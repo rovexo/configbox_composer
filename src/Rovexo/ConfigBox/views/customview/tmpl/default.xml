@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="Custom">
+
+	</layout>
+
+	<fields name="request">
+		<fieldset name="request">
+
+			<field name="viewname" type="text"
+				   description="Name of the custom view to show"
+				   label="View name"
+				   size="30"
+				   required="true"
+			/>
+		</fieldset>
+	</fields>
+</metadata>

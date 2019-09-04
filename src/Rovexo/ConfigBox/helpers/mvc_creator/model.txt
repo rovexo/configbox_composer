@@ -1,0 +1,22 @@
+<?php
+defined('CB_VALID_ENTRY') or die();
+
+class {componentTitle}Model{namePlural} extends KenedoModel {
+
+	function getTableName() {
+		return '#__{tableName}';
+	}
+
+	function getTableKey() {
+		return 'id';
+	}
+
+	function getPropertyDefinitions() {
+
+		$propDefs = array();
+
+		return $propDefs;
+
+	}
+
+}

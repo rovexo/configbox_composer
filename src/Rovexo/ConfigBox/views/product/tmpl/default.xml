@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="Product">
+		
+	</layout>
+	<state> 
+		<name>Product</name>
+	</state>
+	<fields name="request">
+	
+		<fieldset name="request" addfieldpath="/components/com_configbox/external/kenedo/platforms/joomla/elements">
+			<field name="prod_id" type="product" default="0" label="Product" required="true" />
+		</fieldset>
+		
+	</fields>
+</metadata>

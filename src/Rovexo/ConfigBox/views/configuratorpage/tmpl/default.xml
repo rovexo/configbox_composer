@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="Configurator Page">
+		
+	</layout>
+	
+	<state>
+		<name>Configurator Page</name>
+	</state>
+	
+	<fields name="request">
+		<fieldset name="request" addfieldpath="/components/com_configbox/external/kenedo/platforms/joomla/elements">
+			<field name="prod_id" type="product" default="0" label="Product" />
+			<field name="page_id" type="page" default="0" label="Configurator Page" />			
+		</fieldset>
+	</fields>
+	
+</metadata>

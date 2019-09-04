@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:complexType name="AddressType">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="Name" type="AddressFieldType"/>
+        <xs:sequence>
+          <xs:annotation>
+            <xs:documentation>Obsolete: use Name</xs:documentation>
+          </xs:annotation>
+          <xs:element name="FirstName">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:maxLength value="50"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="LastName">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:maxLength value="50"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:choice>
+      <xs:sequence minOccurs="0">
+        <xs:element name="Street" type="AddressFieldType"/>
+        <xs:element name="Street2" type="AddressFieldType" minOccurs="0"/>
+        <xs:element name="Zip" type="AddressFieldType"/>
+        <xs:element name="City" type="AddressFieldType"/>
+        <xs:element name="State" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:maxLength value="40"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="Country">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="AddressFieldType">
+                <xs:attribute name="Code">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:pattern value="[A-Z]{2}"/>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:element name="Email" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="64"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="Mode" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ReadOnly"/>
+          <xs:enumeration value="ReadWrite"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:simpleType name="PriceType">
+    <xs:restriction base="xs:float">
+      <xs:pattern value="-?\d{1,9}\.\d{2}|-?\d{1,9}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="CurrencyType">
+    <xs:restriction base="xs:string">
+      <xs:length value="3"/>
+      <xs:pattern value="[A-Z]{3}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AddressFieldType">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="50"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Order">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="UserField" type="xs:string" minOccurs="0"/>
+        <xs:element name="Tid">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:maxLength value="32"/>
+              <xs:minLength value="1"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="TemplateSet" minOccurs="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="CSSName" type="xs:string"/>
+                <xs:attribute name="Language">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="EN"/>
+                      <xs:enumeration value="DE"/>
+                      <xs:enumeration value="BG"/>
+                      <xs:enumeration value="FR"/>
+                      <xs:enumeration value="HU"/>
+                      <xs:enumeration value="NL"/>
+                      <xs:enumeration value="ES"/>
+                      <xs:enumeration value="IT"/>
+                      <xs:enumeration value="CS"/>
+                      <xs:enumeration value="HR"/>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="PaymentTypes" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Payment" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="Type" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:enumeration value="CC"/>
+                        <xs:enumeration value="CB"/>
+                        <xs:enumeration value="MAESTRO"/>
+                        <xs:enumeration value="EPS"/>
+                        <xs:enumeration value="MIA"/>
+                        <xs:enumeration value="PB"/>
+                        <xs:enumeration value="PSC"/>
+                        <xs:enumeration value="CASH-TICKET"/>
+                        <xs:enumeration value="ELV"/>
+                        <xs:enumeration value="QUICK"/>
+                        <xs:enumeration value="GIROPAY"/>
+                        <xs:enumeration value="PAYPAL"/>
+                        <xs:enumeration value="MPASS"/>
+                        <xs:enumeration value="INVOICE"/>
+                        <xs:enumeration value="HP"/>
+                        <xs:enumeration value="SAFETYPAY"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="Brand">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:enumeration value="AMEX"/>
+                        <xs:enumeration value="DINERS"/>
+                        <xs:enumeration value="MASTERCARD"/>
+                        <xs:enumeration value="VISA"/>
+                        <xs:enumeration value="JCB"/>
+                        <xs:enumeration value="BANK-BGLD"/>
+                        <xs:enumeration value="BAWAG"/>
+                        <xs:enumeration value="BA"/>
+                        <xs:enumeration value="ERSTE"/>
+                        <xs:enumeration value="RZB"/>
+                        <xs:enumeration value="HYPO"/>
+                        <xs:enumeration value="VOLKSBANK"/>
+                        <xs:enumeration value="ARZ"/>
+                        <xs:enumeration value="ONE"/>
+                        <xs:enumeration value="T-MOBILE"/>
+                        <xs:enumeration value="ORANGE"/>
+                        <xs:enumeration value="ATOS"/>
+                        <xs:enumeration value="HOBEX-AT"/>
+                        <xs:enumeration value="HOBEX-DE"/>
+                        <xs:enumeration value="HOBEX-NL"/>
+                        <xs:enumeration value="BILLPAY"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="Enable" type="xs:boolean" default="true">
+              <xs:annotation>
+                <xs:documentation>Enable or disable the specified payment types</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ShoppingCart" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Description" type="xs:string" minOccurs="0"/>
+              <xs:element name="Item" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Number" minOccurs="0">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="Style" type="xs:string"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="ProductNr" minOccurs="0">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="Style" type="xs:string"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Description" minOccurs="0">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="Style" type="xs:string"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Package" minOccurs="0">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="Style" type="xs:string"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Quantity" minOccurs="0">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:unsignedInt">
+                            <xs:attribute name="Style" type="xs:string"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="ItemPrice" minOccurs="0">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="PriceType">
+                            <xs:attribute name="Style" type="xs:string"/>
+                            <xs:attribute name="Tax" type="PriceType"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Price" minOccurs="0">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="PriceType">
+                            <xs:attribute name="Style" type="xs:string"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="SubTotal">
+                  <xs:complexType>
+                    <xs:simpleContent>
+                      <xs:extension base="PriceType">
+                        <xs:attribute name="Header" type="xs:string"/>
+                        <xs:attribute name="HeaderStyle" type="xs:string"/>
+                        <xs:attribute name="Style" type="xs:string"/>
+                      </xs:extension>
+                    </xs:simpleContent>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="Discount">
+                  <xs:complexType>
+                    <xs:simpleContent>
+                      <xs:extension base="PriceType">
+                        <xs:attribute name="Header" type="xs:string"/>
+                        <xs:attribute name="HeaderStyle" type="xs:string"/>
+                        <xs:attribute name="Style" type="xs:string"/>
+                      </xs:extension>
+                    </xs:simpleContent>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="ShippingCosts">
+                  <xs:complexType>
+                    <xs:simpleContent>
+                      <xs:extension base="PriceType">
+                        <xs:attribute name="Header" type="xs:string"/>
+                        <xs:attribute name="HeaderStyle" type="xs:string"/>
+                        <xs:attribute name="Style" type="xs:string"/>
+                        <xs:attribute name="Tax" type="PriceType"/>
+                      </xs:extension>
+                    </xs:simpleContent>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="Tax">
+                  <xs:complexType>
+                    <xs:simpleContent>
+                      <xs:extension base="PriceType">
+                        <xs:attribute name="Percent" type="xs:float"/>
+                        <xs:attribute name="Header" type="xs:string"/>
+                        <xs:attribute name="HeaderStyle" type="xs:string"/>
+                        <xs:attribute name="Style" type="xs:string"/>
+                      </xs:extension>
+                    </xs:simpleContent>
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="Header" type="xs:string"/>
+            <xs:attribute name="HeaderStyle" type="xs:string"/>
+            <xs:attribute name="Style" type="xs:string"/>
+            <xs:attribute name="CaptionStyle" type="xs:string"/>
+            <xs:attribute name="NumberHeader" type="xs:string"/>
+            <xs:attribute name="NumberStyle" type="xs:string"/>
+            <xs:attribute name="ProductNrHeader" type="xs:string"/>
+            <xs:attribute name="ProductNrStyle" type="xs:string"/>
+            <xs:attribute name="DescriptionHeader" type="xs:string"/>
+            <xs:attribute name="DescriptionStyle" type="xs:string"/>
+            <xs:attribute name="PackageHeader" type="xs:string"/>
+            <xs:attribute name="PackageStyle" type="xs:string"/>
+            <xs:attribute name="QuantityHeader" type="xs:string"/>
+            <xs:attribute name="QuantityStyle" type="xs:string"/>
+            <xs:attribute name="ItemPriceHeader" type="xs:string"/>
+            <xs:attribute name="ItemPriceStyle" type="xs:string"/>
+            <xs:attribute name="PriceHeader" type="xs:string"/>
+            <xs:attribute name="PriceStyle" type="xs:string"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Price">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="PriceType">
+                <xs:attribute name="Header" type="xs:string"/>
+                <xs:attribute name="HeaderStyle" type="xs:string"/>
+                <xs:attribute name="Style" type="xs:string"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Currency" minOccurs="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="CurrencyType">
+                <xs:attribute name="Display"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Customer" minOccurs="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="Id">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:maxLength value="32"/>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="UseProfile" type="xs:boolean"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="BillingAddr" minOccurs="0">
+          <xs:complexType>
+            <xs:complexContent>
+              <xs:extension base="AddressType"/>
+            </xs:complexContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ShippingAddr" minOccurs="0">
+          <xs:complexType>
+            <xs:complexContent>
+              <xs:extension base="AddressType"/>
+            </xs:complexContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="URL" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Success" type="xs:anyURI" minOccurs="0"/>
+              <xs:element name="Error" type="xs:anyURI" minOccurs="0"/>
+              <xs:element name="Confirmation" type="xs:anyURI" minOccurs="0"/>
+              <xs:element name="Cancel" type="xs:anyURI" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="Style" type="xs:string"/>
+      <xs:attribute name="LogoStyle" type="xs:string"/>
+      <xs:attribute name="PageHeaderStyle" type="xs:string"/>
+      <xs:attribute name="PageCaptionStyle" type="xs:string"/>
+      <xs:attribute name="PageStyle" type="xs:string"/>
+      <xs:attribute name="InputFieldsStyle" type="xs:string"/>
+      <xs:attribute name="DropDownListsStyle" type="xs:string"/>
+      <xs:attribute name="ButtonsStyle" type="xs:string"/>
+      <xs:attribute name="ErrorsStyle" type="xs:string"/>
+      <xs:attribute name="ErrorsHeaderStyle" type="xs:string"/>
+      <xs:attribute name="SuccessTitleStyle" type="xs:string"/>
+      <xs:attribute name="ErrorTitleStyle" type="xs:string"/>
+      <xs:attribute name="FooterStyle" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

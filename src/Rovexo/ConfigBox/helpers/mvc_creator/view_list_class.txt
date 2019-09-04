@@ -1,0 +1,21 @@
+<?php
+defined('CB_VALID_ENTRY') or die();
+
+class {componentTitle}View{namePlural} extends KenedoView {
+
+	public $component = '{componentName}';
+	public $controllerName = '{controllerName}';
+
+	/**
+	 * @return {componentTitle}Model{namePlural}
+	 * @throws Exception
+	 */
+	function getDefaultModel() {
+		return KenedoModel::getModel('{componentTitle}Model{namePlural}');
+	}
+
+	function getPageTitle() {
+		return KText::_('{namePlural}');
+	}
+
+}

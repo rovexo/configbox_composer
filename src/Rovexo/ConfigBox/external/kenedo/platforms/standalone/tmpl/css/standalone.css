@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+
+body {
+	font-size:12px;
+	font-family:Arial, sans-serif;
+}
+
+a {
+	text-decoration:none;
+}
+
+h1 {
+	color: #0B55C4;
+}

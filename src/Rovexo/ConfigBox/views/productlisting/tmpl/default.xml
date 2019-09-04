@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="Product Listing">
+		
+	</layout>
+	
+	<state>
+		<name>Product Listing Page</name>
+	</state>
+	
+	<fields name="request">
+		<fieldset name="request" addfieldpath="/components/com_configbox/external/kenedo/platforms/joomla/elements">
+			<field name="listing_id" type="listing" label="Product Listing" required="true" description="The product listing to display" />
+		</fieldset>
+	</fields>
+</metadata>

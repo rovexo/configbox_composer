@@ -1,0 +1,30 @@
+{
+    "name": "rovexo/configbox-php",
+    "description": "Configbox is a web-based product configurator and ecommerce application.",
+    "type": "library",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Rovexo SIA",
+            "email": "office@rovexo.com"
+        }
+    ],
+    "require": {
+        "php": "5.4 - 7.2",
+        "ext-apcu": "*",
+        "ext-gd": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-mysqli": "*",
+        "ext-readline": "*",
+        "ext-soap": "*",
+        "ext-xml": "*",
+        "ext-zip": "*",
+        "ext-openssl": "*",
+        "ext-Reflection": "*",
+        "ext-Zend-OPcache": "*"
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}

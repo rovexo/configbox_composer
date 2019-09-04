@@ -1,0 +1,38 @@
+<?php
+defined('CB_VALID_ENTRY') or die();
+
+class {componentTitle}Controller{namePlural} extends KenedoController {
+
+	/**
+	 * @return {componentTitle}Model{namePlural}
+	 */
+
+	protected function getDefaultModel() {
+		return KenedoModel::getModel('{componentTitle}Model{namePlural}');
+	}
+
+	/**
+	 * @return {componentTitle}View{namePlural}
+	 */
+
+	protected function getDefaultView() {
+		return $this->getDefaultViewList();
+	}
+
+	/**
+	 * @return {componentTitle}View{namePlural}
+	 */
+
+	protected function getDefaultViewList() {
+		return KenedoView::getView('{componentTitle}View{namePlural}');
+	}
+
+	/**
+	 * @return {componentTitle}View{nameSingular}
+	 */
+
+	protected function getDefaultViewForm() {
+		return KenedoView::getView('{componentTitle}View{nameSingular}');
+	}
+
+}
