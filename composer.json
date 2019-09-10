@@ -11,18 +11,22 @@
     ],
     "require": {
         "php": "5.4 - 7.2",
-        "ext-apcu": "*",
+        "ext-curl": "*",
+        "ext-dom": "*",
         "ext-gd": "*",
+        "ext-ionCube-Loader": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-mysqli": "*",
-        "ext-readline": "*",
-        "ext-soap": "*",
-        "ext-xml": "*",
-        "ext-zip": "*",
         "ext-openssl": "*",
         "ext-Reflection": "*",
-        "ext-Zend-OPcache": "*"
+        "ext-SimpleXML": "*",
+        "ext-soap": "*",
+        "ext-wddx": "*",
+        "ext-xml": "*",
+        "ext-xsl": "*",
+        "ext-Zend-OPcache": "*",
+        "ext-zip": "*"
     },
     "autoload": {
         "classmap": ["src/"]
