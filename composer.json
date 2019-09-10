@@ -30,8 +30,5 @@
     },
     "autoload": {
         "classmap": ["src/"]
-    },
-    "scripts": {
-        "post-install-cmd": "php src/Rovexo/ConfigBox/symlink-assets.php"
     }
 }
