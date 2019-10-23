@@ -1,5 +1,5 @@
 <?php
-
+// Adding a dummy content
 class Rovexo_ConfigBox_KenedoLoader
 {
 	public function initKenedo() {
