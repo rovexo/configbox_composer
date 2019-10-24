@@ -9,7 +9,7 @@
 	  "email": "office@rovexo.com"
 	}
   ],
-  "version": "1",
+  "version": "1.0.0-beta.1",
   "require": {
 	"php": "5.4 - 7.2",
 	"ext-apcu": "*",
@@ -17,7 +17,6 @@
 	"ext-json": "*",
 	"ext-mbstring": "*",
 	"ext-mysqli": "*",
-	"ext-readline": "*",
 	"ext-soap": "*",
 	"ext-xml": "*",
 	"ext-zip": "*",
