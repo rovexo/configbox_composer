@@ -19,7 +19,7 @@ defined('CB_VALID_ENTRY') or die();
 				<div class="help-block validation-message-target">
 					<?php echo ($this->hasValidationMessage) ? hsc($this->validationMessage) : '';?>
 				</div>
-				<button class="trigger-show-file-browser btn btn-default" <?php echo ($this->question->disableControl) ? ' disabled="disabled"':'';?>><?php echo KText::_('Browse');?></button>
+				<a class="trigger-show-file-browser btn btn-default" <?php echo ($this->question->disableControl) ? ' disabled="disabled"':'';?>><?php echo KText::_('Browse');?></a>
 				<input class="fallback-input" style="display: none" type="file" />
 			</div>
 

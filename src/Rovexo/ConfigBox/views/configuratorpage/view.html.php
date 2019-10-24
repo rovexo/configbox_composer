@@ -235,6 +235,12 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 		return $calls;
 	}
 
+	function getJsInitCallsEach() {
+		$calls = parent::getJsInitCallsEach();
+		$calls[] = 'configbox/configurator::initConfiguratorPageEach';
+		return $calls;
+	}
+
 	/**
 	 * Adds cart position id, product id and page id to the view's attributes as data attributes
 	 * @return string
@@ -383,19 +389,20 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 		$this->showPrevButton = !empty($this->prevPage);
 		$this->showNextButton = !empty($this->nextPage);
 
-		// In global and page settings you can define if the finish button should show on the last page only or on any page
-		$showFinishOnlyOnLastPage = ($this->product->page_nav_cart_button_last_page_only == 1 or ($this->product->page_nav_cart_button_last_page_only == 2 && CbSettings::getInstance()->get('page_nav_cart_button_last_page_only') == 1));
-
-		if ($showFinishOnlyOnLastPage) {
-			$this->showFinishButton = empty($this->nextPage);
-		}
-		else {
-			$this->showFinishButton = true;
-		}
-
 		// On Magento, we do not show CB's finish button in any case (platform makes it's own one)
         if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento2')) {
 			$this->showFinishButton = false;
+		}
+        else {
+			// In global and page settings you can define if the finish button should show on the last page only or on any page
+			$showFinishOnlyOnLastPage = ($this->product->page_nav_cart_button_last_page_only == 1 or ($this->product->page_nav_cart_button_last_page_only == 2 && CbSettings::getInstance()->get('page_nav_cart_button_last_page_only') == 1));
+
+			if ($showFinishOnlyOnLastPage) {
+				$this->showFinishButton = empty($this->nextPage);
+			}
+			else {
+				$this->showFinishButton = true;
+			}
 		}
 
 		// Set CSS classes for navigation buttons, indicates what shall be hidden

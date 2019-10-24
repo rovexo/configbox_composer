@@ -180,7 +180,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 	function getCriticalIssues() {
 		$items = array();
 
-		if (KenedoPlatform::getName() != 'magento' && $this->shopCountryIsMissing()) {
+		if ((KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') && $this->shopCountryIsMissing()) {
 			$warning = new stdClass();
 			$warning->title = KText::_('WARNING_NO_SHOP_COUNTRY_TITLE');
 			$warning->problem = KText::_('WARNING_NO_SHOP_COUNTRY_PROBLEM');
@@ -685,5 +685,55 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 		return $text;
 
 	}
+
+	/**
+	 * Tells if license exired. Caches check result for 10 minutes.
+	 * @return bool true if license has expired
+	 * @throws Exception
+	 */
+	public function isLicenseExpired()
+    {
+
+    	$lastCheckDate = ConfigboxSystemVars::getVar('last_license_check_date');
+    	$lastCheckResult = ConfigboxSystemVars::getVar('last_license_check_result');
+		$lastCheckKey = ConfigboxSystemVars::getVar('last_license_check_key');
+
+    	$timeNow = KenedoTimeHelper::getNormalizedTime('NOW', 'datetime');
+		$licenseKey = CbSettings::getInstance()->get('product_key');
+
+    	if ($lastCheckDate != null) {
+    		$last = new DateTime($lastCheckDate);
+			$now = new DateTime('now');
+			$diff = $now->diff($last, true);
+			if ($diff->i < 10 && $lastCheckKey == $licenseKey) {
+				return boolval($lastCheckResult);
+			}
+		}
+
+
+		$serverList = explode(',', CbSettings::getInstance()->get('license_manager_satellites'));
+		shuffle($serverList);
+
+		$url = 'https://'.trim($serverList[0]).'/v4/getLicenseData.php?license_key='.$licenseKey;
+		$timeout = ini_get('default_socket_timeout');
+		ini_set('default_socket_timeout', 5);
+		$json = file_get_contents($url);
+		ini_set('default_socket_timeout', $timeout);
+		$info = json_decode($json, true);
+
+		if ($info['data']['days_left'] === NULL || $info['data']['days_left'] >= 0) {
+			$result = false;
+		}
+		else {
+			$result = true;
+		}
+
+		ConfigboxSystemVars::setVar('last_license_check_key', $licenseKey);
+		ConfigboxSystemVars::setVar('last_license_check_date', $timeNow);
+		ConfigboxSystemVars::setVar('last_license_check_result', intval($result));
+
+		return $result;
+
+    }
 
 }

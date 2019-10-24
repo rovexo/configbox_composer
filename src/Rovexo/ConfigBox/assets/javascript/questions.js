@@ -12,9 +12,18 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 		init: function() {
 
+		},
+
+		initEach: function() {
+
 			cbrequire(['cbj.ui'], function() {
 
 				cbj('.question.type-calendar').each(function() {
+
+					if (cbj(this).hasClass('initialized')) {
+						return;
+					}
+					cbj(this).addClass('initialized');
 
 					var questionId = cbj(this).data('questionId');
 					var questionElement = cbj(this);
@@ -195,6 +204,10 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 		},
 
+		initEach: function() {
+
+		},
+
 		onSystemSelectionChange: function(event, questionId, selection) {
 			var question = cbj('#question-' + questionId);
 			var type = question.data('question-type');
@@ -270,76 +283,6 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 				});
 
-				// Init all spectrum pickers
-				cbj('.question.type-colorpicker .spectrum-input').spectrum({
-					flat: true,
-					showInput: true,
-					showInitial: false,
-					allowEmpty: false,
-					showAlpha: false,
-					disabled: false,
-					showPalette: true,
-					showPaletteOnly: false,
-					togglePaletteOnly: false,
-					showSelectionPalette: true,
-					clickoutFiresChange: true,
-					cancelText: '',
-					chooseText: '',
-					containerClassName: 'cb-spectrum',
-					replacerClassName: 'cb-replacer form-control',
-					preferredFormat: 'hex',
-
-					// A change triggers an immediate store
-					change: function(color) {
-
-						// Get values
-						var questionId = cbj(this).closest('.question.type-colorpicker').data('questionId');
-						var selection = color.toHexString();
-
-						// Set the background color in the output bar
-						cbj(this).closest('.question.type-colorpicker').find('.color-picker-output').css('background-color', selection);
-
-						// Store the selection
-						configurator.sendSelectionToServer(questionId, selection);
-
-					},
-
-					// Moving the picker needle triggers a delayed store
-					move: function(color) {
-
-						// Get a ref to the picker (so we can read from it in the timeout function)
-						var that = cbj(this);
-
-						// Prime the timeout if there isn't one already
-						questionColorpicker.timeout = questionColorpicker.timeout || null;
-
-						// We start storing with a delay in the next step - here we cancel any running JS timeout
-						if (questionColorpicker.timeout) {
-							window.clearTimeout(questionColorpicker.timeout);
-						}
-
-						// Set a timeout for storing the selection (delayed store)
-						questionColorpicker.timeout = window.setTimeout(
-
-							function() {
-
-								// Set the color in the output div
-								cbj(that).closest('.question.type-colorpicker').find('.color-picker-output').css('background-color', color.toHexString());
-								// Store the selection
-								var questionId = cbj(that).closest('.question.type-colorpicker').data('questionId');
-
-								// Get the color in hex
-								var selection = color.toHexString();
-
-								configurator.sendSelectionToServer(questionId, selection);
-
-							},
-							400
-						);
-
-					}
-
-				});
 
 				// Entering a hex code in spectrum makes an immediate change (once we got 7 chars)
 				cbj(document).on('keyup', '.cb-spectrum .sp-input', function() {
@@ -349,6 +292,94 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 					if (selection.length === 7) {
 						cbj('.sp-active').closest('.question.type-colorpicker').find('.color-picker-input').spectrum('set', selection).trigger('change');
 					}
+
+				});
+
+			});
+
+		},
+
+		initEach: function() {
+
+			cbrequire(['cbj.spectrum'], function() {
+
+				cbj('.question.type-colorpicker .spectrum-input').each(function() {
+
+					if (cbj(this).hasClass('initialized')) {
+						return;
+					}
+					cbj(this).addClass('initialized');
+
+					// Init the spectrum pickers
+					cbj(this).spectrum({
+						flat: true,
+						showInput: true,
+						showInitial: false,
+						allowEmpty: false,
+						showAlpha: false,
+						disabled: false,
+						showPalette: true,
+						showPaletteOnly: false,
+						togglePaletteOnly: false,
+						showSelectionPalette: true,
+						clickoutFiresChange: true,
+						cancelText: '',
+						chooseText: '',
+						containerClassName: 'cb-spectrum',
+						replacerClassName: 'cb-replacer form-control',
+						preferredFormat: 'hex',
+
+						// A change triggers an immediate store
+						change: function(color) {
+
+							// Get values
+							var questionId = cbj(this).closest('.question.type-colorpicker').data('questionId');
+							var selection = color.toHexString();
+
+							// Set the background color in the output bar
+							cbj(this).closest('.question.type-colorpicker').find('.color-picker-output').css('background-color', selection);
+
+							// Store the selection
+							configurator.sendSelectionToServer(questionId, selection);
+
+						},
+
+						// Moving the picker needle triggers a delayed store
+						move: function(color) {
+
+							// Get a ref to the picker (so we can read from it in the timeout function)
+							var that = cbj(this);
+
+							// Prime the timeout if there isn't one already
+							questionColorpicker.timeout = questionColorpicker.timeout || null;
+
+							// We start storing with a delay in the next step - here we cancel any running JS timeout
+							if (questionColorpicker.timeout) {
+								window.clearTimeout(questionColorpicker.timeout);
+							}
+
+							// Set a timeout for storing the selection (delayed store)
+							questionColorpicker.timeout = window.setTimeout(
+
+								function() {
+
+									// Set the color in the output div
+									cbj(that).closest('.question.type-colorpicker').find('.color-picker-output').css('background-color', color.toHexString());
+									// Store the selection
+									var questionId = cbj(that).closest('.question.type-colorpicker').data('questionId');
+
+									// Get the color in hex
+									var selection = color.toHexString();
+
+									configurator.sendSelectionToServer(questionId, selection);
+
+								},
+								400
+							);
+
+						}
+
+					});
 
 				});
 
@@ -406,14 +437,23 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 		init: function() {
 
-			cbj('.question.type-textbox').each(function(){
+		},
+
+		initEach: function() {
+
+			cbj('.question.type-textbox').each(function() {
+
+				if (cbj(this).hasClass('initialized')) {
+					return;
+				}
+				cbj(this).addClass('initialized');
 
 				var questionId = cbj(this).data('questionId');
 
 				cbj('#input-question-' + questionId).on('keyup', function() {
 
 					// Get what is currently in the text box
-					var inputText = cbj(this).val();
+					var input = cbj(this);
 
 					// Prime the timeout if there isn't one already
 					questionTextbox.timeout = questionTextbox.timeout || null;
@@ -426,7 +466,7 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 					// Set a timeout for storing the text
 					questionTextbox.timeout = window.setTimeout(
 						function() {
-							configurator.sendSelectionToServer(questionId, inputText);
+							configurator.sendSelectionToServer(questionId, input.val());
 						},
 						400
 					);
@@ -478,7 +518,16 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 		init: function() {
 
-			cbj('.question.type-textarea').each(function(){
+		},
+
+		initEach: function() {
+
+			cbj('.question.type-textarea').each(function() {
+
+				if (cbj(this).hasClass('initialized')) {
+					return;
+				}
+				cbj(this).addClass('initialized');
 
 				var questionId = cbj(this).data('questionId');
 
@@ -550,26 +599,26 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 		init: function() {
 
-			cbj('.question.type-checkbox').each(function() {
+			cbj(document).on('change', '.question.type-checkbox input[type=checkbox]', function() {
 
-				var questionId = cbj(this).data('questionId');
+				var questionId = cbj(this).closest('.question').data('question-id');
+				var answer = cbj(this).closest('.answer');
+				var selection = (cbj(this).prop('checked') === true) ? cbj(this).val() : '';
 
-				cbj(document).on('change', '.question.type-checkbox input[name="question-' + questionId+'"]', function (){
+				if (selection) {
+					answer.addClass('selected');
+				}
+				else {
+					answer.removeClass('selected');
+				}
 
-					var selection = (cbj(this).prop('checked') === true) ? cbj(this).val() : '';
-
-					if (selection) {
-						cbj(this).closest('.answer').addClass('selected');
-					}
-					else {
-						cbj(this).closest('.answer').removeClass('selected');
-					}
-
-					configurator.sendSelectionToServer(questionId, selection);
-
-				});
+				configurator.sendSelectionToServer(questionId, selection);
 
 			});
+
+		},
+
+		initEach: function() {
 
 		},
 
@@ -620,25 +669,25 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 		init: function() {
 
-			cbj('.question.type-radiobuttons').each(function() {
+			cbj(document).on('change', '.question.type-radiobuttons input[type=radio]', function() {
 
-				var questionId = cbj(this).data('questionId');
+				if (cbj(this).prop('checked') === false) {
+					return;
+				}
 
-				cbj(document).on('change', '#question-' + questionId + ' input[name=question-' + questionId +']', function () {
+				var questionId = cbj(this).closest('.question').data('question-id');
+				var answer = cbj(this).closest('.answer');
+				var selection = parseInt(cbj(this).val());
 
-					if (cbj(this).prop('checked') === false) {
-						return;
-					}
+				answer.addClass('selected').siblings().removeClass('selected');
 
-					var selection = cbj(this).val();
-
-					cbj('#answer-' + selection).addClass('selected').siblings().removeClass('selected');
-
-					configurator.sendSelectionToServer(questionId, selection);
-
-				});
+				configurator.sendSelectionToServer(questionId, selection);
 
 			});
+
+		},
+
+		initEach: function() {
 
 		},
 
@@ -688,7 +737,6 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 	var questionDropdown = {
 
 		init: function() {
-
 
 			// Dropdown open functionality
 			cbj(document).on('click', '.configbox-dropdown-trigger', function() {
@@ -746,6 +794,10 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 				}
 
 			});
+
+		},
+
+		initEach: function() {
 
 		},
 
@@ -820,24 +872,25 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 		init: function() {
 
-			cbj('.question.type-images').each(function() {
+			cbj(document).on('change', '.question.type-images input[type=radio]', function() {
 
-				var questionId = cbj(this).data('questionId');
+				if (cbj(this).prop('checked') === false) {
+					return;
+				}
 
-				cbj(document).on('change', '#question-' + questionId + ' input[name=question-' + questionId +']', function () {
+				var questionId = cbj(this).closest('.question').data('question-id');
+				var answer = cbj(this).closest('.answer');
+				var selection = parseInt(cbj(this).val());
 
-					if (cbj(this).prop('checked') === false) {
-						return;
-					}
+				answer.addClass('selected').siblings().removeClass('selected');
 
-					var selection = cbj(this).val();
-					cbj('#answer-' + selection).addClass('selected').siblings().removeClass('selected');
-
-					configurator.sendSelectionToServer(questionId, selection);
-
-				});
+				configurator.sendSelectionToServer(questionId, selection);
 
 			});
+
+		},
+
+		initEach: function() {
 
 		},
 
@@ -896,12 +949,22 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 		init: function() {
 
+		},
+
+		initEach: function() {
+
 			// No need to use a parameter in callback function - jQueryUI 'goes' into cbj during loading
 			cbrequire(['cbj.ui'], function() {
 
+				// We need to force having touch punch loaded after jQueryUI (doing it via requireJS config was a problem)
 				cbrequire(['cbj.touchpunch'], function() {
 
 					cbj('.question.type-slider').each(function() {
+
+						if (cbj(this).hasClass('initialized')) {
+							return;
+						}
+						cbj(this).addClass('initialized');
 
 						var question = cbj(this);
 						var questionId = question.data('questionId');
@@ -1107,8 +1170,17 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 			// Trigger system selection change method on user changes as well
 			cbj(document).on('cbSelectionChange', questionUpload.onSystemSelectionChange);
 
+		},
+
+		initEach: function() {
+
 			// We do the drag/drop/etc question by question because it reads easier
 			cbj('.question.type-upload').each(function() {
+
+				if (cbj(this).hasClass('initialized')) {
+					return;
+				}
+				cbj(this).addClass('initialized');
 
 				// Make a reference to the question element for later
 				var question = cbj(this);
@@ -1326,6 +1398,11 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 			cbj('.question.type-choices').each(function() {
 
+				if (cbj(this).hasClass('initialized')) {
+					return;
+				}
+				cbj(this).addClass('initialized');
+
 				var questionId = cbj(this).data('questionId');
 
 				cbj(document).on('change', '#question-' + questionId + ' .configbox-choice-field', function() {
@@ -1367,6 +1444,10 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 				});
 
 			});
+
+		},
+
+		initEach: function() {
 
 		},
 
@@ -1442,16 +1523,16 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 	};
 
 	configurator.registerQuestion('calendar', 		questionCalendar);
-	configurator.registerQuestion('colorpicker', 	questionColorpicker);
-	configurator.registerQuestion('ralcolorpicker', questionRalColorpicker);
+	configurator.registerQuestion('colorpicker', 		questionColorpicker);
+	configurator.registerQuestion('ralcolorpicker', 	questionRalColorpicker);
 	configurator.registerQuestion('checkbox', 		questionCheckbox);
-	configurator.registerQuestion('choices', 		questionChoices);
+	configurator.registerQuestion('choices', 			questionChoices);
 	configurator.registerQuestion('dropdown', 		questionDropdown);
-	configurator.registerQuestion('images', 		questionImages);
+	configurator.registerQuestion('images', 			questionImages);
 	configurator.registerQuestion('radiobuttons', 	questionRadiobuttons);
-	configurator.registerQuestion('slider', 		questionSlider);
-	configurator.registerQuestion('textbox', 		questionTextbox);
+	configurator.registerQuestion('slider', 			questionSlider);
+	configurator.registerQuestion('textbox', 			questionTextbox);
 	configurator.registerQuestion('textarea', 		questionTextarea);
-	configurator.registerQuestion('upload', 		questionUpload);
+	configurator.registerQuestion('upload', 			questionUpload);
 
 });

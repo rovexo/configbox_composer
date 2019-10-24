@@ -30,7 +30,11 @@ class ConfigboxPrices {
 
 			if (KenedoPlatform::getName() == 'magento') {
 				self::$pricesEnteredNet = (Mage::getStoreConfig('tax/calculation/price_includes_tax')) ? false : true;
-			}
+			} else if (KenedoPlatform::getName() == 'magento2') {
+                $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                $scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
+                self::$pricesEnteredNet = $scopeConfig->getValue('tax/calculation/price_includes_tax', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+            }
 			else {
 				self::$pricesEnteredNet = true;
 			}
@@ -53,7 +57,13 @@ class ConfigboxPrices {
 			$taxDisplayType = Mage::getStoreConfig('tax/display/type');
 			$showNet = ($taxDisplayType == 1);
 			return $showNet;
-		}
+		} else if (KenedoPlatform::getName() == 'magento2') {
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
+            $taxDisplayType = $scopeConfig->getValue('tax/display/type', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+            $showNet = ($taxDisplayType == 1);
+            return $showNet;
+        }
 
 		if ($userId === NULL) {
 			$userId = ConfigboxUserHelper::getUserId();
@@ -73,7 +83,7 @@ class ConfigboxPrices {
 	 */
 	public static function getTaxRate($taxClassId) {
 
-		if (KenedoPlatform::getName() == 'magento') {
+		if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento2')) {
 			return KSession::get('cbtaxrate');
 		}
 
@@ -211,7 +221,7 @@ class ConfigboxPrices {
 			return 0;
 		}
 
-		if (KenedoPlatform::getName() == 'magento') {
+		if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento2')) {
 
 			$sessionKey = 'cbproduct_base_price_'.$productId;
 

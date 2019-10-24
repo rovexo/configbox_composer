@@ -836,8 +836,7 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'positionForm'=>56000,
 		);
 
-
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 			$propDefs['asproducttitle'] = array(
 				'name'=>'asproducttitle',
 				'label'=>KText::_('Use Selection as Product Title'),

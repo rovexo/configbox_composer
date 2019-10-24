@@ -37,6 +37,12 @@ defined('CB_VALID_ENTRY') or die();
 			?>
 		</ul>
 
+		<ul class="element-list">
+			<li class="shown" id="element-regarding">
+				<span><?php echo KText::_('Regarding Question');?><?php echo KenedoHtml::getTooltip('<span class="fa fa-question-circle"></span>', KText::_('HELP_TEXT_REGARDING_QUESTION'));?></span>
+			</li>
+		</ul>
+
 	</div>
 
 	<div id="element-attributes">
@@ -76,6 +82,27 @@ defined('CB_VALID_ENTRY') or die();
 					</ul>
 				</li>
 			<?php } ?>
+
+			<li class="xref-group" id="xref-group-regarding">
+				<ul class="conditions-list xref-list">
+
+					<?php
+					foreach ($this->elementAttributes as $fieldPath => $elementAttribute) {
+						$termData = array(
+						'type'=>'ElementAttribute',
+						'elementId' => 'regarding',
+						'fieldPath' => $fieldPath,
+						'fallbackValue' => '',
+						);
+
+						echo '<li>';
+						echo ConfigboxCalcTerm::getTerm('ElementAttribute')->getTermHtml($termData);
+						echo '</li>';
+					}
+					?>
+				</ul>
+			</li>
+
 		</ul>
 	</div>
 </div>

@@ -1,0 +1,19 @@
+{
+  "predef": [ "$", "jQuery", "text", "$p", "window", "document", "console", "parent", "cbrequire", "define", "XMLHttpRequest", "FormData", "File", "FileList" ],
+  "curly":                true,
+  "eqeqeq":               true,
+  "funcscope":            true,
+  "latedef":              true,
+  "nonbsp":               true,
+  "notypeof":             true,
+  "undef":                true,
+  "unused":               true,
+
+  "debug":                true,
+  "scripturl":            true,
+
+  "-W079":                true,
+  "-W098":                true,
+  "-W116":                true,
+  "-W104":                true
+}

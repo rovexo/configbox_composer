@@ -36,17 +36,22 @@ div#element-box div.m {
 
 /* Joomla admin CSS changes - END */
 
-/* Magento admin CSS changes - START */
-
-.configbox-admin-index {
-	min-width:1172px;
-}
+/* Magento 1 admin CSS changes - START */
 
 .configbox-admin-index .middle {
 	background: none #f6f6f7;
 }
 
 /* Magento admin CSS changes - END */
+
+/* Magento 2 admin CSS changes - START */
+
+.configbox-admin-index .page-wrapper {
+	background: none #f6f6f7;
+}
+
+/* Magento 2 admin CSS changes - END */
+
 
 /* Wordpress admin CSS changes - START */
 
@@ -1033,10 +1038,17 @@ table.sans-padding td {
 }
 
 .cb-content #view-admincounties .kenedo-filter #xref_admincountries_adminzones_zone_id_chosen,
+.cb-content #view-admincounties .kenedo-filter #xref_admincountries_adminzones_zone_id_chosen + a
 .cb-content #view-admincounties .kenedo-filter #adminstates_name,
+.cb-content #view-admincounties .kenedo-filter #adminstates_name + a,
 .cb-content #view-admincounties .kenedo-filter #xref_admincountries_adminzones_zone_id,
+.cb-content #view-admincounties .kenedo-filter #xref_admincountries_adminzones_zone_id + a,
 .cb-content #view-admincounties .kenedo-filter #admincountries_state_name,
-.cb-content #view-admincounties .kenedo-filter #admincountries_country_name {
+.cb-content #view-admincounties .kenedo-filter #admincountries_state_name + a,
+.cb-content #view-admincounties .kenedo-filter #admincountries_country_name,
+.cb-content #view-admincounties .kenedo-filter #admincountries_country_name + a,
+.cb-content #view-admincounties .kenedo-filter #adminstates_name,
+.cb-content #view-admincounties .kenedo-filter #adminstates_name + a {
 	display:none;
 }
 

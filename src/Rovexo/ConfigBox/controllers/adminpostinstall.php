@@ -318,7 +318,7 @@ class ConfigboxControllerAdminpostinstall extends KenedoController {
 
 		ConfigboxCacheHelper::purgeCache();
 
-		if (KenedoPlatform::getName() == 'magento') {
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
 			ConfigboxSystemVars::setVar('post_install_done', '1');
 		}
 

@@ -50,6 +50,11 @@ defined('CB_VALID_ENTRY') or die();
 			<?php if (KenedoPlatform::getName() == 'magento') { ?>
 				<input type="hidden" id="form_key" 		name="form_key" 		value="<?php echo Mage::getSingleton('core/session')->getFormKey();?>" />
 			<?php } ?>
+            <?php if (KenedoPlatform::getName() == 'magento2') { ?>
+                <?php $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); ?>
+                <?php $formKey = $objectManager->get('Magento\Framework\Data\Form\FormKey'); ?>
+                <input type="hidden" id="form_key" 		name="form_key" 		value="<?php echo $formKey->getFormKey();?>" />
+            <?php } ?>
 		</div>
 
 		<div class="clear"></div>

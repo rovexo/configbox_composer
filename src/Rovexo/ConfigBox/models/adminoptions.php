@@ -80,7 +80,7 @@ class ConfigboxModelAdminoptions extends KenedoModel {
 			'positionForm'=>1420,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['price_overrides'] = array(
 				'name' => 'price_overrides',
@@ -117,7 +117,7 @@ class ConfigboxModelAdminoptions extends KenedoModel {
 			'positionForm'=>1600,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['price_recurring_overrides'] = array(
 				'name' => 'price_recurring_overrides',
@@ -263,7 +263,7 @@ class ConfigboxModelAdminoptions extends KenedoModel {
 		$propDefs['custom_fields_start'] = array(
 			'name'=>'custom_fields_start',
 			'type'=>'groupstart',
-			'title'=>KText::_('Custom Component Fields'),
+			'title'=>KText::_('Custom Global Answer Fields'),
 			'toggle'=>true,
 			'defaultState'=>'closed',
 			'notes'=>KText::_('With these fields you can add your own data. You can use this data in your own templates and calculation models.'),

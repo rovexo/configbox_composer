@@ -54,13 +54,16 @@ define(['cbj'], function(cbj) {
 		cbj(document).on('cbAnswerActivation', 			this.onAnswerActivation);
 		cbj(document).on('cbAnswerDeactivation', 		this.onAnswerDeactivation);
 
-		this.initImagePreloading();
 		this.initDeferredPageNav();
 		this.initSelectionImageSwitcher();
+
+	};
+
+	configurator.initConfiguratorPageEach = function() {
+		this.initQuestions();
+		this.initImagePreloading();
 		this.initStickyBlock();
 		this.initBsPopovers();
-		this.initQuestions();
-
 	};
 
 	configurator.showPageEditButtons = function() {
@@ -222,16 +225,22 @@ define(['cbj'], function(cbj) {
 					throw 'The configurator page contains a question without a data-question-type attribute. Compare with the built-in question type templates and add it. The question with the problem has the ID "' + cbj(this).attr('id') + '"';
 				}
 
-				// Skip those already initialized
-				if (initializedTypes.indexOf(type) !== -1) {
-					return;
-				}
-
 				var questionType = configurator.getQuestionType(type);
 
 				if (!questionType) {
 					throw 'The configurator page contains a question of type "' + type + '", but type object is not registered. Make sure you make and register it in custom_questions.js';
 				}
+
+				// If there is an initEach function, run it
+				if (questionType.initEach) {
+					questionType.initEach();
+				}
+
+				// The rest runs only once per page load
+				if (initializedTypes.indexOf(type) !== -1) {
+					return;
+				}
+				initializedTypes.push(type);
 
 				questionType.init();
 
@@ -244,7 +253,6 @@ define(['cbj'], function(cbj) {
 				cbj(document).on('cbValidationMessageShown',	questionType.onValidationMessageShown);
 				cbj(document).on('cbValidationMessageCleared',	questionType.onValidationMessageCleared);
 
-				initializedTypes.push(type);
 
 			});
 
@@ -313,6 +321,12 @@ define(['cbj'], function(cbj) {
 		var topPadding		= 20;
 		var colsHaveCollapsed = false;
 
+		if (configurator.stickyBlockHandlersAttached === true) {
+			return;
+		}
+
+		configurator.stickyBlockHandlersAttached = true;
+
 		// This checks regularly if the columns have collapsed and which is the higher one
 		window.setInterval(function(){
 			floaterHeight = floater.height();
@@ -342,6 +356,10 @@ define(['cbj'], function(cbj) {
 
 		// This applies padding to the sticky block so it stays in sight
 		cbj(window).scroll(function() {
+
+			if (floater.length === 0) {
+				return;
+			}
 
 			if (colsHaveCollapsed === true) {
 				floater.css('padding-top', 0);

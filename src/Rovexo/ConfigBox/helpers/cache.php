@@ -549,23 +549,39 @@ class ConfigboxCacheHelper {
 
 		$filenameDefault = CbSettings::getInstance()->get('defaultprodimage');
 
-		// Overwrite product image with default product image if there is none
-		if (!$product->prod_image && $filenameDefault) {
-			$product->prod_image_href = CONFIGBOX_URL_DEFAULT_IMAGES.'/'.$filenameDefault;
-			$product->prod_image_path = CONFIGBOX_DIR_DEFAULT_IMAGES.'/'.$filenameDefault;
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+
+			$product->prod_image_href = null;
+			$product->prod_image_path = null;
+			$product->listing_id = null;
+			$product->priceLabel = '';
+			$product->priceLabelRecurring = '';
+
+		}
+		else {
+
+			// Overwrite product image with default product image if there is none
+			if (!$product->prod_image && $filenameDefault) {
+				$product->prod_image_href = CONFIGBOX_URL_DEFAULT_IMAGES.'/'.$filenameDefault;
+				$product->prod_image_path = CONFIGBOX_DIR_DEFAULT_IMAGES.'/'.$filenameDefault;
+			}
+
+			$product->listing_id = NULL;
+
+			if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+				if (count($product->product_listing_ids)) {
+					$product->listing_id = $product->product_listing_ids[0];
+				}
+			}
+
+
+
+			// Set the price label (mind the camel case notation)
+			$product->priceLabel = ($product->pricelabel) ? $product->pricelabel : KText::_('Price');
+			$product->priceLabelRecurring = ($product->pricelabel_recurring) ? $product->pricelabel_recurring : KText::_('Recurring Price');
+
 		}
 
-		// LEGACY (remove in CB 4)
-		$product->imagesrc = $product->prod_image_href;
-		$product->listing_id = NULL;
-
-		if (count($product->product_listing_ids)) {
-			$product->listing_id = $product->product_listing_ids[0];
-		}
-
-		// Set the price label (mind the camel case notation)
-		$product->priceLabel = ($product->pricelabel) ? $product->pricelabel : KText::_('Price');
-		$product->priceLabelRecurring = ($product->pricelabel_recurring) ? $product->pricelabel_recurring : KText::_('Recurring Price');
 
 		// Deal with tax rates and prices - START
 		$product->taxRate = ConfigboxPrices::getProductTaxRate($product->id);
@@ -575,17 +591,33 @@ class ConfigboxCacheHelper {
 		$product->basePriceGross = ConfigboxPrices::getProductPrice($product->id,false,true);
 		$product->basePriceTax = $product->basePriceGross - $product->basePriceNet;
 
-		$product->basePriceRecurringNet = ConfigboxPrices::getProductPriceRecurring($product->id,true,true);
-		$product->basePriceRecurringGross = ConfigboxPrices::getProductPriceRecurring($product->id,false,true);
-		$product->basePriceRecurringTax = $product->basePriceRecurringGross - $product->basePriceRecurringNet;
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			$product->basePriceRecurringNet = 0;
+			$product->basePriceRecurringGross = 0;
+			$product->basePriceRecurringTax = 0;
+		}
+		else {
+			$product->basePriceRecurringNet = ConfigboxPrices::getProductPriceRecurring($product->id,true,true);
+			$product->basePriceRecurringGross = ConfigboxPrices::getProductPriceRecurring($product->id,false,true);
+			$product->basePriceRecurringTax = $product->basePriceRecurringGross - $product->basePriceRecurringNet;
+		}
+
 
 		$product->priceNet = ConfigboxPrices::getProductPrice($product->id,true,false);
 		$product->priceGross = ConfigboxPrices::getProductPrice($product->id,false,false);
 		$product->priceTax = $product->priceGross - $product->priceNet;
 
-		$product->priceRecurringNet = ConfigboxPrices::getProductPriceRecurring($product->id,true,false);
-		$product->priceRecurringGross = ConfigboxPrices::getProductPriceRecurring($product->id,false,false);
-		$product->priceRecurringTax = $product->priceRecurringGross - $product->priceRecurringNet;
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			$product->priceRecurringNet = 0;
+			$product->priceRecurringGross = 0;
+			$product->priceRecurringTax = 0;
+		}
+		else {
+			$product->priceRecurringNet = ConfigboxPrices::getProductPriceRecurring($product->id,true,false);
+			$product->priceRecurringGross = ConfigboxPrices::getProductPriceRecurring($product->id,false,false);
+			$product->priceRecurringTax = $product->priceRecurringGross - $product->priceRecurringNet;
+		}
+
 
 		// These two are always in the current tax mode and the selected currency
 		$product->price = ConfigboxPrices::getProductPrice($product->id, ConfigboxPrices::showNetPrices(), false);
@@ -610,36 +642,46 @@ class ConfigboxCacheHelper {
 
 		// Deal with taxRate and prices - END
 
-		// Set the custom price text for the regular price
-		if ($product->custom_price_text) {
-			$matches = array();
-			$regEx = '/\[(.*?)\]/';
-			preg_match_all($regEx, $product->custom_price_text, $matches);
-			if (isset($matches[1][0])) {
-				$search = $matches[0][0];
-				$price = (float)$matches[1][0] * ConfigboxCurrencyHelper::getCurrency()->multiplicator;
-				$price = $price + ($price / 100 * $product->taxRate);
-				$output = cbprice($price);
-				$product->custom_price_text = str_replace($search,$output,$product->custom_price_text);
+
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			$product->custom_price_text = '';
+			$product->custom_price_text_recurring = '';
+			$product->showReviews = false;
+		}
+		else {
+			// Set the custom price text for the regular price
+			if ($product->custom_price_text) {
+				$matches = array();
+				$regEx = '/\[(.*?)\]/';
+				preg_match_all($regEx, $product->custom_price_text, $matches);
+				if (isset($matches[1][0])) {
+					$search = $matches[0][0];
+					$price = (float)$matches[1][0] * ConfigboxCurrencyHelper::getCurrency()->multiplicator;
+					$price = $price + ($price / 100 * $product->taxRate);
+					$output = cbprice($price);
+					$product->custom_price_text = str_replace($search,$output,$product->custom_price_text);
+				}
 			}
+
+			// Set the custom price text for the recurring price
+			if ($product->custom_price_text_recurring) {
+				$matches = array();
+				$regEx = '/\[(.*?)\]/';
+				preg_match_all($regEx, $product->custom_price_text_recurring, $matches);
+				if (isset($matches[1][0])) {
+					$search = $matches[0][0];
+					$price = (float)$matches[1][0] * ConfigboxCurrencyHelper::getCurrency()->multiplicator;
+					$price = $price + ($price / 100 * $product->taxRate);
+					$output = cbprice($price);
+					$product->custom_price_text_recurring = str_replace($search,$output,$product->custom_price_text_recurring);
+				}
+			}
+
+			// Determine if reviews shall be shown
+			$product->showReviews = ( $product->enable_reviews == 1 or ( $product->enable_reviews == 2 and CbSettings::getInstance()->get('enable_reviews_products') == 1) );
+
 		}
 
-		// Set the custom price text for the recurring price
-		if ($product->custom_price_text_recurring) {
-			$matches = array();
-			$regEx = '/\[(.*?)\]/';
-			preg_match_all($regEx, $product->custom_price_text_recurring, $matches);
-			if (isset($matches[1][0])) {
-				$search = $matches[0][0];
-				$price = (float)$matches[1][0] * ConfigboxCurrencyHelper::getCurrency()->multiplicator;
-				$price = $price + ($price / 100 * $product->taxRate);
-				$output = cbprice($price);
-				$product->custom_price_text_recurring = str_replace($search,$output,$product->custom_price_text_recurring);
-			}
-		}
-
-		// Determine if reviews shall be shown
-		$product->showReviews = ( $product->enable_reviews == 1 or ( $product->enable_reviews == 2 and CbSettings::getInstance()->get('enable_reviews_products') == 1) );
 
 		// Determine the first page id (mainly used for the 'configure product' link),
 		$assignments = self::getAssignments();
@@ -648,28 +690,60 @@ class ConfigboxCacheHelper {
 		$product->isConfigurable = (count($pages)) ? true : false;
 		$product->firstPageId = (count($pages)) ? array_shift($pages) : NULL;
 
-		// Deal with price module settings - START
-		$ps = array (
-			'pm_show_regular_first' 			=> $product->pm_show_regular_first,
-			'pm_show_delivery_options' 			=> $product->pm_show_delivery_options,
-			'pm_show_payment_options'			=> $product->pm_show_payment_options,
-			'pm_show_net_in_b2c' 				=> $product->pm_show_net_in_b2c,
-			'pm_regular_show_prices' 			=> $product->pm_regular_show_prices,
-			'pm_regular_show_categories' 		=> $product->pm_regular_show_categories,
-			'pm_regular_show_elements' 			=> $product->pm_regular_show_elements,
-			'pm_regular_show_elementprices' 	=> $product->pm_regular_show_elementprices,
-			'pm_regular_expand_categories' 		=> $product->pm_regular_expand_categories,
-			'pm_regular_show_taxes'				=> $product->pm_regular_show_taxes,
-			'pm_regular_show_cart_button'		=> $product->pm_regular_show_cart_button,
-			'pm_recurring_show_overview'		=> $product->pm_recurring_show_overview,
-			'pm_recurring_show_prices' 			=> $product->pm_recurring_show_prices,
-			'pm_recurring_show_categories' 		=> $product->pm_recurring_show_categories,
-			'pm_recurring_show_elements' 		=> $product->pm_recurring_show_elements,
-			'pm_recurring_show_elementprices' 	=> $product->pm_recurring_show_elementprices,
-			'pm_recurring_expand_categories' 	=> $product->pm_recurring_expand_categories,
-			'pm_recurring_show_taxes'			=> $product->pm_recurring_show_taxes,
-			'pm_recurring_show_cart_button'		=> $product->pm_recurring_show_cart_button,
-		);
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+
+			// Deal with price module settings - START
+			$ps = array (
+				'pm_show_regular_first' 			=> 0,
+				'pm_show_delivery_options' 			=> 0,
+				'pm_show_payment_options'			=> 0,
+				'pm_show_net_in_b2c' 				=> $product->pm_show_net_in_b2c,
+				'pm_regular_show_prices' 			=> $product->pm_regular_show_prices,
+				'pm_regular_show_categories' 		=> $product->pm_regular_show_categories,
+				'pm_regular_show_elements' 			=> $product->pm_regular_show_elements,
+				'pm_regular_show_elementprices' 	=> $product->pm_regular_show_elementprices,
+				'pm_regular_expand_categories' 		=> $product->pm_regular_expand_categories,
+				'pm_regular_show_taxes'				=> $product->pm_regular_show_taxes,
+				'pm_regular_show_cart_button'		=> 0,
+				'pm_recurring_show_overview'		=> 0,
+				'pm_recurring_show_prices' 			=> 0,
+				'pm_recurring_show_categories' 		=> 0,
+				'pm_recurring_show_elements' 		=> 0,
+				'pm_recurring_show_elementprices' 	=> 0,
+				'pm_recurring_expand_categories' 	=> 0,
+				'pm_recurring_show_taxes'			=> 0,
+				'pm_recurring_show_cart_button'		=> 0,
+			);
+
+		}
+		else {
+
+			// Deal with price module settings - START
+			$ps = array (
+				'pm_show_regular_first' 			=> $product->pm_show_regular_first,
+				'pm_show_delivery_options' 			=> $product->pm_show_delivery_options,
+				'pm_show_payment_options'			=> $product->pm_show_payment_options,
+				'pm_show_net_in_b2c' 				=> $product->pm_show_net_in_b2c,
+				'pm_regular_show_prices' 			=> $product->pm_regular_show_prices,
+				'pm_regular_show_categories' 		=> $product->pm_regular_show_categories,
+				'pm_regular_show_elements' 			=> $product->pm_regular_show_elements,
+				'pm_regular_show_elementprices' 	=> $product->pm_regular_show_elementprices,
+				'pm_regular_expand_categories' 		=> $product->pm_regular_expand_categories,
+				'pm_regular_show_taxes'				=> $product->pm_regular_show_taxes,
+				'pm_regular_show_cart_button'		=> $product->pm_regular_show_cart_button,
+				'pm_recurring_show_overview'		=> $product->pm_recurring_show_overview,
+				'pm_recurring_show_prices' 			=> $product->pm_recurring_show_prices,
+				'pm_recurring_show_categories' 		=> $product->pm_recurring_show_categories,
+				'pm_recurring_show_elements' 		=> $product->pm_recurring_show_elements,
+				'pm_recurring_show_elementprices' 	=> $product->pm_recurring_show_elementprices,
+				'pm_recurring_expand_categories' 	=> $product->pm_recurring_expand_categories,
+				'pm_recurring_show_taxes'			=> $product->pm_recurring_show_taxes,
+				'pm_recurring_show_cart_button'		=> $product->pm_recurring_show_cart_button,
+			);
+
+		}
+
+
 
 		foreach ($ps as $key=>&$value) {
 			if (($value == 2 && $key != 'pm_regular_expand_categories' && $key != 'pm_recurring_expand_categories') or ($value == 3 && $key == 'pm_regular_expand_categories')) {
@@ -1318,7 +1392,7 @@ class ConfigboxCacheHelper {
 
 			// With Magento we cheat a bit, we store the Magento-product's tax rate somewhere in the config page
 			// Now we write all tax classes with that tax rate and done
-			if (KenedoPlatform::getName() == 'magento') {
+			if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento')) {
 
 				$db = KenedoPlatform::getDb();
 				$query = "SELECT * FROM `#__configbox_tax_classes`";
@@ -1451,7 +1525,7 @@ class ConfigboxCacheHelper {
 			if (self::$cache['currencies'] === null) {
 
 				// Magento get's special treatment later
-				if (KenedoPlatform::getName() != 'magento') {
+				if ((KenedoPlatform::getName() != 'magento') && (KenedoPlatform::getName() != 'magento2')) {
 					$db = KenedoPlatform::getDb();
 					$query = "SELECT * FROM `#__configbox_currencies` WHERE `published` = '1'";
 					$db->setQuery($query);
@@ -1463,15 +1537,29 @@ class ConfigboxCacheHelper {
 			}
 
 			// For Magento, we sneak in currency data into the memo cache like this (it'll be the default and base currency)
-			if (KenedoPlatform::getName() == 'magento') {
+			if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento2')) {
 
-				$baseCurrencyCode       = Mage::app()->getStore()->getBaseCurrencyCode();
-				$baseCurrency           = Mage::app()->getLocale()->currency( $baseCurrencyCode );
-				$currentCurrencyCode    = Mage::app()->getStore()->getCurrentCurrencyCode();
-				$currentCurrency        = Mage::app()->getLocale()->currency($currentCurrencyCode);
+                if (KenedoPlatform::getName() == 'magento') {
+                    $baseCurrencyCode = Mage::app()->getStore()->getBaseCurrencyCode();
+                    $baseCurrency = Mage::app()->getLocale()->currency($baseCurrencyCode);
+                    $currentCurrencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
+                    $currentCurrency = Mage::app()->getLocale()->currency($currentCurrencyCode);
 
-				$rates = Mage::getModel('directory/currency')->getCurrencyRates($baseCurrencyCode, array($currentCurrencyCode));
-				$multiplier = !empty($rates[$currentCurrencyCode]) ? $rates[$currentCurrencyCode] : 1;
+                    $rates = Mage::getModel('directory/currency')->getCurrencyRates($baseCurrencyCode, array($currentCurrencyCode));
+                } else if (KenedoPlatform::getName() == 'magento2') {
+                    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                    $storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+                    $currencyFactory = $objectManager->get('Magento\Directory\Model\CurrencyFactory')->create();
+
+                    $baseCurrencyCode = $storeManager->getStore()->getBaseCurrencyCode();
+                    $baseCurrency = $currencyFactory->load($baseCurrencyCode);
+                    $currentCurrencyCode = $storeManager->getStore()->getCurrentCurrencyCode();
+                    $currentCurrency = $currencyFactory->load($currentCurrencyCode);
+
+                    $rates = $currencyFactory->getCurrencyRates($baseCurrencyCode, array($currentCurrencyCode));
+                }
+
+                $multiplier = 1;
 
 				$currencies = array();
 

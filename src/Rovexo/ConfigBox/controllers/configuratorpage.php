@@ -112,45 +112,8 @@ class ConfigboxControllerConfiguratorpage extends KenedoController {
 		ob_clean();
 		header('Cache-Control: no-cache, must-revalidate');
 
-		ob_start();
-
-		header('Content-Type: application/json', true);
+		KenedoPlatform::p()->setDocumentMimeType('application/json');
 		echo json_encode($response);
-
-		// Deal with compression of the response
-		$data = ob_get_clean();
-
-		if (defined('CONFIGBOX_CONFIGURATOR_NO_COMPRESSSION')) {
-			echo $data;
-			exit();
-		}
-
-        if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento2')) {
-			echo $data;
-			exit();
-		}
-
-		// Here we just deal with encoding
-		if (ini_get('zlib.output_compression')) {
-			echo $data;
-		}
-		elseif (!isset($_SERVER['HTTP_ACCEPT_ENCODING'])) {
-			echo $data;
-		}
-		elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false) {
-			header('Content-Encoding: gzip');
-			echo gzencode($data, 2);
-		}
-		elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'x-gzip') !== false) {
-			header('Content-Encoding: x-gzip');
-			echo gzencode($data, 2);
-		}
-		else {
-			echo $data;
-		}
-
-		// Do a blunt exit to avoid any after-render processing of the platform
-		exit();
 
 	}
 

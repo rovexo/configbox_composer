@@ -228,7 +228,7 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'positionForm'=>100000,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['price_calculation_overrides'] = array(
 				'name' => 'price_calculation_overrides',
@@ -261,7 +261,7 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			),
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['price_recurring_calculation_overrides'] = array(
 				'name' => 'price_recurring_calculation_overrides',

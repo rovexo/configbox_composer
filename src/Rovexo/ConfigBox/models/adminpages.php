@@ -87,7 +87,7 @@ class ConfigboxModelAdminpages extends KenedoModel {
 			'positionForm'=>700,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['label'] = array(
 				'name'=>'label',
@@ -287,6 +287,10 @@ class ConfigboxModelAdminpages extends KenedoModel {
 	 */
 	protected function fillEmptyUrlSegments(&$data) {
 
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			return;
+		}
+
 		$tags = KenedoLanguageHelper::getActiveLanguageTags();
 
 		foreach ($tags as $tag) {
@@ -325,6 +329,10 @@ class ConfigboxModelAdminpages extends KenedoModel {
 	 */
 	protected function checkForDuplicateUrlSegment($data) {
 
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			return true;
+		}
+
 		$languages = KenedoLanguageHelper::getActiveLanguages();
 
 		$db = KenedoPlatform::getDb();
@@ -361,6 +369,10 @@ class ConfigboxModelAdminpages extends KenedoModel {
 	 * @param object $data
 	 */
 	protected function storeOldUrlSegments($data) {
+
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			return;
+		}
 
 		// In case of inserts, don't act
 		if ($this->isInsert($data)) {

@@ -25,12 +25,16 @@ defined('CB_VALID_ENTRY') or die();
 			<p><?php echo KText::_('There are no elements on this page.');?></p>
 		</div>
 	<?php } else { ?>
-		<div class="configurator-page-questions">
+		<div class="configurator-page-questions clearfix">
 			<?php echo implode('', $this->questionsHtml); ?>
 		</div>
 	<?php } ?>
 
 	<div id="configurator-data" data-json="<?php echo hsc($this->configuratorDataJson);?>"></div>
+
+	<?php if ($this->structuredData) { ?>
+		<script type="application/ld+json"><?php echo $this->structuredData;?></script>
+	<?php } ?>
 
 </div>
 

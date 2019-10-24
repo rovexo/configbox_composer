@@ -1,34 +1,31 @@
 {
-    "name": "rovexo/configbox-php",
-    "description": "Configbox is a web-based product configurator and ecommerce application.",
-    "type": "library",
-    "license": "proprietary",
-    "authors": [
-        {
-            "name": "Rovexo SIA",
-            "email": "office@rovexo.com"
-        }
-    ],
-    "require": {
-        "php": "5.4 - 7.2",
-        "ext-curl": "*",
-        "ext-dom": "*",
-        "ext-gd": "*",
-        "ext-ionCube-Loader": "*",
-        "ext-json": "*",
-        "ext-mbstring": "*",
-        "ext-mysqli": "*",
-        "ext-openssl": "*",
-        "ext-Reflection": "*",
-        "ext-SimpleXML": "*",
-        "ext-soap": "*",
-        "ext-wddx": "*",
-        "ext-xml": "*",
-        "ext-xsl": "*",
-        "ext-Zend-OPcache": "*",
-        "ext-zip": "*"
-    },
-    "autoload": {
-        "classmap": ["src/"]
-    }
+  "name": "rovexo/configbox-php",
+  "description": "Configbox is a web-based product configurator and ecommerce application.",
+  "type": "library",
+  "license": "proprietary",
+  "authors": [
+	{
+	  "name": "Rovexo SIA",
+	  "email": "office@rovexo.com"
+	}
+  ],
+  "version": "1",
+  "require": {
+	"php": "5.4 - 7.2",
+	"ext-apcu": "*",
+	"ext-gd": "*",
+	"ext-json": "*",
+	"ext-mbstring": "*",
+	"ext-mysqli": "*",
+	"ext-readline": "*",
+	"ext-soap": "*",
+	"ext-xml": "*",
+	"ext-zip": "*",
+	"ext-openssl": "*",
+	"ext-Reflection": "*",
+	"ext-Zend-OPcache": "*"
+  },
+  "autoload": {
+	"classmap": ["src/"]
+  }
 }

@@ -3,7 +3,6 @@ defined('CB_VALID_ENTRY') or die();
 
 $db = KenedoPlatform::getDb();
 
-
 if (KenedoPlatform::getName() == 'magento') {
 	$oldStoreFolder = Mage::getBaseDir('media').DS.'elovaris'.DS.'configbox'.DS.'store_data';
 	$oldCustomerFolder = Mage::getBaseDir('media').DS.'elovaris'.DS.'configbox'.DS.'customer_data';

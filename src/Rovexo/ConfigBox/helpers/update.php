@@ -171,7 +171,7 @@ class ConfigboxUpdateHelper {
 	 */
 	protected static function installFresh() {
 
-		$file = __DIR__.'/updates/complete/3.1.0.48_ddl.sql';
+		$file = __DIR__ . '/updates/complete/3.1.0.70_ddl.sql';
 
 		// Get the complete SQL DDL queries
 		$contents = str_replace('sltxh_', '#__', file_get_contents($file));
@@ -191,18 +191,18 @@ class ConfigboxUpdateHelper {
 		}
 
 		// Run the dynamic DML stuff
-		require(__DIR__.'/updates/complete/3.1.0.48_dml.php');
+		require(__DIR__.'/updates/complete/3.1.0.70_dml.php');
 
 		// Run the file updates
-		require(__DIR__.'/updates/complete/3.1.0.48_files.php');
+		require(__DIR__.'/updates/complete/3.1.0.70_files.php');
 
 
 		// Finally set the update version, so that older scripts won't get loaded on the next request
-		$query = "REPLACE INTO `#__configbox_system_vars` SET `key` = 'latest_update_version', `value` = '3.1.0.48'; ";
+		$query = "REPLACE INTO `#__configbox_system_vars` SET `key` = 'latest_update_version', `value` = '3.1.0.70'; ";
 		$db->setQuery($query);
 		$db->query();
 
-		return '3.1.0.48';
+		return '3.1.0.70';
 
 	}
 

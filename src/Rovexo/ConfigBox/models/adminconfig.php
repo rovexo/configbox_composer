@@ -121,7 +121,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>50,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['currencies'] = array(
 				'name' => 'currencies',
@@ -207,7 +207,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>120,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['default_country_id'] = array(
 				'name'=>'default_country_id',
@@ -445,7 +445,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>500,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['show_conversion_table'] = array(
 				'name'=>'show_conversion_table',
@@ -457,7 +457,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			);
 		}
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['defaultprodimage'] = array (
 				'name'=>'defaultprodimage',
@@ -511,7 +511,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>560,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['blocktitles_start'] = array(
 				'name' => 'blocktitles_start',
@@ -595,7 +595,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>650,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['pm_show_delivery_options'] = array(
 				'name' => 'pm_show_delivery_options',
@@ -689,7 +689,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>760,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['pm_regular_show_cart_button'] = array(
 				'name' => 'pm_regular_show_cart_button',
@@ -771,7 +771,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>860,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['pm_recurring_show_cart_button'] = array(
 				'name' => 'pm_recurring_show_cart_button',
@@ -795,7 +795,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>900,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['geolocation_start'] = array(
 				'name' => 'geolocation_start',
@@ -992,7 +992,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		$propDefs['label_assignment_custom_1'] = array(
 			'name'=>'label_assignment_custom_1',
-			'label'=>KText::sprintf('Label for Option Assignment Custom Field %s',1),
+			'label'=>KText::sprintf('Label for Answer Custom Field %s',1),
 			'default'=>'',
 			'type'=>'string',
 			'positionForm'=>1150,
@@ -1000,7 +1000,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		$propDefs['label_assignment_custom_2'] = array(
 			'name'=>'label_assignment_custom_2',
-			'label'=>KText::sprintf('Label for Option Assignment Custom Field %s',2),
+			'label'=>KText::sprintf('Label for Answer Custom Field %s',2),
 			'default'=>'',
 			'type'=>'string',
 			'positionForm'=>1160,
@@ -1008,7 +1008,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		$propDefs['label_assignment_custom_3'] = array(
 			'name'=>'label_assignment_custom_3',
-			'label'=>KText::sprintf('Label for Option Assignment Custom Field %s',3),
+			'label'=>KText::sprintf('Label for Answer Custom Field %s',3),
 			'default'=>'',
 			'type'=>'string',
 			'positionForm'=>1170,
@@ -1016,7 +1016,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		$propDefs['label_assignment_custom_4'] = array(
 			'name'=>'label_assignment_custom_4',
-			'label'=>KText::sprintf('Label for Option Assignment Custom Field %s',4),
+			'label'=>KText::sprintf('Label for Answer Custom Field %s',4),
 			'default'=>'',
 			'type'=>'string',
 			'positionForm'=>1180,
@@ -1025,7 +1025,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		$propDefs['label_option_custom_1'] = array(
 			'name'=>'label_option_custom_1',
-			'label'=>KText::sprintf('Label for Option Custom Field %s',1),
+			'label'=>KText::sprintf('Label for global answer custom field %s',1),
 			'default'=>'',
 			'type'=>'string',
 			'positionForm'=>1190,
@@ -1033,7 +1033,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		$propDefs['label_option_custom_2'] = array(
 			'name'=>'label_option_custom_2',
-			'label'=>KText::sprintf('Label for Option Custom Field %s',2),
+			'label'=>KText::sprintf('Label for global answer custom field %s',2),
 			'default'=>'',
 			'type'=>'string',
 			'positionForm'=>1200,
@@ -1041,7 +1041,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		$propDefs['label_option_custom_3'] = array(
 			'name'=>'label_option_custom_3',
-			'label'=>KText::sprintf('Label for Option Custom Field %s',3),
+			'label'=>KText::sprintf('Label for global answer custom field %s',3),
 			'default'=>'',
 			'type'=>'string',
 			'positionForm'=>1210,
@@ -1049,7 +1049,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		$propDefs['label_option_custom_4'] = array(
 			'name'=>'label_option_custom_4',
-			'label'=>KText::sprintf('Label for Option Custom Field %s',4),
+			'label'=>KText::sprintf('Label for global answer custom field %s',4),
 			'default'=>'',
 			'type'=>'string',
 			'positionForm'=>1210,
@@ -1057,7 +1057,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		$propDefs['label_option_custom_5'] = array(
 			'name'=>'label_option_custom_5',
-			'label'=>KText::sprintf('Label for Option Custom Field %s',5),
+			'label'=>KText::sprintf('Label for global answer custom field %s',5),
 			'default'=>'',
 			'type'=>'string',
 			'positionForm'=>1220,
@@ -1065,7 +1065,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		$propDefs['label_option_custom_6'] = array(
 			'name'=>'label_option_custom_6',
-			'label'=>KText::sprintf('Label for Option Custom Field %s',6),
+			'label'=>KText::sprintf('Label for global answer custom field %s',6),
 			'default'=>'',
 			'type'=>'string',
 			'positionForm'=>1230,
@@ -1136,7 +1136,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>1310,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['connectors_start'] = array(
 				'name'=>'connectors_start',
@@ -1167,8 +1167,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		}
 
-
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['structureddata_start'] = array(
 				'name' => 'structureddata_start',

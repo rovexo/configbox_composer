@@ -4,7 +4,7 @@ if (!defined('CB_VALID_ENTRY')) {
 	define('CB_VALID_ENTRY', true);
 }
 
-// Init Kenedo framework (Runs ConfigBox' init scripts as well)
+// Init Kenedo framework (Runs Configbox' init scripts as well)
 require_once(dirname(__FILE__).'/external/kenedo/helpers/init.php');
 initKenedo('com_configbox');
 
@@ -13,7 +13,7 @@ $component = KRequest::getKeyword('option','com_configbox');
 $controllerName = KRequest::getKeyword('controller','');
 $viewName = KRequest::getKeyword('view','');
 $task = KRequest::getKeyword('task','display');
-
+//test
 if ($controllerName || $viewName) {
 
 	$className = KenedoController::getControllerClass($component, $controllerName, $viewName);

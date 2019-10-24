@@ -164,6 +164,11 @@ class ConfigboxModelConfiguratorPage extends KenedoModelLight {
 	 */
 	function ensureProperCartEnvironment($productId) {
 
+		if (empty($productId) || !is_numeric($productId)) {
+			KLog::log('Invalid product ID as parameter. Var content was '.var_export($productId, true), 'error');
+			throw new Exception(500, 'Trying to ensure proper cart environment with an invalid product ID');
+		}
+
 		// Make sure we got a user
 		if (ConfigboxUserHelper::getUserId() == 0) {
 			$userId = ConfigboxUserHelper::createNewUser();

@@ -229,7 +229,7 @@ class ConfigboxConditionElementAttribute extends ConfigboxCondition {
 			}
 
 			$attributes[$fieldPath] = array(
-				'text'=> $label .' '. KText::_('in component for %s'),
+				'text'=> $label .' '. KText::_('in global answer for %s'),
 			);
 
 		}

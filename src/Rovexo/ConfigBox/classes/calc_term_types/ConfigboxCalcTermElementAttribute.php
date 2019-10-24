@@ -90,7 +90,7 @@ class ConfigboxCalcTermElementAttribute extends ConfigboxCalcTerm {
 	function getTermHtml($termData, $forEditing = true) {
 		$attributes = $this->getElementAttributes();
 		if (strtolower($termData['elementId']) == 'regarding') {
-			$termName = KText::sprintf($attributes[$termData['fieldPath']]['text'], KText::_('Regarding Element'));
+			$termName = KText::sprintf($attributes[$termData['fieldPath']]['text'], KText::_('Regarding Question'));
 		}
 		else {
 			$termName = KText::sprintf($attributes[$termData['fieldPath']]['text'], hsc(ConfigboxRulesHelper::getQuestionTitle($termData['elementId'])));
@@ -135,30 +135,30 @@ class ConfigboxCalcTermElementAttribute extends ConfigboxCalcTerm {
 		$label3 = $settings->get('label_assignment_custom_3');
 		$label4 = $settings->get('label_assignment_custom_4');
 
-		$assignmentCustom1 = (trim($label1)) ? $label1 : KText::sprintf('Assignment Custom %s',1);
-		$assignmentCustom2 = (trim($label2)) ? $label2 : KText::sprintf('Assignment Custom %s',2);
-		$assignmentCustom3 = (trim($label3)) ? $label3 : KText::sprintf('Assignment Custom %s',3);
-		$assignmentCustom4 = (trim($label4)) ? $label4 : KText::sprintf('Assignment Custom %s',4);
+		$assignmentCustom1 = (trim($label1)) ? $label1 : KText::sprintf('Answer Custom %s',1);
+		$assignmentCustom2 = (trim($label2)) ? $label2 : KText::sprintf('Answer Custom %s',2);
+		$assignmentCustom3 = (trim($label3)) ? $label3 : KText::sprintf('Answer Custom %s',3);
+		$assignmentCustom4 = (trim($label4)) ? $label4 : KText::sprintf('Answer Custom %s',4);
 
 		$label1 = $settings->get('label_option_custom_1');
 		$label2 = $settings->get('label_option_custom_2');
 		$label3 = $settings->get('label_option_custom_3');
 		$label4 = $settings->get('label_option_custom_4');
 
-		$optionCustom1 = (trim($label1)) ? $label1 : KText::sprintf('Option Custom %s',1);
-		$optionCustom2 = (trim($label2)) ? $label2 : KText::sprintf('Option Custom %s',2);
-		$optionCustom3 = (trim($label3)) ? $label3 : KText::sprintf('Option Custom %s',3);
-		$optionCustom4 = (trim($label4)) ? $label4 : KText::sprintf('Option Custom %s',4);
+		$optionCustom1 = (trim($label1)) ? $label1 : KText::sprintf('Global Answer Custom %s',1);
+		$optionCustom2 = (trim($label2)) ? $label2 : KText::sprintf('Global Answer Custom %s',2);
+		$optionCustom3 = (trim($label3)) ? $label3 : KText::sprintf('Global Answer Custom %s',3);
+		$optionCustom4 = (trim($label4)) ? $label4 : KText::sprintf('Global Answer Custom %s',4);
 
 		$label1 = $settings->get('label_element_custom_1');
 		$label2 = $settings->get('label_element_custom_2');
 		$label3 = $settings->get('label_element_custom_3');
 		$label4 = $settings->get('label_element_custom_4');
 
-		$elementCustom1 = (trim($label1)) ? $label1 : KText::sprintf('Element Custom %s',1);
-		$elementCustom2 = (trim($label2)) ? $label2 : KText::sprintf('Element Custom %s',2);
-		$elementCustom3 = (trim($label3)) ? $label3 : KText::sprintf('Element Custom %s',3);
-		$elementCustom4 = (trim($label4)) ? $label4 : KText::sprintf('Element Custom %s',4);
+		$elementCustom1 = (trim($label1)) ? $label1 : KText::sprintf('Question Custom %s',1);
+		$elementCustom2 = (trim($label2)) ? $label2 : KText::sprintf('Question Custom %s',2);
+		$elementCustom3 = (trim($label3)) ? $label3 : KText::sprintf('Question Custom %s',3);
+		$elementCustom4 = (trim($label4)) ? $label4 : KText::sprintf('Question Custom %s',4);
 
 		return array(
 

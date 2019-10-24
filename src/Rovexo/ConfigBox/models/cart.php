@@ -488,14 +488,14 @@ class ConfigboxModelCart extends KenedoModelLight {
 
 
 			// Cart Reduced Total
-			$cartDetails->baseTotalNet		+= $position->baseTotalReducedNet;
-			$cartDetails->baseTotalTax		+= $position->baseTotalReducedTax;
-			$cartDetails->baseTotalGross	+= $position->baseTotalReducedGross;
+			$cartDetails->baseTotalNet		+= round($position->baseTotalReducedNet, 2);
+			$cartDetails->baseTotalTax		+= round($position->baseTotalReducedTax, 2);
+			$cartDetails->baseTotalGross	+= round($position->baseTotalReducedGross, 2);
 
 			// Cart Reduced Recurring
-			$cartDetails->baseTotalRecurringNet		+= $position->baseTotalReducedRecurringNet;
-			$cartDetails->baseTotalRecurringTax		+= $position->baseTotalReducedRecurringTax;
-			$cartDetails->baseTotalRecurringGross	+= $position->baseTotalReducedRecurringGross;
+			$cartDetails->baseTotalRecurringNet		+= round($position->baseTotalReducedRecurringNet, 2);
+			$cartDetails->baseTotalRecurringTax		+= round($position->baseTotalReducedRecurringTax, 2);
+			$cartDetails->baseTotalRecurringGross	+= round($position->baseTotalReducedRecurringGross, 2);
 
 		}
 

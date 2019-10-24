@@ -126,7 +126,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		$connection->prefix = $info['db']['table_prefix'];
 
 		return $connection;
-
 	}
 	
 	public function &getDb() {
@@ -208,7 +207,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 	
 	public function getLanguageUrlCode($languageTag = NULL) {
-
 		if ($languageTag == NULL) {
 			$languageTag = $this->getLanguageTag();
 		}
@@ -241,6 +239,13 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 
     }
 	
+/*	public function addScriptDeclaration($js, $newTag = false, $toBody = false) {
+		$tag = '<script type="text/javascript">'."\n//<![CDATA[\n";
+		$tag.= $js;
+		$tag.= "\n//]]>\n".'</script>';
+		$this->scriptDeclarations[] = $tag;
+	}*/
+
     public function addScriptDeclaration($js, $newTag = false, $toBody = false) {
 
         if ($toBody) {
@@ -282,13 +287,11 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 	
 	public function isAdminArea() {
-
-		if(Mage::getDesign()->getArea() == 'adminhtml') {
+		if($this->state->getAreaCode() == 'adminhtml') {
 			return true;
 		}
 
 		return false;
-
 	}
 
 	public function isSiteArea() {
@@ -512,7 +515,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getRoute($url, $encode = true, $secure = NULL) {
-
 		if (strpos($url,'http') === 0) {
 			return $url;
 		}
@@ -541,7 +543,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		}
 
 		return $url;
-
 	}
 	
 	public function getActiveMenuItemId() {
@@ -549,7 +550,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getLanguages() {
-
         $languages = $this->locale->getOptionLocales();
 
 		$return = array();
@@ -566,7 +566,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		}
 
 		return $return;
-
 	}
 	
 	//TODO: Implement
@@ -585,7 +584,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getComponentDir($componentName) {
-        return $this->directoryList->getRoot() . DS . "vendor" . DS . "rovexo" . DS . "configbox-php" . DS . "src" . DS . "Rovexo" . DS . "ConfigBox";
+        return $this->directoryList->getRoot() . DS . "vendor" . DS . "rovexo" . DS . "configbox-php" . DS . "src" . DS . "Rovexo" . DS . "Configbox";
 	}
 
 	public function getUrlAssets() {

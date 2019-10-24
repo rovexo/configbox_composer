@@ -16,7 +16,7 @@ defined('CB_VALID_ENTRY') or die();
 			</div>
 		</li>
 
-		<?php if (KenedoPlatform::getName() != 'magento') { ?>
+		<?php if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') { ?>
 			<li class="menu-list-item item-adminlistings"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminlistings');?>"><?php echo KText::_('Product Listings');?></a></li>
 		<?php } ?>
 
@@ -25,7 +25,7 @@ defined('CB_VALID_ENTRY') or die();
 		<li class="menu-list-item item-admintemplates"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admintemplates');?>"><?php echo KText::_('Templates');?></a></li>
 	</ul>
 
-	<?php if (KenedoPlatform::getName() != 'magento') { ?>
+	<?php if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') { ?>
 
 		<ul class="menu-list">
 			<li class="menu-list-item item-adminorders"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminorders');?>"><?php echo KText::_('Orders');?></a></li>
@@ -62,13 +62,16 @@ defined('CB_VALID_ENTRY') or die();
 			<li class="menu-list-item item-adminshopdata"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminshopdata');?>"><?php echo KText::_('Store Information');?></a></li>
 			<li class="menu-list-item item-adminuserfields"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminuserfields');?>"><?php echo KText::_('Customer Fields');?></a></li>
 			<li class="menu-list-item item-adminnotifications"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminnotifications');?>"><?php echo KText::_('Notifications');?></a></li>
-			<li class="menu-list-item item-adminconfig"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminconfig');?>"><?php echo KText::_('Settings');?></a></li>
 
 		</ul>
 
 	<?php } ?>
 
-	<?php if (KenedoPlatform::getName() == 'magento') { ?>
+    <ul class="menu-list">
+        <li class="menu-list-item item-adminconfig"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminconfig');?>"><?php echo KText::_('Settings');?></a></li>
+    </ul>
+
+	<?php if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') { ?>
 
 		<ul class="menu-list">
 			<li class="menu-list-item item-adminshopdata"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminshopdata');?>"><?php echo KText::_('Store Information');?></a></li>

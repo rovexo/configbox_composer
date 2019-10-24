@@ -295,14 +295,14 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 				}
 
 				// Now add unreduced position price to record - one-time price
-				$record->baseTotalUnreducedNet 		+= $position->baseTotalUnreducedNet;
-				$record->baseTotalUnreducedTax 		+= $position->baseTotalUnreducedTax;
-				$record->baseTotalUnreducedGross 	+= $position->baseTotalUnreducedGross;
+				$record->baseTotalUnreducedNet 		+= round($position->baseTotalUnreducedNet, 2);
+				$record->baseTotalUnreducedTax 		+= round($position->baseTotalUnreducedTax, 2);
+				$record->baseTotalUnreducedGross 	+= round($position->baseTotalUnreducedGross, 2);
 
 				// Now add unreduced position price to record - recurring price
-				$record->baseTotalUnreducedRecurringNet 	 += $position->baseTotalUnreducedRecurringNet;
-				$record->baseTotalUnreducedRecurringTax 	 += $position->baseTotalUnreducedRecurringTax;
-				$record->baseTotalUnreducedRecurringGross += $position->baseTotalUnreducedRecurringGross;
+				$record->baseTotalUnreducedRecurringNet 	 += round($position->baseTotalUnreducedRecurringNet, 2);
+				$record->baseTotalUnreducedRecurringTax 	 += round($position->baseTotalUnreducedRecurringTax, 2);
+				$record->baseTotalUnreducedRecurringGross 	 += round($position->baseTotalUnreducedRecurringGross, 2);
 
 				// Add up the order weight
 				$record->weight += $position->weight;
@@ -483,8 +483,24 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 				$record->basePayableAmount += $record->payment->basePriceGross;
 			}
 
+			// There can be a rounding issue summing up merch/shipping/payment total, so we take rounded amounts extra here
+
 			// Append the currency prices
 			ConfigboxCurrencyHelper::appendCurrencyPrices($record, $record->currency->multiplicator);
+
+			// Payable amount is what we use for payment and all
+			$record->payableAmount = $record->totalGross;
+
+			// Add the delivery price to payable
+			if ($record->delivery) {
+				$record->payableAmount += $record->delivery->priceGross;
+			}
+
+			// Add the payment method price to payable
+			$record->payment 	= $this->getOrderRecordPaymentOption($record);
+			if ($record->payment) {
+				$record->payableAmount += $record->payment->priceGross;
+			}
 
 			// Add the tax summary
 			$record->taxSummary = $this->getOrderRecordTaxSummary($record);

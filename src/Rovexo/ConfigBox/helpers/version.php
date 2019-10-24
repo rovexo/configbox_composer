@@ -1,7 +1,7 @@
 <?php
 class ConfigboxVersionHelper {
 
-	static $version = '3.1.3';
+	static $version = '3.1.4-PR1';
 	static $parts;
 	static $platformVersion;
 

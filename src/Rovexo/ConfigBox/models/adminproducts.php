@@ -48,7 +48,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 20000,
 		);
 
-		if (KenedoPlatform::getName() == 'magento') {
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
 			$propDefs['generalStart']['notes'] = '';
 		}
 
@@ -69,7 +69,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 40000,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['product_listing_ids'] = array(
 				'name' => 'product_listing_ids',
@@ -104,7 +104,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 				'appendSerial' => 1,
 				'allowedExtensions' => array('jpg', 'jpeg', 'gif', 'tif', 'bmp', 'png'),
 				'allow' => array('image/pjpeg', 'image/jpg', 'image/jpeg', 'image/gif', 'image/tif', 'image/bmp', 'image/png', 'image/x-png'),
-				'size' => '1000',
+				'size' => '2000',
 				'filetype' => 'image',
 				'dirBase' => CONFIGBOX_DIR_PRODUCT_IMAGES,
 				'urlBase' => CONFIGBOX_URL_PRODUCT_IMAGES,
@@ -196,7 +196,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 110500,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['baseprice_start'] = array(
 				'name' => 'baseprice_start',
@@ -468,7 +468,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 
 		}
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['display_listing_start'] = array(
 				'name' => 'display_listing_start',
@@ -537,7 +537,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 
 		}
 
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['displayStart'] = array(
 				'name' => 'displayStart',
@@ -548,16 +548,16 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 				'positionForm' => 368500,
 			);
 
-			$propDefs['product_detail_panes_in_configurator_pages'] = array(
-				'name'=>'product_detail_panes_in_configurator_steps',
-				'label'=>KText::_('Show product detail panes in configurator pages'),
-				'tooltip'=>KText::_('See the section product detail panes below.'),
-				'type'=>'boolean',
-				'default'=>0,
-				'positionForm' => 368550,
-			);
-
 		}
+
+		$propDefs['product_detail_panes_in_configurator_pages'] = array(
+			'name'=>'product_detail_panes_in_configurator_steps',
+			'label'=>KText::_('Show product detail panes in configurator pages'),
+			'tooltip'=>KText::_('See the section product detail panes below.'),
+			'type'=>'boolean',
+			'default'=>0,
+			'positionForm' => 368550,
+		);
 
 		$propDefs['page_nav_show_tabs'] = array(
 			'name' => 'page_nav_show_tabs',
@@ -569,43 +569,55 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 368600,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		$propDefs['page_nav_show_buttons'] = array(
+			'name' => 'page_nav_show_buttons',
+			'label' => KText::_('Show page navigation with next and previous buttons'),
+			'tooltip' => KText::_('Choose yes to show next and previous buttons below the page questions.'),
+			'type' => 'dropdown',
+			'default' => 2,
+			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+			'positionForm' => 368700,
+		);
 
-			$propDefs['page_nav_show_buttons'] = array(
-				'name' => 'page_nav_show_buttons',
-				'label' => KText::_('Show page navigation with next and previous buttons'),
-				'tooltip' => KText::_('Choose yes to show next and previous buttons below the page questions.'),
-				'type' => 'dropdown',
-				'default' => 2,
-				'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
-				'positionForm' => 368700,
-			);
+		$propDefs['page_nav_block_on_missing_selections'] = array(
+			'name'=>'page_nav_block_on_missing_selections',
+			'label'=>KText::_('FIELD_LABEL_PRODUCT_BLOCK_ON_MISSING'),
+			'tooltip'=>KText::_('TOOLTIP_PRODUCT_BLOCK_ON_MISSING'),
+			'type'=>'dropdown',
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'default'=>2,
+			'positionForm'=>368800,
+		);
 
-			$propDefs['page_nav_block_on_missing_selections'] = array(
-				'name'=>'page_nav_block_on_missing_selections',
-				'label'=>KText::_('FIELD_LABEL_PRODUCT_BLOCK_ON_MISSING'),
-				'tooltip'=>KText::_('TOOLTIP_PRODUCT_BLOCK_ON_MISSING'),
-				'type'=>'dropdown',
-				'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
-				'default'=>2,
-				'positionForm'=>368800,
-			);
+		$propDefs['page_nav_cart_button_last_page_only'] = array(
+			'name'=>'page_nav_cart_button_last_page_only',
+			'label'=>KText::_('FIELD_LABEL_PRODUCT_CART_BUTTON_LAST_PAGE_ONLY'),
+			'tooltip'=>KText::_('TOOLTIP_PRODUCT_CART_BUTTON_LAST_PAGE_ONLY'),
+			'type'=>'dropdown',
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'default'=>2,
+			'positionForm'=>368800,
+			'appliesWhen' => array(
+				'page_nav_show_buttons'=>array('1', '2'),
+			)
+		);
 
-			$propDefs['page_nav_cart_button_last_page_only'] = array(
-				'name'=>'page_nav_cart_button_last_page_only',
-				'label'=>KText::_('FIELD_LABEL_PRODUCT_CART_BUTTON_LAST_PAGE_ONLY'),
-				'tooltip'=>KText::_('TOOLTIP_PRODUCT_CART_BUTTON_LAST_PAGE_ONLY'),
-				'type'=>'dropdown',
-				'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
-				'default'=>2,
-				'positionForm'=>368800,
-				'appliesWhen' => array(
-					'page_nav_show_buttons'=>array('1', '2'),
-				)
-			);
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
 
+			$propDefs['product_detail_panes_in_configurator_pages']['invisible'] = true;
+			$propDefs['product_detail_panes_in_configurator_pages']['default'] = 0;
 
+			$propDefs['page_nav_show_buttons']['invisible'] = true;
+			$propDefs['page_nav_show_buttons']['default'] = 0;
 
+			$propDefs['page_nav_block_on_missing_selections']['invisible'] = true;
+			$propDefs['page_nav_block_on_missing_selections']['default'] = 0;
+
+			$propDefs['page_nav_cart_button_last_page_only']['invisible'] = true;
+			$propDefs['page_nav_cart_button_last_page_only']['default'] = 0;
+		}
+
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 			$propDefs['display_end'] = array(
 				'name' => 'display_end',
 				'type' => 'groupend',
@@ -613,8 +625,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			);
 		}
 
-
-		if (KenedoPlatform::getName() != 'magento') {
+		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
 			$propDefs['detail_panes_start'] = array(
 				'name' => 'detail_panes_start',
@@ -781,26 +792,30 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 610000,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		$propDefs['pm_show_delivery_options'] = array(
+			'name' => 'pm_show_delivery_options',
+			'label' => KText::_('Show delivery option'),
+			'type' => 'dropdown',
+			'default' => 2,
+			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+			'positionForm' => 620000,
+		);
 
-			$propDefs['pm_show_delivery_options'] = array(
-				'name' => 'pm_show_delivery_options',
-				'label' => KText::_('Show delivery option'),
-				'type' => 'dropdown',
-				'default' => 2,
-				'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
-				'positionForm' => 620000,
-			);
+		$propDefs['pm_show_payment_options'] = array(
+			'name' => 'pm_show_payment_options',
+			'label' => KText::_('Show payment option'),
+			'type' => 'dropdown',
+			'default' => 2,
+			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+			'positionForm' => 630000,
+		);
 
-			$propDefs['pm_show_payment_options'] = array(
-				'name' => 'pm_show_payment_options',
-				'label' => KText::_('Show payment option'),
-				'type' => 'dropdown',
-				'default' => 2,
-				'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
-				'positionForm' => 630000,
-			);
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			$propDefs['pm_show_delivery_options']['invisible'] = true;
+			$propDefs['pm_show_delivery_options']['default'] = 0;
 
+			$propDefs['pm_show_payment_options']['invisible'] = true;
+			$propDefs['pm_show_payment_options']['default'] = 0;
 		}
 
 		$propDefs['pm_show_net_in_b2c'] = array(
@@ -883,17 +898,18 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 720000,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		$propDefs['pm_regular_show_cart_button'] = array(
+			'name' => 'pm_regular_show_cart_button',
+			'label' => KText::_('Show cart button'),
+			'type' => 'dropdown',
+			'default' => 2,
+			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+			'positionForm' => 730000,
+		);
 
-			$propDefs['pm_regular_show_cart_button'] = array(
-				'name' => 'pm_regular_show_cart_button',
-				'label' => KText::_('Show cart button'),
-				'type' => 'dropdown',
-				'default' => 2,
-				'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
-				'positionForm' => 730000,
-			);
-
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			$propDefs['pm_regular_show_cart_button']['invisible'] = true;
+			$propDefs['pm_regular_show_cart_button']['default'] = 0;
 		}
 
 		$propDefs['pm_price_module_end_regular'] = array(
@@ -976,17 +992,18 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 820000,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		$propDefs['pm_recurring_show_cart_button'] = array(
+			'name' => 'pm_recurring_show_cart_button',
+			'label' => KText::_('Show cart button'),
+			'type' => 'dropdown',
+			'default' => 2,
+			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+			'positionForm' => 830000,
+		);
 
-			$propDefs['pm_recurring_show_cart_button'] = array(
-				'name' => 'pm_recurring_show_cart_button',
-				'label' => KText::_('Show cart button'),
-				'type' => 'dropdown',
-				'default' => 2,
-				'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
-				'positionForm' => 830000,
-			);
-
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			$propDefs['pm_recurring_show_cart_button']['invisible'] = true;
+			$propDefs['pm_recurring_show_cart_button']['default'] = 0;
 		}
 
 		$propDefs['price_module_end_recurring'] = array(
@@ -1002,93 +1019,96 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm'=>850000,
 		);
 
-		if (KenedoPlatform::getName() != 'magento') {
+		$propDefs['misc_start'] = array(
+			'name' => 'misc_start',
+			'type' => 'groupstart',
+			'title' => KText::_('Others'),
+			'toggle' => true,
+			'defaultState' => 'closed',
+			'positionForm' => 1000000,
+		);
 
+		$propDefs['sku'] = array(
+			'name' => 'sku',
+			'label' => KText::_('LABEL_PRODUCT_SKU'),
+			'type' => 'string',
+			'size' => '50',
+			'required' => 0,
+			'tooltip' => KText::_('The article ID of the product.'),
+			'listing' => 30,
+			'order' => 30,
+			'search' => 2,
+			'filter' => 2,
+			'listingwidth' => '100px',
+			'positionForm' => 1001000,
+		);
 
-			$propDefs['misc_start'] = array(
-				'name' => 'misc_start',
-				'type' => 'groupstart',
-				'title' => KText::_('Others'),
-				'toggle' => true,
-				'defaultState' => 'closed',
-				'positionForm' => 1000000,
-			);
+		$propDefs['use_recurring_pricing'] = array(
+			'name' => 'use_recurring_pricing',
+			'label' => KText::_('Does the product also use recurring pricing?'),
+			'tooltip' => KText::_('If you want to show one-time and recurring prices, click yes. There will be price entries for two types of prices then.'),
+			'type' => 'boolean',
+			'default' => 0,
+			'positionForm' => 1002000,
+		);
 
-			$propDefs['sku'] = array(
-				'name' => 'sku',
-				'label' => KText::_('LABEL_PRODUCT_SKU'),
-				'type' => 'string',
-				'size' => '50',
-				'required' => 0,
-				'tooltip' => KText::_('The article ID of the product.'),
-				'listing' => 30,
-				'order' => 30,
-				'search' => 2,
-				'filter' => 2,
-				'listingwidth' => '100px',
-				'positionForm' => 1001000,
-			);
+		$propDefs['label'] = array(
+			'name' => 'label',
+			'label' => KText::_('LABEL_SEF_SEGMENT'),
+			'tooltip' => KText::_('TOOLTIP_SEF_SEGMENT'),
+			'required' => 0,
+			'type' => 'translatable',
+			'stringTable' => '#__configbox_strings',
+			'langType' => 17,
+			'positionForm' => 1003000,
+		);
 
-			$propDefs['use_recurring_pricing'] = array(
-				'name' => 'use_recurring_pricing',
-				'label' => KText::_('Does the product also use recurring pricing?'),
-				'tooltip' => KText::_('If you want to show one-time and recurring prices, click yes. There will be price entries for two types of prices then.'),
-				'type' => 'boolean',
-				'default' => 0,
-				'positionForm' => 1002000,
-			);
+		$propDefs['dispatch_time'] = array(
+			'name' => 'dispatch_time',
+			'label' => KText::_('Dispatch Time'),
+			'tooltip' => KText::_('Define how many days it takes to dispatch the product after the order is completed. Set to 0 for immediate dispatch.'),
+			'type' => 'string',
+			'stringType' => 'number',
+			'default' => 0,
+			'unit' => KText::_('days'),
+			'positionForm' => 1005000,
+		);
 
-			$propDefs['label'] = array(
-				'name' => 'label',
-				'label' => KText::_('LABEL_SEF_SEGMENT'),
-				'tooltip' => KText::_('TOOLTIP_SEF_SEGMENT'),
-				'required' => 0,
-				'type' => 'translatable',
-				'stringTable' => '#__configbox_strings',
-				'langType' => 17,
-				'positionForm' => 1003000,
-			);
+		$propDefs['baseweight'] = array(
+			'name' => 'baseweight',
+			'label' => KText::_('Base Weight'),
+			'type' => 'string',
+			'stringType' => 'number',
+			'unit' => CbSettings::getInstance()->get('weightunits'),
+			'tooltip' => KText::_('The product weight without any upgrades. You can change the weight unit in the configuration globally.'),
+			'positionForm' => 1006000,
+		);
 
-			$propDefs['dispatch_time'] = array(
-				'name' => 'dispatch_time',
-				'label' => KText::_('Dispatch Time'),
-				'tooltip' => KText::_('Define how many days it takes to dispatch the product after the order is completed. Set to 0 for immediate dispatch.'),
-				'type' => 'string',
-				'stringType' => 'number',
-				'default' => 0,
-				'unit' => KText::_('days'),
-				'positionForm' => 1005000,
-			);
+		$propDefs['misc_end'] = array(
+			'name' => 'misc_end',
+			'type' => 'groupend',
+			'positionForm' => 1200000,
+		);
 
-			$propDefs['baseweight'] = array(
-				'name' => 'baseweight',
-				'label' => KText::_('Base Weight'),
-				'type' => 'string',
-				'stringType' => 'number',
-				'unit' => CbSettings::getInstance()->get('weightunits'),
-				'tooltip' => KText::_('The product weight without any upgrades. You can change the weight unit in the configuration globally.'),
-				'positionForm' => 1006000,
-			);
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
 
-			$propDefs['misc_end'] = array(
-				'name' => 'misc_end',
-				'type' => 'groupend',
-				'positionForm' => 1200000,
-			);
+			unset($propDefs['misc_start'], $propDefs['misc_end']);
 
+			$propDefs['sku']['invisible'] = true;
+			$propDefs['sku']['default'] = 0;
+
+			$propDefs['label']['invisible'] = true;
+			$propDefs['label']['default'] = 0;
+
+			$propDefs['dispatch_time']['invisible'] = true;
+			$propDefs['dispatch_time']['default'] = 0;
+
+			$propDefs['baseweight']['invisible'] = true;
+			$propDefs['baseweight']['default'] = 0;
+
+			$propDefs['use_recurring_pricing']['invisible'] = true;
+			$propDefs['use_recurring_pricing']['default'] = 0;
 		}
-		else {
-			$propDefs['use_recurring_pricing'] = array(
-				'name' => 'use_recurring_pricing',
-				'label' => KText::_('Does the product also use recurring pricing?'),
-				'tooltip' => KText::_('If you want to show one-time and recurring prices, click yes. There will be price entries for two types of prices then.'),
-				'type' => 'boolean',
-				'default' => 0,
-				'positionForm' => 1002000,
-				'invisible'=>true,
-			);
-		}
-
 
 		return $propDefs;
 
@@ -1196,6 +1216,10 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 	 */
 	protected function fillEmptyUrlSegments(&$data) {
 
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			return;
+		}
+
 		$tags = KenedoLanguageHelper::getActiveLanguageTags();
 
 		foreach ($tags as $tag) {
@@ -1235,6 +1259,10 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 	 */
 	protected function checkForDuplicateUrlSegment($data) {
 
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			return true;
+		}
+
 		$languages = KenedoLanguageHelper::getActiveLanguages();
 
 		$db = KenedoPlatform::getDb();
@@ -1271,6 +1299,10 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 	 * @param object $data
 	 */
 	protected function storeOldUrlSegments($data) {
+
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			return;
+		}
 
 		// In case of inserts, don't act
 		if ($this->isInsert($data)) {
