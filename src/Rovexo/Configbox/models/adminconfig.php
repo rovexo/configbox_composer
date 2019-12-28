@@ -110,7 +110,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 			'tableOther'=>'',
 			'keyOther'=>'tag',
-			'displayColumnOther'=>'tag',
+			'displayColumnOther'=>'label',
 
 			'positionForm'=>40,
 		);

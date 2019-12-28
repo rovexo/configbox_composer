@@ -17,11 +17,6 @@ class ConfigboxViewBlockvisualization extends KenedoView {
 	public $cartPositionId;
 
 	/**
-	 * @var int ID of the current page. You need to set if if you use the view as sub view
-	 */
-	public $pageId;
-
-	/**
 	 * @var int ID of the product that should be visualized
 	 */
 	public $productId;
@@ -59,10 +54,6 @@ class ConfigboxViewBlockvisualization extends KenedoView {
 
 	function prepareTemplateVars() {
 
-		if (empty($this->pageId)) {
-			return;
-		}
-
 		if (empty($this->cartPositionId)) {
 			$this->cartPositionId = ConfigboxConfiguration::getInstance()->getPositionId();
 		}
@@ -87,7 +78,7 @@ class ConfigboxViewBlockvisualization extends KenedoView {
 		$product = KenedoModel::getModel('ConfigboxModelProduct')->getProduct($this->productId);
 
 		$this->urlBaseImage = ($product->baseimage_href) ? $product->baseimage_href : '';
-		$this->visualizationSlots = ConfigboxProductImageHelper::getVisualizationImageSlots($this->cartPositionId, $this->pageId);
+		$this->visualizationSlots = ConfigboxProductImageHelper::getVisualizationImageSlots($this->cartPositionId);
 		$this->urlBlankImage = KPATH_URL_ASSETS.'/images/blank.gif';
 
 		$wrapperClasses = array(
@@ -112,10 +103,10 @@ class ConfigboxViewBlockvisualization extends KenedoView {
 
 	/**
 	 * @param int $pageId
+	 * @deprecated No longer needed
 	 * @return $this
 	 */
 	function setPageId($pageId) {
-		$this->pageId = $pageId;
 		return $this;
 	}
 

@@ -59,25 +59,25 @@ if (!is_file(CONFIGBOX_DIR_DEFAULT_IMAGES.'/default_prod_image.jpg')) {
 	copy($src, CONFIGBOX_DIR_DEFAULT_IMAGES.'/default_prod_image.jpg');
 }
 
-$assetsFolder = KenedoPlatform::p()->getDirCustomizationAssets();
-
-$files = array(
-	$assetsFolder.'/css/custom.css',
-	$assetsFolder.'/css/custom.min.css',
-	$assetsFolder.'/javascript/custom.js',
-	$assetsFolder.'/javascript/custom.min.js',
-	$assetsFolder.'/javascript/custom_questions.js',
-	$assetsFolder.'/javascript/custom_questions.min.js',
-);
-
-foreach ($files as $file) {
-
-	$dir = dirname($file);
-
-	if (is_dir($dir) == false) {
-		mkdir($dir, 0775, true);
-	}
-
-	file_put_contents($file, '');
-
-}
+//$assetsFolder = KenedoPlatform::p()->getDirCustomizationAssets();
+//
+//$files = array(
+//	$assetsFolder.'/css/custom.css',
+//	$assetsFolder.'/css/custom.min.css',
+//	$assetsFolder.'/javascript/custom.js',
+//	$assetsFolder.'/javascript/custom.min.js',
+//	$assetsFolder.'/javascript/custom_questions.js',
+//	$assetsFolder.'/javascript/custom_questions.min.js',
+//);
+//
+//foreach ($files as $file) {
+//
+//	$dir = dirname($file);
+//
+//	if (is_dir($dir) == false) {
+//		mkdir($dir, 0775, true);
+//	}
+//
+//	file_put_contents($file, '');
+//
+//}

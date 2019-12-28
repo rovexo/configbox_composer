@@ -606,6 +606,13 @@
 	margin-right: 2px;
 }
 
+.cb-content .question.type-images input[type=checkbox] {
+	position: relative;
+	top: -2px;
+	margin-top: 0;
+	margin-right: 2px;
+}
+
 .cb-content .question.type-checkbox .form-group {
 	margin-bottom: 0;
 }
@@ -712,4 +719,11 @@
 .view-configuratorpage .question-description-modal .modal-content,
 .view-configuratorpage .answer-description-modal .modal-content {
 	padding:20px;
+}
+
+.view-configuratorpage .configbox-disabled,
+.view-configuratorpage .configbox-disabled:hover {
+	background:#ccc;
+	border-color:#bbb;
+	cursor:default;
 }

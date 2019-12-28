@@ -258,7 +258,7 @@ class ObserverNotifications {
 
 		$regularPath = dirname(__FILE__).DS.'notifications'.DS.'templates';
 
-		$customFolder = CONFIGBOX_DIR_CUSTOMIZATION .DS. 'notification_templates';
+		$customFolder = KenedoPlatform::p()->getDirCustomization() .DS. 'notification_templates';
 
 		if (file_exists($customFolder.DS.$fileHtml)) {
 			ob_start();
@@ -294,7 +294,7 @@ class ObserverNotifications {
 	 */
 	protected function processNotificationSnippets(&$email, $shopData, $orderRecord, $recipientData, $status) {
 
-		$customBaseFolder = CONFIGBOX_DIR_CUSTOMIZATION.DS.'notification_snippets';
+		$customBaseFolder = KenedoPlatform::p()->getDirCustomization().DS.'notification_snippets';
 
 		// Deal with notification elements
 		preg_match_all("/\{element_(.*)\}/", $email->body, $matches);
@@ -364,7 +364,7 @@ class ObserverNotifications {
 		// Get the paths to regular and override attachment file
 		$regularPath = dirname(__FILE__).DS.'notifications'.DS.'attachments';
 
-		$customFolder = CONFIGBOX_DIR_CUSTOMIZATION.DS.'notification_attachments';
+		$customFolder = KenedoPlatform::p()->getDirCustomization().DS.'notification_attachments';
 
 		foreach ($filePdfs as $filePdf) {
 

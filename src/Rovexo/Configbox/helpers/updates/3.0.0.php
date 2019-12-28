@@ -21,10 +21,10 @@ $folderRenamings = array(
 	$oldDataFolder.DS.'position_images' 					=> $oldCustomerFolder.DS.'position_images',
 	$oldDataFolder.DS.'quotations' 							=> $oldCustomerFolder.DS.'quotations',
 	$oldDataFolder.DS.'shoplogo' 							=> $oldStoreFolder.DS.'shoplogo',
-	$oldDataFolder.DS.'notification_attachments' 			=> CONFIGBOX_DIR_CUSTOMIZATION.DS.'notification_attachments',
-	$oldDataFolder.DS.'notification_templates' 				=> CONFIGBOX_DIR_CUSTOMIZATION.DS.'notification_templates',
-	$oldDataFolder.DS.'notification_elements' 				=> CONFIGBOX_DIR_CUSTOMIZATION.DS.'notification_elements',
-	CONFIGBOX_DIR_CUSTOMIZATION.DS.'notification_elements' 	=> CONFIGBOX_DIR_CUSTOMIZATION.DS.'notification_snippets',
+	$oldDataFolder.DS.'notification_attachments' 			=> KenedoPlatform::p()->getDirCustomization().DS.'notification_attachments',
+	$oldDataFolder.DS.'notification_templates' 				=> KenedoPlatform::p()->getDirCustomization().DS.'notification_templates',
+	$oldDataFolder.DS.'notification_elements' 				=> KenedoPlatform::p()->getDirCustomization().DS.'notification_elements',
+	KenedoPlatform::p()->getDirCustomization().DS.'notification_elements' 	=> KenedoPlatform::p()->getDirCustomization().DS.'notification_snippets',
 );
 
 foreach ($folderRenamings as $old=>$new) {
@@ -1010,7 +1010,7 @@ if (ConfigboxUpdateHelper::tableExists('#__cbcheckout_order_countries') == false
 
 }
 
-$base = CONFIGBOX_DIR_CUSTOMIZATION.DS.'templates';
+$base = KenedoPlatform::p()->getDirCustomization().DS.'templates';
 
 if (is_dir($base)) {
 

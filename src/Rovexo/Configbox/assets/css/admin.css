@@ -487,15 +487,6 @@ table.sans-padding td {
 
 /* QUICKEDIT - START */
 
-.cb-content .quickeditwait:before {
-	margin-left:5px;
-	font-family:FontAwesome;
-	content: "\f110";
-	animation: fa-spin 2s infinite linear;
-	-webkit-font-smoothing: antialiased;
-	display:inline-block;
-}
-
 .cb-content .quick-edit-buttons {
 	background:rgba(255, 255, 255, 0.7);
 	font-size:16px;

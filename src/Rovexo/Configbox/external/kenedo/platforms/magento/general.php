@@ -312,6 +312,7 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	}
 	//TODO: Implement
 	public function getDocumentTitle() {
+		return '';
 		//Mage::app()->getLayout()->getBlock('head')->getTitle();
 	}
 

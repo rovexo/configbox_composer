@@ -84,7 +84,7 @@ defined('CB_VALID_ENTRY') or die();
 
 	<div class="kenedo-hidden-fields">
 
-		<input type="hidden" id="option_assignment_load_url" name="option_assignment_load_url" value="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminoptions&task=edit&id=%');?>" />
+		<input type="hidden" id="option_assignment_load_url" name="option_assignment_load_url" value="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminoptions&task=edit&id=placeholder_option_id');?>" />
 
 		<input type="hidden" id="option" 		name="option" 			value="<?php echo hsc($this->component);?>" />
 		<input type="hidden" id="controller"	name="controller" 		value="<?php echo hsc($this->controllerName);?>" />

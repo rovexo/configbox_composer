@@ -78,16 +78,9 @@ class ConfigboxModelConfiguratorPage extends KenedoModelLight {
 		if ($page) {
 
 			if (KenedoPlatform::getName() == 'magento') {
-				$currentUrl = Mage::helper('core/url')->getCurrentUrl();
-				$currentUrl = preg_replace('/page_id=(\d+)/i', '', $currentUrl);
-				$currentUrl = rtrim($currentUrl,'&?');
-				$page->url = $currentUrl . ( (strstr($currentUrl, '?')) ? '&':'?') . 'page_id='.$page->id;
+				$page->url = '#page-'.$page->id;
 			} elseif(KenedoPlatform::getName() == 'magento2') {
-			    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-                $currentUrl = $objectManager->get('Magento\Framework\UrlInterface')->getCurrentUrl();
-                $currentUrl = preg_replace('/page_id=(\d+)/i', '', $currentUrl);
-                $currentUrl = rtrim($currentUrl,'&?');
-                $page->url = $currentUrl . ( (strstr($currentUrl, '?')) ? '&':'?') . 'page_id='.$page->id;
+                $page->url = '#page-'.$page->id;
             } else {
 				$page->url = KLink::getRoute('index.php?option=com_configbox&view=configuratorpage&prod_id='.intval($page->product_id).'&page_id='.intval($page->id));
 			}
@@ -166,7 +159,7 @@ class ConfigboxModelConfiguratorPage extends KenedoModelLight {
 
 		if (empty($productId) || !is_numeric($productId)) {
 			KLog::log('Invalid product ID as parameter. Var content was '.var_export($productId, true), 'error');
-			throw new Exception(500, 'Trying to ensure proper cart environment with an invalid product ID');
+			throw new Exception('Trying to ensure proper cart environment with an invalid product ID', 500);
 		}
 
 		// Make sure we got a user
@@ -209,6 +202,13 @@ class ConfigboxModelConfiguratorPage extends KenedoModelLight {
 		if (!$positionId) {
 			KLog::log('No position is set, creating new one.');
 			$positionId = $positionModel->createPosition($cartId, $productId);
+		}
+		else {
+			$position = $positionModel->getPosition($positionId);
+			if (!$position) {
+				KLog::log('Position is ID is there, but position may have been auto-cleaned. Creating new one.');
+				$positionId = $positionModel->createPosition($cartId, $productId);
+			}
 		}
 		$position = $positionModel->getPosition($positionId);
 

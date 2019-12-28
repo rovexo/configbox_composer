@@ -492,7 +492,11 @@ JsonResponses.prototype.configuratorUpdates = {
 		},
 		"total": {
 			"productPrice": 120,
+			"productPriceNet": 120,
+			"productPriceGross": 120,
 			"productPriceRecurring": 0,
+			"productPriceNetRecurring": 120,
+			"productPriceGrossRecurring": 120,
 			"price": 132,
 			"priceRecurring": 0,
 			"priceNet": 110,
@@ -528,7 +532,11 @@ JsonResponses.prototype.configuratorUpdates = {
 			"priceRecurringTaxFormatted": "\u20ac 0,00",
 			"priceRecurringGrossFormatted": "\u20ac 0,00",
 			"productPriceFormatted": "\u20ac 120,00",
-			"productPriceRecurringFormatted": "\u20ac 0,00"
+			"productPriceNetFormatted": "\u20ac 120,00",
+			"productPriceGrossFormatted": "\u20ac 120,00",
+			"productPriceRecurringFormatted": "\u20ac 0,00",
+			"productPriceNetRecurringFormatted": "\u20ac 0,00",
+			"productPriceGrossRecurringFormatted": "\u20ac 0,00"
 		},
 		"pages": {
 			"8": {

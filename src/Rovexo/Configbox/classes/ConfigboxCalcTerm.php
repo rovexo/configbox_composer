@@ -83,7 +83,7 @@ abstract class ConfigboxCalcTerm {
 				include_once($path.DS.$file);
 			}
 
-			$path = CONFIGBOX_DIR_CUSTOMIZATION.DS.'calc_term_types';
+			$path = KenedoPlatform::p()->getDirCustomization().DS.'calc_term_types';
 			if (is_dir($path)) {
 				$customConditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 				foreach ($customConditionFiles as $file) {
@@ -110,7 +110,7 @@ abstract class ConfigboxCalcTerm {
 				self::$termClassNames[] = str_replace('.php', '',$file);
 			}
 
-			$path = CONFIGBOX_DIR_CUSTOMIZATION.DS.'calc_term_types';
+			$path = KenedoPlatform::p()->getDirCustomization().DS.'calc_term_types';
 			if (is_dir($path)) {
 				$customConditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 				foreach ($customConditionFiles as $file) {

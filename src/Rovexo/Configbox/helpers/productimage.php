@@ -236,10 +236,9 @@ class ConfigboxProductImageHelper {
 	/**
 	 * Gives you an array of objects with all visualization images and info practical for display
 	 * @param int $cartPositionId
-	 * @param int $pageId
 	 * @return object[]
 	 */
-	static function getVisualizationImageSlots($cartPositionId, $pageId) {
+	static function getVisualizationImageSlots($cartPositionId) {
 		
 		$configuration = ConfigboxConfiguration::getInstance($cartPositionId);
 		$productId = $configuration->getProductId();

@@ -49,14 +49,15 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 		parameterDefinitions: {},
 
-		initShapeDiverVis: function() {
+		onceCallHasFinished: false,
+
+		initShapeDiverVisOnce: function() {
 
 			// Set our message listener
 			module.addMessageListener();
 
 			// Set the iframe height (see iframe width/height ratio) and let it run on window resize
 			cbj(window).on('resize', module.setIframeHeight);
-			module.setIframeHeight();
 
 			// Get a ref to the iframe (mind this var is the DOM object, not a jQuery collection)
 			var iframe = module.getIframe();
@@ -70,8 +71,28 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 			// Set the listener for geometry updates
 			cbj(document).on('sdGeometryUpdateDone', module.setExternalTextures);
 
-			// Finally set the iframe URL and let the viewer load
-			iframe.src = iframe.dataset.src;
+			// Mark the once-call as done (see initShapeDiverVisEach)
+			module.onceCallHasFinished = true;
+
+		},
+
+		initShapeDiverVisEach: function() {
+
+			// The each calls need the once call to be done first, setting an interval to wait for it
+			var interval = window.setInterval(function() {
+
+				if (module.onceCallHasFinished === true) {
+
+					module.setIframeHeight();
+					var iframe = module.getIframe();
+
+					// Finally set the iframe URL and let the viewer load
+					iframe.src = iframe.dataset.src;
+					window.clearInterval(interval);
+
+				}
+
+			}, 100);
 
 		},
 

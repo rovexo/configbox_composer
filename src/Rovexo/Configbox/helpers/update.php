@@ -234,7 +234,7 @@ class ConfigboxUpdateHelper {
 			self::$latestUpdateVersion = '0.0.0';
 		}
 
-		$configboxUpdateFileFolder 	= CONFIGBOX_DIR_CUSTOMIZATION.DS.'updates';
+		$configboxUpdateFileFolder 	= KenedoPlatform::p()->getDirCustomization().DS.'updates';
 		$configboxUpdateFiles 		= KenedoFileHelper::getFiles($configboxUpdateFileFolder, '.php$', false, false);
 
 		// Sort the files by version

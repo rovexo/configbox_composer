@@ -112,11 +112,31 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 			cbj('.input-' + questionId).datepicker('refresh');
 		},
 
-		onValidationMessageShown: function(event, questionid, message) {
+		onValidationMessageShown: function(event, questionId, message) {
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || question.is('.type-calendar') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
 
 		},
 
-		onValidationMessageCleared: function(event, questionid) {
+		onValidationMessageCleared: function(event, questionId) {
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || question.is('.type-calendar') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
 
 		}
 
@@ -253,14 +273,31 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 		},
 
 		onValidationMessageShown: function(event, questionId, message) {
-			cbj('#question-' + questionId).find('.form-group').addClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html(message).show();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || question.is('.type-ralcolorpicker') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
 
 		},
 
 		onValidationMessageCleared: function(event, questionId) {
-			cbj('#question-' + questionId).find('.form-group').removeClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html('').hide();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || question.is('.type-ralcolorpicker') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
+
 		}
 
 	};
@@ -421,14 +458,31 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 		},
 
 		onValidationMessageShown: function(event, questionId, message) {
-			cbj('#question-' + questionId).find('.form-group').addClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html(message).show();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || question.is('.type-colorpicker') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
 
 		},
 
 		onValidationMessageCleared: function(event, questionId) {
-			cbj('#question-' + questionId).find('.form-group').removeClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html('').hide();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || question.is('.type-colorpicker') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
+
 		}
 
 	};
@@ -502,14 +556,30 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 		},
 
 		onValidationMessageShown: function(event, questionId, message) {
-			cbj('#question-' + questionId).find('.form-group').addClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html(message).show();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-textbox') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
 
 		},
 
 		onValidationMessageCleared: function(event, questionId) {
-			cbj('#question-' + questionId).find('.form-group').removeClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html('').hide();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-textbox') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
 		}
 
 	};
@@ -583,14 +653,30 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 		},
 
 		onValidationMessageShown: function(event, questionId, message) {
-			cbj('#question-' + questionId).find('.form-group').addClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html(message).show();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-textarea') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
 
 		},
 
 		onValidationMessageCleared: function(event, questionId) {
-			cbj('#question-' + questionId).find('.form-group').removeClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html('').hide();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-textarea') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
 		}
 
 	};
@@ -654,13 +740,30 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 		},
 
 		onValidationMessageShown: function(event, questionId, message) {
-			cbj('#question-' + questionId).find('.form-group').addClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html(message).show();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-checkbox') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
+
 		},
 
 		onValidationMessageCleared: function(event, questionId) {
-			cbj('#question-' + questionId).find('.form-group').removeClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html('').hide();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-checkbox') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
 		}
 
 	};
@@ -723,13 +826,30 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 		},
 
 		onValidationMessageShown: function(event, questionId, message) {
-			cbj('#question-' + questionId).find('.form-group').addClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html(message).show();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-radiobuttons') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
+
 		},
 
 		onValidationMessageCleared: function(event, questionId) {
-			cbj('#question-' + questionId).find('.form-group').removeClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html('').hide();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-radiobuttons') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
 		}
 
 	};
@@ -857,13 +977,30 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 		},
 
 		onValidationMessageShown: function(event, questionId, message) {
-			cbj('#question-' + questionId).find('.form-group').addClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html(message).show();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-dropdown') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
+
 		},
 
 		onValidationMessageCleared: function(event, questionId) {
-			cbj('#question-' + questionId).find('.form-group').removeClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html('').hide();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-dropdown') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
 		}
 
 	};
@@ -883,6 +1020,23 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 				var selection = parseInt(cbj(this).val());
 
 				answer.addClass('selected').siblings().removeClass('selected');
+
+				configurator.sendSelectionToServer(questionId, selection);
+
+			});
+
+			cbj(document).on('change', '.question.type-images input[type=checkbox]', function() {
+
+				var questionId = cbj(this).closest('.question').data('question-id');
+				var answer = cbj(this).closest('.answer');
+				var selection = (cbj(this).prop('checked') === true) ? cbj(this).val() : '';
+
+				if (selection) {
+					answer.addClass('selected');
+				}
+				else {
+					answer.removeClass('selected');
+				}
 
 				configurator.sendSelectionToServer(questionId, selection);
 
@@ -934,13 +1088,30 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 		},
 
 		onValidationMessageShown: function(event, questionId, message) {
-			cbj('#question-' + questionId).find('.form-group').addClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html(message).show();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-images') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
+
 		},
 
 		onValidationMessageCleared: function(event, questionId) {
-			cbj('#question-' + questionId).find('.form-group').removeClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html('').hide();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-images') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
 		}
 
 	};
@@ -1127,13 +1298,30 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 		},
 
 		onValidationMessageShown: function(event, questionId, message) {
-			cbj('#question-' + questionId).find('.form-group').addClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html(message).show();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-slider') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
+
 		},
 
 		onValidationMessageCleared: function(event, questionId) {
-			cbj('#question-' + questionId).find('.form-group').removeClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html('').hide();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-slider') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
 		}
 
 	};
@@ -1380,14 +1568,30 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 		},
 
 		onValidationMessageShown: function(event, questionId, message) {
-			cbj('#question-' + questionId).find('.form-group').addClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html(message).show();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-upload') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
 
 		},
 
 		onValidationMessageCleared: function(event, questionId) {
-			cbj('#question-' + questionId).find('.form-group').removeClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html('').hide();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-upload') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
 		}
 
 	};
@@ -1511,13 +1715,30 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 		},
 
 		onValidationMessageShown: function(event, questionId, message) {
-			cbj('#question-' + questionId).find('.form-group').addClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html(message).show();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-choices') === false) {
+				return;
+			}
+
+			question.find('.form-group').addClass('has-error');
+			question.find('.validation-message-target').html(message).show();
+
 		},
 
 		onValidationMessageCleared: function(event, questionId) {
-			cbj('#question-' + questionId).find('.form-group').removeClass('has-error');
-			cbj('#question-' + questionId).find('.validation-message-target').html('').hide();
+
+			var question = cbj('#question-' + questionId);
+
+			// Skip anything that isn't the right type
+			if (question.length === 0 || cbj('#question-' + questionId).is('.type-choices') === false) {
+				return;
+			}
+
+			question.find('.form-group').removeClass('has-error');
+			question.find('.validation-message-target').html('').hide();
 		}
 
 	};

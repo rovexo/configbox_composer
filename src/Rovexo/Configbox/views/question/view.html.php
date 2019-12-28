@@ -380,9 +380,9 @@ class ConfigboxViewQuestion extends KenedoView {
 		// Joomla-typical template override location
 		$templatePaths['templateOverride'] 	= KenedoPlatform::p()->getTemplateOverridePath('com_configbox', $viewName, $template);
 		// Custom template for the specific question type view
-		$templatePaths['customTemplate'] 	= CONFIGBOX_DIR_CUSTOMIZATION .DS. 'templates' .DS. $viewName .DS. $template.'.php';
+		$templatePaths['customTemplate'] 	= KenedoPlatform::p()->getDirCustomization() .DS. 'templates' .DS. $viewName .DS. $template.'.php';
 		// SPECIAL: Custom template for the base question view
-		$templatePaths['customGeneralTemplate'] 	= CONFIGBOX_DIR_CUSTOMIZATION .DS. 'templates' .DS. 'question' .DS. $template.'.php';
+		$templatePaths['customGeneralTemplate'] 	= KenedoPlatform::p()->getDirCustomization() .DS. 'templates' .DS. 'question' .DS. $template.'.php';
 		// Regular template for specific question type view
 		$templatePaths['defaultTemplate'] 	= dirname($this->getViewPath()).DS.'tmpl'.DS.$template.'.php';
 		// SPECIAL: Regular template for the base question view

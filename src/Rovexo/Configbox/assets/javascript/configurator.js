@@ -3,7 +3,7 @@
 /**
  * @module configbox/configurator
  */
-define(['cbj'], function(cbj) {
+define(['cbj', 'configbox/server'], function(cbj, server) {
 
 	"use strict";
 
@@ -44,6 +44,10 @@ define(['cbj'], function(cbj) {
 		// Handler to toggle page selection display when the user clicks on a page title in the selections block
 		cbj(document).on('click', '.configurator-page-title', this.blockPricing.toggleSelectionsVisibility);
 
+		// Handler for add to cart - validates selections, switches to right page if something is missing, adds to cart
+		// otherwise
+		cbj(document).on('click', '.trigger-add-to-cart', this.onAddToCart);
+
 		// Handlers for configurator page edit popover
 		cbj(document).on('click', '.trigger-show-page-edit-buttons', this.showPageEditButtons);
 		cbj(document).on('click', '.trigger-hide-page-edit-buttons', this.hidePageEditButtons);
@@ -54,16 +58,246 @@ define(['cbj'], function(cbj) {
 		cbj(document).on('cbAnswerActivation', 			this.onAnswerActivation);
 		cbj(document).on('cbAnswerDeactivation', 		this.onAnswerDeactivation);
 
+		if (server.config.platformName === 'magento2') {
+			cbj(document).on('cbPricingChange', this.updateMagento2Total);
+		}
+
+		cbj(document).on('serverRequestSent', function() {
+			configurator.requestInProgress = true;
+		});
+
+		cbj(document).on('serverResponseReceived', function() {
+			configurator.requestInProgress = false;
+		});
+
 		this.initDeferredPageNav();
 		this.initSelectionImageSwitcher();
+		this.initPageNavigation();
 
 	};
+
+	configurator.requestInProgress = false;
 
 	configurator.initConfiguratorPageEach = function() {
 		this.initQuestions();
 		this.initImagePreloading();
 		this.initStickyBlock();
 		this.initBsPopovers();
+	};
+
+	configurator.onAddToCart = function(event) {
+
+		// For backwards compatibility, add-to-cart buttons were regular links before
+		event.preventDefault();
+		event.stopPropagation();
+
+		var btn = cbj(this);
+
+		// This will be called after definition (either immediately or if a selection request
+		// is ongoing, then right after it
+		var addFunction = function() {
+
+			if (btn.hasClass('processing')) {
+				return;
+			}
+
+			btn.addClass('processing');
+
+			var data = {
+				cartPositionId: configurator.getCartPositionId()
+			};
+
+			server.makeRequest('configuratorpage', 'getMissingSelections', data)
+
+				.done(function(missingSelections) {
+
+					if (missingSelections.length !== 0) {
+
+						var shouldPageId = parseInt(missingSelections[0].pageId);
+
+						if (shouldPageId !== configurator.getPageId()) {
+							configurator.switchPage(shouldPageId, function() {
+								configurator.addValidationErrors(missingSelections);
+							});
+						}
+						else {
+							configurator.addValidationErrors(missingSelections);
+						}
+
+						btn.removeClass('processing');
+
+					}
+					else {
+
+						server.makeRequest('configuratorpage', 'addConfigurationToCart', data)
+
+							.done(function(response) {
+
+								if (response.success === true) {
+									window.location.href = response.redirectUrl;
+								}
+								else {
+									alert(response.feedback);
+								}
+
+							})
+
+							.always(function() {
+								btn.removeClass('processing');
+							});
+
+					}
+
+
+				});
+
+		};
+
+		if (configurator.requestInProgress) {
+			cbj(document).on('serverResponseReceived', addFunction)
+		}
+		else {
+			addFunction();
+		}
+
+	};
+
+	/**
+	 * Takes in missingSelections array as from ConfigboxControllerConfiguratorpage::getMissingSelections
+	 * and displays the messages on any questions present on the current page
+	 * @param missingSelections
+	 */
+	configurator.addValidationErrors = function(missingSelections) {
+		cbj.each(missingSelections, function(i, missingSelection) {
+			configurator.showValidationError(missingSelection.id, missingSelection.message);
+		});
+	};
+
+	/**
+	 * Facilitates the page switching by prev/next buttons and tabs
+	 */
+	configurator.initPageNavigation = function() {
+
+		window.addEventListener('popstate', function(event) {
+
+			if (event && event.state && event.state.cbPageId) {
+				configurator.switchPage(event.state.cbPageId);
+			}
+
+		});
+
+		cbj(document).on('click', '.cb-page-nav-prev, .cb-page-nav-next, .cb-tab-nav-link', function(event) {
+
+			var url = cbj(this).attr('href');
+			var pageId;
+
+			var classAttr = cbj(this).attr('class') || '';
+			var classes = classAttr.split(' ');
+			for (var i in classes) {
+				if (classes.hasOwnProperty(i) === true) {
+					if (classes[i].indexOf('page-id-') !== -1) {
+						pageId = classes[i].replace('page-id-', '');
+						pageId = parseInt(pageId);
+					}
+				}
+			}
+
+			if (!pageId) {
+				console.log('No page ID found in link classes. Skipping ajax switch');
+				return;
+			}
+
+			event.preventDefault();
+
+			var state = {
+				cbPageId: pageId
+			};
+
+			window.history.pushState(state, '', url);
+
+			configurator.switchPage(pageId);
+
+		});
+
+	};
+
+	/**
+	 * Refreshes the configurator page view, showing the page as requested by param pageId.
+	 *
+	 * @param {Number} pageId
+	 * @param {Function=} callback
+	 */
+	configurator.switchPage = function(pageId, callback) {
+
+		if (cbj('.configurator-page-wrapper').length === 0) {
+			cbj('.kenedo-view.view-configuratorpage').wrap('<div class="configurator-page-wrapper"></div>');
+		}
+
+		server.injectHtml(
+			'.configurator-page-wrapper',
+			'configuratorpage',
+			'getPageHtml',
+			{pageId: pageId},
+			function() {
+				
+				var offsetView = cbj('.kenedo-view.view-configuratorpage').offset().top;
+				var scrollTop = cbj(window).scrollTop();
+
+				var stickyHeaderHeight;
+				if (typeof(window.stickyHeaderHeight) === 'undefined') {
+					stickyHeaderHeight = 50;
+				}
+				else {
+					stickyHeaderHeight = window.stickyHeaderHeight;
+				}
+
+				var scrollPosition = offsetView - stickyHeaderHeight;
+
+				if (scrollPosition < scrollTop) {
+					cbj('html, body').animate({
+						scrollTop: scrollPosition
+					}, 500);
+				}
+				
+				if (typeof(callback) == 'function') {
+					callback();
+				}
+
+			});
+
+	};
+
+	configurator.updateMagento2Total = function(event, pricing) {
+
+		var price = pricing.total.price;
+		var priceNet = pricing.total.priceNet;
+		var optionId = cbj('#wrapper-cb-option').data('option-id');
+		var selectorPriceBox = '.price-box';
+
+		window.require(['jquery'], function($)
+		{
+
+			var key = 'options[' + optionId + ']';
+
+			var newPrice = {};
+
+			newPrice[key] = {
+				'oldPrice': {
+					'amount': priceNet,
+					'adjustments': []
+				},
+				'basePrice': {
+					'amount': priceNet
+				},
+				'finalPrice': {
+					'amount': price
+				}
+			};
+
+			$(selectorPriceBox).trigger('updatePrice', newPrice);
+
+		});
+
 	};
 
 	configurator.showPageEditButtons = function() {
@@ -208,51 +442,65 @@ define(['cbj'], function(cbj) {
 	};
 
 	/**
+	 * Holds an array of question types, for remembering which questions have already been initialized
+	 * @type {Array}
+	 */
+	configurator.initializedQuestionTypes = [];
+
+	/**
 	 * Loads both built-in and custom question js, then loops through the current page's questions and inits the needed
 	 * question types.
 	 */
 	configurator.initQuestions = function() {
 
-		cbrequire(['configbox/questions', 'configbox/custom/custom_questions'], function() {
+		cbrequire(['configbox/server'], function(server) {
 
-			var initializedTypes = [];
+			var dependencies = ['configbox/questions'];
 
-			cbj('.kenedo-view.view-configuratorpage .question').each(function() {
+			if (server.config.requireCustomQuestionJs === true) {
+				dependencies.push('configbox/custom/custom_questions');
+			}
 
-				var type = cbj(this).data('questionType');
+			cbrequire(dependencies, function() {
 
-				if (!type) {
-					throw 'The configurator page contains a question without a data-question-type attribute. Compare with the built-in question type templates and add it. The question with the problem has the ID "' + cbj(this).attr('id') + '"';
-				}
+				cbj('.kenedo-view.view-configuratorpage .question').each(function() {
 
-				var questionType = configurator.getQuestionType(type);
+					var type = cbj(this).data('questionType');
 
-				if (!questionType) {
-					throw 'The configurator page contains a question of type "' + type + '", but type object is not registered. Make sure you make and register it in custom_questions.js';
-				}
+					if (!type) {
+						throw 'The configurator page contains a question without a data-question-type attribute. Compare with the built-in question type templates and add it. The question with the problem has the ID "' + cbj(this).attr('id') + '"';
+					}
 
-				// If there is an initEach function, run it
-				if (questionType.initEach) {
-					questionType.initEach();
-				}
+					var questionType = configurator.getQuestionType(type);
 
-				// The rest runs only once per page load
-				if (initializedTypes.indexOf(type) !== -1) {
-					return;
-				}
-				initializedTypes.push(type);
+					if (!questionType) {
+						throw 'The configurator page contains a question of type "' + type + '", but type object is not registered. Make sure you make and register it in custom_questions.js';
+					}
 
-				questionType.init();
+					// If there is an initEach function, run it
+					if (questionType.initEach) {
+						questionType.initEach();
+					}
 
-				cbj(document).on('cbQuestionActivation', 		questionType.onQuestionActivation);
-				cbj(document).on('cbQuestionDeactivation', 		questionType.onQuestionDeactivation);
-				cbj(document).on('cbAnswerActivation', 			questionType.onAnswerActivation);
-				cbj(document).on('cbAnswerDeactivation', 		questionType.onAnswerDeactivation);
-				cbj(document).on('cbSystemSelectionChange', 	questionType.onSystemSelectionChange);
-				cbj(document).on('cbValidationChange', 			questionType.onValidationChange);
-				cbj(document).on('cbValidationMessageShown',	questionType.onValidationMessageShown);
-				cbj(document).on('cbValidationMessageCleared',	questionType.onValidationMessageCleared);
+					// The rest runs only once per page load
+					if (configurator.initializedQuestionTypes.indexOf(type) !== -1) {
+						return;
+					}
+					configurator.initializedQuestionTypes.push(type);
 
+					questionType.init();
+
+					cbj(document).on('cbQuestionActivation', 		questionType.onQuestionActivation);
+					cbj(document).on('cbQuestionDeactivation', 		questionType.onQuestionDeactivation);
+					cbj(document).on('cbAnswerActivation', 			questionType.onAnswerActivation);
+					cbj(document).on('cbAnswerDeactivation', 		questionType.onAnswerDeactivation);
+					cbj(document).on('cbSystemSelectionChange', 	questionType.onSystemSelectionChange);
+					cbj(document).on('cbValidationChange', 			questionType.onValidationChange);
+					cbj(document).on('cbValidationMessageShown',	questionType.onValidationMessageShown);
+					cbj(document).on('cbValidationMessageCleared',	questionType.onValidationMessageCleared);
+
+
+				});
 
 			});
 
@@ -391,6 +639,7 @@ define(['cbj'], function(cbj) {
 
 		var requestInProgress;
 		var redirectUrl;
+		var submittingForm;
 
 		// Clicks on links until xhrs finished
 		cbj(document).on('click', '.wait-for-xhr', function(event) {
@@ -403,15 +652,41 @@ define(['cbj'], function(cbj) {
 			}
 		});
 
+		// M2 add to cart form around the configurar. Submissions get delayed until xhr calls are done
+		cbj('.view-configuratorpage').closest('form').on('submit', function(event) {
+
+			if (requestInProgress === true) {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				submittingForm = cbj(this);
+			}
+
+		});
+
 		cbj(document).ajaxStart(function(){
 			requestInProgress = true;
 		});
 
 		cbj(document).ajaxStop(function(){
+
 			requestInProgress = false;
+
 			if (redirectUrl) {
 				window.location.href = redirectUrl;
+				return;
 			}
+
+			if (submittingForm) {
+				if (submittingForm.find('button[type=submit]').length !== 0) {
+					submittingForm.find('button[type=submit]').trigger('click');
+				}
+				else {
+					submittingForm.trigger('submit');
+				}
+
+				submittingForm = null;
+			}
+
 		});
 
 	};
@@ -473,6 +748,8 @@ define(['cbj'], function(cbj) {
 	 * @fires serverResponseReceived
 	 */
 	configurator.sendSelectionToServer = function(questionId, selection, confirmed) {
+
+		cbj(document).trigger('serverRequestSent');
 
 		// Update the visualization immediately for better responsiveness
 		configurator.blockVisualization.updateVisualization(questionId, parseInt(selection));

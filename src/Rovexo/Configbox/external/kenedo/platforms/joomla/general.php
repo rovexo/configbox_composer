@@ -473,11 +473,18 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 
 		// At some point Joomla must have introduced that sendMail function. Seems more best-practice-like
 		if ($reflect->hasMethod('sendMail')) {
-			$response = $mailer->sendMail($fromEmail, $fromName, $recipient, $subject, $body, $isHtml, $cc, $bcc, $attachment);
+			$response = $mailer->sendMail($fromEmail, $fromName, $recipient, $subject, $body, $isHtml, $cc, $bcc, $attachment, $fromEmail, $fromName);
+
 			if ($response == false) {
 				KLog::log('Sending email failed. Error message from JMailer is "'.$mailer->ErrorInfo.'". Function arguments were '.var_export(func_get_args(), true), 'error');
+				return false;
 			}
-			return $response;
+			elseif(is_a($response, 'Exception') == true) {
+				/** @noinspection PhpUndefinedMethodInspection */
+				KLog::log('Sending email failed. Error message from JMailer is "'.$response->getMessage().'". Function arguments were '.var_export(func_get_args(), true), 'error');
+				return false;
+			}
+
 		}
 
 		$mailer->setSender(array($fromEmail, $fromName));
@@ -485,6 +492,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		$mailer->setSubject($subject);
 		$mailer->setBody($body);
 		$mailer->setFrom($fromEmail, $fromName);
+		$mailer->addReplyTo($fromEmail, $fromName);
 		$mailer->isHtml( $isHtml );
 
 		$mailer->addCc($cc);
@@ -756,6 +764,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		if ($this->getVersionShort() == 1.5) {
 
 			if ($minGroupId) {
+				/** @noinspection PhpUndefinedMethodInspection */
 				return (KenedoPlatform::p()->getUserGroupId($userId) >= $minGroupId);
 			}
 			else {

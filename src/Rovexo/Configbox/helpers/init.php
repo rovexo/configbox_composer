@@ -140,16 +140,64 @@ define('CONFIGBOX_DIR_PSPS_CUSTOM',					KenedoPlatform::p()->getDirCustomization
 define('CONFIGBOX_DIR_PROPERTIES_CUSTOM',			KenedoPlatform::p()->getDirCustomization().'/properties');
 define('CONFIGBOX_DIR_MODEL_PROPERTY_CUSTOMIZATION',KenedoPlatform::p()->getDirCustomization().'/model_property_customization');
 
+/**
+ * @const CONFIGBOX_URL_CUSTOMIZATION
+ * @deprecated Place browser-accessible files in the customization assets dir and use KenedoPlatform::p()->getUrlCustomizationAssets() instead
+ */
 define('CONFIGBOX_URL_CUSTOMIZATION',			        KenedoPlatform::p()->getUrlCustomization());
+
+/**
+ * @const CONFIGBOX_URL_CUSTOMIZATION_ASSETS
+ * @deprecated Use KenedoPlatform::p()->getUrlCustomizationAssets() instead
+ */
 define('CONFIGBOX_URL_CUSTOMIZATION_ASSETS',			KenedoPlatform::p()->getUrlCustomizationAssets());
+
+/**
+ * @const CONFIGBOX_URL_CUSTOMIZATION_ASSETS_CSS
+ * @deprecated Use KenedoPlatform::p()->getUrlCustomizationAssets().'/css' instead
+ */
 define('CONFIGBOX_URL_CUSTOMIZATION_ASSETS_CSS',		KenedoPlatform::p()->getUrlCustomizationAssets().'/css');
+
+/**
+ * @const CONFIGBOX_URL_CUSTOMIZATION_ASSETS_IMAGES
+ * @deprecated Use KenedoPlatform::p()->getUrlCustomizationAssets().'/images' instead
+ */
 define('CONFIGBOX_URL_CUSTOMIZATION_ASSETS_IMAGES',		KenedoPlatform::p()->getUrlCustomizationAssets().'/images');
+
+/**
+ * @const CONFIGBOX_URL_CUSTOMIZATION_ASSETS_JAVASCRIPT
+ * @deprecated Use KenedoPlatform::p()->getUrlCustomizationAssets().'/javascript' instead
+ */
 define('CONFIGBOX_URL_CUSTOMIZATION_ASSETS_JAVASCRIPT',	KenedoPlatform::p()->getUrlCustomizationAssets().'/javascript');
 
+/**
+ * @const CONFIGBOX_DIR_CUSTOMIZATION
+ * @deprecated Use KenedoPlatform::p()->getDirCustomization() instead
+ */
 define('CONFIGBOX_DIR_CUSTOMIZATION',			        KenedoPlatform::p()->getDirCustomization());
+
+/**
+ * @const CONFIGBOX_DIR_CUSTOMIZATION_ASSETS
+ * @deprecated Use KenedoPlatform::p()->getDirCustomizationAssets() instead
+ */
 define('CONFIGBOX_DIR_CUSTOMIZATION_ASSETS',			KenedoPlatform::p()->getDirCustomizationAssets());
-define('CONFIGBOX_DIR_CUSTOMIZATION_ASSETS_CSS',		KenedoPlatform::p()->getDirCustomizationAssets().'/css');
-define('CONFIGBOX_DIR_CUSTOMIZATION_ASSETS_IMAGES',		KenedoPlatform::p()->getDirCustomizationAssets().'/images');
-define('CONFIGBOX_DIR_CUSTOMIZATION_ASSETS_JAVASCRIPT',	KenedoPlatform::p()->getDirCustomizationAssets().'/javascript');
+
+/**
+ * @const CONFIGBOX_DIR_CUSTOMIZATION_ASSETS_CSS
+ * @deprecated Use KenedoPlatform::p()->getDirCustomizationAssets().DS.'css' instead
+ */
+define('CONFIGBOX_DIR_CUSTOMIZATION_ASSETS_CSS',		KenedoPlatform::p()->getDirCustomizationAssets().DS.'css');
+
+/**
+ * @const CONFIGBOX_DIR_CUSTOMIZATION_ASSETS_IMAGES
+ * @deprecated Use KenedoPlatform::p()->getDirCustomizationAssets().DS.'images' instead
+ */
+define('CONFIGBOX_DIR_CUSTOMIZATION_ASSETS_IMAGES',		KenedoPlatform::p()->getDirCustomizationAssets().DS.'images');
+
+/**
+ * @const CONFIGBOX_DIR_CUSTOMIZATION_ASSETS_JAVASCRIPT
+ * @deprecated Use KenedoPlatform::p()->getDirCustomizationAssets().DS.'javascript' instead
+ */
+define('CONFIGBOX_DIR_CUSTOMIZATION_ASSETS_JAVASCRIPT',	KenedoPlatform::p()->getDirCustomizationAssets().DS.'javascript');
 
 KenedoObserver::triggerEvent('onConfigboxInitialized');

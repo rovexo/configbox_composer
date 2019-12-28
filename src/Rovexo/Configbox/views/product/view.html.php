@@ -191,7 +191,7 @@ class ConfigboxViewProduct extends KenedoView {
 
 		// List the template paths sorted by how specific they are
 		$templates['templateOverride'] = KenedoPlatform::p()->getTemplateOverridePath('com_configbox', 'product', $this->template);
-		$templates['customTemplate'] = CONFIGBOX_DIR_CUSTOMIZATION.DS.'templates'.DS.'product'.DS.$this->template.'.php';
+		$templates['customTemplate'] = KenedoPlatform::p()->getDirCustomization().DS.'templates'.DS.'product'.DS.$this->template.'.php';
 		$templates['defaultTemplate'] = KPATH_DIR_CB.DS.'views'.DS.'product'.DS.'tmpl'.DS.'default.php';
 
 		// Try which template to use

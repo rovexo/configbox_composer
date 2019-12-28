@@ -82,7 +82,7 @@ abstract class ConfigboxCondition {
 				include_once($path.DS.$file);
 			}
 
-			$path = CONFIGBOX_DIR_CUSTOMIZATION.DS.'rule_condition_types';
+			$path = KenedoPlatform::p()->getDirCustomization().DS.'rule_condition_types';
 			if (is_dir($path)) {
 				$customConditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 				foreach ($customConditionFiles as $file) {
@@ -109,7 +109,7 @@ abstract class ConfigboxCondition {
 				self::$conditionClassNames[] = str_replace('.php', '',$file);
 			}
 
-			$path = CONFIGBOX_DIR_CUSTOMIZATION.DS.'rule_condition_types';
+			$path = KenedoPlatform::p()->getDirCustomization().DS.'rule_condition_types';
 			if (is_dir($path)) {
 				$customConditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 				foreach ($customConditionFiles as $file) {

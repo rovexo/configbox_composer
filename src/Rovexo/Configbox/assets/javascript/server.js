@@ -27,7 +27,9 @@ define(['cbj'], function (cbj) {
 			urlXhr: '',
 			useMinifiedJs: true,
 			useMinifiedCss: true,
-			useAssetsCacheBuster: true
+			useAssetsCacheBuster: true,
+			requireCustomJs: true,
+			requireCustomQuestionJs: true
 		},
 
 		/**
@@ -53,7 +55,7 @@ define(['cbj'], function (cbj) {
 				if (callback) {
 					callback();
 				}
-			})
+			});
 		},
 
 		/**

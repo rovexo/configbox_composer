@@ -226,7 +226,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		if (in_array($path, $this->stylesheetUrls) == false) {
 
 			$this->stylesheetUrls[] = $path;
-			wp_enqueue_style( uniqid(), $path );
+			wp_enqueue_style( uniqid(), $path, array(), null );
 
 		}
 
@@ -248,7 +248,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 			'async' => $async,
 		);
 
-		wp_enqueue_script(uniqid(), $path);
+		wp_enqueue_script(uniqid(), $path, array(), NULL);
 
 	}
 
@@ -362,6 +362,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 		$headers = array(
 			'From: "'.$fromName.'" <'.$from.'>',
+			'Reply-To: "'.$fromName.'" <'.$from.'>',
 		);
 
 		if ($isHtml) {
@@ -612,7 +613,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 		if (KRequest::getKeyword('tmpl') == 'component' || KRequest::getKeyword('in_modal') == '1') {
 			require(__DIR__.'/tmpl/component.php');
-			return;
+			exit();
 		}
 
 		if ($this->isAdminArea()) {
@@ -639,6 +640,10 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	}
 	
 	public function getRoute($url, $encode = true, $secure = NULL) {
+
+		if (function_exists('getRouteOverride')) {
+			return getRouteOverride($url, $encode, $secure);
+		}
 
 		$parsed = parse_url($url);
 

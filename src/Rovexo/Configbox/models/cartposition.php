@@ -123,7 +123,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 		}
 
 		if (!$productId) {
-			KLog::log('Could not create position, bi product id was passed','warning');
+			KLog::log('Could not create position, no product id was passed','warning');
 			return false;
 		}
 
@@ -131,7 +131,13 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 
 		// Insert the position
 		$time = KenedoTimeHelper::getFormattedOnly('NOW','datetime');
-		$query = "INSERT INTO `#__configbox_cart_positions` SET `cart_id` = ".intval($cartId).", `prod_id` = ".intval($productId).", `created` = '".$db->getEscaped($time)."'";
+		$query = "
+		INSERT INTO `#__configbox_cart_positions` 
+			SET 
+			    `cart_id` = ".intval($cartId).", 
+			    `prod_id` = ".intval($productId).", 
+			    `created` = '".$db->getEscaped($time)."',
+			    `finished` = 0";
 		$db->setQuery($query);
 		$succ = $db->query();
 		if (!$succ) {
@@ -759,14 +765,20 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 		$pricing['priceLabel'] = $product->priceLabel;
 		$pricing['priceRecurringLabel'] = $product->priceLabelRecurring;
 
-		$selections = ConfigboxConfiguration::getInstance()->getSelections();
+		$configuration = ConfigboxConfiguration::getInstance($positionId);
+		$selections = $configuration->getSelections();
 
 		$pricing['questions'] = array();
 		$pricing['answers'] = array();
 
 		// Set product price (see product base price)
 		$pricing['total']['productPrice'] 			= ConfigboxPrices::getProductPrice($productId, NULL, false);
+		$pricing['total']['productPriceNet'] 			= ConfigboxPrices::getProductPrice($productId, true, false);
+		$pricing['total']['productPriceGross'] 			= ConfigboxPrices::getProductPrice($productId, false, false);
+
 		$pricing['total']['productPriceRecurring'] 	= ConfigboxPrices::getProductPriceRecurring($productId, NULL, false);
+		$pricing['total']['productPriceNetRecurring'] 	= ConfigboxPrices::getProductPriceRecurring($productId, true, false);
+		$pricing['total']['productPriceGrossRecurring'] 	= ConfigboxPrices::getProductPriceRecurring($productId, false, false);
 
 		// Init total price for later adding
 		$pricing['total']['price'] 				= $pricing['total']['productPrice'];
@@ -801,7 +813,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 			}
 
 			$pricing['questions'][$questionId]['questionTitle'] = $question->title;
-			$pricing['questions'][$questionId]['outputValue'] = $question->getOutputValue();
+			$pricing['questions'][$questionId]['outputValue'] = $question->getOutputValue($configuration->getSelection($questionId));
 			$pricing['questions'][$questionId]['showInOverview'] = $question->show_in_overview;
 			$pricing['questions'][$questionId]['showButHidden'] = !isset($selections[$questionId]);
 
@@ -942,7 +954,12 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 		$pricing['total']['priceRecurringGrossFormatted']	= cbprice($pricing['total']['priceRecurringGross']);
 
 		$pricing['total']['productPriceFormatted'] 			= cbprice($pricing['total']['productPrice']);
-		$pricing['total']['productPriceRecurringFormatted'] = cbprice($pricing['total']['productPriceRecurring']);
+		$pricing['total']['productPriceNetFormatted'] 		= cbprice($pricing['total']['productPriceNet']);
+		$pricing['total']['productPriceGrossFormatted'] 	= cbprice($pricing['total']['productPriceGross']);
+
+		$pricing['total']['productPriceRecurringFormatted'] 		= cbprice($pricing['total']['productPriceRecurring']);
+		$pricing['total']['productPriceNetRecurringFormatted'] 		= cbprice($pricing['total']['productPriceNetRecurring']);
+		$pricing['total']['productPriceGrossRecurringFormatted'] 	= cbprice($pricing['total']['productPriceGrossRecurring']);
 
 		$pricing['totalPlusExtras']['priceNetFormatted']	= cbprice($pricing['totalPlusExtras']['priceNet']);
 		$pricing['totalPlusExtras']['priceTaxFormatted']	= cbprice($pricing['totalPlusExtras']['priceTax']);
@@ -1108,8 +1125,11 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 
 	}
 
-	function getMissingSelections($pageId = NULL) {
-		$configuration = ConfigboxConfiguration::getInstance($this->getId());
+	function getMissingSelections($pageId = NULL, $positionId = NULL) {
+
+		$positionId = ($positionId) ? $positionId : $this->getId();
+
+		$configuration = ConfigboxConfiguration::getInstance($positionId);
 		$productId = $configuration->getProductId();
 
 		$ass = ConfigboxCacheHelper::getAssignments();
@@ -1134,7 +1154,8 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 						'id' => $question->id,
 						'title' => $question->title,
 						'productId' => $productId,
-						'pageId' => $question->page_id
+						'pageId' => $question->page_id,
+						'message' => KText::_('MESSAGE_MISSING_SELECTION'),
 					);
 					$missingQuestions[] = $missingQuestion;
 				}

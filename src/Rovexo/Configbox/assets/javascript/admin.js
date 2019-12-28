@@ -241,7 +241,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'configbox/ruleEditor', '
 				cbj(document).on('change','#view-adminoptionassignment #option_id', function(){
 					var optionId = cbj(this).val();
 					var urlTemplate = cbj('#option_assignment_load_url').val();
-					var url = urlTemplate.replace('%', optionId);
+					var url = urlTemplate.replace('placeholder_option_id', optionId);
 
 					cbrequire(['tinyMCE'], function(tinyMCE) {
 						if (tinyMCE.majorVersion > 3) {

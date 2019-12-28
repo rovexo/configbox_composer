@@ -504,7 +504,7 @@ class KenedoView {
 		// Joomla-typical template override location
 		$templatePaths['templateOverride'] 	= KenedoPlatform::p()->getTemplateOverridePath($this->component, $viewName, $template);
 		// Custom template for the view's template
-		$templatePaths['customTemplate'] 	= CONFIGBOX_DIR_CUSTOMIZATION .DS. 'templates' .DS. $viewName .DS. $template.'.php';
+		$templatePaths['customTemplate'] 	= KenedoPlatform::p()->getDirCustomization() .DS. 'templates' .DS. $viewName .DS. $template.'.php';
 		// Original template for that view
 		$templatePaths['defaultTemplate'] 	= dirname($this->getViewPath()).DS.'tmpl'.DS.$template.'.php';
 
@@ -727,7 +727,10 @@ class KenedoView {
 		}
 
 		$urls[] = KenedoPlatform::p()->getUrlAssets().'/css/general.css';
-		$urls[] = KenedoPlatform::p()->getUrlCustomizationAssets().'/css/custom.css';
+
+		if (file_exists(KenedoPlatform::p()->getDirCustomizationAssets().'/css/custom.css')) {
+			$urls[] = KenedoPlatform::p()->getUrlCustomizationAssets().'/css/custom.css';
+		}
 
 		return $urls;
 

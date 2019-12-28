@@ -288,7 +288,7 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 		// Collect all possible template paths (in the order the should be chosen from)
 		$templates = array();
 		$templates['templateOverride'] 	= KenedoPlatform::p()->getTemplateOverridePath('com_configbox', 'configuratorpage', $layoutName);
-		$templates['customTemplate'] 	= CONFIGBOX_DIR_CUSTOMIZATION.DS.'templates'.DS.'configuratorpage'.DS. $layoutName .'.php';
+		$templates['customTemplate'] 	= KenedoPlatform::p()->getDirCustomization().DS.'templates'.DS.'configuratorpage'.DS. $layoutName .'.php';
 		$templates['defaultTemplate'] 	= KPATH_DIR_CB.DS.'views'.DS.'configuratorpage'.DS.'tmpl'.DS.'default.php';
 
         if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento2')) {
@@ -408,17 +408,25 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 		// Set CSS classes for navigation buttons, indicates what shall be hidden
 		if (count($this->missingSelections) && $this->blockNavigationOnMissing) {
 			$this->nextButtonClasses    = 'configbox-disabled cb-page-nav-next wait-for-xhr';
-			$this->finishButtonClasses  = 'configbox-disabled add-to-cart-button cb-page-nav-finish wait-for-xhr trigger-ga-track-add-to-cart';
+			$this->finishButtonClasses  = 'configbox-disabled add-to-cart-button cb-page-nav-finish wait-for-xhr trigger-add-to-cart trigger-ga-track-add-to-cart';
 		}
 		else {
 			$this->nextButtonClasses    = 'cb-page-nav-next wait-for-xhr';
-			$this->finishButtonClasses  = 'cb-page-nav-finish add-to-cart-button wait-for-xhr trigger-ga-track-add-to-cart';
+			$this->finishButtonClasses  = 'cb-page-nav-finish add-to-cart-button wait-for-xhr trigger-add-to-cart trigger-ga-track-add-to-cart';
 		}
 
 		// This class let's the system know that all xhr request need to finish before navigating to another page
 		$this->prevButtonClasses = 'cb-page-nav-prev wait-for-xhr';
 
-		$this->urlFinishButton  = KLink::getRoute('index.php?option=com_configbox&controller=cart&task=finishConfiguration&cart_position_id='.intval($this->cartPositionId) );
+		if ($this->prevPage) {
+			$this->prevButtonClasses .= ' page-id-'.$this->prevPage->id;
+		}
+
+		if ($this->nextPage) {
+			$this->nextButtonClasses .= ' page-id-'.$this->nextPage->id;
+		}
+
+		$this->urlFinishButton  = '';
 
 		// Set the HTML document's title
 		if (count($pages) == 1) {
@@ -505,7 +513,7 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 		elseif ($this->product->visualization_type == 'composite' && ConfigboxProductImageHelper::hasProductImage($this->cartPositionId)) {
 			$this->showVisualization = true;
 			$visualizationView = KenedoView::getView('ConfigboxViewBlockvisualization');
-			$visualizationView->setPageId($this->pageId)->setPositionId($this->cartPositionId);
+			$visualizationView->setPositionId($this->cartPositionId);
 			$this->visualizationHtml = $visualizationView->getHtml();
 		}
 		else {

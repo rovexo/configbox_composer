@@ -2458,7 +2458,7 @@ if (!is_file($defaultImage) && is_file($defaultImage)) {
 /* COPY THE DEFAULT PRODUCT IMAGE IF MISSING - END */
 
 /* REPAIR INCORRECTLY CREATED LANGUAGE OVERRIDE FILES (NO .INI EXTENSION) - START */
-$baseLangFolder = CONFIGBOX_DIR_CUSTOMIZATION.DS.'language_overrides';
+$baseLangFolder = KenedoPlatform::p()->getDirCustomization().DS.'language_overrides';
 
 
 if( is_file($baseLangFolder.DS.'frontend'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox')) {
@@ -3510,15 +3510,15 @@ if (is_dir($newDir) && is_dir($oldDir)) {
 }
 
 // Rename old template override folder for the configurator page
-$oldDir = CONFIGBOX_DIR_CUSTOMIZATION.DS.'templates'.DS.'configuration_page';
-$newDir = CONFIGBOX_DIR_CUSTOMIZATION.DS.'templates'.DS.'configuratorpage';
+$oldDir = KenedoPlatform::p()->getDirCustomization().DS.'templates'.DS.'configuration_page';
+$newDir = KenedoPlatform::p()->getDirCustomization().DS.'templates'.DS.'configuratorpage';
 if (!is_dir($newDir) && is_dir($oldDir)) {
 	rename($oldDir,$newDir);
 }
 
 // Rename old template override folder for the listing
-$oldDir = CONFIGBOX_DIR_CUSTOMIZATION.DS.'templates'.DS.'product_listing';
-$newDir = CONFIGBOX_DIR_CUSTOMIZATION.DS.'templates'.DS.'productlisting';
+$oldDir = KenedoPlatform::p()->getDirCustomization().DS.'templates'.DS.'product_listing';
+$newDir = KenedoPlatform::p()->getDirCustomization().DS.'templates'.DS.'productlisting';
 if (!is_dir($newDir) && is_dir($oldDir)) {
 	rename($oldDir,$newDir);
 }

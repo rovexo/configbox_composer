@@ -45,14 +45,20 @@ class ConfigboxControllerConfiguratorpage extends KenedoController {
 		$this->getDefaultView()->setPageId(KRequest::getInt('page_id'))->display();
 	}
 
+	function getPageHtml() {
+		$pageId = KRequest::getInt('pageId', 0);
+		echo $this->getDefaultView()->setPageId($pageId)->getHtml();
+	}
+
 	/**
 	 * Renders JSON data about with missing selections for the current cart position.
 	 *
 	 * @throws Exception
 	 */
 	function getMissingSelections() {
+		$positionId = KRequest::getInt('cartPositionId', null);
 		$positionModel = KenedoModel::getModel('ConfigboxModelCartposition');
-		$missingSelections = $positionModel->getMissingSelections();
+		$missingSelections = $positionModel->getMissingSelections(null, $positionId);
 		echo json_encode($missingSelections);
 	}
 
@@ -114,6 +120,57 @@ class ConfigboxControllerConfiguratorpage extends KenedoController {
 
 		KenedoPlatform::p()->setDocumentMimeType('application/json');
 		echo json_encode($response);
+
+	}
+
+	/**
+	 * Takes in cartPositionId from request data and adds product to the cart.
+	 * Responds with object in JSON (success: true|false, redirectUrl to cart).
+	 * @throws Exception
+	 */
+	function addConfigurationToCart() {
+
+		try {
+			$positionId = KRequest::getInt('cartPositionId');
+
+			if (!$positionId) {
+				throw new Exception('No cart position ID provided.');
+			}
+
+			$positionModel = KenedoModel::getModel('ConfigboxModelCartposition');
+
+			if ($positionModel->userOwnsPosition($positionId) == false) {
+				throw new Exception('Cart position does not exist or does not belong to your user account.');
+			}
+
+			$position = $positionModel->getPosition($positionId);
+			if (!$position) {
+				throw new Exception('Cart position does not exist or does not belong to your user account.');
+			}
+
+			// Check for missing elements
+			$missingSelections = $positionModel->getMissingSelections();
+			if (count($missingSelections) !== 0) {
+				throw new Exception('Configuration is missing selections.');
+			}
+
+			// Set position's flag to finished
+			$positionModel->editPosition($positionId, array('finished'=>1));
+
+			// Fire the 'add to cart' event
+			$cartModel = KenedoModel::getModel('ConfigboxModelCart');
+			$cartDetails = $cartModel->getCartDetails($position->cart_id);
+
+			KenedoObserver::triggerEvent('onConfigBoxAddToCart', array(&$cartDetails));
+
+			$url = KLink::getRoute($cartDetails->redirectURL, false);
+
+			echo ConfigboxJsonResponse::makeOne()->setSuccess(true)->setCustomData('redirectUrl', $url)->toJson();
+		}
+		catch (Exception $e) {
+			$msg = KText::_('FEEDBACK_ADD_TO_CART_FAILED');
+			echo ConfigboxJsonResponse::makeOne()->setSuccess(false)->setFeedback($msg)->toJson();
+		}
 
 	}
 

@@ -4,8 +4,10 @@ defined('CB_VALID_ENTRY') or die();
  * @var KenedoPlatformStandalone $this
  */
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $this->getLanguageTag();?>">
 <head>
+<title><?php echo $this->getDocumentTitle();?></title>
 <base href="<?php echo KPATH_SCHEME.'://'.$_SERVER['HTTP_HOST'];?>" />
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="<?php echo KPATH_URL_BASE.'/components/com_configbox/external/kenedo/platforms/standalone/tmpl/css/standalone.css';?>" type="text/css" />

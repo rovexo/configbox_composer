@@ -1515,51 +1515,36 @@ class ConfigboxCacheHelper {
 	 */
 	public static function &getCurrencies() {
 
-		// If memo-cache for currencies is empty..
-		if (empty(self::$cache['currencies'])) {
+		// On M1/M2 we don't look into CB's currency list, but fetch Magento's base and current currency. Then we make
+		// CB think there is just one currency, Magento's current currency and set it as base currency.
+		if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento2')) {
 
-			// ..get from persistent cache..
-			self::$cache['currencies'] = self::getFromCache('currencies');
+			if (empty(self::$cache['currencies'])) {
 
-			// ..is that cache is empty too, get to populate it
-			if (self::$cache['currencies'] === null) {
-
-				// Magento get's special treatment later
-				if ((KenedoPlatform::getName() != 'magento') && (KenedoPlatform::getName() != 'magento2')) {
-					$db = KenedoPlatform::getDb();
-					$query = "SELECT * FROM `#__configbox_currencies` WHERE `published` = '1'";
-					$db->setQuery($query);
-					$currencies = $db->loadObjectList('id');
-					self::$cache['currencies'] = $currencies;
-					self::writeToCache('currencies', $currencies);
-				}
-
-			}
-
-			// For Magento, we sneak in currency data into the memo cache like this (it'll be the default and base currency)
-			if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento2')) {
-
-                if (KenedoPlatform::getName() == 'magento') {
-                    $baseCurrencyCode = Mage::app()->getStore()->getBaseCurrencyCode();
-                    $baseCurrency = Mage::app()->getLocale()->currency($baseCurrencyCode);
-                    $currentCurrencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
+				if (KenedoPlatform::getName() == 'magento') {
+					$baseCurrencyCode = Mage::app()->getStore()->getBaseCurrencyCode();
+					$currentCurrencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
                     $currentCurrency = Mage::app()->getLocale()->currency($currentCurrencyCode);
+					$currentCurrencyLabel = $currentCurrency->getName();
+					$currentCurrencySymbol = $currentCurrency->getSymbol();
 
-                    $rates = Mage::getModel('directory/currency')->getCurrencyRates($baseCurrencyCode, array($currentCurrencyCode));
-                } else if (KenedoPlatform::getName() == 'magento2') {
-                    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-                    $storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
-                    $currencyFactory = $objectManager->get('Magento\Directory\Model\CurrencyFactory')->create();
+					$rates = Mage::getModel('directory/currency')->getCurrencyRates($baseCurrencyCode, array($currentCurrencyCode));
+				} else if (KenedoPlatform::getName() == 'magento2') {
+					$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+					$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+					$currencyModel = $objectManager->get('Magento\Directory\Model\Currency');
+                    $localeResolver = $objectManager->get('\Magento\Framework\Locale\ResolverInterface');
 
                     $baseCurrencyCode = $storeManager->getStore()->getBaseCurrencyCode();
-                    $baseCurrency = $currencyFactory->load($baseCurrencyCode);
                     $currentCurrencyCode = $storeManager->getStore()->getCurrentCurrencyCode();
-                    $currentCurrency = $currencyFactory->load($currentCurrencyCode);
+                    $currencyResource = (new \Magento\Framework\Locale\Bundle\CurrencyBundle())->get($localeResolver->getLocale())['Currencies'] ?: [];
+                    $currentCurrencyLabel = $currencyResource[$currentCurrencyCode][1];
+                    $currentCurrencySymbol = $currencyResource[$currentCurrencyCode][0];
 
-                    $rates = $currencyFactory->getCurrencyRates($baseCurrencyCode, array($currentCurrencyCode));
-                }
+					$rates = $currencyModel->getCurrencyRates($baseCurrencyCode, array($currentCurrencyCode));
+				}
 
-                $multiplier = 1;
+                $multiplier = !empty($rates[$currentCurrencyCode]) ? $rates[$currentCurrencyCode] : 1;
 
 				$currencies = array();
 
@@ -1568,23 +1553,46 @@ class ConfigboxCacheHelper {
 				$currency->default = 1;
 				$currency->base = 1;
 				/** @noinspection PhpUndefinedMethodInspection */
-				$currency->title         = $currentCurrency->getName();
+				$currency->title         = $currentCurrencyLabel;
 				$currency->code          = $currentCurrencyCode;
 				$currency->multiplicator = $multiplier;
 				/** @noinspection PhpUndefinedMethodInspection */
-				$currency->symbol    = $baseCurrency->getSymbol();
+				$currency->symbol    = $currentCurrencySymbol;
 				$currency->published = 1;
 				$currency->ordering  = 1;
 
 				$currencies[1] = $currency;
 
 				self::$cache['currencies'] = $currencies;
+
 			}
-			// For Joomla and any future others, append the translatable title (shouldn't be cached)
-			else {
-				foreach (self::$cache['currencies'] as $currency) {
-					$currency->title = ConfigboxCacheHelper::getTranslation('#__configbox_strings', 6, $currency->id);
-				}
+
+			return self::$cache['currencies'];
+
+		}
+
+
+		// Now for non Magento platforms. Try from memo cache first..
+		if (empty(self::$cache['currencies'])) {
+
+			// ..if empty get from persistent cache..
+			self::$cache['currencies'] = self::getFromCache('currencies');
+
+			// ..is that cache is empty too, get to populate it
+			if (self::$cache['currencies'] === null) {
+
+				$db = KenedoPlatform::getDb();
+				$query = "SELECT * FROM `#__configbox_currencies` WHERE `published` = '1'";
+				$db->setQuery($query);
+				$currencies = $db->loadObjectList('id');
+				self::$cache['currencies'] = $currencies;
+				self::writeToCache('currencies', $currencies);
+
+			}
+
+			// We add the translated title in the current language
+			foreach (self::$cache['currencies'] as $currency) {
+				$currency->title = ConfigboxCacheHelper::getTranslation('#__configbox_strings', 6, $currency->id);
 			}
 
 		}
@@ -1636,7 +1644,7 @@ class ConfigboxCacheHelper {
 
 		if (self::$memohasApcu === NULL) {
 
-			$loadedAndEnabled = extension_loaded('apcu') && ini_get('apc.enabled') == true;
+			$loadedAndEnabled = extension_loaded('apcu') && ini_get('apc.enabled') == true && ini_get('apc.slam_defense') == 0;
 
 			// In case we run via CLI, make sure apc.enable_cli is on
 			if (in_array(php_sapi_name(), array('cli', 'cli-server'))) {

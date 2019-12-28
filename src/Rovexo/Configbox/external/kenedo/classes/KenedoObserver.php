@@ -32,7 +32,7 @@ class KenedoObserver {
 
 		if ($connectors) {
 
-			$path = CONFIGBOX_DIR_CUSTOMIZATION .'/custom_observers';
+			$path = KenedoPlatform::p()->getDirCustomization() .'/custom_observers';
 
 			foreach ($connectors as $connector) {
 				if (is_file($path.DS.$connector->file) && ($connector->after_system == (int)$afterSystem)) {

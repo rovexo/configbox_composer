@@ -189,12 +189,12 @@ class ConfigboxModelAdmintemplates extends KenedoModel {
 	
 		$success = unlink($file);
 	
-		$baseFolder = CONFIGBOX_DIR_CUSTOMIZATION .DS. 'templates';
+		$baseFolder = KenedoPlatform::p()->getDirCustomization() .DS. 'templates';
 	
 		if (is_dir($baseFolder . DS . 'element' .DS. $templateName)) {
 				
 			$files = KenedoFileHelper::getFiles($baseFolder . DS . 'element' .DS. $templateName, "\.php$");
-				
+
 			if (count($files) == 0) {
 				KenedoFileHelper::deleteFolder($baseFolder . DS . 'element' .DS. $templateName);
 			}
@@ -212,7 +212,7 @@ class ConfigboxModelAdmintemplates extends KenedoModel {
 	
 	function getFilename($templateType, $templateName) {
 	
-		$baseFolder = CONFIGBOX_DIR_CUSTOMIZATION .DS. 'templates';
+		$baseFolder = KenedoPlatform::p()->getDirCustomization() .DS. 'templates';
 	
 		switch ($templateType) {
 	
@@ -249,7 +249,7 @@ class ConfigboxModelAdmintemplates extends KenedoModel {
 		
 		$filter = "\.php$";
 		
-		$elementFolder = CONFIGBOX_DIR_CUSTOMIZATION .DS. 'templates'.DS.'element';
+		$elementFolder = KenedoPlatform::p()->getDirCustomization() .DS. 'templates'.DS.'element';
 		
 		$folders = KenedoFileHelper::getFolders($elementFolder,'',false,false);
 		
@@ -262,19 +262,19 @@ class ConfigboxModelAdmintemplates extends KenedoModel {
 			}
 		}
 		
-		$pageFolder = CONFIGBOX_DIR_CUSTOMIZATION .DS.'templates'.DS.'configuratorpage';
+		$pageFolder = KenedoPlatform::p()->getDirCustomization() .DS.'templates'.DS.'configuratorpage';
 		$files = KenedoFileHelper::getFiles($pageFolder,$filter,false,false);
 		foreach ($files as $file) {
 			$templates['template_page'][preg_replace('#\.[^.]*$#', '', $file)] = $pageFolder.DS.$file;
 		}
 		
-		$productFolder = CONFIGBOX_DIR_CUSTOMIZATION .DS.'templates'.DS.'product';
+		$productFolder = KenedoPlatform::p()->getDirCustomization() .DS.'templates'.DS.'product';
 		$files = KenedoFileHelper::getFiles($productFolder,$filter,false,false);
 		foreach ($files as $file) {
 			$templates['template_product'][preg_replace('#\.[^.]*$#', '', $file)] = $productFolder.DS.$file;
 		}
 		
-		$productListingFolder = CONFIGBOX_DIR_CUSTOMIZATION .DS.'templates'.DS.'productlisting';
+		$productListingFolder = KenedoPlatform::p()->getDirCustomization() .DS.'templates'.DS.'productlisting';
 		$files = KenedoFileHelper::getFiles($productListingFolder,$filter,false,false);
 		foreach ($files as $file) {
 			$templates['template_listing'][preg_replace('#\.[^.]*$#', '', $file)] = $productListingFolder.DS.$file;
@@ -286,7 +286,7 @@ class ConfigboxModelAdmintemplates extends KenedoModel {
 	
 	function getConfiguratorPageTemplates() {
 		
-		$folder = CONFIGBOX_DIR_CUSTOMIZATION .DS.'templates'.DS.'configuratorpage';
+		$folder = KenedoPlatform::p()->getDirCustomization() .DS.'templates'.DS.'configuratorpage';
 		$files = KenedoFileHelper::getFiles($folder, '.php$', false, false);
 		
 		$fileoption = new stdClass;
@@ -311,7 +311,7 @@ class ConfigboxModelAdmintemplates extends KenedoModel {
 	
 	function getElementTemplates() {
 				
-		$folder = CONFIGBOX_DIR_CUSTOMIZATION .DS.'templates'.DS.'element';
+		$folder = KenedoPlatform::p()->getDirCustomization() .DS.'templates'.DS.'element';
 						
 		$folders = KenedoFileHelper::getFolders($folder,'',false,false);
 		$fileoption = new stdClass();
@@ -337,7 +337,7 @@ class ConfigboxModelAdmintemplates extends KenedoModel {
 	
 	function getProductTemplates() {
 		
-		$folder = CONFIGBOX_DIR_CUSTOMIZATION .DS.'templates'.DS.'product';
+		$folder = KenedoPlatform::p()->getDirCustomization() .DS.'templates'.DS.'product';
 		$filter = ".php$";
 		
 		$files = KenedoFileHelper::getFiles($folder,$filter,false,false);
@@ -364,7 +364,7 @@ class ConfigboxModelAdmintemplates extends KenedoModel {
 	
 	function getProductsTemplates() {
 		
-		$folder = CONFIGBOX_DIR_CUSTOMIZATION .DS.'templates'.DS.'productlisting';
+		$folder = KenedoPlatform::p()->getDirCustomization() .DS.'templates'.DS.'productlisting';
 		$filter = ".php$";
 		
 		$files = KenedoFileHelper::getFiles($folder,$filter,false,false);

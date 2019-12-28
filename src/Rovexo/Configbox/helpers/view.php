@@ -79,6 +79,9 @@ class ConfigboxViewHelper {
 			$urlMainJs = KPATH_URL_ASSETS.'/main.js'.$queryStringPart;
 		}
 
+		$requireCustomJs = file_exists(KenedoPlatform::p()->getDirCustomizationAssets().'/javascript/custom.js');
+		$requireCustomQuestionJs = file_exists(KenedoPlatform::p()->getDirCustomizationAssets().'/javascript/custom_questions.js');
+
 		// We put a whole lot of settings as JSON string in a data attribute of the requireJS script tag
 		// It will be read and stored in the main.js file and ready to use via the configbox JS module (configbox.config)
 		$appConfig = array(
@@ -96,7 +99,9 @@ class ConfigboxViewHelper {
 			'urlXhr'            => KLink::getRoute('index.php?option=com_configbox&format=raw', false),
 			'useMinifiedJs'		=> $useMinifiedJs,
 			'useMinifiedCss'	=> $useMinifiedCss,
-			'useAssetsCacheBuster' => $useCacheBuster,
+			'useAssetsCacheBuster' 		=> $useCacheBuster,
+			'requireCustomJs'			=> $requireCustomJs,
+			'requireCustomQuestionJs'	=> $requireCustomQuestionJs,
 		);
 
 		// You can create a function called 'cbGetCustomRequirePaths' to add paths to the requireJS configuration

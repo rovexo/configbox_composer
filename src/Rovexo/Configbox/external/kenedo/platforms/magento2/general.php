@@ -1,9 +1,6 @@
 <?php
 
 
-use Magento\Framework\UrlInterface;
-use Magento\Framework\View\Element\Template\Context;
-
 class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	
 	protected $db;
@@ -202,9 +199,12 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
         return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::LOG);
 	}
 
-	public function getLanguageTag() {
-		return 'en-US';
-	}
+    public function getLanguageTag() {
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $store = $objectManager->get('Magento\Store\Api\Data\StoreInterface');
+        $locale = str_replace('_', '-', $store->getLocaleCode());
+        return $locale;
+    }
 	
 	public function getLanguageUrlCode($languageTag = NULL) {
 		if ($languageTag == NULL) {
@@ -549,24 +549,28 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		return 0;
 	}
 
-	public function getLanguages() {
-        $languages = $this->locale->getOptionLocales();
+    public function getLanguages() {
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+        $scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
+        $languages = [];
 
-		$return = array();
-		foreach ($languages as $language) {
-			$tag = str_replace('_', '-', $language['value']);
+        $stores = $storeManager->getStores();
+        foreach($stores as $store) {
+            $localeCode = $scopeConfig->getValue('general/locale/code', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getStoreId());
+            $tag = str_replace('_', '-', $localeCode);
 
-			//  Ignore languages which don't have language code in xx-XX format
-			if (strlen($tag) != 5) {
-			    continue;
-            }
+            $language = \Locale::getPrimaryLanguage($tag);
+            $country = \Locale::getRegion($tag);
+            $allLanguages = (new \Magento\Framework\Locale\Bundle\LanguageBundle())->get($tag)['Languages'];
+            $allCountries = (new \Magento\Framework\Locale\Bundle\RegionBundle())->get($tag)['Countries'];
 
-			$label = $language['label'];
-			$return[$tag] = new KenedoObject(array('tag'=>$tag, 'label'=>$label, 'urlCode'=>$tag));
-		}
+            $label = $allLanguages[$language] . ' (' . $allCountries[$country] . ')';
 
-		return $return;
-	}
+            $languages[] = new KenedoObject(array('tag'=>$tag, 'label'=>$label, 'urlCode'=>$tag));
+        }
+        return $languages;
+    }
 	
 	//TODO: Implement
 	public function platformUserEditFormIsReachable() {
@@ -600,21 +604,57 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
         return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::CACHE);
 	}
 
+	protected $memoGetDirCustomization;
+
+	/**
+	 * @return string Filesystem path to the customization dir.
+	 */
 	public function getDirCustomization() {
-        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::APP) . DS . 'code' . DS . 'Rovexo' . DS . 'Configbox';
-	}
+
+		if ($this->memoGetDirCustomization === null) {
+
+			if ($this->customizationIsModuleInstalled()) {
+				$this->memoGetDirCustomization = $this->moduleReader->getModuleDir(\Magento\Framework\Module\Dir::MODULE_VIEW_DIR, "Rovexo_ConfigboxCustomizations").DS.'customizations';
+			}
+			else {
+				$this->memoGetDirCustomization = $this->getTmpPath();
+			}
+
+		}
+
+		return $this->memoGetDirCustomization;
+
+    }
 
 	public function getUrlCustomization() {
         return '';
 	}
 
+	protected $memoGetDirCustomizationAssets;
+
+	/**
+	 * @return string Filesystem path to the customization assets dir.
+	 */
 	public function getDirCustomizationAssets() {
-        return $this->moduleReader->getModuleDir(\Magento\Framework\Module\Dir::MODULE_VIEW_DIR, "Rovexo_Configbox") . DS . "base" . DS . "web";
+
+		if ($this->memoGetDirCustomizationAssets === null) {
+
+			if ($this->customizationIsModuleInstalled()) {
+				$this->memoGetDirCustomizationAssets = $this->moduleReader->getModuleDir(\Magento\Framework\Module\Dir::MODULE_VIEW_DIR, "Rovexo_ConfigboxCustomizations") . DS . "base" . DS . "web";
+			}
+			else {
+				$this->memoGetDirCustomizationAssets = $this->getTmpPath();
+			}
+
+		}
+
+		return $this->memoGetDirCustomizationAssets;
+
 	}
 
 	public function getUrlCustomizationAssets() {
         $url = $this->assetRepository->getUrlWithParams('', array('_secure' => $this->context->getRequest()->isSecure()));
-        return $url . DS . "Rovexo_Configbox";
+        return $url.'/Rovexo_ConfigboxCustomizations';
 	}
 
 	public function getDirCustomizationSettings() {
@@ -715,5 +755,27 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
             <script type="<?php echo hsc($asset['type']);?>" async="<?php echo ($asset['async']) ? 'true':'false';?>" defer="<?php echo ($asset['defer']) ? 'true':'false';?>"></script>
         <?php }
     }
+
+    public function echoOutput($output) {
+		echo $output;
+		exit();
+    }
+
+    protected $memoCustomizationIsModuleInstalled;
+
+	/**
+	 * @return bool
+	 */
+    protected function customizationIsModuleInstalled() {
+
+    	if ($this->memoCustomizationIsModuleInstalled === NULL) {
+			$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+			$moduleManager = $objectManager->get('\Magento\Framework\Module\Manager');
+			$this->memoCustomizationIsModuleInstalled = $moduleManager->isEnabled('Rovexo_ConfigboxCustomizations');
+	    }
+
+		return $this->memoCustomizationIsModuleInstalled;
+
+	}
 
 }

@@ -597,6 +597,13 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'modelMethod'=>'getRecords',
 
 			'positionForm'=>36000,
+			'appliesWhen'=>array(
+				'question_type' => array(
+					'textbox',
+					'slider',
+					'textarea',
+				),
+			),
 		);
 
 		$propDefs['multiplicator'] = array(
@@ -638,6 +645,11 @@ class ConfigboxModelAdminelements extends KenedoModel {
 
 			'appliesWhen'=>array(
 				'joinedby_page_id_to_adminpages_joinedby_product_id_to_adminproducts_use_recurring_pricing' => '1',
+				'question_type' => array(
+					'textbox',
+					'slider',
+					'textarea',
+				),
 			),
 			'positionForm'=>39000,
 		);
@@ -654,13 +666,26 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'modelMethod'=>'getRecords',
 
 			'positionForm'=>40000,
+			'appliesWhen'=>array(
+				'question_type' => array(
+					'textbox',
+					'slider',
+					'textarea',
+				),
+			),
 		);
 
 		$propDefs['calc_end'] = array(
 			'name'=>'calc_end',
 			'type'=>'groupend',
-			'opentable'=>0,
 			'positionForm'=>41000,
+			'appliesWhen'=>array(
+				'question_type' => array(
+					'textbox',
+					'slider',
+					'textarea',
+				),
+			),
 		);
 
 		$propDefs['desc_start'] = array(
@@ -699,7 +724,6 @@ class ConfigboxModelAdminelements extends KenedoModel {
 		$propDefs['desc_end'] = array(
 			'name'=>'desc_end',
 			'type'=>'groupend',
-			'opentable'=>0,
 			'positionForm'=>45000,
 		);
 
@@ -1051,12 +1075,17 @@ class ConfigboxModelAdminelements extends KenedoModel {
 				return false;
 			}
 
+			if ($data->question_type == 'images' && $answerCount == 0) {
+				$this->setError(KText::_('VALIDATION_FEEDBACK_QUESTION_BAD_ANSWERS_IMAGES'));
+				return false;
+			}
+
 			if (in_array($data->question_type, array('textbox', 'textarea', 'upload', 'slider', 'calendar', 'choices', 'colorpicker')) && $answerCount != 0) {
 				$this->setError(KText::_('VALIDATION_FEEDBACK_QUESTION_BAD_ANSWERS_FREE'));
 				return false;
 			}
 
-			if (in_array($data->question_type, array('radiobuttons', 'dropdown', 'images')) && $answerCount < 2) {
+			if (in_array($data->question_type, array('radiobuttons', 'dropdown')) && $answerCount < 2) {
 				$this->setError(KText::_('VALIDATION_FEEDBACK_QUESTION_BAD_ANSWERS_MULTIPLE'));
 				return false;
 			}
@@ -1245,7 +1274,7 @@ class ConfigboxModelAdminelements extends KenedoModel {
 	}
 
 	function getCustomQuestionTypes() {
-		$folder = CONFIGBOX_DIR_CUSTOMIZATION.'/views/';
+		$folder = KenedoPlatform::p()->getDirCustomization().'/views/';
 		$folders = KenedoFileHelper::getFolders($folder, 'question_');
 
 		$types = array();

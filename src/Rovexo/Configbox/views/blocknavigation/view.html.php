@@ -98,7 +98,7 @@ class ConfigboxViewBlocknavigation extends KenedoView {
 
 		foreach ($this->pages as $page) {
 			$this->listItemCssClasses[$page->id] = 'page page-'.$page->id . ( ($page->id == $this->pageId ) ? ' active current':'');
-			$this->tabLinkClasses[$page->id] = 'wait-for-xhr';
+			$this->tabLinkClasses[$page->id] = 'wait-for-xhr cb-tab-nav-link page-id-'.$page->id;
 		}
 
 		$wrapperClasses = array(

@@ -389,24 +389,18 @@ if (ConfigboxUpdateHelper::tableExists('#__configbox_elements') == true) {
 }
 
 // Create the customization dir if not there already
-if (!is_dir(CONFIGBOX_DIR_CUSTOMIZATION)) {
-	mkdir(CONFIGBOX_DIR_CUSTOMIZATION, 0755, true);
-}
+//if (!is_dir(KenedoPlatform::p()->getDirCustomization())) {
+//	mkdir(KenedoPlatform::p()->getDirCustomization(), 0755, true);
+//}
 
 // Rename or create the customization assets dir
-$oldAssetsPath = CONFIGBOX_DIR_CUSTOMIZATION.'/style_overrides';
-$newAssetsPath = CONFIGBOX_DIR_CUSTOMIZATION.'/assets';
+$oldAssetsPath = KenedoPlatform::p()->getDirCustomization().'/style_overrides';
+$newAssetsPath = KenedoPlatform::p()->getDirCustomizationAssets();
 
 if (is_dir($oldAssetsPath)) {
 	$success = rename($oldAssetsPath, $newAssetsPath);
 	if ($success == false) {
 		KLog::log('Could not rename customization assets folder during upgrade', 'upgrade_errors');
-	}
-}
-else {
-	$success = mkdir($newAssetsPath, 0755);
-	if ($success == false) {
-		KLog::log('Could not create customization assets folder during upgrade', 'upgrade_errors');
 	}
 }
 
@@ -425,12 +419,12 @@ foreach ($renamings as $old=>$new) {
 		continue;
 	}
 
-	// Create whatever folder the new file location is in if not there yet
-	if (!is_dir(dirname($new))) {
-		mkdir(dirname($new), 0777, true);
-	}
-
 	if (file_exists($old) == true && file_exists($new) == false) {
+
+		// Create whatever folder the new file location is in if not there yet
+		if (!is_dir(dirname($new))) {
+			mkdir(dirname($new), 0777, true);
+		}
 
 		$success = rename($old, $new);
 
@@ -451,34 +445,24 @@ foreach ($renamings as $old=>$new) {
 		}
 	}
 
-	// Create the files if there is none yet
-	if (file_exists($old) == false && file_exists($new) == false) {
-
-		// leave out minified files (just in case the starting situation was 'regular file there' but no min file
-		if (strpos(basename($new), '.min.') !== false) {
-			file_put_contents($new, '');
-		}
-
-	}
-
 }
 
 /* New files in customization folder: custom_questions.js */
-$newFiles = array(
-	CONFIGBOX_DIR_CUSTOMIZATION_ASSETS_JAVASCRIPT.'/custom_questions.js',
-);
-
-foreach ($newFiles as $newFile) {
-
-	if (!is_dir(dirname($newFile))) {
-		mkdir(dirname($newFile), 0777, true);
-	}
-
-	if (!is_file($newFile)) {
-		file_put_contents($newFile, '');
-	}
-
-}
+//$newFiles = array(
+//	KenedoPlatform::p()->getDirCustomizationAssets().'/javascript/custom_questions.js',
+//);
+//
+//foreach ($newFiles as $newFile) {
+//
+//	if (!is_dir(dirname($newFile))) {
+//		mkdir(dirname($newFile), 0777, true);
+//	}
+//
+//	if (!is_file($newFile)) {
+//		file_put_contents($newFile, '');
+//	}
+//
+//}
 
 
 if (ConfigboxUpdateHelper::tableExists('#__configbox_cart_position_configurations') == true) {

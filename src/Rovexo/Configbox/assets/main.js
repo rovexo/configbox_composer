@@ -52,7 +52,7 @@
 			'configbox/calcEditor': 		'javascript/calc-editor',
 			// Watch out with jQuery - we changed the JS file a bit. We changed the define call to make it register unnamed
 			// Also, we made it not write itself in the global scope (see comments with 'rovexo')
-			'cbj': 							'kenedo/external/jquery-3.3.1/jquery',
+			'cbj': 							'kenedo/external/jquery-3.4.1/jquery',
 			// All the plugins got wrapped in a define requiring cbj, jqueryUI's define call was changed to require cbj
 			'cbj.ui': 						'kenedo/external/jquery.ui-1.12.1/jquery-ui',
 			'cbj.bootstrap': 				'kenedo/external/bootstrap-3.3.7/js/bootstrap',
@@ -61,7 +61,7 @@
 			'cbj.dragtable':				'kenedo/external/jquery.dragtable-3.0.0/jquery.dragtable',
             'cbj.spectrum':				    'kenedo/external/jquery.spectrum-1.8.0/spectrum',
 			'cbj.touchpunch':			    'kenedo/external/jquery.ui.touch-punch-0.2.3/jquery.ui.touch-punch',
-			'tinyMCE':						'kenedo/external/tinymce-4.5.5/tinymce'
+			'tinyMCE':						'kenedo/external/tinymce-5.1.1/tinymce'
 		},
 
 		// As per CM's documentation, we use packages (makes editor mode JS files load properly without surprises)
@@ -127,8 +127,13 @@
 	// Init require, get our own cbrequire to stay within context
 	window.cbrequire = require.config(configuration);
 
+	var dependencies = ['cbj'];
+	if (appConfig.requireCustomJs === true) {
+		dependencies.push('configbox/custom/custom');
+	}
+
 	// 'Start' the app (load the customization JS file as well)
-	window.cbrequire(['cbj', 'configbox/custom/custom'], function(cbj) {
+	window.cbrequire(dependencies, function(cbj) {
 
 		var doneModuleCalls = [];
 
@@ -162,7 +167,7 @@
 							return;
 						}
 
-						if (cbj('head').find('link[href="' + url + '"]').length !== 0) {
+						if (cbj('link[href="' + url + '"]').length !== 0) {
 							return;
 						}
 

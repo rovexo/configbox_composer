@@ -526,7 +526,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 			$warnings[] = $warning;
 		}
 
-		$confTemplate = CONFIGBOX_DIR_CUSTOMIZATION .DS.'templates'.DS.'confirmation'.DS.'default.php';
+		$confTemplate = KenedoPlatform::p()->getDirCustomization() .DS.'templates'.DS.'confirmation'.DS.'default.php';
 
 		if (is_file($confTemplate)) {
 			$content = file_get_contents($confTemplate);

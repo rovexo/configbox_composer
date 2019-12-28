@@ -31,8 +31,14 @@ class ConfigboxViewSdvisualization extends KenedoView {
 	function getJsInitCallsOnce() {
 		$calls = parent::getJsInitCallsOnce();
 
-		$calls[] = 'configbox/shapediver::initShapeDiverVis';
+		$calls[] = 'configbox/shapediver::initShapeDiverVisOnce';
 
+		return $calls;
+	}
+
+	function getJsInitCallsEach() {
+		$calls = [];
+		$calls[] = 'configbox/shapediver::initShapeDiverVisEach';
 		return $calls;
 	}
 

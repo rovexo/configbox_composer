@@ -283,7 +283,6 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			$propDefs['baseprice_end'] = array(
 				'name' => 'baseprice_end',
 				'type' => 'groupend',
-				'opentable' => 0,
 				'positionForm' => 240000,
 			);
 
@@ -915,7 +914,6 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 		$propDefs['pm_price_module_end_regular'] = array(
 			'name'=>'price_module_end_regular',
 			'type'=>'groupend',
-			'opentable'=>0,
 			'positionForm' => 740000,
 		);
 
@@ -1015,7 +1013,6 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 		$propDefs['price_module_end'] = array(
 			'name'=>'price_module_end',
 			'type'=>'groupend',
-			'opentable'=>1,
 			'positionForm'=>850000,
 		);
 

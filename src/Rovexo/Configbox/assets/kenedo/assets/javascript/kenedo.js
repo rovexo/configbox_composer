@@ -12,8 +12,8 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 		initAdminPage : function() {
 
-            this.initNewContent(cbj('.view-admin, .view-blank'));
-            this.afterInitNewContent(cbj('.view-admin, .view-blank'));
+			this.initNewContent(cbj('.view-admin, .view-blank'));
+			this.afterInitNewContent(cbj('.view-admin, .view-blank'));
 
 			window.addEventListener('popstate', function(event) {
 
@@ -486,68 +486,71 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 				cbrequire(['tinyMCE', 'configbox/server'], function(tinyMCE, server) {
 
-					tinyMCE.init({
-						convert_urls : false,
-						document_base_url : server.config.urlBase,
-						documentBaseURL : server.config.urlBase,
-						baseURL : server.config.urlTinyMceBase,
-						suffix : (server.config.useMinifiedJs === true) ? '.min' : '',
+					try {
+						tinyMCE.init({
+							convert_urls : false,
+							document_base_url : server.config.urlBase,
+							documentBaseURL : server.config.urlBase,
+							baseURL : server.config.urlTinyMceBase,
+							suffix : (server.config.useMinifiedJs === true) ? '.min' : '',
 
-						// General options
-						mode 		: "textareas",
-						selector 	: '.kenedo-html-editor',
-						theme 		: "modern",
-						plugins		: [
-							"advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-							"searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime nonbreaking",
-							"save table contextmenu directionality emoticons template paste textcolor"
-						],
-						toolbar		: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-						content_css : "",
-						template_external_list_url 	: "js/template_list.js",
-						external_link_list_url 		: "js/link_list.js",
-						external_image_list_url 	: "js/image_list.js",
-						media_external_list_url 	: "js/media_list.js",
+							// General options
+							mode 		: "textareas",
+							selector 	: '.kenedo-html-editor',
+							plugins		: [
+								"advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+								"searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime nonbreaking",
+								"save table directionality emoticons template paste"
+							],
+							toolbar		: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+							template_external_list_url 	: "js/template_list.js",
+							external_link_list_url 		: "js/link_list.js",
+							external_image_list_url 	: "js/image_list.js",
+							media_external_list_url 	: "js/media_list.js",
 
-						style_formats: [
-							{title: 'Headers', items: [
-								{title: 'Header 1', format: 'h1'},
-								{title: 'Header 2', format: 'h2'},
-								{title: 'Header 3', format: 'h3'},
-								{title: 'Header 4', format: 'h4'},
-								{title: 'Header 5', format: 'h5'},
-								{title: 'Header 6', format: 'h6'}
-							]},
-							{title: 'Inline', items: [
-								{title: 'Bold', icon: 'bold', format: 'bold'},
-								{title: 'Italic', icon: 'italic', format: 'italic'},
-								{title: 'Underline', icon: 'underline', format: 'underline'},
-								{title: 'Strikethrough', icon: 'strikethrough', format: 'strikethrough'},
-								{title: 'Superscript', icon: 'superscript', format: 'superscript'},
-								{title: 'Subscript', icon: 'subscript', format: 'subscript'},
-								{title: 'Code', icon: 'code', format: 'code'}
-							]},
-							{title: 'Blocks', items: [
-								{title: 'Paragraph', format: 'p'},
-								{title: 'Blockquote', format: 'blockquote'},
-								{title: 'Div', format: 'div'},
-								{title: 'Pre', format: 'pre'}
-							]},
-							{title: 'Alignment', items: [
-								{title: 'Left', icon: 'alignleft', format: 'alignleft'},
-								{title: 'Center', icon: 'aligncenter', format: 'aligncenter'},
-								{title: 'Right', icon: 'alignright', format: 'alignright'},
-								{title: 'Justify', icon: 'alignjustify', format: 'alignjustify'}
-							]},
-							{title: 'Others', items: [
-								{title : 'Custom 1', selector : 'p', classes : 'custom-1'},
-								{title : 'Custom 2', selector : 'p', classes : 'custom-2'},
-								{title : 'Custom 3', selector : 'p', classes : 'custom-3'},
-								{title : 'Custom 4', selector : 'p', classes : 'custom-4'}
-							]}
-						]
+							style_formats: [
+								{title: 'Headers', items: [
+										{title: 'Header 1', format: 'h1'},
+										{title: 'Header 2', format: 'h2'},
+										{title: 'Header 3', format: 'h3'},
+										{title: 'Header 4', format: 'h4'},
+										{title: 'Header 5', format: 'h5'},
+										{title: 'Header 6', format: 'h6'}
+									]},
+								{title: 'Inline', items: [
+										{title: 'Bold', icon: 'bold', format: 'bold'},
+										{title: 'Italic', icon: 'italic', format: 'italic'},
+										{title: 'Underline', icon: 'underline', format: 'underline'},
+										{title: 'Strikethrough', icon: 'strikethrough', format: 'strikethrough'},
+										{title: 'Superscript', icon: 'superscript', format: 'superscript'},
+										{title: 'Subscript', icon: 'subscript', format: 'subscript'},
+										{title: 'Code', icon: 'code', format: 'code'}
+									]},
+								{title: 'Blocks', items: [
+										{title: 'Paragraph', format: 'p'},
+										{title: 'Blockquote', format: 'blockquote'},
+										{title: 'Div', format: 'div'},
+										{title: 'Pre', format: 'pre'}
+									]},
+								{title: 'Alignment', items: [
+										{title: 'Left', icon: 'alignleft', format: 'alignleft'},
+										{title: 'Center', icon: 'aligncenter', format: 'aligncenter'},
+										{title: 'Right', icon: 'alignright', format: 'alignright'},
+										{title: 'Justify', icon: 'alignjustify', format: 'alignjustify'}
+									]},
+								{title: 'Others', items: [
+										{title : 'Custom 1', selector : 'p', classes : 'custom-1'},
+										{title : 'Custom 2', selector : 'p', classes : 'custom-2'},
+										{title : 'Custom 3', selector : 'p', classes : 'custom-3'},
+										{title : 'Custom 4', selector : 'p', classes : 'custom-4'}
+									]}
+							]
 
-					});
+						});
+					} catch(error) {
+						console.log('Init of TinyMCE failed. Error message was ' + error);
+					}
+
 				});
 
 
@@ -800,7 +803,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 							cbj('#property-name-' + propertyName).show();
 
-							var defaultValue = (typeof(propDef.default) !== 'undefined') ? propDef.default : '';
+							var defaultValue = (typeof(propDef['default']) !== 'undefined') ? propDef['default'] : '';
 
 							if (defaultValue) {
 
@@ -824,7 +827,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 							cbj('#property-name-' + propertyName).hide();
 
-							var nullValue = (typeof(propDef.default) !== 'undefined') ? propDef.default : '';
+							var nullValue = (typeof(propDef['default']) !== 'undefined') ? propDef['default'] : '';
 
 							if (cbj('#' + propertyName).is('select')) {
 
@@ -1148,6 +1151,9 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			if (cbj(item).closest('.intra-listing').length) {
 				target = cbj(item).closest('.intra-listing');
 			}
+			else if(cbj(item).closest('.kenedo-view.param-picker').length !== 0) {
+				target = cbj(item).closest('.kenedo-view.view-blank');
+			}
 			else {
 				// In case we got a link within the ConfigBox target area, use that one
 				if (cbj(item).closest('.configbox-ajax-target').length) {
@@ -1317,9 +1323,9 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				case 'store':
 					kenedo.defaultFormTaskHandlerStore(viewName, event);
 					break;
-                case 'storeAndNew':
-                    kenedo.defaultFormTaskHandlerStore(viewName, event);
-                    break;
+				case 'storeAndNew':
+					kenedo.defaultFormTaskHandlerStore(viewName, event);
+					break;
 				case 'apply':
 					kenedo.defaultFormTaskHandlerApply(viewName, event);
 					break;
@@ -1370,11 +1376,11 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 				tinyMCE.triggerSave();
 
-                var form = cbj('.kenedo-details-form');
-                var xhr = new XMLHttpRequest();
-                xhr.onload = kenedo.getFormTaskResponseHandler(viewName);
-                xhr.open("post", form[0].action, true);
-                xhr.send(new FormData(form[0]));
+				var form = cbj('.kenedo-details-form');
+				var xhr = new XMLHttpRequest();
+				xhr.onload = kenedo.getFormTaskResponseHandler(viewName);
+				xhr.open("post", form[0].action, true);
+				xhr.send(new FormData(form[0]));
 
 			});
 
@@ -1386,11 +1392,11 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 				tinyMCE.triggerSave();
 
-                var form = cbj('.kenedo-details-form');
-                var xhr = new XMLHttpRequest();
-                xhr.onload = kenedo.getFormTaskResponseHandler(viewName);
-                xhr.open("post", form[0].action, true);
-                xhr.send(new FormData(form[0]));
+				var form = cbj('.kenedo-details-form');
+				var xhr = new XMLHttpRequest();
+				xhr.onload = kenedo.getFormTaskResponseHandler(viewName);
+				xhr.open("post", form[0].action, true);
+				xhr.send(new FormData(form[0]));
 
 			});
 
@@ -1418,9 +1424,9 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				case 'store':
 					kenedo.defaultFormTaskResponseHandlerStore(viewName, response);
 					break;
-                case 'storeAndNew':
-                    kenedo.defaultFormTaskResponseHandlerStoreAndNew(viewName, response);
-                    break;
+				case 'storeAndNew':
+					kenedo.defaultFormTaskResponseHandlerStoreAndNew(viewName, response);
+					break;
 				case 'apply':
 					kenedo.defaultFormTaskResponseHandlerApply(viewName, response);
 					break;
@@ -1459,41 +1465,41 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 		},
 
-        /**
-         * @param {String} viewName
-         * @param {JsonResponses.kenedoStoreResponse} response
-         */
-        defaultFormTaskResponseHandlerStoreAndNew: function(viewName, response) {
+		/**
+		 * @param {String} viewName
+		 * @param {JsonResponses.kenedoStoreResponse} response
+		 */
+		defaultFormTaskResponseHandlerStoreAndNew: function(viewName, response) {
 
-            // Show any error or notice messages
-            kenedo.processResponseMessages(response);
+			// Show any error or notice messages
+			kenedo.processResponseMessages(response);
 
-            // Set all data in the form, overwriting what may needs overwriting
-            if (response.data) {
-                cbj.each(response.data, function(propertyName, value) {
-                    cbj('#'+propertyName).val(value);
-                });
-            }
+			// Set all data in the form, overwriting what may needs overwriting
+			if (response.data) {
+				cbj.each(response.data, function(propertyName, value) {
+					cbj('#'+propertyName).val(value);
+				});
+			}
 
-            // Reset id field to 0 to allow for new insert
-            cbj('#id').val('0');
+			// Reset id field to 0 to allow for new insert
+			cbj('#id').val('0');
 
-            // If we're in a modal, reload any intra listings and close the modal
-            if (kenedo.isViewInModal()) {
-                parent.window.cbrequire(['cbj', 'kenedo', 'cbj.colorbox'], function(parentCbj, parentKenedo) {
-                    parentKenedo.reloadIntraListings();
-                });
-                return;
-            }
+			// If we're in a modal, reload any intra listings and close the modal
+			if (kenedo.isViewInModal()) {
+				parent.window.cbrequire(['cbj', 'kenedo', 'cbj.colorbox'], function(parentCbj, parentKenedo) {
+					parentKenedo.reloadIntraListings();
+				});
+				return;
+			}
 
-            // Redirect to the return URL
-            if (kenedo.isViewAjaxView()) {
-                kenedo.loadSubview(kenedo.getReturnUrl());
-            }
-            else {
-                window.location.href = kenedo.getReturnUrl();
-            }
-        },
+			// Redirect to the return URL
+			if (kenedo.isViewAjaxView()) {
+				kenedo.loadSubview(kenedo.getReturnUrl());
+			}
+			else {
+				window.location.href = kenedo.getReturnUrl();
+			}
+		},
 
 		/**
 		 *

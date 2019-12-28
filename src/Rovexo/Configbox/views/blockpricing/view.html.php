@@ -220,8 +220,8 @@ class ConfigboxViewBlockpricing extends KenedoView {
 
 		$this->productId = $position->prod_id;
 
-		$this->addToCartLink = KLink::getRoute('index.php?option=com_configbox&view=cart&task=finishConfiguration&cart_position_id='.$positionId);
-		$this->addToCartLinkClasses = 'add-to-cart wait-for-xhr';
+		$this->addToCartLink = '';
+		$this->addToCartLinkClasses = 'trigger-add-to-cart wait-for-xhr';
 
 		$this->assign('deliveryNetKey',		'priceNet');
 		$this->assign('shippingNetTaxKey',	'priceTax');
