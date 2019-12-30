@@ -154,13 +154,17 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	}
 
 	/**
-	 *
-	 * Authenticate a user (in other words, figure out if the provided credentials match a user)
-	 * This does not login a user.
-	 *
-	 * @param string $username
-	 * @param string $password
-	 * @return bool
+	 * @inheritDoc
+	 */
+	public function getApplicationVersion() {
+		$path = JPATH_ADMINISTRATOR.'/components/com_configbox/configbox.xml';
+		$manifest = simplexml_load_file($path);
+		$version = $manifest->version->__toString();
+		return $version;
+	}
+
+	/**
+	 * @inheritDoc
 	 */
 	public function authenticate($username, $password) {
 

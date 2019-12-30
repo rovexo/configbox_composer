@@ -136,6 +136,22 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		wp_logout();
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	public function getApplicationVersion() {
+
+		$path = WP_PLUGIN_DIR.'/configbox/configbox.php';
+
+		$default_headers = array(
+			'Version' => 'Version',
+		);
+
+		$data = get_file_data( $path, $default_headers, 'plugin');
+		return $data['Version'];
+
+	}
+
 	//TODO: Test
 	public function authenticate($username, $passwordClear) {
 		$response = wp_authenticate($username, $passwordClear);

@@ -1,53 +1,39 @@
 <?php
 class ConfigboxVersionHelper {
 
-	static $version = '3.1.4-PR1';
-	static $parts;
-	static $platformVersion;
-
+	/**
+	 * @param string $part (major, minor, patchLevel, betaString), empty to get the whole version string
+	 * @return string
+	 * @deprecated Use KenedoPlatform::p()->getApplicationVersion() instead. For getting parts of version, split yourself.
+	 */
 	static public function getConfigBoxVersion($part = NULL) {
 
+		$version = KenedoPlatform::p()->getApplicationVersion();
+
 		if ($part == NULL) {
-			return self::$version;
-		}
-
-		if (!self::$parts) {
-			self::splitConfigBoxVersion();
-		}
-
-		return self::$parts[$part];
-	}
-
-	protected static function splitConfigBoxVersion() {
-		$version = self::getConfigBoxVersion();
-		$x = explode('.',$version,3);
-		self::$parts['major'] = $x[0];
-		self::$parts['minor'] = $x[1];
-		if (is_int($x[2])) {
-			self::$parts['patchLevel'] = $x[2];
-			self::$parts['betaString'] = '';
+			return $version;
 		}
 		else {
-			$l = explode('-',$x[2],2);
-			self::$parts['patchLevel'] = $l[0];
-			self::$parts['betaString'] = !empty($l[1]) ? $l[1] : '';
+
+			$x = explode('.', $version,3);
+
+			$parts['major'] = $x[0];
+			$parts['minor'] = $x[1];
+
+			if (is_int($x[2])) {
+				$parts['patchLevel'] = $x[2];
+				$parts['betaString'] = '';
+			}
+			else {
+				$l = explode('-',$x[2],2);
+				$parts['patchLevel'] = $l[0];
+				$parts['betaString'] = !empty($l[1]) ? $l[1] : '';
+			}
+
+			return $parts[$part];
+
 		}
-	}
 
-	static function getPlatformVersion() {
-
-		if (!self::$platformVersion) {
-			self::$platformVersion = KenedoPlatform::p()->getVersionShort();
-		}
-		return self::$platformVersion;
-	}
-
-	static function getIdForPlatformVersion() {
-		$platformVersion = self::getPlatformVersion();
-		$platformName = KenedoPlatform::getName();
-		$id = substr($platformVersion,0,3);
-		$id = $platformName.'-'.str_replace('.', '_', $id);
-		return $id;
 	}
 
 }

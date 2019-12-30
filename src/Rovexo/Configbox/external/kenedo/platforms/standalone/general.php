@@ -61,6 +61,15 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	public function logout() {
 		KSession::set('logged_in',false);
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getApplicationVersion() {
+		//TODO: See about how a release number makes sense for standalone
+		return '1.0.0';
+	}
+
 	//TODO: Implement
 	public function authenticate($username, $passwordClear) {
 		return true;

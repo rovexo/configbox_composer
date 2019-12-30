@@ -447,8 +447,13 @@ class KenedoView {
 		$this->viewCssClasses[] = (KRequest::getInt('parampicker') == 1) ? 'param-picker':'no-parampicker';
 		$this->viewCssClasses[] = ($this->isInModal()) ? 'in-modal':'in-tab';
 		$this->viewCssClasses[] = 'platform-'.KenedoPlatform::getName();
-		$this->viewCssClasses[] = ConfigboxVersionHelper::getIdForPlatformVersion();
 		$this->viewCssClasses[] = KenedoPlatform::p()->isAdminArea() ? 'in-backend':'in-frontend';
+
+		$platformName = KenedoPlatform::getName();
+		$platformVersion = KenedoPlatform::p()->getVersionShort();
+		$platformVersionClass = $platformName.'-'.str_replace('.', '_', $platformVersion);
+		$this->viewCssClasses[] = $platformVersionClass;
+
 	}
 
 	function renderViewCssClasses() {
@@ -718,11 +723,11 @@ class KenedoView {
 
 		$urls = array(
 			KenedoPlatform::p()->getUrlAssets().'/kenedo/external/bootstrap-3.3.7/css/bootstrap-prefixed.css',
-			KenedoPlatform::p()->getUrlAssets().'/kenedo/external/jquery.ui-1.12.1/jquery-ui.css',
 			KenedoPlatform::p()->getUrlAssets().'/kenedo/assets/css/kenedo.css',
 		);
 
 		if (KenedoPlatform::p()->isAdminArea() == true || strpos($this->view, 'admin') === 0) {
+			$urls[] = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/jquery.ui-1.12.1/jquery-ui-prefixed.css';
 			$urls[] = KenedoPlatform::p()->getUrlAssets().'/css/admin.css';
 		}
 

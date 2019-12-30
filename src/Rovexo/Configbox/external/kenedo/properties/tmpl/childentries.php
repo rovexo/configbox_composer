@@ -55,11 +55,13 @@ else {
 	}
 
 	$url = 'index.php?'.http_build_query($httpQuery);
-
+	$url = str_replace('%24', '$', $url);
+	$listingUrl = KLink::getRoute($url);
+	$listingUrl = str_replace('%24', '$', $listingUrl);
 
 	$view->prepareTemplateVars();
 	?>
-	<div class="intra-listing kenedo-listing-form" data-listing-url="<?php echo KLink::getRoute($url);?>">
+	<div class="intra-listing kenedo-listing-form" data-listing-url="<?php echo $listingUrl;?>">
 		<?php $view->renderView(); ?>
 	</div>
 	<?php 

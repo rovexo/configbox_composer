@@ -14,7 +14,7 @@ $credentials = array(
 	'merchantLicenseSandbox' => $this->orderRecord->payment->params->get('merchant_license_test',''),
 	'merchantLicenseLive'    => $this->orderRecord->payment->params->get('merchant_license_live',''),
 	'applicationSignature'   => $this->orderRecord->payment->params->get('application_signature',''),
-	'applicationVersion'     => ConfigboxVersionHelper::getConfigBoxVersion(),
+	'applicationVersion'     => KenedoPlatform::p()->getApplicationVersion(),
 );
 
 $bs->setCredentials($credentials);

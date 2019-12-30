@@ -53,12 +53,22 @@ JsonResponses.prototype.configuratorUpdates = {
 	"requestedChange": {"questionId": 22,"selection": "something", "outputValue": "Eine Tasche"},
 	"originalValue": {"questionId": 1, "selection": "something", "outputValue": "Eine Tasche"},
 	"cart_position_id": 200,
-	"missingSelections": [
+	"missingPageSelections": [
 		{
 			'id':1,
 			'title':'Question Title',
 			'productId': 1,
-			'pageId':1
+			'pageId':1,
+			'message': 'Missing selection text'
+		}
+	],
+	"missingProductSelections": [
+		{
+			'id':1,
+			'title':'Question Title',
+			'productId': 1,
+			'pageId':1,
+			'message': 'Missing selection text'
 		}
 	],
 	"configurationChanges": {

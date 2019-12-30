@@ -29,7 +29,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			var parameters = {
 				'platform': server.config.platformName,
 				'lang': server.config.languageCode,
-				'version': server.config.cbVersion
+				'version': cbj('.kenedo-view.view-admindashboard').data('configbox-version')
 			};
 
 			cbj.ajax({

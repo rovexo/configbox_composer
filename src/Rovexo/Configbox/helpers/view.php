@@ -2,7 +2,7 @@
 class ConfigboxViewHelper {
 
 	protected static $gotAdded = false;
-	protected static $cacheVar = NULL;
+	protected static $memoCacheBusterValue = NULL;
 
 	/**
 	 * Gives you a string to be used as cache buster value for static assets.
@@ -10,19 +10,19 @@ class ConfigboxViewHelper {
 	 */
 	static function getCacheBusterValue() {
 
-		if (self::$cacheVar === NULL) {
+		if (self::$memoCacheBusterValue === NULL) {
 
 			// Prepare a value that we later use as GET parameter value for cache busting
-			self::$cacheVar = ConfigboxVersionHelper::getConfigBoxVersion();
+			self::$memoCacheBusterValue = KenedoPlatform::p()->getApplicationVersion();
 
 			// If you define a function called 'getReleaseNumber' you can make your own custom files 'cache-safe'
 			if (function_exists('getReleaseNumber')) {
-				self::$cacheVar .= '-'. getReleaseNumber();
+				self::$memoCacheBusterValue .= '-'. getReleaseNumber();
 			}
 
 		}
 
-		return self::$cacheVar;
+		return self::$memoCacheBusterValue;
 
 	}
 
@@ -71,12 +71,12 @@ class ConfigboxViewHelper {
 
 		// Prepare the URLs to requirejs and our main.js file
 		if ($useMinifiedJs) {
-			$urlRequireJs = KPATH_URL_ASSETS.'/kenedo/external/require-2.3.2/require.min.js';
-			$urlMainJs = KPATH_URL_ASSETS.'/main.min.js'.$queryStringPart;
+			$urlRequireJs = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/require-2.3.2/require.min.js';
+			$urlMainJs = KenedoPlatform::p()->getUrlAssets().'/main.min.js'.$queryStringPart;
 		}
 		else {
-			$urlRequireJs = KPATH_URL_ASSETS.'/kenedo/external/require-2.3.2/require.js';
-			$urlMainJs = KPATH_URL_ASSETS.'/main.js'.$queryStringPart;
+			$urlRequireJs = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/require-2.3.2/require.js';
+			$urlMainJs = KenedoPlatform::p()->getUrlAssets().'/main.js'.$queryStringPart;
 		}
 
 		$requireCustomJs = file_exists(KenedoPlatform::p()->getDirCustomizationAssets().'/javascript/custom.js');
@@ -94,7 +94,6 @@ class ConfigboxViewHelper {
 			'languageTag'      	=> KText::getLanguageTag(),
 			'decimalSymbol'     => KText::_('DECIMAL_MARK', '.'),
 			'thousandsSeparator'=> KText::_('DIGIT_GROUPING_SYMBOL', ','),
-			'cbVersion'         => ConfigboxVersionHelper::getConfigBoxVersion(),
 			'cacheVar'			=> $cacheVar,
 			'urlXhr'            => KLink::getRoute('index.php?option=com_configbox&format=raw', false),
 			'useMinifiedJs'		=> $useMinifiedJs,
@@ -156,7 +155,7 @@ class ConfigboxViewHelper {
 
 		// Rewrite paths to images if necessary
 		preg_match_all("/src=\"(.*)\"/Ui", $html, $images);
-		preg_match_all("/url((.*))/Ui", $html, $backgrounds);
+		preg_match_all("/url(.*)/Ui", $html, $backgrounds);
 
 		// Init replacement array
 		$replacements = array();

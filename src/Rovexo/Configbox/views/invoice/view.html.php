@@ -122,7 +122,7 @@ class ConfigboxViewInvoice extends KenedoView {
 		$this->shopCountryName = ConfigboxCountryHelper::getCountryName($this->shopData->country_id);
 		$this->shopStateName = ConfigboxCountryHelper::getStateName($this->shopData->state_id);
 
-		$this->hrefCssSystem = KPATH_DIR_ASSETS.DS.'css'.DS.'pdf-invoice.css';
+		$this->hrefCssSystem = KenedoPlatform::p()->getDirAssets().DS.'css'.DS.'pdf-invoice.css';
 		$this->hrefCssCustom = KenedoPlatform::p()->getDirCustomizationAssets().DS.'css'.DS.'custom.css';
 
 		$this->useShopLogo = false;

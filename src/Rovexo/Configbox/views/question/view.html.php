@@ -192,7 +192,8 @@ class ConfigboxViewQuestion extends KenedoView {
 			if ($question->applies == false && $question->display_while_disabled == 'hide') {
 				$question->elementImageCssClasses = 'question-decoration preload-image';
 				$question->elementImagePreloadAttributes = ' data-src="'.$question->el_image_href.'"';
-				$question->elementImageSrc = KPATH_URL_ASSETS.'/assets/images/blank.gif';
+				$question->elementImageSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII=';
+
 			}
 			else {
 				$question->elementImageCssClasses = 'question-decoration';
@@ -294,7 +295,7 @@ class ConfigboxViewQuestion extends KenedoView {
 				$answer->pickerImageSrc = $answer->option_picker_image_href;
 			}
 			else {
-				$answer->pickerImageSrc = KPATH_URL_ASSETS.'/images/blank.gif';
+				$answer->pickerImageSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII=';
 			}
 
 			// Set preloading/delayed loading CSS classes and attributes

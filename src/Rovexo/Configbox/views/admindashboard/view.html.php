@@ -57,6 +57,11 @@ class ConfigboxViewAdmindashboard extends KenedoView {
 	public $licenseKey;
 
 	/**
+	 * @var string
+	 */
+	public $configboxVersion;
+
+	/**
 	 * @return ConfigboxModelAdmindashboard
 	 * @throws Exception
 	 */
@@ -85,6 +90,7 @@ class ConfigboxViewAdmindashboard extends KenedoView {
 		$model = $this->getDefaultModel();
 
 		$this->licenseKey = CbSettings::getInstance()->get('product_key');
+		$this->configboxVersion = KenedoPlatform::p()->getApplicationVersion();
 
 		$serverList = explode(',', CbSettings::getInstance()->get('license_manager_satellites'));
 		shuffle($serverList);

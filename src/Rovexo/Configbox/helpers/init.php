@@ -77,18 +77,17 @@ class_alias('ConfigboxUserHelper', 'CbcheckoutUserHelper');
 class_alias('ConfigboxPermissionHelper', 'ConfigboxOrderHelper');
 
 // Built-in assets base URL and dir
+/**
+ * @const KPATH_URL_ASSETS
+ * @deprecated Use KenedoPlatform::p()->getUrlAssets() instead
+ */
 define('KPATH_URL_ASSETS', KenedoPlatform::p()->getUrlAssets());
+
+/**
+ * @const KPATH_DIR_ASSETS
+ * @deprecated Use KenedoPlatform::p()->getDirAssets() instead
+ */
 define('KPATH_DIR_ASSETS', KenedoPlatform::p()->getDirAssets());
-
-// Set all path constants
-// Set version numbers here
-define('CONFIGBOX_VERSION',						ConfigboxVersionHelper::getConfigBoxVersion());
-define('CONFIGBOX_VERSION_MAJOR', 				ConfigboxVersionHelper::getConfigBoxVersion('major'));
-define('CONFIGBOX_VERSION_MINOR', 				ConfigboxVersionHelper::getConfigBoxVersion('minor'));
-define('CONFIGBOX_VERSION_PATCHLEVEL', 			ConfigboxVersionHelper::getConfigBoxVersion('patchLevel'));
-define('CONFIGBOX_IS_BETA',						(ConfigboxVersionHelper::getConfigBoxVersion('betaString') == ''));
-
-// Files that DO NOT get deployed on a live site
 
 // SYSTEM DATA (these are supposed to be different on DEV/TEST/LIVE)
 define('CONFIGBOX_DIR_CACHE',						KenedoPlatform::p()->getDirCache().'/configbox');

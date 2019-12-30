@@ -22,7 +22,6 @@ define(['cbj'], function (cbj) {
 			languageTag: '',
 			decimalSymbol: '',
 			thousandsSeparator: '',
-			cbVersion: '',
 			cacheVar: '',
 			urlXhr: '',
 			useMinifiedJs: true,

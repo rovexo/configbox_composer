@@ -17,11 +17,17 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		// Handler for when we got the response from a configurator selection update
 		cbj(document).on('serverResponseReceived', this.processServerResponse);
 
-		// Handler for when required questions don't have a selection
-		cbj(document).on('cbRequiredSelectionsMissing', this.onRequiredSelectionsMissing);
+		// Handler for when required questions on whole product don't have a selection
+		cbj(document).on('cbRequiredProductSelectionsMissing', this.onRequiredProductSelectionsMissing);
 
-		// Handler for when all required questions have a selection
-		cbj(document).on('cbRequiredSelectionsMade', this.onRequiredSelectionsMade);
+		// Handler for when all required questions whole product have a selection
+		cbj(document).on('cbRequiredProductSelectionsMade', this.onRequiredProductSelectionsMade);
+
+		// Handler for when required questions on page don't have a selection
+		cbj(document).on('cbRequiredPageSelectionsMissing', this.onRequiredPageSelectionsMissing);
+
+		// Handler for when all required questions on page have a selection
+		cbj(document).on('cbRequiredPageSelectionsMade', this.onRequiredPageSelectionsMade);
 
 		// Handler to send the form when the user changes the currency dropdown in the currency block
 		cbj(document).on('change', '#currency_id', this.onChangeCurrency);
@@ -60,6 +66,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 		if (server.config.platformName === 'magento2') {
 			cbj(document).on('cbPricingChange', this.updateMagento2Total);
+			this.initMagento2Validation();
 		}
 
 		cbj(document).on('serverRequestSent', function() {
@@ -154,7 +161,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		};
 
 		if (configurator.requestInProgress) {
-			cbj(document).on('serverResponseReceived', addFunction)
+			cbj(document).on('serverResponseReceived', addFunction);
 		}
 		else {
 			addFunction();
@@ -165,7 +172,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 	/**
 	 * Takes in missingSelections array as from ConfigboxControllerConfiguratorpage::getMissingSelections
 	 * and displays the messages on any questions present on the current page
-	 * @param missingSelections
+	 * @param {JsonResponses.configuratorUpdates.missingProductSelections} missingSelections
 	 */
 	configurator.addValidationErrors = function(missingSelections) {
 		cbj.each(missingSelections, function(i, missingSelection) {
@@ -267,6 +274,56 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 	};
 
+	/**
+	 * The method adds a jquery.validator method ('configbox_m2_validation')
+	 * It kicks in on M2 add-to-cart form submits
+	 * It checks for missing CB selections and not only responds with true/false but also shows validation messages (
+	 * until a solution is found, that
+	 */
+	configurator.initMagento2Validation = function() {
+
+		window.require(['jquery', 'mage/validation'], function($) {
+
+			$.validator.addMethod(
+				'configbox_m2_validation',
+				function (value, element) {
+
+					var missingSelections = configurator.getConfiguratorData('missingProductSelections');
+
+					if (missingSelections.length === 0) {
+
+						var questions = configurator.getConfiguratorData('questions');
+
+						cbj.each(questions, function() {
+							configurator.clearValidationError(this.id);
+						});
+
+						return true;
+					}
+					else {
+
+						var shouldPageId = parseInt(missingSelections[0].pageId);
+
+						if (shouldPageId !== configurator.getPageId()) {
+							configurator.switchPage(shouldPageId, function() {
+								configurator.addValidationErrors(missingSelections);
+							});
+						}
+						else {
+							configurator.addValidationErrors(missingSelections);
+						}
+
+						return false;
+					}
+
+				},
+				'' // Empty validation response (for not showing M2's validation message)
+			);
+
+		});
+
+	};
+
 	configurator.updateMagento2Total = function(event, pricing) {
 
 		var price = pricing.total.price;
@@ -357,19 +414,35 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		cbj('#answer-' + answerId).addClass('non-applying-answer').removeClass('applying-answer');
 	};
 
+
 	/**
-	 * @listens Event:cbRequiredSelectionsMissing
+	 * @listens Event:cbRequiredProductSelectionsMissing
 	 */
-	configurator.onRequiredSelectionsMissing = function() {
+	configurator.onRequiredProductSelectionsMissing = function() {
+
+	};
+
+	/**
+	 * @listens Event:cbRequiredProductSelectionsMade
+	 */
+	configurator.onRequiredProductSelectionsMade = function() {
+
+	};
+
+
+	/**
+	 * @listens Event:cbRequiredPageSelectionsMissing
+	 */
+	configurator.onRequiredPageSelectionsMissing = function() {
 		if (configurator.getConfiguratorData('blockNavigationOnMissing') === true) {
 			cbj('.add-to-cart-button, .cb-page-nav-next').addClass('configbox-disabled');
 		}
 	};
 
 	/**
-	 * @listens Event:cbRequiredSelectionsMade
+	 * @listens Event:cbRequiredPageSelectionsMade
 	 */
-	configurator.onRequiredSelectionsMade = function() {
+	configurator.onRequiredPageSelectionsMade = function() {
 		cbj('.add-to-cart-button, .cb-page-nav-next').removeClass('configbox-disabled');
 	};
 
@@ -781,30 +854,19 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 	};
 
 	/**
-	 *
-	 * @typedef {Object} CbServerResponse
-	 * @property {string} error Error message, empty string if there was no error
-	 * @property {CbServerResponseSelection} requestedChange
-	 * @property {CbServerResponseSelection} originalValue
-	 * @property {string} confirmationText
-	 *
-	 * @typedef {Object} CbServerResponseSelection
-	 * @property {Number} questionId
-	 * @property {string} selection
-	 * @property {string} outputValue
-	 *
-	 *
-	 *
 	 * Handler for event 'serverResponseReceived'. Processes the response from a selection change.
 	 *
 	 * @param {Event} event - jQuery event object
-	 * @param {CbServerResponse} data
+	 * @param {JsonResponses.configuratorUpdates} data
 	 *
 	 * @see JsonResponses.configuratorUpdates
 	 *
 	 * @listens Event:serverResponseReceived
-	 * @fires cbRequiredSelectionsMissing When required questions are not answered
-	 * @fires cbRequiredSelectionsMade When all required questions are answered
+	 *
+	 * @fires cbRequiredPageSelectionsMissing When required questions on current page are not answered
+	 * @fires cbRequiredPageSelectionsMade When all required questions on current page are answered
+	 * @fires cbRequiredProductSelectionsMissing When required questions in whole product are not answered
+	 * @fires cbRequiredProductSelectionsMade When all required questions in whole are answered
 	 * @fires cbPricingChange To get the selection made by the function visible
 	 */
 	configurator.processServerResponse = function(event, data) {
@@ -862,19 +924,37 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			cbj(document).trigger('cbPricingChange', [data.pricing]);
 		}
 
+		configurator.setConfiguratorDataItem('missingPageSelections', data.missingPageSelections);
+
 		// Deal with required questions and the page blocker
-		if (data.missingSelections.length) {
+		if (data.missingPageSelections.length) {
 			/**
-			 * @event cbRequiredSelectionsMissing
+			 * @event cbRequiredPageSelectionsMissing
 			 * @property {array}
 			 */
-			cbj(document).trigger('cbRequiredSelectionsMissing', [data.missingSelections]);
+			cbj(document).trigger('cbRequiredPageSelectionsMissing', [data.missingPageSelections]);
 		}
 		else {
 			/**
-			 * @event cbRequiredSelectionsMade
+			 * @event cbRequiredPageSelectionsMade
 			 */
-			cbj(document).trigger('cbRequiredSelectionsMade');
+			cbj(document).trigger('cbRequiredPageSelectionsMade');
+		}
+
+		configurator.setConfiguratorDataItem('missingProductSelections', data.missingProductSelections);
+
+		if (data.missingProductSelections.length) {
+			/**
+			 * @event cbRequiredProductSelectionsMissing
+			 * @property {array}
+			 */
+			cbj(document).trigger('cbRequiredProductSelectionsMissing', [data.missingProductSelections]);
+		}
+		else {
+			/**
+			 * @event cbRequiredProductSelectionsMade
+			 */
+			cbj(document).trigger('cbRequiredProductSelectionsMade');
 		}
 
 	};
@@ -962,7 +1042,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 	 * @param {JsonResponses.configuratorUpdates.validationValues} validationValues - validation values
 	 * @fires cbValidationChange
 	 */
-	configurator.processValidationUpdate = function(validationValues ) {
+	configurator.processValidationUpdate = function(validationValues) {
 
 		cbj.each(validationValues, function (questionId, validationValue) {
 			/**

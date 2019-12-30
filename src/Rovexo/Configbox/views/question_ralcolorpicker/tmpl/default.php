@@ -59,16 +59,14 @@ defined('CB_VALID_ENTRY') or die();
 					<span class="ral-color-group-label"><?php echo KText::_('Color Group');?></span>
 				</div>
 				<div class="ral-color-group-colors">
-					<?php
-					foreach($this->ralColors as $key => $color){ ?>
-							<div
-									class="ral-color"
-									data-group-id="<?php echo substr($color['code'], 0,1);?>"
-									data-color-id="<?php echo $color['code'];?>"
-									data-hex="<?php echo $color['hex'];?>"
-									style="background-color: <?php echo $color['hex'];?>;">
-										<a class="<?php if(in_array($color['code'], $this->ralColorsDark)) echo 'is-dark '; ?> ral-color-item"><?php echo KText::_('RAL').' '.$color['code'].' '.KText::_('RAL_' . $color['code']);?></a>
-							</div>
+					<?php foreach($this->ralColors as $key => $color) { ?>
+						<a class="trigger-pick-ral-color ral-color <?php echo (in_array($color['code'], $this->ralColorsDark)) ? 'is-dark':'is-light'; ?>"
+						   data-group-id="<?php echo hsc(substr($color['code'], 0,1));?>"
+						   data-color-id="<?php echo hsc($color['code']);?>"
+						   data-hex="<?php echo hsc($color['hex']);?>"
+						   style="background-color: <?php echo hsc($color['hex']);?>;">
+							<?php echo hsc(KText::_('RAL').' '.$color['code'].' '.KText::_('RAL_' . $color['code']));?>
+						</a>
 					<?php } ?>
 				</div>
 			</div>

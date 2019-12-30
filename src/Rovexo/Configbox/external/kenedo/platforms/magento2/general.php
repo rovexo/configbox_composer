@@ -154,6 +154,21 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		return;
 	}
 
+	protected $memoGetApplicationVersion;
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getApplicationVersion() {
+
+		if ($this->memoGetApplicationVersion == NULL) {
+			$moduleInfo = \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Framework\Module\ModuleList')->getOne('Rovexo_Configbox');
+			$this->memoGetApplicationVersion = $moduleInfo['setup_version'];
+		}
+
+		return $this->memoGetApplicationVersion;
+	}
+
 	//TODO: Implement
 	public function authenticate($username, $passwordClear) {
 		return true;

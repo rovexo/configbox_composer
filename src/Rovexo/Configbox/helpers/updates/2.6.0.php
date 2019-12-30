@@ -2446,7 +2446,7 @@ foreach ($dataFolders as $dataFolder) {
 
 /* COPY THE DEFAULT PRODUCT IMAGE IF NOT THERE YET - START */
 $defaultImage =  KenedoPlatform::p()->getComponentDir('com_configbox').'/data/default_images/default_prod_image.jpg';
-$srcFile = KPATH_DIR_ASSETS.DS.'images'.DS.'default_prod_image.jpg';
+$srcFile = KenedoPlatform::p()->getDirAssets().DS.'images'.DS.'default_prod_image.jpg';
 
 if (is_dir(dirname($defaultImage)) == false) {
 	mkdir( dirname($defaultImage), 0777, true );

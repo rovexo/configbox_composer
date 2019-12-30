@@ -67,10 +67,16 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 	public $questionsHtml;
 
 	/**
-	 * @var array[] Array of data with currently missing selections (title, id, pageId and productId)
+	 * @var array[] Array of data with missing selections in product (title, id, pageId, productId and message)
 	 * @see ConfigboxModelCartposition::getMissingSelections
 	 */
-	public $missingSelections;
+	public $missingProductSelections;
+
+	/**
+	 * @var array[] Array of data with missing selections on current page (title, id, pageId, productId and message)
+	 * @see ConfigboxModelCartposition::getMissingSelections
+	 */
+	public $missingPageSelections;
 
 	/**
 	 * @var string JSON data about the configurator (for use by the frontend JS, put in the HTML output in a data attribute)
@@ -220,6 +226,7 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 
 	function getStyleSheetUrls() {
 		$urls = parent::getStyleSheetUrls();
+		$urls[] = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/jquery.ui-1.12.1/jquery-ui-prefixed.css';
 		$urls[] = KenedoPlatform::p()->getUrlAssets().'/css/configurator.css';
 		return $urls;
 	}
@@ -353,7 +360,8 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 
 		// Put info on missing selections to the template
 		$positionModel = KenedoModel::getModel('ConfigboxModelCartposition');
-		$this->missingSelections = $positionModel->getMissingSelections($this->pageId);
+		$this->missingPageSelections = $positionModel->getMissingSelections($this->pageId, $this->cartPositionId);
+		$this->missingProductSelections = $positionModel->getMissingSelections(NULL, $this->cartPositionId);
 
 		// Get info on all pages of the product
 		$pages = $pageModel->getPages($this->productId);
@@ -406,7 +414,7 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 		}
 
 		// Set CSS classes for navigation buttons, indicates what shall be hidden
-		if (count($this->missingSelections) && $this->blockNavigationOnMissing) {
+		if (count($this->missingPageSelections) && $this->blockNavigationOnMissing) {
 			$this->nextButtonClasses    = 'configbox-disabled cb-page-nav-next wait-for-xhr';
 			$this->finishButtonClasses  = 'configbox-disabled add-to-cart-button cb-page-nav-finish wait-for-xhr trigger-add-to-cart trigger-ga-track-add-to-cart';
 		}
@@ -532,6 +540,7 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 		$this->showNetPrices = (ConfigboxPermissionHelper::canGetB2BMode());
 
 		$configuratorData = array(
+			'missingProductSelections'	=> $this->missingProductSelections,
 			'cartPositionId'			=> $this->cartPositionId,
 			'productId'					=> $this->product->id,
 			'pageId'					=> $this->page->id,

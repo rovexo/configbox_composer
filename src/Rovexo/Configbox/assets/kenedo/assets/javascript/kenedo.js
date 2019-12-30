@@ -450,6 +450,31 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				});
 			}
 
+			if (cbj(wrapper).find('.kenedo-datepicker').length !== 0) {
+				cbrequire(['cbj.ui'], function() {
+
+					cbj(wrapper).find('.kenedo-datepicker').each(function() {
+
+						var altField = cbj(this).closest('.kenedo-property').find('.form-control');
+						var value = altField.val();
+
+						var params = {
+							dateFormat: 'yy-mm-dd',
+							altFormat: 'yy-mm-dd',
+							altField: altField,
+						};
+
+						cbj(wrapper).find('.kenedo-datepicker').datepicker(params);
+
+						if (value && value !== '0000-00-00') {
+							cbj(wrapper).find('.kenedo-datepicker').datepicker('setDate', value);
+						}
+
+					});
+
+				});
+			}
+
 			// Go through all views and run the ready functions
 			cbj(wrapper).find('.kenedo-view').each(function() {
 				var viewId = cbj(this).attr('id');
