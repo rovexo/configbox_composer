@@ -5,8 +5,9 @@ defined('CB_VALID_ENTRY') or die();
  */
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="<?php echo $this->getLanguageTag();?>">
 <head>
+<title><?php echo $this->getDocumentTitle();?></title>
 <base href="<?php echo KPATH_URL_BASE;?>" />
 <meta charset="utf-8" />
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />

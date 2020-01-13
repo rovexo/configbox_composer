@@ -10,6 +10,15 @@
 	border-bottom-width: 1px;
 }
 
+.cb-content img {
+	max-width:100%;
+	height:auto;
+}
+
+.cb-content .nav-tabs {
+	margin-left:0;
+}
+
 body.modal-open {
 	overflow:hidden;
 }

@@ -192,7 +192,8 @@ class ConfigboxViewQuestion extends KenedoView {
 			if ($question->applies == false && $question->display_while_disabled == 'hide') {
 				$question->elementImageCssClasses = 'question-decoration preload-image';
 				$question->elementImagePreloadAttributes = ' data-src="'.$question->el_image_href.'"';
-				$question->elementImageSrc = KPATH_URL_ASSETS.'/assets/images/blank.gif';
+				$question->elementImageSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII=';
+
 			}
 			else {
 				$question->elementImageCssClasses = 'question-decoration';
@@ -294,7 +295,7 @@ class ConfigboxViewQuestion extends KenedoView {
 				$answer->pickerImageSrc = $answer->option_picker_image_href;
 			}
 			else {
-				$answer->pickerImageSrc = KPATH_URL_ASSETS.'/images/blank.gif';
+				$answer->pickerImageSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII=';
 			}
 
 			// Set preloading/delayed loading CSS classes and attributes
@@ -380,9 +381,9 @@ class ConfigboxViewQuestion extends KenedoView {
 		// Joomla-typical template override location
 		$templatePaths['templateOverride'] 	= KenedoPlatform::p()->getTemplateOverridePath('com_configbox', $viewName, $template);
 		// Custom template for the specific question type view
-		$templatePaths['customTemplate'] 	= CONFIGBOX_DIR_CUSTOMIZATION .DS. 'templates' .DS. $viewName .DS. $template.'.php';
+		$templatePaths['customTemplate'] 	= KenedoPlatform::p()->getDirCustomization() .DS. 'templates' .DS. $viewName .DS. $template.'.php';
 		// SPECIAL: Custom template for the base question view
-		$templatePaths['customGeneralTemplate'] 	= CONFIGBOX_DIR_CUSTOMIZATION .DS. 'templates' .DS. 'question' .DS. $template.'.php';
+		$templatePaths['customGeneralTemplate'] 	= KenedoPlatform::p()->getDirCustomization() .DS. 'templates' .DS. 'question' .DS. $template.'.php';
 		// Regular template for specific question type view
 		$templatePaths['defaultTemplate'] 	= dirname($this->getViewPath()).DS.'tmpl'.DS.$template.'.php';
 		// SPECIAL: Regular template for the base question view

@@ -180,7 +180,7 @@ class KText {
 		}
 
 		// Load frontend overrides
-		$files[] = CONFIGBOX_DIR_CUSTOMIZATION .DS.'language_overrides'.DS.$languageTag.DS.'overrides.ini';
+		$files[] = KenedoPlatform::p()->getDirCustomization() .DS.'language_overrides'.DS.$languageTag.DS.'overrides.ini';
 
 		// Se which files exist and return those
 		$filesToReturn = array();

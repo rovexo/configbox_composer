@@ -185,15 +185,21 @@ class ConfigboxModelAdminoptions extends KenedoModel {
 			'default'=>0,
 			'tooltip'=>KText::_('When set to yes, the option will be unselectable and greyed out.'),
 			'positionForm'=>2300,
+			'appliesWhen' => array(
+				'available'=>'1',
+			),
 		);
 
 		$propDefs['availibility_date'] = array(
 			'name'=>'availibility_date',
-			'label'=>KText::_('Availibility date'),
+			'label'=>KText::_('Availability date'),
 			'type'=>'datetime',
-			'default'=>'',
+			'default'=>NULL,
 			'tooltip'=>KText::_('Set the date on which the part will be available again.'),
 			'positionForm'=>2400,
+			'appliesWhen'=>array(
+				'available'=>'1',
+			),
 		);
 
 		$propDefs['availability_end'] = array(

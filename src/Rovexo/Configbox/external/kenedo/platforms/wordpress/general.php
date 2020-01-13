@@ -136,6 +136,22 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		wp_logout();
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	public function getApplicationVersion() {
+
+		$path = WP_PLUGIN_DIR.'/configbox/configbox.php';
+
+		$default_headers = array(
+			'Version' => 'Version',
+		);
+
+		$data = get_file_data( $path, $default_headers, 'plugin');
+		return $data['Version'];
+
+	}
+
 	//TODO: Test
 	public function authenticate($username, $passwordClear) {
 		$response = wp_authenticate($username, $passwordClear);
@@ -226,7 +242,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		if (in_array($path, $this->stylesheetUrls) == false) {
 
 			$this->stylesheetUrls[] = $path;
-			wp_enqueue_style( uniqid(), $path );
+			wp_enqueue_style( uniqid(), $path, array(), null );
 
 		}
 
@@ -248,7 +264,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 			'async' => $async,
 		);
 
-		wp_enqueue_script(uniqid(), $path);
+		wp_enqueue_script(uniqid(), $path, array(), NULL);
 
 	}
 
@@ -362,6 +378,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 		$headers = array(
 			'From: "'.$fromName.'" <'.$from.'>',
+			'Reply-To: "'.$fromName.'" <'.$from.'>',
 		);
 
 		if ($isHtml) {
@@ -612,7 +629,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 		if (KRequest::getKeyword('tmpl') == 'component' || KRequest::getKeyword('in_modal') == '1') {
 			require(__DIR__.'/tmpl/component.php');
-			return;
+			exit();
 		}
 
 		if ($this->isAdminArea()) {
@@ -639,6 +656,10 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	}
 	
 	public function getRoute($url, $encode = true, $secure = NULL) {
+
+		if (function_exists('getRouteOverride')) {
+			return getRouteOverride($url, $encode, $secure);
+		}
 
 		$parsed = parse_url($url);
 
@@ -983,6 +1004,22 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	 */
 	public function registerShutdownFunction($callback) {
 		register_shutdown_function($callback);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getCsrfTokenName() {
+		//Note: Not being used on this platform
+		return 'cb_form_key';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getCsrfTokenValue() {
+		//Note: Not being used on this platform
+		return '';
 	}
 
 }

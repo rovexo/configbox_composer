@@ -450,6 +450,31 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				});
 			}
 
+			if (cbj(wrapper).find('.kenedo-datepicker').length !== 0) {
+				cbrequire(['cbj.ui'], function() {
+
+					cbj(wrapper).find('.kenedo-datepicker').each(function() {
+
+						var altField = cbj(this).closest('.kenedo-property').find('.form-control');
+						var value = altField.val();
+
+						var params = {
+							dateFormat: 'yy-mm-dd',
+							altFormat: 'yy-mm-dd',
+							altField: altField,
+						};
+
+						cbj(wrapper).find('.kenedo-datepicker').datepicker(params);
+
+						if (value && value !== '0000-00-00') {
+							cbj(wrapper).find('.kenedo-datepicker').datepicker('setDate', value);
+						}
+
+					});
+
+				});
+			}
+
 			// Go through all views and run the ready functions
 			cbj(wrapper).find('.kenedo-view').each(function() {
 				var viewId = cbj(this).attr('id');
@@ -486,68 +511,71 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 				cbrequire(['tinyMCE', 'configbox/server'], function(tinyMCE, server) {
 
-					tinyMCE.init({
-						convert_urls : false,
-						document_base_url : server.config.urlBase,
-						documentBaseURL : server.config.urlBase,
-						baseURL : server.config.urlTinyMceBase,
-						suffix : (server.config.useMinifiedJs === true) ? '.min' : '',
+					try {
+						tinyMCE.init({
+							convert_urls : false,
+							document_base_url : server.config.urlBase,
+							documentBaseURL : server.config.urlBase,
+							baseURL : server.config.urlTinyMceBase,
+							suffix : (server.config.useMinifiedJs === true) ? '.min' : '',
 
-						// General options
-						mode 		: "textareas",
-						selector 	: '.kenedo-html-editor',
-						theme 		: "modern",
-						plugins		: [
-							"advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-							"searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime nonbreaking",
-							"save table contextmenu directionality emoticons template paste textcolor"
-						],
-						toolbar		: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-						content_css : "",
-						template_external_list_url 	: "js/template_list.js",
-						external_link_list_url 		: "js/link_list.js",
-						external_image_list_url 	: "js/image_list.js",
-						media_external_list_url 	: "js/media_list.js",
+							// General options
+							mode 		: "textareas",
+							selector 	: '.kenedo-html-editor',
+							plugins		: [
+								"advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+								"searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime nonbreaking",
+								"save table directionality emoticons template paste"
+							],
+							toolbar		: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+							template_external_list_url 	: "js/template_list.js",
+							external_link_list_url 		: "js/link_list.js",
+							external_image_list_url 	: "js/image_list.js",
+							media_external_list_url 	: "js/media_list.js",
 
-						style_formats: [
-							{title: 'Headers', items: [
-									{title: 'Header 1', format: 'h1'},
-									{title: 'Header 2', format: 'h2'},
-									{title: 'Header 3', format: 'h3'},
-									{title: 'Header 4', format: 'h4'},
-									{title: 'Header 5', format: 'h5'},
-									{title: 'Header 6', format: 'h6'}
-								]},
-							{title: 'Inline', items: [
-									{title: 'Bold', icon: 'bold', format: 'bold'},
-									{title: 'Italic', icon: 'italic', format: 'italic'},
-									{title: 'Underline', icon: 'underline', format: 'underline'},
-									{title: 'Strikethrough', icon: 'strikethrough', format: 'strikethrough'},
-									{title: 'Superscript', icon: 'superscript', format: 'superscript'},
-									{title: 'Subscript', icon: 'subscript', format: 'subscript'},
-									{title: 'Code', icon: 'code', format: 'code'}
-								]},
-							{title: 'Blocks', items: [
-									{title: 'Paragraph', format: 'p'},
-									{title: 'Blockquote', format: 'blockquote'},
-									{title: 'Div', format: 'div'},
-									{title: 'Pre', format: 'pre'}
-								]},
-							{title: 'Alignment', items: [
-									{title: 'Left', icon: 'alignleft', format: 'alignleft'},
-									{title: 'Center', icon: 'aligncenter', format: 'aligncenter'},
-									{title: 'Right', icon: 'alignright', format: 'alignright'},
-									{title: 'Justify', icon: 'alignjustify', format: 'alignjustify'}
-								]},
-							{title: 'Others', items: [
-									{title : 'Custom 1', selector : 'p', classes : 'custom-1'},
-									{title : 'Custom 2', selector : 'p', classes : 'custom-2'},
-									{title : 'Custom 3', selector : 'p', classes : 'custom-3'},
-									{title : 'Custom 4', selector : 'p', classes : 'custom-4'}
-								]}
-						]
+							style_formats: [
+								{title: 'Headers', items: [
+										{title: 'Header 1', format: 'h1'},
+										{title: 'Header 2', format: 'h2'},
+										{title: 'Header 3', format: 'h3'},
+										{title: 'Header 4', format: 'h4'},
+										{title: 'Header 5', format: 'h5'},
+										{title: 'Header 6', format: 'h6'}
+									]},
+								{title: 'Inline', items: [
+										{title: 'Bold', icon: 'bold', format: 'bold'},
+										{title: 'Italic', icon: 'italic', format: 'italic'},
+										{title: 'Underline', icon: 'underline', format: 'underline'},
+										{title: 'Strikethrough', icon: 'strikethrough', format: 'strikethrough'},
+										{title: 'Superscript', icon: 'superscript', format: 'superscript'},
+										{title: 'Subscript', icon: 'subscript', format: 'subscript'},
+										{title: 'Code', icon: 'code', format: 'code'}
+									]},
+								{title: 'Blocks', items: [
+										{title: 'Paragraph', format: 'p'},
+										{title: 'Blockquote', format: 'blockquote'},
+										{title: 'Div', format: 'div'},
+										{title: 'Pre', format: 'pre'}
+									]},
+								{title: 'Alignment', items: [
+										{title: 'Left', icon: 'alignleft', format: 'alignleft'},
+										{title: 'Center', icon: 'aligncenter', format: 'aligncenter'},
+										{title: 'Right', icon: 'alignright', format: 'alignright'},
+										{title: 'Justify', icon: 'alignjustify', format: 'alignjustify'}
+									]},
+								{title: 'Others', items: [
+										{title : 'Custom 1', selector : 'p', classes : 'custom-1'},
+										{title : 'Custom 2', selector : 'p', classes : 'custom-2'},
+										{title : 'Custom 3', selector : 'p', classes : 'custom-3'},
+										{title : 'Custom 4', selector : 'p', classes : 'custom-4'}
+									]}
+							]
 
-					});
+						});
+					} catch(error) {
+						console.log('Init of TinyMCE failed. Error message was ' + error);
+					}
+
 				});
 
 

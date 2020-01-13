@@ -41,7 +41,7 @@ defined('CB_VALID_ENTRY') or die();
 			<?php } ?>
 
 			<?php if ($this->showButtonNavigation == false && $this->showFinishButton) { ?>
-				<a rel="nofollow" class="btn btn-primary add-to-cart-button <?php echo $this->finishButtonClasses;?>" href="<?php echo $this->urlFinishButton;?>"><?php echo KText::_('Add to cart');?></a>
+				<a rel="nofollow" class="btn btn-primary <?php echo $this->finishButtonClasses;?>"><?php echo KText::_('Add to cart');?></a>
 			<?php } ?>
 		</div>
 

@@ -22,12 +22,13 @@ define(['cbj'], function (cbj) {
 			languageTag: '',
 			decimalSymbol: '',
 			thousandsSeparator: '',
-			cbVersion: '',
 			cacheVar: '',
 			urlXhr: '',
 			useMinifiedJs: true,
 			useMinifiedCss: true,
-			useAssetsCacheBuster: true
+			useAssetsCacheBuster: true,
+			requireCustomJs: true,
+			requireCustomQuestionJs: true
 		},
 
 		/**
@@ -35,12 +36,12 @@ define(['cbj'], function (cbj) {
 		 * @param {string|jQuery} target - CSS selector or jQuery collection
 		 * @param {string} controller - CB controller name
 		 * @param {string} task - CB controller task
-		 * @param {array|object} data - POST data to send
+		 * @param {array|object=} data - POST data to send
 		 * @param {function=} callback - Callback to send
 		 */
 		injectHtml: function(target, controller, task, data, callback) {
 
-			var requestData = data;
+			var requestData = data || {};
 			requestData.option = 'com_configbox';
 			requestData.controller = controller;
 			requestData.task = task;
@@ -53,7 +54,7 @@ define(['cbj'], function (cbj) {
 				if (callback) {
 					callback();
 				}
-			})
+			});
 		},
 
 		/**

@@ -101,14 +101,12 @@ defined('CB_VALID_ENTRY') or die();
 		<input type="hidden" id="form_custom_2" name="form_custom_2" 	value="<?php echo hsc(KRequest::getString('form_custom_2'));?>" />
 		<input type="hidden" id="form_custom_3" name="form_custom_3" 	value="<?php echo hsc(KRequest::getString('form_custom_3'));?>" />
 		<input type="hidden" id="form_custom_4" name="form_custom_4" 	value="<?php echo hsc(KRequest::getString('form_custom_4'));?>" />
-		<?php if (KenedoPlatform::getName() == 'magento') { ?>
-			<input type="hidden" id="form_key" 		name="form_key" 		value="<?php echo Mage::getSingleton('core/session')->getFormKey();?>" />
-		<?php } ?>
-        <?php if (KenedoPlatform::getName() == 'magento2') { ?>
-            <?php $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); ?>
-            <?php $formKey = $objectManager->get('Magento\Framework\Data\Form\FormKey'); ?>
-            <input type="hidden" id="form_key" 		name="form_key" 		value="<?php echo $formKey->getFormKey();?>" />
-        <?php } ?>
+
+		<input type="hidden"
+		       id="<?php echo hsc(KenedoPlatform::p()->getCsrfTokenName());?>"
+		       name="<?php echo hsc(KenedoPlatform::p()->getCsrfTokenName());?>"
+		       value="<?php echo hsc(KenedoPlatform::p()->getCsrfTokenValue());?>" />
+
 	</div>
 	
 </form>

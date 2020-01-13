@@ -276,7 +276,7 @@ class ConfigboxLocationHelper {
 		// Load balancers and CDNs may put multiple IPs comma separated
 		if (strstr($ipAddress, ', ')) {
 			$addresses = explode(', ', $ipAddress);
-			$ipAddress = trim($addresses[0]);
+			$ipAddress = trim(end($addresses));
 		}
 
 		if ($ipAddress == '127.0.0.1' || $ipAddress == '::1') {

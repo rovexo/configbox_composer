@@ -22,6 +22,6 @@ defined('CB_VALID_ENTRY') or die();
 
 	</div>
 
-	<a class="btn btn-primary pull-right trigger-store-languages" data-next-step="<?php echo ($this->platformName == 'magento') ? '6':'3';?>"><?php echo KText::_('Next');?></a>
+	<a class="btn btn-primary pull-right trigger-store-languages" data-next-step="<?php echo ($this->platformName == 'magento' || $this->platformName == 'magento2') ? '6':'3';?>"><?php echo KText::_('Next');?></a>
 
 </div>

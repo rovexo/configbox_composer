@@ -21,9 +21,9 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 		return 'ConfigboxModelAdminpages';
 	}
 
-    function getChildModelForeignKey() {
-        return 'product_id';
-    }
+	function getChildModelForeignKey() {
+		return 'product_id';
+	}
 
 	function getPropertyDefinitions() {
 
@@ -130,6 +130,10 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 99000,
 		);
 
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			$propDefs['published']['invisible'] = true;
+		}
+
 		$propDefs['generalEnd'] = array(
 			'name'=>'generalEnd',
 			'type'=>'groupend',
@@ -145,6 +149,10 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 110100,
 		);
 
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			$propDefs['visualization_start']['defaultState'] = 'opened';
+		}
+
 		$propDefs['visualization_type'] = array(
 			'name' => 'visualization_type',
 			'label' => KText::_('What type of visualization do you want to use?'),
@@ -154,7 +162,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 				'none'=>KText::_('No Visualisation'),
 				'composite' => KText::_('Composite Image'),
 				'shapediver' => KText::_('ShapeDiver 3D Model'),
-				),
+			),
 			'default' => 'none',
 			'positionForm' => 110200,
 		);
@@ -283,7 +291,6 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			$propDefs['baseprice_end'] = array(
 				'name' => 'baseprice_end',
 				'type' => 'groupend',
-				'opentable' => 0,
 				'positionForm' => 240000,
 			);
 
@@ -773,6 +780,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 590000,
 		);
 
+		// Watch out - for M2 the entire group is hidden (by CSS style in admin.css)
 		$propDefs['price_module_start'] = array(
 			'name'=>'price_module_start',
 			'type'=>'groupstart',
@@ -915,7 +923,6 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 		$propDefs['pm_price_module_end_regular'] = array(
 			'name'=>'price_module_end_regular',
 			'type'=>'groupend',
-			'opentable'=>0,
 			'positionForm' => 740000,
 		);
 
@@ -1015,7 +1022,6 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 		$propDefs['price_module_end'] = array(
 			'name'=>'price_module_end',
 			'type'=>'groupend',
-			'opentable'=>1,
 			'positionForm'=>850000,
 		);
 

@@ -8,7 +8,7 @@ defined('CB_VALID_ENTRY') or die();
 
 	<div class="page-navigation-cart col-sm-6">
 		<?php if ($this->showNextButton == true && $this->showFinishButton == true) { ?>
-			<a rel="nofollow" class="btn btn-primary <?php echo $this->finishButtonClasses;?>" href="<?php echo $this->urlFinishButton;?>"><?php echo KText::_('Add to cart');?></a>
+			<a rel="nofollow" class="btn btn-primary <?php echo $this->finishButtonClasses;?>"><?php echo KText::_('Add to cart');?></a>
 		<?php } ?>
 	</div>
 
@@ -23,7 +23,7 @@ defined('CB_VALID_ENTRY') or die();
 		<?php } ?>
 
 		<?php if ($this->showFinishButton == true && $this->showNextButton == false) { ?>
-			<a rel="nofollow" class="btn btn-primary <?php echo $this->finishButtonClasses;?>" href="<?php echo $this->urlFinishButton;?>"><?php echo KText::_('Add to cart');?></a>
+			<a rel="nofollow" class="btn btn-primary <?php echo $this->finishButtonClasses;?>"><?php echo KText::_('Add to cart');?></a>
 		<?php } ?>
 
 	</div>

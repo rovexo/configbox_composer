@@ -34,7 +34,7 @@ class IpnBillsafe_invoice {
 				'merchantLicenseSandbox' => $this->settings->get('merchant_license_test',''),
 				'merchantLicenseLive'    => $this->settings->get('merchant_license_live',''),
 				'applicationSignature'   => $this->settings->get('application_signature',''),
-				'applicationVersion'     => ConfigboxVersionHelper::getConfigBoxVersion(),
+				'applicationVersion'     => KenedoPlatform::p()->getApplicationVersion(),
 		);
 		
 		$this->sdk->setCredentials($credentials);

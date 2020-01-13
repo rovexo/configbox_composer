@@ -154,13 +154,17 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	}
 
 	/**
-	 *
-	 * Authenticate a user (in other words, figure out if the provided credentials match a user)
-	 * This does not login a user.
-	 *
-	 * @param string $username
-	 * @param string $password
-	 * @return bool
+	 * @inheritDoc
+	 */
+	public function getApplicationVersion() {
+		$path = JPATH_ADMINISTRATOR.'/components/com_configbox/configbox.xml';
+		$manifest = simplexml_load_file($path);
+		$version = $manifest->version->__toString();
+		return $version;
+	}
+
+	/**
+	 * @inheritDoc
 	 */
 	public function authenticate($username, $password) {
 
@@ -473,11 +477,18 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 
 		// At some point Joomla must have introduced that sendMail function. Seems more best-practice-like
 		if ($reflect->hasMethod('sendMail')) {
-			$response = $mailer->sendMail($fromEmail, $fromName, $recipient, $subject, $body, $isHtml, $cc, $bcc, $attachment);
+			$response = $mailer->sendMail($fromEmail, $fromName, $recipient, $subject, $body, $isHtml, $cc, $bcc, $attachment, $fromEmail, $fromName);
+
 			if ($response == false) {
 				KLog::log('Sending email failed. Error message from JMailer is "'.$mailer->ErrorInfo.'". Function arguments were '.var_export(func_get_args(), true), 'error');
+				return false;
 			}
-			return $response;
+			elseif(is_a($response, 'Exception') == true) {
+				/** @noinspection PhpUndefinedMethodInspection */
+				KLog::log('Sending email failed. Error message from JMailer is "'.$response->getMessage().'". Function arguments were '.var_export(func_get_args(), true), 'error');
+				return false;
+			}
+
 		}
 
 		$mailer->setSender(array($fromEmail, $fromName));
@@ -485,6 +496,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		$mailer->setSubject($subject);
 		$mailer->setBody($body);
 		$mailer->setFrom($fromEmail, $fromName);
+		$mailer->addReplyTo($fromEmail, $fromName);
 		$mailer->isHtml( $isHtml );
 
 		$mailer->addCc($cc);
@@ -756,6 +768,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		if ($this->getVersionShort() == 1.5) {
 
 			if ($minGroupId) {
+				/** @noinspection PhpUndefinedMethodInspection */
 				return (KenedoPlatform::p()->getUserGroupId($userId) >= $minGroupId);
 			}
 			else {
@@ -1224,6 +1237,20 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	 */
 	public function registerShutdownFunction($callback) {
 		register_shutdown_function($callback);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getCsrfTokenName() {
+		return JSession::getFormToken();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getCsrfTokenValue() {
+		return '1';
 	}
 
 }

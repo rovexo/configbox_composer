@@ -108,7 +108,7 @@ class KenedoModel {
 	 *
 	 * @return KenedoModel $model A KenedoModel subclass object
 	 *
-	 * @see InterfaceKenedoPlatform::getComponentDir(), CONFIGBOX_DIR_CUSTOMIZATION
+	 * @see InterfaceKenedoPlatform::getComponentDir(), KenedoPlatform::p()->getDirCustomization()
 	 *
 	 */
 	static function getModel($className, $path = '') {
@@ -156,7 +156,7 @@ class KenedoModel {
 
 			// Get the complete path to the regular and custom model
 			$regularPath = KenedoPlatform::p()->getComponentDir($component) .DS. 'models' .DS. $modelFileName;
-			$customPath = CONFIGBOX_DIR_CUSTOMIZATION .DS. 'models' .DS. $modelFileName;
+			$customPath = KenedoPlatform::p()->getDirCustomization() .DS. 'models' .DS. $modelFileName;
 
 			// Overwrite $path to get the file from either customization or system
 			if ($path == '') {

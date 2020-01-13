@@ -12,14 +12,12 @@ defined('CB_VALID_ENTRY') or die();
 				<input type="hidden" name="option" value="<?php echo hsc($this->component);?>" />
 				<input type="hidden" name="controller" value="<?php echo hsc($this->controllerName);?>" />
 				<input type="hidden" name="task" value="storeLicenseKey" />
-				<?php if (KenedoPlatform::getName() == 'magento') { ?>
-					<input type="hidden" name="form_key" value="<?php echo Mage::getSingleton('core/session')->getFormKey();?>" />
-				<?php } ?>
-                <?php if (KenedoPlatform::getName() == 'magento2') { ?>
-                    <?php $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); ?>
-                    <?php $formKey = $objectManager->get('Magento\Framework\Data\Form\FormKey'); ?>
-                    <input type="hidden" id="form_key" 		name="form_key" 		value="<?php echo $formKey->getFormKey();?>" />
-                <?php } ?>
+
+				<input type="hidden"
+				       id="<?php echo hsc(KenedoPlatform::p()->getCsrfTokenName());?>"
+				       name="<?php echo hsc(KenedoPlatform::p()->getCsrfTokenName());?>"
+				       value="<?php echo hsc(KenedoPlatform::p()->getCsrfTokenValue());?>" />
+
 			</form>
 		</div>
 	</div>

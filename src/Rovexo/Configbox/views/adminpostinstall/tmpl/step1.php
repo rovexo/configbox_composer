@@ -12,7 +12,7 @@ defined('CB_VALID_ENTRY') or die();
 		<label for="licenseKey"><?php echo KText::_('POST_INSTALL_LICENSE_KEY_LABEL');?></label>
 		<input class="form-control" type="text" id="licenseKey" aria-describedby="help-licenseKey" value="<?php echo hsc($this->licenseKey);?>">
 		<div class="help-block validation-placeholder"></div>
-		<span id="help-licenseKey" class="help-block"><?php echo KText::_('POST_INSTALL_LICENSE_KEY_HELP');?></span>
+		<div id="help-licenseKey" class="help-block"><?php echo KText::_('POST_INSTALL_LICENSE_KEY_HELP');?></div>
 	</div>
 
 	<a class="btn btn-primary pull-right trigger-store-license-key" data-next-step="<?php echo ($this->platformName == 'wordpress') ? '3':'2';?>"><?php echo KText::_('Next');?></a>

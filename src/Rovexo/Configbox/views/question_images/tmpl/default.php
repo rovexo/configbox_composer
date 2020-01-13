@@ -34,7 +34,7 @@ defined('CB_VALID_ENTRY') or die();
 								name="question-<?php echo intval($this->question->id);?>"
 								id="answer-input-<?php echo intval($answer->id);?>"
 								value="<?php echo intval($answer->id);?>"
-								type="radio"
+								type="<?php echo (count($this->question->answers) == 1) ? 'checkbox':'radio'; ?>"
 							<?php echo ($answer->isSelected) ? 'checked="checked"' : '';?>
 							<?php echo ($answer->disableControl) ? 'disabled="disabled"' : '';?>
 						/>

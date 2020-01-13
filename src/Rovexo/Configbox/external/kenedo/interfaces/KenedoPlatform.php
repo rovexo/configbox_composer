@@ -1,13 +1,57 @@
 <?php
 interface InterfaceKenedoPlatform {
 
+	/**
+	 * @return KenedoDatabase or sub class
+	 */
 	public function &getDb();
+
+	/**
+	 * @return object 	stdClass object with members hostname (may contain port as hostname:port), username, password,
+	 * 					database (schema name), prefix (table prefix)
+	 */
 	public function getDbConnectionData();
+
+	/**
+	 * Runs any platform-specific initialization code
+	 * @return void
+	 */
 	public function initialize();
+
+	/**
+	 * Issues a redirect header (or if not possible adds a JS block redirecting the user)
+	 * @param string $url
+	 * @param int $httpCode
+	 * @return void
+	 */
 	public function redirect($url, $httpCode = 303);
+
+	/**
+	 * Logs the current user out
+	 * @return bool Success or failure
+	 */
 	public function logout();
+
+	/**
+	 * Authenticate a user (basically check if username and password is valid) - mind it does not log the user in
+	 * @param string $username
+	 * @param string $passwordClear
+	 * @return bool Success or failure
+	 */
 	public function authenticate($username, $passwordClear);
+
+	/**
+	 * Login in a user with given user name
+	 * @param string $username The platform username of the user
+	 * @return bool Success or failure
+	 */
 	public function login($username);
+
+	/**
+	 * @return string Currently installed version of ConfigBox (mind it's the app, not the library)
+	 */
+	public function getApplicationVersion();
+
 	public function sendSystemMessage($text, $type = NULL);
 	public function getVersionShort();
 	public function getDebug();
@@ -58,7 +102,22 @@ interface InterfaceKenedoPlatform {
 	public function startSession();
 	public function getPasswordResetLink();
 	public function getPlatformLoginLink();
+
+	/**
+	 * Returns a URI or URL from a standard Joomla non-SEF URI (index.php? followed by a query string)
+	 * @param string $url
+	 * @param bool $encode
+	 * @param int $secure 0: (default) Use scheme used in the current request
+	 *                    1: Use HTTPS
+	 *                    2: Use HTTP
+	 * @return string
+	 */
 	public function getRoute($url, $encode = true, $secure = NULL);
+
+	/**
+	 * Used only in Joomla. Returns the ID of the currency active menu item ID.
+	 * @return int|null
+	 */
 	public function getActiveMenuItemId();
 
 	/**
@@ -178,5 +237,17 @@ interface InterfaceKenedoPlatform {
 	 * @see register_shutdown_function()
 	 */
 	public function registerShutdownFunction($callback);
+
+	/**
+	 * Returns the POST/GET param name for the Anti-CSRF Token
+	 * @return string
+	 */
+	public function getCsrfTokenName();
+
+	/**
+	 * Returns the POST/GET param value for the Anti-CSRF Token
+	 * @return string
+	 */
+	public function getCsrfTokenValue();
 
 }

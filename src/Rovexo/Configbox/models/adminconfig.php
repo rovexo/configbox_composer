@@ -89,6 +89,10 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>30,
 		);
 
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			$propDefs['language_tag']['invisible'] = true;
+		}
+
 		$propDefs['active_languages'] = array(
 			'name'=>'active_languages',
 			'label'=>KText::_('Active Languages'),
@@ -110,7 +114,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 			'tableOther'=>'',
 			'keyOther'=>'tag',
-			'displayColumnOther'=>'tag',
+			'displayColumnOther'=>'label',
 
 			'positionForm'=>40,
 		);
@@ -206,6 +210,10 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'tooltip'=>KText::_('Choose the customer group a new customer should be put in.'),
 			'positionForm'=>120,
 		);
+
+		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+			$propDefs['default_customer_group_id']['invisible'] = true;
+		}
 
 		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
 
@@ -576,6 +584,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		}
 
+		// Watch out - for M2 the entire group is hidden (by CSS style in admin.css)
 		$propDefs['price_module_start'] = array(
 			'name'=>'price_module_start',
 			'type'=>'groupstart',
@@ -1077,6 +1086,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>1240,
 		);
 
+		// Watch out - for M2 the entire group is hidden (by CSS style in admin.css)
 		$propDefs['maintenance_start'] = array(
 			'name' => 'maintenance_start',
 			'type' => 'groupstart',

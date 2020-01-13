@@ -178,6 +178,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 	}
 
 	function getCriticalIssues() {
+
 		$items = array();
 
 		if ((KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') && $this->shopCountryIsMissing()) {
@@ -186,6 +187,15 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 			$warning->problem = KText::_('WARNING_NO_SHOP_COUNTRY_PROBLEM');
 			$warning->solution = KText::_('WARNING_NO_SHOP_COUNTRY_SOLUTION');
 			$warning->access = KText::_('WARNING_NO_SHOP_COUNTRY_ACCESS');
+			$items[] = $warning;
+		}
+
+		if ($this->isLicenseKeyEntered() == false) {
+			$warning = new stdClass();
+			$warning->title = KText::_('WARNING_NO_LICENSE_KEY_ENTERED_TITLE');
+			$warning->problem = KText::_('WARNING_NO_LICENSE_KEY_ENTERED_PROBLEM');
+			$warning->solution = KText::_('WARNING_NO_LICENSE_KEY_ENTERED_SOLUTION');
+			$warning->access = KText::_('WARNING_NO_LICENSE_KEY_ENTERED_ACCESS');
 			$items[] = $warning;
 		}
 
@@ -526,7 +536,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 			$warnings[] = $warning;
 		}
 
-		$confTemplate = CONFIGBOX_DIR_CUSTOMIZATION .DS.'templates'.DS.'confirmation'.DS.'default.php';
+		$confTemplate = KenedoPlatform::p()->getDirCustomization() .DS.'templates'.DS.'confirmation'.DS.'default.php';
 
 		if (is_file($confTemplate)) {
 			$content = file_get_contents($confTemplate);
@@ -687,6 +697,17 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 	}
 
 	/**
+	 * Tells if there's a license key entered in the CB settings
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function isLicenseKeyEntered() {
+		$licenseKey = CbSettings::getInstance()->get('product_key');
+		return !empty($licenseKey);
+	}
+
+
+	/**
 	 * Tells if license exired. Caches check result for 10 minutes.
 	 * @return bool true if license has expired
 	 * @throws Exception
@@ -700,6 +721,10 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 
     	$timeNow = KenedoTimeHelper::getNormalizedTime('NOW', 'datetime');
 		$licenseKey = CbSettings::getInstance()->get('product_key');
+
+		if (!$licenseKey) {
+			throw new Exception('No license key found in CB settings');
+		}
 
     	if ($lastCheckDate != null) {
     		$last = new DateTime($lastCheckDate);

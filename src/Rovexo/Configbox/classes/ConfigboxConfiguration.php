@@ -42,9 +42,10 @@ class ConfigboxConfiguration {
 
 		$this->positionId = intval($positionId);
 
-		$selections = $this->loadSelectionsFromSession();
-
-		if (!$selections) {
+		if ($this->selectionAreSetInSession()) {
+			$selections = $this->loadSelectionsFromSession();
+		}
+		else {
 			$selections = $this->loadSelectionsFromDb();
 		}
 
@@ -100,6 +101,15 @@ class ConfigboxConfiguration {
 	}
 
 	/**
+	 * Checks if selections were set (even if empty) in session.
+	 * @return bool
+	 */
+	public function selectionAreSetInSession() {
+		$data = KSession::get('selections_'.$this->getPositionId(), NULL);
+		return ($data !== null);
+	}
+
+	/**
 	 * @return string[]
 	 */
 	public function loadSelectionsFromSession() {
@@ -125,7 +135,7 @@ class ConfigboxConfiguration {
 		$success = $db->query();
 
 		if (!$success) {
-			throw new Exception('An error occured during storing selections.');
+			throw new Exception('An error occurred during storing selections.');
 		}
 
 		$selections = $this->getSelections(false);
@@ -142,7 +152,7 @@ class ConfigboxConfiguration {
 			$success = $db->insertObject('#__configbox_cart_position_configurations', $record);
 
 			if (!$success) {
-				throw new Exception('An error occured during storing selections.');
+				throw new Exception('An error occurred during storing selections.');
 			}
 
 		}
@@ -161,7 +171,7 @@ class ConfigboxConfiguration {
 		$success = $db->query();
 
 		if (!$success) {
-			throw new Exception('An error occured during storing selections.');
+			throw new Exception('An error occurred during storing selections.');
 		}
 
 	}

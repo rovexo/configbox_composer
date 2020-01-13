@@ -50,6 +50,12 @@ div#element-box div.m {
 	background: none #f6f6f7;
 }
 
+.platform-magento2 .view-adminconfig #property-name-maintenance_start,
+.platform-magento2 .view-adminproduct #property-name-price_module_start,
+.platform-magento2 .view-adminconfig #property-name-price_module_start {
+	display:none!important;
+}
+
 /* Magento 2 admin CSS changes - END */
 
 
@@ -486,15 +492,6 @@ table.sans-padding td {
 
 
 /* QUICKEDIT - START */
-
-.cb-content .quickeditwait:before {
-	margin-left:5px;
-	font-family:FontAwesome;
-	content: "\f110";
-	animation: fa-spin 2s infinite linear;
-	-webkit-font-smoothing: antialiased;
-	display:inline-block;
-}
 
 .cb-content .quick-edit-buttons {
 	background:rgba(255, 255, 255, 0.7);

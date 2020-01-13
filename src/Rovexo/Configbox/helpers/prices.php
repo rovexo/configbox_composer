@@ -33,7 +33,7 @@ class ConfigboxPrices {
 			} else if (KenedoPlatform::getName() == 'magento2') {
                 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
                 $scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
-                self::$pricesEnteredNet = $scopeConfig->getValue('tax/calculation/price_includes_tax', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+                self::$pricesEnteredNet = ($scopeConfig->getValue('tax/calculation/price_includes_tax', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)) ? false : true;
             }
 			else {
 				self::$pricesEnteredNet = true;
@@ -53,24 +53,27 @@ class ConfigboxPrices {
 	 */
 	public static function showNetPrices($userId = NULL) {
 
-		if (KenedoPlatform::getName() == 'magento') {
-			$taxDisplayType = Mage::getStoreConfig('tax/display/type');
-			$showNet = ($taxDisplayType == 1);
-			return $showNet;
-		} else if (KenedoPlatform::getName() == 'magento2') {
-            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            $scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
-            $taxDisplayType = $scopeConfig->getValue('tax/display/type', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-            $showNet = ($taxDisplayType == 1);
-            return $showNet;
-        }
-
 		if ($userId === NULL) {
 			$userId = ConfigboxUserHelper::getUserId();
 		}
 
 		if (!isset(self::$showNetPrices[$userId])) {
-			self::$showNetPrices[$userId] = ConfigboxPermissionHelper::canGetB2BMode($userId);
+
+			if (KenedoPlatform::getName() == 'magento') {
+				$taxDisplayType = Mage::getStoreConfig('tax/display/type');
+				$showNet = ($taxDisplayType == 1);
+				self::$showNetPrices[$userId] = $showNet;
+			} else if (KenedoPlatform::getName() == 'magento2') {
+				$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+				$scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
+				$taxDisplayType = $scopeConfig->getValue('tax/display/type', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+				$showNet = ($taxDisplayType == 1);
+				self::$showNetPrices[$userId] = $showNet;
+			}
+			else {
+				self::$showNetPrices[$userId] = ConfigboxPermissionHelper::canGetB2BMode($userId);
+			}
+
 		}
 
 		return self::$showNetPrices[$userId];
@@ -221,44 +224,43 @@ class ConfigboxPrices {
 			return 0;
 		}
 
-		if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento2')) {
-
-			$sessionKey = 'cbproduct_base_price_'.$productId;
-
-			$price = KSession::get($sessionKey, 0);
-
-			if (!$inBaseCurrency) {
-				$price *= ConfigboxCurrencyHelper::getCurrency()->multiplicator;
-			}
-
-			return $price;
-
-		}
+		if (KenedoPlatform::getName() == 'magento2') {
+		    return 0;
+        }
 
 		if ($getNet === NULL) {
 			$getNet = ConfigboxPrices::showNetPrices();
 		}
 
 		$cacheData = ConfigboxCacheHelper::getPricingForProduct($productId);
+		$taxClassId = $cacheData['taxClassIdByProduct'][$productId];
 
-		$price = $cacheData['priceByProduct'][$productId];
+		if (KenedoPlatform::getName() == 'magento') {
 
-		// Check for overrides
-		$overrides = $cacheData['priceOverridesByProduct'][$productId];
-		if (count($overrides)) {
-			$groupId = ConfigboxUserHelper::getGroupId();
-			foreach ($overrides as $override) {
-				if ($override['group_id'] == $groupId) {
-					$price = $override['price'];
+			$sessionKey = 'cbproduct_base_price_'.$productId;
+			$price = KSession::get($sessionKey, 0);
+
+		}
+		else {
+
+			$price = $cacheData['priceByProduct'][$productId];
+
+			// Check for overrides
+			$overrides = $cacheData['priceOverridesByProduct'][$productId];
+			if (count($overrides)) {
+				$groupId = ConfigboxUserHelper::getGroupId();
+				foreach ($overrides as $override) {
+					if ($override['group_id'] == $groupId) {
+						$price = $override['price'];
+					}
 				}
 			}
+
 		}
 
 		if ($inBaseCurrency == false) {
 			$price *= ConfigboxCurrencyHelper::getCurrency()->multiplicator;
 		}
-
-		$taxClassId = $cacheData['taxClassIdByProduct'][$productId];
 
 		return self::getNormalizedPrice($price, $getNet, $productId, $taxClassId);
 		

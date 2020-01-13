@@ -4,9 +4,10 @@ defined('CB_VALID_ENTRY') or die();
  * @var KenedoPlatformWordpress $this
  */
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $this->getLanguageTag();?>">
 <head>
-
+	<title><?php echo $this->getDocumentTitle();?></title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
 	<?php $this->renderStyleSheetLinks();?>
@@ -22,3 +23,4 @@ defined('CB_VALID_ENTRY') or die();
 	<?php $this->renderBodyScriptDeclarations();?>
 
 </body>
+</html>

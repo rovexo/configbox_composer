@@ -257,6 +257,7 @@
 
 .cb-content .question .validation-message-target {
 	display: none;
+	color:#e02b27;
 }
 
 .cb-content .question .answer.radio,
@@ -332,7 +333,12 @@
 
 .cb-content .question.type-calendar.non-applying-question.grey-out-non-applying .trigger-show-calendar {
 	color: #ccc;
+}
 
+.cb-content .question.type-calendar .ui-datepicker-inline {
+	box-shadow: none;
+	margin:5px 0;
+	max-width:100%;
 }
 
 .cb-content .question.type-colorpicker .pseudo-text-field {
@@ -389,16 +395,14 @@
 	margin-bottom: 5px;
 	padding: 15px;
 	border-radius: 15px;
-}
-
-.cb-content .question.type-ralcolorpicker .modal-content .ral-color a{
 	font-size: 14px;
 	color: #000;
 	text-decoration: none;
 	display: block;
+	cursor: pointer;
 }
 
-.cb-content .question.type-ralcolorpicker .modal-content .ral-color a.is-dark {
+.cb-content .question.type-ralcolorpicker .modal-content .ral-color.is-dark {
 	color: #ffffff;
 }
 
@@ -414,6 +418,10 @@
 .cb-content .question.type-colorpicker .sp-container {
 	border: 1px solid #ccc;
 	display: block;
+}
+
+.cb-content .question.type-colorpicker .sp-container.sp-flat {
+	z-index:0;
 }
 
 .cb-content .question.type-colorpicker .sp-palette-container,
@@ -606,6 +614,13 @@
 	margin-right: 2px;
 }
 
+.cb-content .question.type-images input[type=checkbox] {
+	position: relative;
+	top: -2px;
+	margin-top: 0;
+	margin-right: 2px;
+}
+
 .cb-content .question.type-checkbox .form-group {
 	margin-bottom: 0;
 }
@@ -712,4 +727,11 @@
 .view-configuratorpage .question-description-modal .modal-content,
 .view-configuratorpage .answer-description-modal .modal-content {
 	padding:20px;
+}
+
+.view-configuratorpage .configbox-disabled,
+.view-configuratorpage .configbox-disabled:hover {
+	background:#ccc;
+	border-color:#bbb;
+	cursor:default;
 }

@@ -97,6 +97,13 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 		Mage::getSingleton('customer/session')->logout();
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	public function getApplicationVersion() {
+		return Mage::getConfig()->getNode('modules/Elovaris_Configbox/version')->__toString();
+	}
+
 	//TODO: Implement
 	public function authenticate($username, $passwordClear) {
 		return true;
@@ -104,18 +111,6 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 
 	//TODO: Implement
 	public function login($username) {
-		return true;
-		/** @var $session Mage_Customer_Model_Session */
-		/*$session = Mage::getSingleton( 'customer/session' );
-
-		try {
-			$session->login( $username, $password );
-			$session->setCustomerAsLoggedIn( $session->getCustomer() );
-			return true;
-		}
-		catch( Exception $e ) {
-			return false;
-		}*/
 
 	}
 
@@ -134,7 +129,7 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 		}
 
 	}
-	//TODO: Implement
+
 	public function getVersionShort() {
 		return Mage::getVersion();
 	}
@@ -146,11 +141,11 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	public function getConfigOffset() {
 		return Mage::app()->getStore()->getConfig('general/locale/timezone');
 	}
-	//TODO: Implement
+
 	public function getMailerFromName() {
 		return Mage::getStoreConfig('trans_email/ident_general/name');
 	}
-	//TODO: Implement
+
 	public function getMailerFromEmail() {
 		return Mage::getStoreConfig('trans_email/ident_general/email');
 	}
@@ -312,6 +307,7 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	}
 	//TODO: Implement
 	public function getDocumentTitle() {
+		return '';
 		//Mage::app()->getLayout()->getBlock('head')->getTitle();
 	}
 
@@ -590,7 +586,7 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 			parse_str($parsed['query'],$params);
 		}
 
-		$params['form_key'] = Mage::getSingleton('core/session')->getFormKey();
+		$params['form_key'] = $this->getCsrfTokenValue();;
 
 		if ($secure === NULL) {
 			$params['_forced_secure'] = Mage::app()->getRequest()->isSecure();
@@ -740,6 +736,20 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	 */
 	public function registerShutdownFunction($callback) {
 
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getCsrfTokenName() {
+		return 'form_key';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getCsrfTokenValue() {
+		return Mage::getSingleton('core/session')->getFormKey();
 	}
 
 }

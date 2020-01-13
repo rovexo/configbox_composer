@@ -61,6 +61,15 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	public function logout() {
 		KSession::set('logged_in',false);
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getApplicationVersion() {
+		//TODO: See about how a release number makes sense for standalone
+		return '1.0.0';
+	}
+
 	//TODO: Implement
 	public function authenticate($username, $passwordClear) {
 		return true;
@@ -526,6 +535,22 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	 */
 	public function registerShutdownFunction($callback) {
 		register_shutdown_function($callback);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getCsrfTokenName() {
+		//Note: Not being used on this platform
+		return 'cb_form_key';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getCsrfTokenValue() {
+		//Note: Not being used on this platform
+		return '';
 	}
 
 }

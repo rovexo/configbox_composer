@@ -20,7 +20,7 @@ defined('CB_VALID_ENTRY') or die();
 
 			<div class="input-group">
 
-				<div class="form-control-static pseudo-text-field"><?php echo hsc($this->outputValue);?></div>
+				<div class="form-control-static pseudo-text-field trigger-show-calendar"><?php echo hsc($this->outputValue);?></div>
 
 				<span class="input-group-addon trigger-show-calendar">
 					<span class="glyphicon glyphicon-calendar" title="<?php echo KText::_('Change Date');?>"></span>
@@ -29,7 +29,8 @@ defined('CB_VALID_ENTRY') or die();
 			</div>
 
 			<input style="display:block;width:0;height:0;border:none;margin:0;padding:0;" value="<?php echo hsc($this->outputValue);?>" type="text" id="output-helper-<?php echo hsc($this->question->id);?>" />
-			<input style="display:block;width:0;height:0;border:none;margin:0;padding:0;" value="<?php echo hsc($this->selection);?>" type="text" id="input-<?php echo hsc($this->question->id);?>" />
+
+			<div id="input-<?php echo hsc($this->question->id);?>" data-selection="<?php echo hsc($this->selection);?>"></div>
 
 			<span class="help-block validation-message-target">
 				<?php echo ($this->hasValidationMessage) ? hsc($this->validationMessage) : '';?>

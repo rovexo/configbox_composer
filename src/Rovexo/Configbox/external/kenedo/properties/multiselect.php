@@ -475,6 +475,8 @@ class KenedoPropertyMultiselect extends KenedoProperty {
 			}
 		}
 
+		asort($options, SORT_NATURAL);
+
 		return $options;
 	}
 

@@ -3,7 +3,11 @@ defined('CB_VALID_ENTRY') or die();
 /** @var $this ConfigboxViewAdmindashboard */
 ?>
 
-<div <?php echo $this->getViewAttributes();?> data-license-key="<?php echo hsc($this->licenseKey);?>" data-endpoint-url-dashboard-info="<?php echo hsc($this->urlEndPointDashboardInfo);?>" data-endpoint-url-license-info="<?php echo hsc($this->urlEndPointLicenseInfo);?>">
+<div <?php echo $this->getViewAttributes();?>
+		data-license-key="<?php echo hsc($this->licenseKey);?>"
+		data-configbox-version="<?php echo hsc($this->configboxVersion);?>"
+		data-endpoint-url-dashboard-info="<?php echo hsc($this->urlEndPointDashboardInfo);?>"
+		data-endpoint-url-license-info="<?php echo hsc($this->urlEndPointLicenseInfo);?>">
 
 	<div class="row">
 
@@ -86,23 +90,27 @@ defined('CB_VALID_ENTRY') or die();
 			<div class="software-update box">
 				<h2><?php echo KText::_('Software Update');?></h2>
 				<p class="checking-for-update"><i class="fa fa-spinner fa-spin"></i><span class="text"><?php echo KText::_('Checking for updates');?></span></p>
-				<p class="patchlevel-update-available"><span class="fa fa-exclamation-triangle"></span><?php echo KText::sprintf('A minor update to version %s was released. Currently installed version is %s.','<span class="latest-version-patchlevel"></span>',CONFIGBOX_VERSION);?> <a class="kenedo-new-tab software-update-link"><?php echo KText::_('Update');?></a></p>
-				<p class="major-update-available"><span class="fa fa-exclamation-triangle"></span><?php echo KText::sprintf('A major update to version %s was released. Currently installed version is %s.','<span class="latest-version-major"></span>',CONFIGBOX_VERSION)?> <a class="kenedo-new-tab software-update-link"><?php echo KText::_('Update');?></a></p>
-				<p class="no-update-available"><span class="fa fa-check-square fa-lg"></span><?php echo KText::sprintf('You are using the latest version of ConfigBox');?> (<?php echo CONFIGBOX_VERSION;?>).</p>
+				<p class="patchlevel-update-available"><span class="fa fa-exclamation-triangle"></span><?php echo KText::sprintf('A minor update to version %s was released. Currently installed version is %s.','<span class="latest-version-patchlevel"></span>', hsc($this->configboxVersion));?> <a class="kenedo-new-tab software-update-link"><?php echo KText::_('Update');?></a></p>
+				<p class="major-update-available"><span class="fa fa-exclamation-triangle"></span><?php echo KText::sprintf('A major update to version %s was released. Currently installed version is %s.','<span class="latest-version-major"></span>', hsc($this->configboxVersion))?> <a class="kenedo-new-tab software-update-link"><?php echo KText::_('Update');?></a></p>
+				<p class="no-update-available"><span class="fa fa-check-square fa-lg"></span><?php echo KText::sprintf('You are using the latest version of ConfigBox');?> (<?php echo hsc($this->configboxVersion);?>).</p>
 			</div>
 
-			<div class="license box">
-				<h2><?php echo KText::_('DASHBOARD_LICENSE_HEADING');?></h2>
-				<div class="license-key">
-					<span class="key"><?php echo KText::_('DASHBOARD_LICENSE_LICENSE_KEY');?></span>
-					<span class="value"><?php echo hsc($this->licenseKey);?></span>
+			<?php if ($this->licenseKey) { ?>
+
+				<div class="license box">
+					<h2><?php echo KText::_('DASHBOARD_LICENSE_HEADING');?></h2>
+					<div class="license-key">
+						<span class="key"><?php echo KText::_('DASHBOARD_LICENSE_LICENSE_KEY');?></span>
+						<span class="value"><?php echo hsc($this->licenseKey);?></span>
+					</div>
+
+					<div class="wrapper-license-data">
+						<i class="fa fa-spinner fa-spin fa-fw"></i>
+						<?php echo KText::_('DASHBOARD_LOADING_LICENSE_DATA');?>
+					</div>
 				</div>
 
-				<div class="wrapper-license-data">
-					<i class="fa fa-spinner fa-spin fa-fw"></i>
-					<?php echo KText::_('DASHBOARD_LOADING_LICENSE_DATA');?>
-				</div>
-			</div>
+			<?php } ?>
 
 			<div class="manual box">
 				<h2><?php echo KText::_('ConfigBox Manual');?></h2>

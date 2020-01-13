@@ -177,7 +177,7 @@ class ConfigboxQuestion {
 			}
 
 			if (class_exists($className) == false) {
-				$filename = CONFIGBOX_DIR_CUSTOMIZATION.DS.'question_types'.DS.$className.'.php';
+				$filename = KenedoPlatform::p()->getDirCustomization().DS.'question_types'.DS.$className.'.php';
 				if (is_file($filename)) {
 					require_once($filename);
 				}
