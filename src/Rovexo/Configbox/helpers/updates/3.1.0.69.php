@@ -9,7 +9,7 @@ if (ConfigboxUpdateHelper::tableExists('#__configbox_magento_xref_mprod_cbprod')
 		id int unsigned auto_increment primary key,
 		cb_product_id int unsigned default 0 not null comment 'CB Product Id',
 		magento_product_id int unsigned default 0 not null comment 'Magento Product ID'
-	);
+	) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 	";
 	$db->setQuery($query);
 	$db->query();

@@ -1035,6 +1035,14 @@ CREATE TABLE `sltxh_configbox_listings`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
+CREATE TABLE `sltxh_configbox_magento_xref_mprod_cbprod`
+(
+    `id` int unsigned auto_increment primary key,
+    `cb_product_id` int unsigned default 0 not null comment 'CB Product Id',
+    `magento_product_id` int unsigned default 0 not null comment 'Magento Product ID'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
 CREATE TABLE `sltxh_configbox_notifications`
 (
     `id`            int(10) unsigned NOT NULL AUTO_INCREMENT,
