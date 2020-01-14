@@ -22,7 +22,11 @@ defined('CB_VALID_ENTRY') or die();
 
 		<li class="menu-list-item item-adminoptions"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminoptions');?>"><?php echo KText::_('Options');?></a></li>
 		<li class="menu-list-item item-admincalculations"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations');?>"><?php echo KText::_('Calculations');?></a></li>
-		<li class="menu-list-item item-admintemplates"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admintemplates');?>"><?php echo KText::_('Templates');?></a></li>
+
+        <?php if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') { ?>
+			<li class="menu-list-item item-admintemplates"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admintemplates');?>"><?php echo KText::_('Templates');?></a></li>
+        <?php } ?>
+
 	</ul>
 
 	<?php if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') { ?>

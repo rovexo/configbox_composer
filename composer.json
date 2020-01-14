@@ -9,10 +9,9 @@
 	  "email": "office@rovexo.com"
 	}
   ],
-  "version": "1.0.2",
+  "version": "1.0.3",
   "require": {
 	"php": "5.4 - 7.3",
-	"ext-apcu": "*",
 	"ext-gd": "*",
 	"ext-json": "*",
 	"ext-mbstring": "*",
