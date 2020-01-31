@@ -171,8 +171,10 @@ class ConfigboxModelAdminorders extends KenedoModel {
 			}
 			catch (Exception $e) {
 				$db->rollbackTransaction();
+				$logMsg = 'SQL error during order deletion. Exception message was '.$e->getMessage().'. File: '.$e->getFile().':'.$e->getLine();
+				KLog::log($logMsg, 'error');
 				$this->setError($e->getMessage());
-				continue;
+				return false;
 			}
 
 			$db->commitTransaction();

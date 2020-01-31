@@ -469,7 +469,7 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'choices'=>array(
 				'none' => KText::_('Just show the question'),
 				'select_default' => KText::_('Auto-select the default answer'),
-				'select_any' => KText::_('Auto-select the first answer'),
+				'select_any' => KText::_('Auto-select the first possible answer'),
 			),
 			'default'=>'none',
 			'positionForm'=>32000,

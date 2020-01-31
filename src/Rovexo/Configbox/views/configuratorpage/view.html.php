@@ -548,7 +548,7 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 			'page'						=> $this->page,
 			'questions'					=> $this->questions,
 			'dateFormat'				=> KText::_('CALENDAR_DATEFORMAT_JS', 'M d, yy'),
-			'blockNavigationOnMissing'  => boolval($this->blockNavigationOnMissing)
+			'blockNavigationOnMissing'  => (bool) $this->blockNavigationOnMissing
 		);
 
 		$this->configuratorDataJson = json_encode($configuratorData);

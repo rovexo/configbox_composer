@@ -183,7 +183,7 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'tooltip'=>KText::_('TOOLTIP_ANSWER_DISPLAY_WHILE_DISABLED'),
 			'type'=>'dropdown',
 			'choices'=>array(
-				'like_question' => KText::_('Same as for the question - that is hide unless set otherwise'),
+				'like_question' => KText::_('TOOLTIP_ANSWER_DISPLAY_WHILE_DISABLED_CHOICE_LIKE_QUESTION'),
 				'hide' => KText::_('Hide the answer'),
 				'grey_out' => KText::_('Grey out the answer'),
 			),

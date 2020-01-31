@@ -70,6 +70,8 @@ if (!function_exists('dump')) {
 	}
 }
 
+//require_once(__DIR__.'/../external/vendor/autoload.php');
+
 // Legacy class names (remove with CB 4.0)
 class_alias('ConfigboxCountryHelper', 'CbcheckoutCountryHelper');
 class_alias('ConfigboxPositionHelper', 'CbcheckoutPositionHelper');

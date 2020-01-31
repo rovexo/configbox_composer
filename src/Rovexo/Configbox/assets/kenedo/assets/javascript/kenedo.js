@@ -79,75 +79,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				event.preventDefault();
 			});
 
-			/* MODAL WINDOW FOR MENU ITEM PARAMETER PICKERS - START */
-
-			// Opening a modal window in Joomla menu item parameter boxes
-			cbj(document).on('click', '.trigger-picker-select', function(event){
-				event.preventDefault();
-
-				var href = cbj(this).attr('href');
-
-				cbrequire(['cbj.colorbox'], function() {
-
-					cbj.colorbox({
-						transition 		: 'fade',
-						href 			: href,
-						overlayClose 	: true,
-						iframe 			: true,
-						fastIframe		: false,
-						width			: '1200px',
-						height			: '600px'
-					});
-
-				});
-
-			});
-
-			// Parameter picker functionality (for menu item parameters)
-			cbj(document).on('click', '.listing-link', function(event){
-
-				// Do not act if the link is within a param-picker view (these are views used for Joomla menu item parameters)
-				if (cbj(this).closest('.param-picker').length == 0) {
-					return;
-				}
-
-				event.preventDefault();
-
-				var id = cbj(this).closest('.item-row').data('item-id');
-				var title = cbj(this).text();
-
-				var pickerObject = cbj(this).closest('.kenedo-listing-form').find('.listing-data-pickerobject').data('value');
-				var pickerMethod = cbj(this).closest('.kenedo-listing-form').find('.listing-data-pickermethod').data('value');
-
-				if (pickerMethod && typeof(parent.window[pickerMethod]) != 'undefined') {
-					parent.window[pickerMethod](id);
-				}
-
-				if (parent.window.document.getElementById(pickerObject + '_id')) {
-					parent.window.document.getElementById(pickerObject + '_id').value = id;
-					parent.window.document.getElementById(pickerObject + '_name').value = title;
-				}
-
-				if (window.parent.cbrequire) {
-
-					window.parent.cbrequire(['cbj', 'cbj.colorbox'], function(parentCbj) {
-						parentCbj.colorbox.close();
-					});
-
-				}
-
-				if (window.parent.jQuery) {
-
-					if (window.parent.jQuery('#'+pickerObject+'-modal').modal) {
-						window.parent.jQuery('#'+pickerObject+'-modal').modal('hide');
-					}
-
-				}
-
-			});
-
-			/* MODAL WINDOW FOR MENU ITEM PARAMETER PICKERS - END */
-
 			// Language switcher for translatables
 			cbj(document).on('click', '.property-type-translatable .language-switcher', function(){
 
@@ -992,7 +923,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 			var checkedIds = [];
 			cbj(this).closest('.kenedo-listing-form').find('.kenedo-item-checkbox').each(function(){
-				if (cbj(this).prop('checked') == true) {
+				if (cbj(this).prop('checked') === true) {
 					checkedIds.push(cbj(this).val());
 				}
 			});
@@ -1001,10 +932,12 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 			cbj(this).closest('.kenedo-listing-form').find('.listing-data-ids').data('value',ids);
 
-			if (task == 'add') {
+			if (task === 'add') {
+
+				var encodedUrl = cbj(this).closest('.kenedo-listing-form').find('.listing-data-add-link').data('value');
 
 				// The URL for adding records is always stored in a data attribute, all that is set in the template for listings
-				var url = kenedo.base64UrlDecode(cbj(this).closest('.kenedo-listing-form').find('.listing-data-add-link').data('value'));
+				var url = kenedo.base64UrlDecode(encodedUrl);
 
 				if (cbj(this).closest('.intra-listing').length) {
 
@@ -1141,7 +1074,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			var url = cbj(item).closest('.kenedo-listing-form').find('.listing-data-base-url').data('value');
 
 			// Add ? for the query string in case
-			if (url.indexOf('?') == -1) {
+			if (url.indexOf('?') === -1) {
 				url += '?';
 			}
 
@@ -1149,7 +1082,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			cbj(item).closest('.kenedo-listing-form').find('.listing-data').each(function(){
 				var key = cbj(this).data('key');
 				// Leave out base-url, no use for it plus probably trouble
-				if (key == 'base-url') {
+				if (key === 'base-url') {
 					return;
 				}
 				var value = cbj(this).data('value');
@@ -1176,9 +1109,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			if (cbj(item).closest('.intra-listing').length) {
 				target = cbj(item).closest('.intra-listing');
 			}
-			else if(cbj(item).closest('.kenedo-view.param-picker').length !== 0) {
-				target = cbj(item).closest('.kenedo-view.view-blank');
-			}
 			else {
 				// In case we got a link within the ConfigBox target area, use that one
 				if (cbj(item).closest('.configbox-ajax-target').length) {
@@ -1198,17 +1128,17 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				// using JS.
 
 				// Show messages
-				if (cbj(this).find('.kenedo-messages li').length != 0) {
+				if (cbj(this).find('.kenedo-messages li').length !== 0) {
 					cbj(this).find('.kenedo-messages').slideDown(200);
 				}
 
 				// Show error messages if any
-				if (cbj(this).find('.kenedo-messages-error li').length != 0) {
+				if (cbj(this).find('.kenedo-messages-error li').length !== 0) {
 					cbj(this).find('.kenedo-messages-error').slideDown(200);
 				}
 
 				// Show notices if any
-				if (cbj(this).find('.kenedo-messages-notice li').length != 0) {
+				if (cbj(this).find('.kenedo-messages-notice li').length !== 0) {
 					cbj(this).find('.kenedo-messages-notice').slideDown(200);
 				}
 

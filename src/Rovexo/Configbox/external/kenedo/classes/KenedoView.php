@@ -354,9 +354,6 @@ class KenedoView {
 			'limit'					=> hsc($this->paginationInfo['limit']),
 			'listing_order_property_name'	=> hsc(count($this->orderingInfo) ? $this->orderingInfo[0]['propertyName'] : ''),
 			'listing_order_dir'				=> hsc(count($this->orderingInfo) ? $this->orderingInfo[0]['direction'] : ''),
-			'parampicker'			=> hsc(KRequest::getInt('parampicker',0)),
-			'pickerobject'			=> hsc(KRequest::getKeyword('pickerobject','')),
-			'pickermethod'			=> hsc(KRequest::getKeyword('pickermethod','')),
 			'return'				=> KLink::base64UrlEncode( KLink::getRoute('index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&lang='.hsc(KText::getLanguageCode()), false) ),
 			'ids'					=> '',
 			'ordering-items'		=> '',
@@ -364,41 +361,29 @@ class KenedoView {
 			'foreignKeyPresetValue'	=> KRequest::getKeyword('foreignKeyPresetValue', (!empty($this->foreignKeyPresetValue)) ? $this->foreignKeyPresetValue : ''),
 		);
 
+        // START - Prepare the href for for the add button
 		if ($this->isIntralisting) {
-
-			// Override the href for for the add button
-			$link = 'index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&task=edit&id=0&in_modal=1&tmpl=component';
-			if (!empty($this->foreignKeyField)) {
-				$link .= '&'.$this->foreignKeyField.'='.$this->foreignKeyPresetValue;
-			}
-			if (KRequest::getKeyword('foreignKeyField')) {
-				$link .= '&'.KRequest::getKeyword('foreignKeyField').'='.KRequest::getInt('foreignKeyPresetValue', '0');
-			}
-			$link .= '&return='.$this->listingData['return'];
-			$listingData['add-link'] = KLink::base64UrlEncode( KLink::getRoute($link, false) );
-
+			$addLink = 'index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&task=edit&id=0&in_modal=1&tmpl=component';
 		}
 		else {
-
-			// Prepare the href for for the add button
-			$link = 'index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&task=edit&id=0';
-
+			$addLink = 'index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&task=edit&id=0';
 			if ($this->isInModal()) {
-				$link.= '&in_modal=1';
+				$addLink.= '&in_modal=1';
 			}
-
-			if (!empty($this->foreignKeyField)) {
-				$link .= '&prefill_'.$this->foreignKeyField.'='.$this->foreignKeyPresetValue;
-			}
-			if (KRequest::getKeyword('foreignKeyField')) {
-				$link .= '&prefill_'.KRequest::getKeyword('foreignKeyField').'='.KRequest::getInt('foreignKeyPresetValue', '0');
-			}
-			$link .= '&return='.$listingData['return'];
 		}
 
-		$listingData['add-link'] = KLink::base64UrlEncode( KLink::getRoute($link, false) );
+        if (!empty($this->foreignKeyField)) {
+            $addLink .= '&prefill_'.$this->foreignKeyField.'='.$this->foreignKeyPresetValue;
+        }
+        if (KRequest::getKeyword('foreignKeyField')) {
+            $addLink .= '&prefill_'.KRequest::getKeyword('foreignKeyField').'='.KRequest::getInt('foreignKeyPresetValue', '0');
+        }
+        $addLink .= '&return='.$listingData['return'];
 
-		$this->listingData = $listingData;
+        $listingData['add-link'] = KLink::base64UrlEncode( KLink::getRoute($addLink, false) );
+        // END - Prepare the href for for the add button
+
+        $this->listingData = $listingData;
 
 	}
 
@@ -444,7 +429,7 @@ class KenedoView {
 		if ($this->isAjaxSubview()) {
 			$this->viewCssClasses[] = 'kenedo-ajax-sub-view';
 		}
-		$this->viewCssClasses[] = (KRequest::getInt('parampicker') == 1) ? 'param-picker':'no-parampicker';
+
 		$this->viewCssClasses[] = ($this->isInModal()) ? 'in-modal':'in-tab';
 		$this->viewCssClasses[] = 'platform-'.KenedoPlatform::getName();
 		$this->viewCssClasses[] = KenedoPlatform::p()->isAdminArea() ? 'in-backend':'in-frontend';

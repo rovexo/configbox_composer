@@ -195,6 +195,11 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 		cbj(document).on('click', '.cb-page-nav-prev, .cb-page-nav-next, .cb-tab-nav-link', function(event) {
 
+			if (cbj(this).hasClass('configbox-disabled') === true) {
+				event.preventDefault();
+				return;
+			}
+
 			var url = cbj(this).attr('href');
 			var pageId;
 

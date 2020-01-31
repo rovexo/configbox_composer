@@ -94,10 +94,8 @@ class ConfigboxControllerUser extends KenedoController {
 		
 		// Send a message if removal did not work
 		if ($success == false) {
-			$errors = $model->getErrors();
-			foreach ($errors as $error) {
-				KenedoPlatform::p()->sendSystemMessage($error);
-			}
+		    $feedback = 'An error occurred during order deletion. Please try again later.';
+            KenedoPlatform::p()->sendSystemMessage($feedback);
 		}
 		else {
 			KenedoPlatform::p()->sendSystemMessage(KText::_('Order removed.'));

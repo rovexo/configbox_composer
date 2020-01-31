@@ -643,7 +643,7 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	}
 
 	public function getComponentDir($componentName) {
-		return Mage::getBaseDir('lib').'/Rovexo/ConfigBox/';
+		return Mage::getBaseDir('lib').'/Rovexo/Configbox/';
 	}
 
 	public function getUrlAssets() {

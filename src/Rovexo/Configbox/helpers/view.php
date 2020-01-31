@@ -63,9 +63,9 @@ class ConfigboxViewHelper {
 		// Prepare a value that we later use as GET parameter value for cache busting
 		$cacheVar = self::getCacheBusterValue();
 
-		$useCacheBuster = boolval(CbSettings::getInstance()->get('use_assets_cache_buster'));
-		$useMinifiedCss = boolval(CbSettings::getInstance()->get('use_minified_css'));
-		$useMinifiedJs  = boolval(CbSettings::getInstance()->get('use_minified_js'));
+		$useCacheBuster = (bool) CbSettings::getInstance()->get('use_assets_cache_buster');
+		$useMinifiedCss = (bool) CbSettings::getInstance()->get('use_minified_css');
+		$useMinifiedJs  = (bool) CbSettings::getInstance()->get('use_minified_js');
 
 		$queryStringPart = ($useCacheBuster) ? '?version=' . $cacheVar : '';
 

@@ -240,30 +240,6 @@ body.admin.com_configbox {
 	float:right;
 }
 
-.cb-content .kenedo-ajax-sub-view .kenedo-tabs,
-.cb-content .in-modal .kenedo-footer-info,
-.cb-content .in-modal .kenedo-tabs,
-.cb-content .param-picker .kenedo-footer-info,
-.cb-content .param-picker .kenedo-tabs {
-	display:none;
-}
-
-.cb-content .param-picker .kenedo-check-all-items {
-	display:none;
-}
-
-.cb-content .param-picker .field-id {
-	width:30px;
-}
-
-.cb-content .param-picker .kenedo-listing-form .kenedo-tasks {
-	display:none;
-}
-
-.cb-content .param-picker .kenedo-page-title {
-	float:left;
-}
-
 .cb-content .kenedo-tasks,
 .cb-content .kenedo-filters {
 	margin-bottom:5px;
@@ -290,15 +266,6 @@ body.admin.com_configbox {
 	color:#333;
 	line-height:25px;
 	height:27px;
-}
-
-
-.cb-content .param-picker .field-ordering {
-	display:none;
-}
-
-.cb-content .param-picker .kenedo-item-checkbox {
-	display:none;
 }
 
 .cb-content .kenedo-listing-form .kenedo-tasks,

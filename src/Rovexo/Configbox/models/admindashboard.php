@@ -181,6 +181,17 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 
 		$items = array();
 
+		if ($this->memoryLimitIsSufficient() == false) {
+
+            $warning = new stdClass();
+            $warning->title = KText::_('DASHBOARD_WARNING_MEMORY_LIMIT_LOW_TITLE');
+            $warning->problem = KText::_('DASHBOARD_WARNING_MEMORY_LIMIT_LOW_PROBLEM');
+            $warning->solution = KText::_('DASHBOARD_WARNING_MEMORY_LIMIT_LOW_SOLUTION');
+            $warning->access = KText::_('DASHBOARD_WARNING_MEMORY_LIMIT_LOW_ACCESS');
+            $items[] = $warning;
+
+        }
+
 		if ((KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') && $this->shopCountryIsMissing()) {
 			$warning = new stdClass();
 			$warning->title = KText::_('WARNING_NO_SHOP_COUNTRY_TITLE');
@@ -316,7 +327,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 
 		if (function_exists('mime_content_type') == false && function_exists('finfo_open') == false) {
 			$warning = new stdClass();
-			$warning->title = KText::_('DASHBOARD_PROBLEM_TITLE');
+			$warning->title = KText::_('DASHBOARD_TITLE_MISSING_MIME_TYPE_FUNCTIONS');
 			$warning->problem = KText::_('DASHBOARD_PROBLEM_MISSING_MIME_TYPE_FUNCTIONS');
 			$warning->solution = KText::_('DASHBOARD_SOLUTION_MISSING_MIME_TYPE_FUNCTIONS');
 			$warning->access = KText::_('Server administrator or hosting provider.');
@@ -579,6 +590,57 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 
 	}
 
+	function memoryLimitIsSufficient() {
+	    return false;
+        $bytes = $this->getMemoryLimitInBytes();
+        $minBytes = 256 * 1024 * 1024;
+        return ($bytes >= $minBytes);
+    }
+
+    /**
+     * Returns the memory limit for the process in bytes (or 0 if the limit is disabled or nothing is set in ini config)
+     * @return int
+     */
+    function getMemoryLimitInBytes() {
+
+        $configValue = ini_get('memory_limit');
+
+        if ($configValue == '-1' || $configValue == '') {
+            return 0;
+        }
+
+        $lastCharacter = substr($configValue, -1);
+
+        if (ctype_digit($lastCharacter)) {
+            $bytes = (int) $configValue;
+        }
+        else {
+
+            switch ($lastCharacter) {
+                case 'G':
+                    $multiplier = 1024 * 1024 * 1024;
+                    break;
+
+                case 'M':
+                    $multiplier = 1024 * 1024;
+                    break;
+
+                case 'K':
+                    $multiplier = 1024;
+                    break;
+                default:
+                    $multiplier = 1;
+
+            }
+
+            $bytes = (int)$configValue * $multiplier;
+
+        }
+
+        return $bytes;
+
+    }
+
 	function userCanCreateConstraints() {
 
 		$db = KenedoPlatform::getDb();
@@ -731,7 +793,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 			$now = new DateTime('now');
 			$diff = $now->diff($last, true);
 			if ($diff->i < 10 && $lastCheckKey == $licenseKey) {
-				return boolval($lastCheckResult);
+				return (bool) $lastCheckResult;
 			}
 		}
 

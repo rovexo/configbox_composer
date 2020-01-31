@@ -127,9 +127,6 @@ defined('CB_VALID_ENTRY') or die();
 		<input type="hidden" id="task" 			name="task" 				value="display" />
 		<input type="hidden" id="tmpl"			name="tmpl" 				value="<?php echo hsc(KRequest::getKeyword('tmpl','index'));?>" />
 		<input type="hidden" id="lang"			name="lang" 				value="<?php echo hsc(KText::getLanguageCode());?>" />
-		<input type="hidden" id="parampicker"	name="parampicker" 			value="<?php echo hsc(KRequest::getInt('parampicker',0));?>" />
-		<input type="hidden" id="pickerobject"	name="pickerobject" 		value="<?php echo hsc(KRequest::getKeyword('pickerobject',''));?>" />
-		<input type="hidden" id="pickermethod"	name="pickermethod" 		value="<?php echo hsc(KRequest::getKeyword('pickermethod',''));?>" />
 		<!-- Return URL unencoded is "<?php echo hsc($this->returnUrl);?>" -->
 		<input type="hidden" id="return" 		name="return" 				value="<?php echo KLink::base64UrlEncode( KLink::getRoute('index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&lang='.hsc(KText::getLanguageCode()), false));?>" />
 	</div>

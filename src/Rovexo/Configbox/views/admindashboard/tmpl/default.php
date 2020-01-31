@@ -24,7 +24,7 @@ defined('CB_VALID_ENTRY') or die();
 								<h3 class="issue-title toggle-handle"><span></span><?php echo hsc($issue->title);?></h3>
 								<div class="issue-details toggle-content">
 									<h4><?php echo KText::_('Problem');?></h4>
-									<div class="issue-problem"><?php echo hsc($issue->problem);?></div>
+									<div class="issue-problem"><?php echo $issue->problem;?></div>
 									<h4><?php echo KText::_('Solution');?></h4>
 									<div class="issue-solution"><?php echo $issue->solution;?></div>
 									<h4><?php echo KText::_('Who can fix it');?></h4>
