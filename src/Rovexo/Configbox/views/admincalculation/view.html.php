@@ -22,6 +22,7 @@ class ConfigboxViewAdmincalculation extends KenedoView {
 		
 		$model = KenedoModel::getModel('ConfigboxModelAdmincalculations');
 		$id = KRequest::getInt('id');
+
 		if ($id) {
 			$record = $model->getRecord($id);
 		}
@@ -29,15 +30,12 @@ class ConfigboxViewAdmincalculation extends KenedoView {
 			$record = $model->initData();
 		}
 
-		$properties = $model->getProperties();
-
 		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&format=raw', false);
-
-		$this->assignRef('pageTitle',	($record->name) ? $record->name : $this->getPageTitle());
-		$this->assignRef('pageTasks',	$model->getDetailsTasks());
-		$this->assignRef('record', 		$record);
-		$this->assignRef('properties',	$properties);
-		$this->assignRef('itemUsage', 	$model->getRecordUsage($id));
+		$this->pageTitle = ($record->name) ? $record->name : $this->getPageTitle();
+		$this->pageTasks = $model->getDetailsTasks();
+        $this->record = $record;
+        $this->properties = $model->getProperties();
+        $this->recordUsage = $model->getRecordUsage($id);
 
 		$this->addViewCssClasses();
 

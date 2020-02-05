@@ -33,19 +33,16 @@ class ConfigboxUpdateHelper {
 		}
 
 		// If an update is in progress currently, abort
-		$updateInProgress = ConfigboxSystemVars::getVar('update_in_progress');
-//		$updateMarkerFile = KenedoPlatform::p()->getTmpPath().'/cb_update_in_progress';
+		$updateMarkerFile = KenedoPlatform::p()->getTmpPath().'/cb_update_in_progress';
 
-//		clearstatcache(true, $updateMarkerFile);
-//		$updateInProgress = is_file($updateMarkerFile);
+		clearstatcache(true, $updateMarkerFile);
+		$updateInProgress = is_file($updateMarkerFile);
 
 		if ($updateInProgress) {
 			return;
 		}
 
-//		touch($updateMarkerFile);
-
-		ConfigboxSystemVars::setVar('update_in_progress', '1');
+		touch($updateMarkerFile);
 
 		self::$latestUpdateVersion = ConfigboxSystemVars::getVar('latest_update_version');
 
@@ -81,7 +78,10 @@ class ConfigboxUpdateHelper {
 
 				// Note that upgrade script failed (will make a note apear in the dashboard)
 				ConfigboxSystemVars::setVar('failed_update_detected', '1');
-				ConfigboxSystemVars::setVar('update_in_progress', '0');
+
+				if (is_file($updateMarkerFile)) {
+                    unlink($updateMarkerFile);
+                }
 
 				KLog::log($e->getMessage(), 'upgrade_errors');
 				KLog::log($e->getMessage(), 'error');
@@ -133,11 +133,10 @@ class ConfigboxUpdateHelper {
 
 					// Note that upgrade script failed (will make a note apear in the dashboard)
 					ConfigboxSystemVars::setVar('failed_update_detected', '1');
-					ConfigboxSystemVars::setVar('update_in_progress', '0');
 
-//					if (is_file($updateMarkerFile)) {
-//						unlink($updateMarkerFile);
-//					}
+					if (is_file($updateMarkerFile)) {
+						unlink($updateMarkerFile);
+					}
 
 					// Log the errors on both upgrade_errors and error log
 					KLog::log($e->getMessage(), 'upgrade_errors');
@@ -171,11 +170,10 @@ class ConfigboxUpdateHelper {
 		}
 
 		ini_set('display_errors', self::$oldDisplayErrorSetting);
-		ConfigboxSystemVars::setVar('update_in_progress', '0');
 
-//		if (is_file($updateMarkerFile)) {
-//			unlink($updateMarkerFile);
-//		}
+		if (is_file($updateMarkerFile)) {
+			unlink($updateMarkerFile);
+		}
 	}
 
 	/**

@@ -36,10 +36,10 @@ class ConfigboxViewAdminoptionassignment extends KenedoView {
 		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&format=raw', false);
 
 		$model = KenedoModel::getModel('ConfigboxModelAdminoptionassignments');
-		
-		$this->assignRef('pageTitle', $this->getPageTitle());
-		$this->assignRef('pageTasks', $model->getDetailsTasks());
-		$this->assignRef('itemUsage', $model->getRecordUsage($id) );
+
+		$this->pageTitle = $this->getPageTitle();
+		$this->pageTasks = $model->getDetailsTasks();
+		$this->recordUsage = $model->getRecordUsage($id);
 
 		$xrefModel = KenedoModel::getModel('ConfigboxModelAdminxrefelementoptions');
 		$optionModel = KenedoModel::getModel('ConfigboxModelAdminoptions');
@@ -61,6 +61,7 @@ class ConfigboxViewAdminoptionassignment extends KenedoView {
 
 				$xref->is_shapediver_control = $element->is_shapediver_control;
 				$xref->joinedby_element_id_to_adminelements_joinedby_page_id_to_adminpages_visualization_type = $product->visualization_type;
+				$xref->question_type = $element->question_type;
 			}
 
 		}
@@ -72,11 +73,10 @@ class ConfigboxViewAdminoptionassignment extends KenedoView {
 			$option = $optionModel->initData();
 		}
 
-		$this->assignRef('record', $xref);
-		$this->assignRef('option', $option);
-		
-		$this->assignRef('properties', $xrefModel->getProperties() );
-		$this->assignRef('optionProperties', $optionModel->getProperties() );
+		$this->record = $xref;
+		$this->option = $option;
+		$this->properties = $xrefModel->getProperties();
+        $this->optionProperties = $optionModel->getProperties();
 
 		$this->addViewCssClasses();
 

@@ -207,11 +207,19 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getTmpPath() {
-		return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::TMP);
+		$path = $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::TMP);
+		if (!is_dir($path)) {
+			mkdir($path, 0777, true);
+		}
+		return $path;
 	}
 
 	public function getLogPath() {
-        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::LOG);
+        $path = $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::LOG);
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
+        return $path;
 	}
 
     public function getLanguageTag() {

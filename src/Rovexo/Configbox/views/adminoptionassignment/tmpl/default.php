@@ -69,10 +69,10 @@ defined('CB_VALID_ENTRY') or die();
 
 	</div>
 
-	<?php if (!empty($this->itemUsage)) { ?>
+	<?php if (!empty($this->recordUsage)) { ?>
 		<div class="kenedo-item-usage">
 			<div class="kenedo-usage-message"><?php echo KText::_('The item is in use in the following entries:');?></div>
-			<?php foreach ($this->itemUsage as $propertyName=>$items) { ?>
+			<?php foreach ($this->recordUsage as $propertyName=>$items) { ?>
 				<?php foreach ($items as $item) { ?>
 				<div>
 					<span class="kenedo-candelete-usage-entry-name"><?php echo hsc($propertyName);?></span> - <a class="kenedo-new-tab kenedo-candelete-usage-entry-link" href="<?php echo $item->link;?>" class="new-tab"><?php echo hsc($item->title);?></a>
