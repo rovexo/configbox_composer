@@ -1703,17 +1703,19 @@ class ConfigboxCacheHelper {
 		// Drop any stuff from the memo cache
 		self::$cache = NULL;
 
+		$cacheDir = KenedoPlatform::p()->getDirCache().'/configbox';
+
 		// Make sure we get the real deal in the next step
-		clearstatcache(true, CONFIGBOX_DIR_CACHE);
+		clearstatcache(true, $cacheDir);
 
 		// If the cache dir is gone already, we're done
-		if (is_dir(CONFIGBOX_DIR_CACHE) == false) {
+		if (is_dir($cacheDir) == false) {
 			return true;
 		}
 
 		// Throw one if we can't edit the cache dir
-		if (is_writable(CONFIGBOX_DIR_CACHE) == false) {
-			$msg = 'Cannot delete ConfigBox cache directory. This is critical. Please make the directory "'.CONFIGBOX_DIR_CACHE.'" writable.';
+		if (is_writable($cacheDir) == false) {
+			$msg = 'Cannot delete ConfigBox cache directory. This is critical. Please make the directory "'.$cacheDir.'" writable.';
 			KLog::log($msg, 'error');
 			throw new Exception($msg);
 		}
@@ -1726,7 +1728,7 @@ class ConfigboxCacheHelper {
 		// We invalidate any cached files in the cache dir
 		if ($hasOpcache || $hasApc) {
 
-			$cacheFiles = KenedoFileHelper::getFiles(CONFIGBOX_DIR_CACHE, '.', true, true);
+			$cacheFiles = KenedoFileHelper::getFiles($cacheDir, '.', true, true);
 
 			foreach ($cacheFiles as $file) {
 
@@ -1743,13 +1745,13 @@ class ConfigboxCacheHelper {
 
 		// We rename the cache dir and delete afterwards to minimize risk race conditions. First we find a name for the trash dir
 		do {
-			$cacheTrashDir = CONFIGBOX_DIR_CACHE.'_'.str_pad(rand(0, 99999), 5, 0);
+			$cacheTrashDir = $cacheDir.'_'.str_pad(rand(0, 99999), 5, 0);
 		}
 		while(is_dir($cacheTrashDir));
 
 		// Now we rename
-		if (rename(CONFIGBOX_DIR_CACHE, $cacheTrashDir) === false) {
-			KLog::log('Could not rename cache folder prior deletion. Make sure that folder '.dirname(CONFIGBOX_DIR_CACHE).' is writable', 'error');
+		if (rename($cacheDir, $cacheTrashDir) === false) {
+			KLog::log('Could not rename cache folder prior deletion. Make sure that folder '.dirname($cacheDir).' is writable', 'error');
 			throw new Exception('Could not move cache folder prior deletion. See ConfigBox error log.');
 		}
 
@@ -1817,7 +1819,7 @@ class ConfigboxCacheHelper {
 
 		$key = str_replace('.', DS, $key);
 
-		$filename = CONFIGBOX_DIR_CACHE.DS.$key.'.cache';
+		$filename = $cacheDir.DS.$key.'.cache';
 
 		clearstatcache(true, $filename);
 
@@ -1852,7 +1854,7 @@ class ConfigboxCacheHelper {
 
 		$key = str_replace('.', DS, $key);
 
-		$filename = CONFIGBOX_DIR_CACHE.DS.$key.'.cache';
+		$filename = KenedoPlatform::p()->getDirCache().DS.'configbox'.DS.$key.'.cache';
 
 		clearstatcache(true, $filename);
 
@@ -1885,7 +1887,9 @@ class ConfigboxCacheHelper {
 
 		$key = str_replace('.', DS, $key);
 
-		$filename = CONFIGBOX_DIR_CACHE.DS.$key.'.cache';
+		$cacheDir = KenedoPlatform::p()->getDirCache().'/configbox';
+
+		$filename = $cacheDir.DS.$key.'.cache';
 
 		clearstatcache(true, $filename);
 
