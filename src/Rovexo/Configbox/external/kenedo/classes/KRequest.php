@@ -53,7 +53,7 @@ class KRequest {
 	static function setVar($key, $value, $from = 'METHOD') {
 
 		if ($from == 'METHOD') {
-			$from = strtoupper( $_SERVER['REQUEST_METHOD'] );
+			$from = isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : '';
 		}
 		if ($from == 'POST') {
 			$_POST[$key] = $value;

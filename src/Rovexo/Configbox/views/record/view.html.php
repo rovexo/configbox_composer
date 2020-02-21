@@ -71,6 +71,22 @@ class ConfigboxViewRecord extends KenedoView {
 			$this->positionHtml[$position->id] = ConfigboxPositionHelper::getPositionHtml($this->orderRecord, $position, 'popup', ($this->hideSkus == false), $inAdmin);
 		}
 
+		$orderGrandTotalNet = $this->orderRecord->totalNet;
+        $orderGrandTotalTax = $this->orderRecord->totalTax;
+        $orderGrandTotalGross = $this->orderRecord->totalGross;
+
+		if ($this->orderRecord->delivery !== NULL) {
+            $orderGrandTotalNet += $this->orderRecord->delivery->priceNet;
+            $orderGrandTotalTax += $this->orderRecord->delivery->priceTax;
+            $orderGrandTotalGross += $this->orderRecord->delivery->priceGross;
+        }
+
+        if ($this->orderRecord->payment !== NULL) {
+            $orderGrandTotalNet += $this->orderRecord->payment->priceNet;
+            $orderGrandTotalTax += $this->orderRecord->payment->priceTax;
+            $orderGrandTotalGross += $this->orderRecord->payment->priceGross;
+        }
+
 		// Prepare order metadata for tracking code to read
 		$this->orderMetaData = array(
 
@@ -80,9 +96,9 @@ class ConfigboxViewRecord extends KenedoView {
 
 			'currencyCode'=> $this->orderRecord->currency->code,
 
-			'orderGrandTotalNet' => $this->orderRecord->totalNet + $this->orderRecord->delivery->priceNet + $this->orderRecord->payment->priceNet,
-			'orderGrandTotalTax' => $this->orderRecord->totalTax + $this->orderRecord->delivery->priceTax + $this->orderRecord->payment->priceTax,
-			'orderGrandTotalGross' => $this->orderRecord->totalGross + $this->orderRecord->delivery->priceGross + $this->orderRecord->payment->priceGross,
+			'orderGrandTotalNet' => $orderGrandTotalNet,
+			'orderGrandTotalTax' => $orderGrandTotalTax,
+			'orderGrandTotalGross' => $orderGrandTotalGross,
 
 			'deliveryNet' => ($this->orderRecord->delivery !== NULL) ? $this->orderRecord->delivery->priceNet : 0,
 			'deliveryTax' => ($this->orderRecord->delivery !== NULL) ? $this->orderRecord->delivery->priceTax : 0,

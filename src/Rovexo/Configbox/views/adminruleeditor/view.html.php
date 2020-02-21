@@ -53,6 +53,31 @@ class ConfigboxViewAdminRuleeditor extends KenedoView {
 	 */
 	public $usageIn;
 
+    /**
+     * @var bool Indicates if the rule is a negated rule
+     */
+    public $isNegatedRule;
+
+    /**
+     * @var string Editor heading when rule is not negated
+     */
+    public $editorHeadingNormal;
+
+    /**
+     * @var string Editor heading when rule is negated
+     */
+    public $editorHeadingNegated;
+
+    /**
+     * @var string Text to prepend to rule property value for normal rules
+     */
+    public $ruleTextPrefixNormal;
+
+    /**
+     * @var string Text to prepend to rule property value for negated rules
+     */
+    public $ruleTextPrefixNegated;
+
 	/**
 	 * @return NULL
 	 */
@@ -80,13 +105,6 @@ class ConfigboxViewAdminRuleeditor extends KenedoView {
 		$this->returnFieldId = KRequest::getString('returnFieldId', '');
 		$this->usageIn = KRequest::getString('usageIn');
 
-		if ($this->usageIn == 'question') {
-			$this->pageTitle = KText::_('Show the question if these conditions are met:');
-		}
-		else {
-			$this->pageTitle = KText::_('Show the answer if these conditions are met:');
-		}
-
 		// Get the rule HTML and assign it
 		if ($rule) {
 			$this->ruleHtml = ConfigboxRulesHelper::getRuleHtml($rule);
@@ -97,7 +115,21 @@ class ConfigboxViewAdminRuleeditor extends KenedoView {
 			$this->ruleIsSet = false;
 		}
 
-		// Get all available condition type names
+        if ($this->usageIn == 'question') {
+            $this->editorHeadingNormal = KText::_('Show the question if these conditions are met:');
+            $this->editorHeadingNegated = KText::_('Hide the question if these conditions are met:');
+        }
+        else {
+            $this->editorHeadingNormal = KText::_('Show the answer if these conditions are met:');
+            $this->editorHeadingNegated = KText::_('Hide the answer if these conditions are met:');
+        }
+
+        $this->ruleTextPrefixNormal = KText::_('RULE_TEXT_PREFIX_NORMAL');
+        $this->ruleTextPrefixNegated = KText::_('RULE_TEXT_PREFIX_NEGATED');
+
+        $this->isNegatedRule = ConfigboxRulesHelper::isNegatedRule($rule);
+
+        // Get all available condition type names
 		$conditionTypeNames = ConfigboxCondition::getConditionTypeNames();
 
 		// The intended ordering for tabs (other types will be appended after those)
@@ -127,8 +159,10 @@ class ConfigboxViewAdminRuleeditor extends KenedoView {
 
 		foreach ($orderedTypeNames as $typeName) {
 			$condition = ConfigboxCondition::getCondition($typeName);
-			$this->conditionTabs[$typeName] = $condition->getTypeTitle();
-			$this->conditionPanels[$typeName] = $condition->getConditionsPanelHtml($this);
+			if ($condition->showPanel() == true) {
+                $this->conditionTabs[$typeName] = $condition->getTypeTitle();
+                $this->conditionPanels[$typeName] = $condition->getConditionsPanelHtml($this);
+            }
 		}
 
 		$this->selectedTypeName = $ordering[0];

@@ -212,6 +212,13 @@ abstract class ConfigboxCondition {
 	 */
 	abstract function getConditionHtml($conditionData, $forEditing = true);
 
+    /**
+     * @return bool Indicates if the condition type shows it's own panel
+     */
+	function showPanel() {
+	   return true;
+    }
+
 	/**
 	 * Should return true if the given element is contained in the condition, false otherwise. Used for finding out
 	 * if the element can be deleted.

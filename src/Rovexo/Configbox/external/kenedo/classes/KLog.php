@@ -312,6 +312,13 @@ class KLog {
 			return;
 		}
 
+		// We do not log the create_function deprecation messages (and do not respect error_reporting() since we want
+		// so trace any errors (clients typically do not know how to give access to error log files or have
+		// error_reporting off).
+		if ($message == 'Function create_function() is deprecated') {
+			return;
+		}
+
 		// Get the CB app dir
 		$appDir = KenedoPlatform::p()->getComponentDir('com_configbox');
 		// Replace any arbitrary dir separators with the system's DS

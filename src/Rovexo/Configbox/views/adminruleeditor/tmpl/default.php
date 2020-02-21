@@ -19,7 +19,12 @@ defined('CB_VALID_ENTRY') or die();
 
 	</div>
 
-	<h3 class="editor-heading"><?php echo hsc($this->pageTitle);?></h3>
+	<div class="editor-heading">
+		<select class="rule-is-negated">
+			<option value="0" data-prefix-rule-text="<?php echo hsc($this->ruleTextPrefixNormal);?>" <?php echo ($this->isNegatedRule == false) ? ' selected':'';?>><?php echo hsc($this->editorHeadingNormal);?></option>
+			<option value="1" data-prefix-rule-text="<?php echo hsc($this->ruleTextPrefixNegated);?>"<?php echo ($this->isNegatedRule == true) ? ' selected':'';?>><?php echo hsc($this->editorHeadingNegated);?></option>
+		</select>
+	</div>
 
 	<div class="rule-area">
 		<?php if ($this->ruleIsSet) { ?>

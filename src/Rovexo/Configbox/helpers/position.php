@@ -26,7 +26,7 @@ class ConfigboxPositionHelper {
 		}
 
 		// Get the full URL to the position image
-		if ($position->product_image) {
+		if ($position->product_image && is_file(CONFIGBOX_DIR_POSITION_IMAGES.'/'.$position->product_image)) {
 			$positionImageSrc = CONFIGBOX_URL_POSITION_IMAGES.'/'.$position->product_image;
 		}
 		else {

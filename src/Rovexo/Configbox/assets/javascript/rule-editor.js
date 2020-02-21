@@ -368,6 +368,25 @@ define(['cbj', 'kenedo', 'configbox/server'], function(cbj, kenedo, server) {
 			// Get the rule's conditions
 			var ruleItems = module.getRuleItems(view.find('.rule-area'));
 
+			// If we deal with a negated rule, we add a 'negation' item to the rule
+			var isNegated = (view.find('.rule-is-negated').val() === '1');
+
+			var ruleHtmlPrefix;
+
+			if (isNegated === true && ruleItems.length > 0) {
+
+				ruleHtmlPrefix = view.find('.rule-is-negated option[value=1]').data('prefix-rule-text');
+
+				var ruleItem = {
+					type: 'negation'
+				};
+				ruleItems.unshift(ruleItem);
+
+			}
+			else {
+				ruleHtmlPrefix = view.find('.rule-is-negated option[value=0]').data('prefix-rule-text');
+			}
+
 			// Modify the parent's controls
 			if (ruleItems.length) {
 				// Hide the parent form's edit button (will show the rule instead)
@@ -384,7 +403,13 @@ define(['cbj', 'kenedo', 'configbox/server'], function(cbj, kenedo, server) {
 			});
 
 			// Copy the rule HTML over to the display wrapper of the parent's form (To show the rule)
-			cbj('#rule-text-' + returnId).html( view.find('.rule-area').html() );
+			var html = '';
+			if (isNegated) {
+				html += ruleHtmlPrefix + ' ';
+			}
+			html += view.find('.rule-area').html();
+
+			cbj('#rule-text-' + returnId).html(html);
 
 			if (jsonRule) {
 				cbj('#rule-text-' + returnId).closest('.rule-wrapper').addClass('has-rule').removeClass('has-no-rule');

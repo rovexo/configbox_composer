@@ -42,8 +42,7 @@ class ConfigboxCacheHelper {
 
 			// If nothing in cache, populate it and put stuff in memo cache
 			if (self::$cache['calculations'][$productId] == NULL) {
-				self::writeCalculationModelCache($productId);
-				self::$cache['calculations'][$productId] = self::getFromCache('calculations.product_'.$productId);
+				self::$cache['calculations'][$productId] = self::writeCalculationModelCache($productId);
 			}
 
 		}
@@ -69,6 +68,8 @@ class ConfigboxCacheHelper {
 
 		self::writeToCache('calculations.product_'.intval($productId), $calculations);
 
+		return $calculations;
+
 	}
 
 	public static function getCalcMatrixData($calculationId) {
@@ -93,37 +94,40 @@ class ConfigboxCacheHelper {
 			self::$cache['calcMatrices'][ $productId ] = self::getFromCache($cacheKey);
 
 			// If not in cache, write cache items
-			if ( self::$cache['calcMatrices'][ $productId ] === null ) {
-				self::writeCalcMatricesForProduct( $productId );
-				self::$cache['calcMatrices'][ $productId ] = self::getFromCache($cacheKey);
+			if (self::$cache['calcMatrices'][ $productId ] === null ) {
+				self::$cache['calcMatrices'][ $productId ] = self::writeCalcMatricesForProduct($productId);
 			}
 
-			// If there is no data, memoize an empty array
-			if ( empty( self::$cache['calcMatrices'][ $productId ] ) ) {
-				self::$cache['calcMatrices'][ $productId ] = array();
-			}
 		}
 
 		return self::$cache['calcMatrices'][ $productId ];
 
 	}
 
+	/**
+	 * @param int $productId
+	 * @return array
+	 * @throws Exception
+	 */
 	protected static function writeCalcMatricesForProduct($productId) {
 		$ass = self::getAssignments();
 		$calculationIds = (!empty($ass['product_to_calculation'][$productId])) ? $ass['product_to_calculation'][$productId] : array();
 
-		if (count($calculationIds)) {
-			$db = KenedoPlatform::getDb();
-			$query = "SELECT * FROM `#__configbox_calculation_matrices_data` WHERE `id` IN (".implode(',', $calculationIds).")";
-			$db->setQuery($query);
-			$cells = $db->loadObjectList();
-			$data = array();
-			foreach ($cells as $cell) {
-				$data[$cell->id][] = $cell;
-			}
-			$cacheKey = 'calcMatrices.product_'.$productId;
-			self::writeToCache($cacheKey, $data);
+		if (count($calculationIds) == 0) {
+			return array();
 		}
+
+		$db = KenedoPlatform::getDb();
+		$query = "SELECT * FROM `#__configbox_calculation_matrices_data` WHERE `id` IN (".implode(',', $calculationIds).")";
+		$db->setQuery($query);
+		$cells = $db->loadObjectList();
+		$data = array();
+		foreach ($cells as $cell) {
+			$data[$cell->id][] = $cell;
+		}
+		$cacheKey = 'calcMatrices.product_'.$productId;
+		self::writeToCache($cacheKey, $data);
+		return $data;
 
 	}
 
@@ -309,8 +313,7 @@ class ConfigboxCacheHelper {
 
 			// If NULL in cache
 			if (self::$cache['translations'][$languageTag] === NULL) {
-				self::writeTranslationCache($languageTag);
-				self::$cache['translations'][$languageTag] = self::getFromCache($cacheKey);
+				self::$cache['translations'][$languageTag] = self::writeTranslationCache($languageTag);
 			}
 
 		}
@@ -338,12 +341,15 @@ class ConfigboxCacheHelper {
 		$items = $db->loadAssocList();
 		if ($items) {
 			foreach ($items as &$t) {
-				if (!empty($t['text']))	$translations[0][$t['type']][$t['key']] = $t['text'];
+				if (!empty($t['text']))	{
+					$translations[0][$t['type']][$t['key']] = $t['text'];
+				}
 			}
 		}
 
-		return self::writeToCache($cacheKey, $translations);
+		self::writeToCache($cacheKey, $translations);
 
+		return $translations;
 	}
 
 	static public function &getPaymentMethodAssignments() {
@@ -355,8 +361,7 @@ class ConfigboxCacheHelper {
 
 			// If NULL in cache
 			if (self::$cache['paymentMethodAssignments'] === NULL) {
-				self::writePaymentMethodAssignments();
-				self::$cache['paymentMethodAssignments'] = self::getFromCache('paymentMethodAssignments');
+				self::$cache['paymentMethodAssignments'] = self::writePaymentMethodAssignments();
 			}
 
 		}
@@ -380,7 +385,9 @@ class ConfigboxCacheHelper {
 			$cache['country_to_payment'][$item['country_id']][$item['payment_id']] = $item['payment_id'];
 		}
 
-		return self::writeToCache('paymentMethodAssignments', $cache);
+		self::writeToCache('paymentMethodAssignments', $cache);
+
+		return $cache;
 
 	}
 
@@ -393,8 +400,7 @@ class ConfigboxCacheHelper {
 
 			// If NULL in cache
 			if (self::$cache['assignments'] === NULL) {
-				self::writeAssignments();
-				self::$cache['assignments'] = self::getFromCache('assignments');
+				self::$cache['assignments'] = self::writeAssignments();
 			}
 
 		}
@@ -528,7 +534,8 @@ class ConfigboxCacheHelper {
 			$cache['page_to_xref'][$item['page_id']][$item['xref_id']] = $item['xref_id'];
 		}
 
-		return self::writeToCache('assignments', $cache);
+		self::writeToCache('assignments', $cache);
+		return $cache;
 
 	}
 
@@ -806,11 +813,10 @@ class ConfigboxCacheHelper {
 
 			// If NULL in cache
 			if (self::$cache['products'] == NULL) {
-				self::writeProductDataCache();
-				self::$cache['products'] = self::getFromCache('products');
+				self::$cache['products'] = self::writeProductDataCache();
 			}
 
-			// Augment with non-cacheable data
+			// Augment with data that shouldn't be cached
 			foreach (self::$cache['products'] as $product) {
 				self::augmentProduct($product);
 			}
@@ -826,6 +832,10 @@ class ConfigboxCacheHelper {
 
 	}
 
+	/**
+	 * @return object[] Kenedo records of products
+	 * @throws Exception
+	 */
 	protected static function writeProductDataCache() {
 
 		$model = KenedoModel::getModel('ConfigboxModelAdminproducts');
@@ -845,7 +855,7 @@ class ConfigboxCacheHelper {
 		// Write the cache entry
 		self::writeToCache('products', $data);
 
-		return true;
+		return $data;
 	}
 
 	public static function getProductDetailPanes($productId) {
@@ -876,12 +886,18 @@ class ConfigboxCacheHelper {
 
 	}
 
-	protected static function writeElementDataCache() {
+	/**
+	 * @param int $productId
+	 * @return object[] KenedoModel records for questions
+	 * @throws Exception
+	 */
+	protected static function writeElementDataCache($productId) {
 
 		$model = KenedoModel::getModel('ConfigboxModelAdminelements');
 
 		// Prepare filters for getting published elements only
 		$filters = array(
+			'adminproducts.id'=>$productId,
 			'adminproducts.published'=>1,
 			'adminpages.published'=>1,
 			'adminelements.published'=>1,
@@ -893,7 +909,7 @@ class ConfigboxCacheHelper {
 				'direction' => 'ASC',
 			),
 			array(
-				'propertyName' => 'ordering',
+				'propertyName' => 'adminelements.ordering',
 				'direction' => 'ASC',
 			),
 		);
@@ -902,15 +918,13 @@ class ConfigboxCacheHelper {
 		$data = array();
 		// Group them by product and put element ids in array keys
 		foreach ($records as $record) {
-			$data[$record->joinedby_page_id_to_adminpages_product_id][$record->id] = $record;
+			$data[$record->id] = $record;
 		}
 
-		// Write each product's elements in a separate cache entry
-		foreach ($data as $productId=>&$dataItem) {
-			self::writeToCache('elements.product_'.$productId, $dataItem);
-		}
+		self::writeToCache('elements.product_'.$productId, $data);
 
-		return true;
+		return $data;
+
 	}
 
 	public static function getQuestion($id) {
@@ -948,7 +962,7 @@ class ConfigboxCacheHelper {
 
 	/**
 	 * @param int $productId
-	 * @return object[]|NULL
+	 * @return object[]
 	 * @throws Exception
 	 */
 	public static function getElementsForProduct($productId) {
@@ -960,13 +974,7 @@ class ConfigboxCacheHelper {
 
 			// If NULL in cache
 			if (self::$cache['elements'][$productId] === NULL) {
-				self::writeElementDataCache();
-				self::$cache['elements'][$productId] = self::getFromCache('elements.product_'.$productId);
-			}
-
-			if (empty(self::$cache['elements'][$productId])) {
-				$return = NULL;
-				return $return;
+				self::$cache['elements'][$productId] = self::writeElementDataCache($productId);
 			}
 
 			// Run the post-caching append methods of each prop
@@ -1008,13 +1016,7 @@ class ConfigboxCacheHelper {
 			self::$cache['xrefs'][$productId] = self::getFromCache('xrefs.product_'.$productId);
 
 			if (self::$cache['xrefs'][$productId] === NULL) {
-				self::writeAnswerDataCache($productId);
-				self::$cache['xrefs'][$productId] = self::getFromCache('xrefs.product_'.$productId);
-			}
-
-			if (empty(self::$cache['xrefs'][$productId])) {
-				$return = NULL;
-				return $return;
+				self::$cache['xrefs'][$productId] = self::writeAnswerDataCache($productId);
 			}
 
 			// Run post-caching appends from model props
@@ -1043,6 +1045,11 @@ class ConfigboxCacheHelper {
 
 	}
 
+	/**
+	 * @param int $productId
+	 * @return object[] Answer data (merged Kenedo records of xref and option data)
+	 * @throws Exception
+	 */
 	protected static function writeAnswerDataCache($productId) {
 
 		// Prepare filters for getting xref data
@@ -1064,33 +1071,44 @@ class ConfigboxCacheHelper {
 
 		// Key-sort the xrefs by ID
 		$answerData = array();
+		$optionIds = array();
 		foreach ($records as $record) {
 			$answerData[$record->id] = $record;
+			$optionIds[] = $record->option_id;
 		}
 		unset($records, $record);
 
-		// Get options data
-		$optionModel = KenedoModel::getModel('ConfigboxModelAdminoptions');
-		$records = $optionModel->getRecords(array(), array(), array());
+		// Merge in option data
+		if (count($optionIds)) {
 
-		// Key-sort the options by ID
-		$optionData = array();
-		foreach ($records as $record) {
-			$optionData[$record->id] = $record;
-		}
-		unset($records, $record);
+			// Get options data
+			$optionModel = KenedoModel::getModel('ConfigboxModelAdminoptions');
+			$filters = array(
+				'adminoptions.id' => $optionIds,
+			);
+			$options = $optionModel->getRecords($filters, array(), array());
 
-		// Merge related option data into each xref
-		foreach ($answerData as $answerDataItem) {
-			if (isset($optionData[$answerDataItem->option_id])) {
-				foreach ($optionData[$answerDataItem->option_id] as $key=>$value) {
-					if ($key == 'id') continue;
-					$answerDataItem->$key = $value;
+			// Key-sort the options by ID
+			$optionData = array();
+			foreach ($options as $option) {
+				$optionData[$option->id] = $option;
+			}
+			unset($options, $record);
+
+			// Merge related option data into each xref
+			foreach ($answerData as $answerDataItem) {
+				if (isset($optionData[$answerDataItem->option_id])) {
+					foreach ($optionData[$answerDataItem->option_id] as $key=>$value) {
+						if ($key == 'id') continue;
+						$answerDataItem->$key = $value;
+					}
 				}
 			}
+
 		}
 
-		return self::writeToCache('xrefs.product_'.$productId, $answerData);
+		self::writeToCache('xrefs.product_'.$productId, $answerData);
+		return $answerData;
 
 	}
 
@@ -1103,13 +1121,7 @@ class ConfigboxCacheHelper {
 
 			// If empty, write the cache items and fetch them
 			if (self::$cache['pricing'][$productId] === NULL) {
-				self::writePricingCache($productId);
-				self::$cache['pricing'][$productId] = self::getFromCache('pricing.product_'.$productId);
-			}
-
-			if (empty(self::$cache['pricing'][$productId])) {
-				$return = NULL;
-				return $return;
+				self::$cache['pricing'][$productId] = self::writePricingCache($productId);
 			}
 
 		}
@@ -1121,6 +1133,7 @@ class ConfigboxCacheHelper {
 	/**
 	 * Populates the cache
 	 * @param int $productId
+	 * @return array
 	 * @see ConfigboxPrices
 	 */
 	protected static function writePricingCache($productId) {
@@ -1275,6 +1288,8 @@ class ConfigboxCacheHelper {
 
 		KLog::stop('populatePriceCache');
 
+		return $cache;
+
 	}
 
 	public static function getGroupData($groupId) {
@@ -1286,8 +1301,7 @@ class ConfigboxCacheHelper {
 
 			// If empty, write the cache items and fetch them
 			if (self::$cache['groups'] === NULL) {
-				self::writeGroupCache();
-				self::$cache['groups'] = self::getFromCache('groups');
+				self::$cache['groups'] = self::writeGroupCache();
 			}
 
 			if (!empty(self::$cache['groups'])) {
@@ -1312,6 +1326,10 @@ class ConfigboxCacheHelper {
 
 	}
 
+	/**
+	 * @return object[] Kenedo records with group data
+	 * @throws Exception
+	 */
 	protected static function writeGroupCache() {
 
 		$model = KenedoModel::getModel('ConfigboxModelAdmincustomergroups');
@@ -1324,6 +1342,8 @@ class ConfigboxCacheHelper {
 		}
 
 		self::writeToCache('groups', $data);
+
+		return $data;
 
 	}
 
@@ -1409,8 +1429,7 @@ class ConfigboxCacheHelper {
 
 				// If empty, write the cache items and fetch them
 				if (self::$cache['taxrates'] === NULL) {
-					self::writeTaxRateCache();
-					self::$cache['taxrates'] = self::getFromCache('taxrates');
+					self::$cache['taxrates'] = self::writeTaxRateCache();
 				}
 			}
 
@@ -1419,6 +1438,10 @@ class ConfigboxCacheHelper {
 		return self::$cache['taxrates'];
 	}
 
+	/**
+	 * @return array
+	 * @throws Exception
+	 */
 	protected static function writeTaxRateCache() {
 
 		$db = KenedoPlatform::getDb();
@@ -1507,6 +1530,7 @@ class ConfigboxCacheHelper {
 		}
 
 		self::writeToCache('taxrates', $taxRates);
+		return $taxRates;
 
 	}
 
@@ -1644,7 +1668,7 @@ class ConfigboxCacheHelper {
 
 		if (self::$memohasApcu === NULL) {
 
-			$loadedAndEnabled = extension_loaded('apcu') && ini_get('apc.enabled') == true && ini_get('apc.slam_defense') == 0;
+			$loadedAndEnabled = extension_loaded('apcu') && ini_get('apc.enabled') == true;
 
 			// In case we run via CLI, make sure apc.enable_cli is on
 			if (in_array(php_sapi_name(), array('cli', 'cli-server'))) {
@@ -1671,7 +1695,9 @@ class ConfigboxCacheHelper {
 		if (self::hasApcu()) {
 			$prefix = self::getKeyPrefix();
 			$cacheIterator = new APCUIterator('/^'.$prefix.'\./');
-			return apcu_delete($cacheIterator);
+			$response = apcu_delete($cacheIterator);
+			self::$cache = NULL;
+			return $response;
 		}
 
 		// Drop any stuff from the memo cache
@@ -1767,6 +1793,10 @@ class ConfigboxCacheHelper {
 
 			$prefix = self::getKeyPrefix();
 			$wholeKey = $prefix.'.'.$key;
+
+			// With slam_defense on, there's a chance that nothing gets written
+			// so we delete the item before-hand
+			apcu_delete($wholeKey);
 
 			$serialized = serialize($data);
 

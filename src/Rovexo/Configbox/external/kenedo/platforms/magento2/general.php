@@ -615,8 +615,10 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getUrlAssets() {
-	    $url = $this->assetRepository->getUrlWithParams('', array('_secure' => $this->context->getRequest()->isSecure()));
-	    return $url . DS . "rovexo" . DS . "configbox" . DS . "assets";
+
+    	$params = array('_secure' => $this->context->getRequest()->isSecure());
+	    $url = $this->assetRepository->getUrlWithParams('', $params);
+	    return $url . "/rovexo/configbox/assets";
 	}
 
 	public function getDirAssets() {
@@ -676,8 +678,9 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getUrlCustomizationAssets() {
-        $url = $this->assetRepository->getUrlWithParams('', array('_secure' => $this->context->getRequest()->isSecure()));
-        return $url.'/Rovexo_ConfigboxCustomizations';
+		$params = array('_secure' => $this->context->getRequest()->isSecure());
+		$url = $this->assetRepository->getUrlWithParams('', $params);
+		return $url . '/Rovexo_ConfigboxCustomizations';
 	}
 
 	public function getDirCustomizationSettings() {

@@ -13,7 +13,7 @@ $component = KRequest::getKeyword('option','com_configbox');
 $controllerName = KRequest::getKeyword('controller','');
 $viewName = KRequest::getKeyword('view','');
 $task = KRequest::getKeyword('task','display');
-//test
+
 if ($controllerName || $viewName) {
 
 	$className = KenedoController::getControllerClass($component, $controllerName, $viewName);

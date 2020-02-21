@@ -591,7 +591,6 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 	}
 
 	function memoryLimitIsSufficient() {
-	    return false;
         $bytes = $this->getMemoryLimitInBytes();
         $minBytes = 256 * 1024 * 1024;
         return ($bytes >= $minBytes);

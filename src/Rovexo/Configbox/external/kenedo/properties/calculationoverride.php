@@ -16,6 +16,10 @@ class KenedoPropertyCalculationOverride extends KenedoProperty {
 	 */
 	function getDataFromRequest(&$data) {
 
+        if ($this->applies($data) == false) {
+            return;
+        }
+
 		$json = KRequest::getVar($this->propertyName, '[]', 'METHOD');
 		$json = stripslashes($json);
 

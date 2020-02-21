@@ -9,7 +9,7 @@
 	  "email": "office@rovexo.com"
 	}
   ],
-  "version": "1.0.4",
+  "version": "1.0.5",
   "require": {
 	"php": "5.6 - 7.3",
 	"ext-gd": "*",
