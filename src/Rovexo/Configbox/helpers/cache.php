@@ -941,15 +941,13 @@ class ConfigboxCacheHelper {
 		$assignments = self::getAssignments();
 
 		if (!isset($assignments['element_to_product'][$elementId])) {
-			$return = NULL;
-			return $return;
+			return NULL;
 		}
 
 		$productId = $assignments['element_to_product'][$elementId];
 
 		if (!$productId) {
-			$return = NULL;
-			return $return;
+			return NULL;
 		}
 
 		if (!isset( self::$cache['elements'][$productId][$elementId] )) {
@@ -1553,7 +1551,7 @@ class ConfigboxCacheHelper {
 					$currentCurrencySymbol = $currentCurrency->getSymbol();
 
 					$rates = Mage::getModel('directory/currency')->getCurrencyRates($baseCurrencyCode, array($currentCurrencyCode));
-				} else if (KenedoPlatform::getName() == 'magento2') {
+				} else {
 					$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 					$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
 					$currencyModel = $objectManager->get('Magento\Directory\Model\Currency');
@@ -1576,11 +1574,9 @@ class ConfigboxCacheHelper {
 				$currency->id = 1;
 				$currency->default = 1;
 				$currency->base = 1;
-				/** @noinspection PhpUndefinedMethodInspection */
 				$currency->title         = $currentCurrencyLabel;
 				$currency->code          = $currentCurrencyCode;
 				$currency->multiplicator = $multiplier;
-				/** @noinspection PhpUndefinedMethodInspection */
 				$currency->symbol    = $currentCurrencySymbol;
 				$currency->published = 1;
 				$currency->ordering  = 1;
@@ -1815,10 +1811,11 @@ class ConfigboxCacheHelper {
 			}
 			return true;
 
-		};
+		}
 
 		$key = str_replace('.', DS, $key);
 
+		$cacheDir = KenedoPlatform::p()->getDirCache().'/configbox';
 		$filename = $cacheDir.DS.$key.'.cache';
 
 		clearstatcache(true, $filename);
@@ -1883,7 +1880,7 @@ class ConfigboxCacheHelper {
 
 			return $var;
 
-		};
+		}
 
 		$key = str_replace('.', DS, $key);
 
