@@ -12,6 +12,11 @@ class ConfigboxViewProductdetailpanes extends KenedoView {
 	public $productId;
 
 	/**
+	 * @var ConfigboxProductData
+	 */
+	public $product;
+
+	/**
 	 * @var ConfigboxProductData $product CB product data
 	 * @see ConfigboxCacheHelper::getProductDetailPanes()
 	 */

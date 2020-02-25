@@ -44,7 +44,7 @@ class ConfigboxViewBlockcurrencies extends KenedoView {
 	public $showConversionTable;
 
 	/**
-	 * @var string[] baseTitle currTitle exchangeRate in an array with currency ids as keys
+	 * @var string[][] baseTitle currTitle exchangeRate in an array with currency ids as keys
 	 */
 	public $exchangeRates = array();
 

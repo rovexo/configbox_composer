@@ -434,11 +434,6 @@ class KenedoView {
 		$this->viewCssClasses[] = 'platform-'.KenedoPlatform::getName();
 		$this->viewCssClasses[] = KenedoPlatform::p()->isAdminArea() ? 'in-backend':'in-frontend';
 
-		$platformName = KenedoPlatform::getName();
-		$platformVersion = KenedoPlatform::p()->getVersionShort();
-		$platformVersionClass = $platformName.'-'.str_replace('.', '_', $platformVersion);
-		$this->viewCssClasses[] = $platformVersionClass;
-
 	}
 
 	function renderViewCssClasses() {

@@ -125,7 +125,7 @@ class ConfigboxControllerAdminpostinstall extends KenedoController {
 			return;
 		}
 
-		$configModel = Kenedomodel::getModel('ConfigboxModelAdminconfig');
+		$configModel = KenedoModel::getModel('ConfigboxModelAdminconfig');
 		$configData = $configModel->getRecord(1);
 		$configData->review_notification_email = KRequest::getString('email');
 

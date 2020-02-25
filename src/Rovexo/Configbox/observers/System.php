@@ -5,17 +5,18 @@ class ObserverSystem {
 
 	function onConfigboxInitialized() {
 
-		// Apply software updates
-		ConfigboxUpdateHelper::applyUpdates();
-
-		// Apply customization software updates
-		ConfigboxUpdateHelper::applyCustomizationUpdates();
+		// Apply software updates - just for M2 we do these only in module's Setup script
+		if (KenedoPlatform::getName() !== 'magento2') {
+			ConfigboxUpdateHelper::applyUpdates();
+		}
 
 		// Load the override files
 		ConfigboxOverridesHelper::loadOverrideFiles();
 
 		// Run the data cleanup processes
-		KenedoModel::getModel('ConfigboxModelCleanup')->cleanUp();
+		if (php_sapi_name() != 'cli') {
+			KenedoModel::getModel('ConfigboxModelCleanup')->cleanUp();
+		}
 
 	}
 

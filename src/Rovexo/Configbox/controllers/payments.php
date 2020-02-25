@@ -114,7 +114,7 @@ class ConfigboxControllerPayments extends KenedoController {
 			}
 			
 			
-		} catch(Stripe_CardError $e) {
+		} catch(Exception $e) {
 			
 			KLog::log("Error in transaction response:\n"."Message:".$e->getMessage()."\n",'payment');
 			$response = new stdClass();

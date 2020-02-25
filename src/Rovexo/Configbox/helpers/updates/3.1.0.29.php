@@ -32,7 +32,7 @@ $mappings = array(
 	$oldCustomerFolder.'/position_images'			=> CONFIGBOX_DIR_POSITION_IMAGES,
 	$oldCustomerFolder.'/quotations'				=> CONFIGBOX_DIR_QUOTATIONS,
 
-	$oldSettingsFolder								=> CONFIGBOX_DIR_SETTINGS
+	$oldSettingsFolder								=> KenedoPlatform::p()->getDirCustomizationSettings(),
 
 );
 

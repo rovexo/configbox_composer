@@ -685,7 +685,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'configbox/ruleEditor', '
 				 * hidden input (with class .overrides-json-data).
 				 * It also hides the 'add override' button if there are overrides for all groups (and vice versa).
 				 *
-				 * @param {{jQuery}} wrapper jQuery object with the property
+				 * @param {jQuery} wrapper jQuery object with the property
 				 */
 				var updateOverrideJson = function(wrapper) {
 

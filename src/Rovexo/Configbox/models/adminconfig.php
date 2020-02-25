@@ -1373,7 +1373,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		$tasks = array();
 
-		if (KenedoPlatform::getName() == 'joomla' && KenedoPlatform::p()->getVersionShort() != 1.5) {
+		if (KenedoPlatform::getName() == 'joomla') {
 			$tasks[] = array('title'=>KText::_('Permissions'), 	'task'=>'', 'link'=>'index.php?option=com_config&view=component&component=com_configbox&path=&tmpl=component');
 		}
 		

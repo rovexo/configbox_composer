@@ -64,9 +64,7 @@ defined('CB_VALID_ENTRY') or die();
 
 
 	<?php if ($this->structuredData) { ?>
-		<script type="application/ld+json">
-			<?php echo $this->structuredData;?>
-		</script>
+		<script type="application/ld+json"><?php echo $this->structuredData;?></script>
 	<?php } ?>
 
 	<?php if ($this->useGaEnhancedTracking) $this->renderView('metadata'); ?>

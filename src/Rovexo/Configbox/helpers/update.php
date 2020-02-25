@@ -3,7 +3,63 @@ class ConfigboxUpdateHelper {
 
 	protected static $latestUpdateVersion = '';
 	protected static $currentlyProcessedVersion = '';
-	protected static $oldDisplayErrorSetting = '';
+
+	protected static function canInstallFresh() {
+
+		$latestVersion = ConfigboxSystemVars::getVar('latest_update_version');
+
+		if (empty($latestVersion)) {
+
+			$db = KenedoPlatform::getDb();
+			$query = "
+			SELECT `TABLE_NAME`
+			FROM `information_schema`.`TABLES` 
+			WHERE `TABLE_SCHEMA` = DATABASE() AND (`TABLE_NAME` LIKE '#__configbox_%' OR `TABLE_NAME` LIKE '#__cbcheckout_%')
+			";
+			$db->setQuery($query);
+			$tables = $db->loadResultList();
+
+			// Table #__configbox_system_vars gets created on the fly, so 1 table is ok.
+			if (count($tables) <= 1) {
+				return true;
+			}
+			else {
+				return false;
+			}
+
+		}
+		else {
+			return false;
+		}
+
+	}
+
+	static function areUpdatesProcessing() {
+		$markerPath = self::getMarkerFilePath();
+		return is_file($markerPath);
+	}
+
+	static function setUpdatesProcessing($bool) {
+
+		$markerPath = self::getMarkerFilePath();
+
+		if ($bool == true) {
+			touch($markerPath);
+		}
+		else {
+			unlink($markerPath);
+		}
+		clearstatcache(true, $markerPath);
+
+	}
+
+	static function onShutdown() {
+		self::setUpdatesProcessing(false);
+	}
+
+	protected static function getMarkerFilePath() {
+		return KenedoPlatform::p()->getTmpPath().'/cb_update_in_progress';
+	}
 
 	/**
 	 * Deals with any database or file updates on software updates. Runs always, it runs PHP scripts for each version.
@@ -12,7 +68,6 @@ class ConfigboxUpdateHelper {
 	 */
 	static function applyUpdates() {
 
-		self::$oldDisplayErrorSetting = ini_set('display_errors',0);
 		$db = KenedoPlatform::getDb();
 
 		// Create the system vars table here, we do not do any table creation outside the update process and can't have it within the files
@@ -25,83 +80,61 @@ class ConfigboxUpdateHelper {
 		$db->setQuery($query);
 		$db->query();
 
-		$failedUpdate = ConfigboxSystemVars::getVar('failed_update_detected');
+		$hadFailedUpdate = ConfigboxSystemVars::getVar('failed_update_detected');
 
 		// In case we had a failed update, we won't go in again until an admin sorted out the mess and removed the flag
-		if ($failedUpdate) {
+		if ($hadFailedUpdate) {
 			return;
 		}
 
-		// If an update is in progress currently, abort
-		$updateMarkerFile = KenedoPlatform::p()->getTmpPath().'/cb_update_in_progress';
-
-		clearstatcache(true, $updateMarkerFile);
-		$updateInProgress = is_file($updateMarkerFile);
-
-		if ($updateInProgress) {
+		// If we got a race condition, abort
+		if (self::areUpdatesProcessing()) {
 			return;
 		}
 
-		touch($updateMarkerFile);
+		// Mark that we're upgrading
+		self::setUpdatesProcessing(true);
 
-		self::$latestUpdateVersion = ConfigboxSystemVars::getVar('latest_update_version');
+		// Failsafe to remove the race-condition safeguard
+		register_shutdown_function(array('ConfigboxUpdateHelper', 'onShutdown'));
 
-		// Normalize the version if we don't have one yet
-		if (!self::$latestUpdateVersion) {
-			self::$latestUpdateVersion = '0.0.0';
-		}
-
-		// With no latestUpdateVersion, we might be dealing with a fresh install..
-		if (self::$latestUpdateVersion == '0.0.0') {
+		if (self::canInstallFresh()) {
 
 			try {
-
-				// ..still this might be an update from a release that didn't have system_vars yet.
-				// So we check if there are any tables starting configbox or cbcheckout (plus prefix of course)
-				$query = "
-				SELECT `TABLE_NAME`
-				FROM `information_schema`.`TABLES` 
-				WHERE `TABLE_SCHEMA` = DATABASE() AND (`TABLE_NAME` LIKE '#__configbox_%' OR `TABLE_NAME` LIKE '#__cbcheckout_%')
-				";
-				$db->setQuery($query);
-				$tables = $db->loadResultList();
-
-				// Tables #__configbox_sessions and #__configbox_system_vars get created on the fly, so 2 tables are ok.
-				if (count($tables) <= 2) {
-					// Mind the installFresh method will skip ahead to a certain version.
-					// After it ran, we still see about update scripts above that version.
-					self::$latestUpdateVersion = self::installFresh();
-				}
-
+				self::$latestUpdateVersion = self::installFresh();
 			}
 			catch (Exception $e) {
 
-				// Note that upgrade script failed (will make a note apear in the dashboard)
+				KLog::log('Fresh install failed. Error messages follow.', 'upgrade_errors');
+
+				// Note that upgrade script failed (will make a note appear in the dashboard)
 				ConfigboxSystemVars::setVar('failed_update_detected', '1');
 
-				if (is_file($updateMarkerFile)) {
-                    unlink($updateMarkerFile);
-                }
+				self::setUpdatesProcessing(false);
 
 				KLog::log($e->getMessage(), 'upgrade_errors');
-				KLog::log($e->getMessage(), 'error');
 
-				// Log the issues (use getFailedQueryLog instead of the Exception message, because the Exception
-				// may not be thrown by a query failure)
+				// Log each failed query just in case
 				foreach ($db->getFailedQueryLog() as $data) {
 					$logEntry = $data['caller_class'].'::'.$data['caller_function'].'(), File '.$data['caller_file'].' on line: '.$data['caller_line'].', Error num: "'.$data['error_num'].'", error msg: "'.$data['error_msg'].'", query: "'.$data['query'].'"';
 					KLog::log($logEntry, 'upgrade_errors');
 				}
 
-				ini_set('display_errors', self::$oldDisplayErrorSetting);
-				return;
-
 			}
+
+			self::applyCustomizationUpdates();
+			sleep(2);
+			self::setUpdatesProcessing(false);
+
+			return;
 
 		}
 
+		self::$latestUpdateVersion = ConfigboxSystemVars::getVar('latest_update_version');
+
+
 		// Get the folder with update scripts and get all files there
-		$configboxUpdateFileFolder 	= KPATH_DIR_CB.DS.'helpers'.DS.'updates';
+		$configboxUpdateFileFolder 	= KenedoPlatform::p()->getComponentDir('com_configbox').DS.'helpers'.DS.'updates';
 		$configboxUpdateFiles 		= KenedoFileHelper::getFiles($configboxUpdateFileFolder, '.php$', false, false);
 
 		// Sort the files by version
@@ -110,7 +143,7 @@ class ConfigboxUpdateHelper {
 		// We'll count the actually processed files for later
 		$countProcessedFiles = 0;
 
-		// We will also count failed queries to enable us to react more inteligently on failures
+		// We will also count failed queries to enable us to react better on failures
 		$db->resetFailedQueryCount();
 
 		foreach ($configboxUpdateFiles as $configboxUpdateFile) {
@@ -121,45 +154,39 @@ class ConfigboxUpdateHelper {
 			// Figure out if we should run that file
 			$doProcessFile = version_compare(self::$currentlyProcessedVersion, self::$latestUpdateVersion,'gt');
 
-			if ($doProcessFile) {
+			// Skip to next otherwise
+			if ($doProcessFile == false) {
+				continue;
+			}
 
-				$countProcessedFiles++;
+			$countProcessedFiles++;
 
-				// Include the file
-				try {
-					require($configboxUpdateFileFolder . DS . $configboxUpdateFile);
-				}
-				catch(Exception $e) {
+			// Include the file
+			try {
+				require($configboxUpdateFileFolder . DS . $configboxUpdateFile);
+			}
+			catch(Exception $e) {
 
-					// Note that upgrade script failed (will make a note apear in the dashboard)
-					ConfigboxSystemVars::setVar('failed_update_detected', '1');
+				// Note that upgrade script failed (will make a note appear in the dashboard)
+				ConfigboxSystemVars::setVar('failed_update_detected', '1');
 
-					if (is_file($updateMarkerFile)) {
-						unlink($updateMarkerFile);
-					}
+				// Log the errors on both upgrade_errors and error log
+				KLog::log($e->getMessage(), 'upgrade_errors');
 
-					// Log the errors on both upgrade_errors and error log
-					KLog::log($e->getMessage(), 'upgrade_errors');
-					KLog::log($e->getMessage(), 'error');
-
-					// Log the failed DB queries (because the exception message might be about a different issue)
-					foreach ($db->getFailedQueryLog() as $data) {
-						$logEntry = $data['caller_class'].'::'.$data['caller_function'].'(), File '.$data['caller_file'].' on line: '.$data['caller_line'].', Error num: "'.$data['error_num'].'", error msg: "'.$data['error_msg'].'", query: "'.$data['query'].'"';
-						KLog::log($logEntry, 'upgrade_errors');
-					}
-
-					// Stop processing files, at this point an admin needs to step in and sort things out.
-					break;
-
+				// Log the failed DB queries (because the exception message might be about a different issue)
+				foreach ($db->getFailedQueryLog() as $data) {
+					$logEntry = $data['caller_class'].'::'.$data['caller_function'].'(), File '.$data['caller_file'].' on line: '.$data['caller_line'].', Error num: "'.$data['error_num'].'", error msg: "'.$data['error_msg'].'", query: "'.$data['query'].'"';
+					KLog::log($logEntry, 'upgrade_errors');
 				}
 
-				if ($db->getFailedQueryCount() == 0) {
+				// Stop processing files, at this point an admin needs to step in and sort things out.
+				break;
 
-					// Store the version each time in the loop so that the problems through timeout/break/fatal errors are minimized
-					ConfigboxSystemVars::setVar('latest_update_version', self::$currentlyProcessedVersion);
+			}
 
-				}
-
+			// Store the version each time in the loop so we see what was the last successful file
+			if ($db->getFailedQueryCount() == 0) {
+				ConfigboxSystemVars::setVar('latest_update_version', self::$currentlyProcessedVersion);
 			}
 
 		}
@@ -167,13 +194,14 @@ class ConfigboxUpdateHelper {
 		// Purge the case in case we actually did process any upgrade scripts
 		if ($countProcessedFiles != 0) {
 			ConfigboxCacheHelper::purgeCache();
+			sleep(2);
 		}
 
-		ini_set('display_errors', self::$oldDisplayErrorSetting);
+		// Run the customization updates
+		self::applyCustomizationUpdates();
 
-		if (is_file($updateMarkerFile)) {
-			unlink($updateMarkerFile);
-		}
+		self::setUpdatesProcessing(false);
+
 	}
 
 	/**
@@ -208,39 +236,20 @@ class ConfigboxUpdateHelper {
 		// Run the file updates
 		require(__DIR__.'/updates/complete/3.1.0.70_files.php');
 
-
-		// Finally set the update version, so that older scripts won't get loaded on the next request
-		$query = "REPLACE INTO `#__configbox_system_vars` SET `key` = 'latest_update_version', `value` = '3.1.0.70'; ";
-		$db->setQuery($query);
-		$db->query();
+		ConfigboxSystemVars::setVar('latest_update_version', '3.1.0.70');
 
 		return '3.1.0.70';
 
 	}
 
 	/**
-	 * Exactly the same as applyUpdates, but for customizations. System var key is 'latest_customization_update_version'.
-	 * @see applyUpdates
+	 * Same as applyUpdates, but for customizations. System var key is 'latest_customization_update_version'.
 	 */
-	static function applyCustomizationUpdates() {
+	protected static function applyCustomizationUpdates() {
 
-		self::$oldDisplayErrorSetting = ini_set('display_errors',0);
 		$db = KenedoPlatform::getDb();
 
-		// Create the system vars table here, we do not do any table creation outside the update process and can't have it within the files
-		$query = "
-		CREATE TABLE IF NOT EXISTS `#__configbox_system_vars` (
-		  `key` varchar(128) NOT NULL,
-		  `value` text NOT NULL,
-		  PRIMARY KEY (`key`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-		$db->setQuery($query);
-		$db->query();
-
-		// Get the latest version that was updated to
-		$query = "SELECT `value` FROM `#__configbox_system_vars` WHERE `key` = 'latest_customization_update_version'";
-		$db->setQuery($query);
-		self::$latestUpdateVersion = $db->loadResult();
+		self::$latestUpdateVersion = ConfigboxSystemVars::getVar('latest_customization_update_version');
 
 		if (!self::$latestUpdateVersion) {
 			self::$latestUpdateVersion = '0.0.0';
@@ -273,13 +282,14 @@ class ConfigboxUpdateHelper {
 				}
 				catch(Exception $e) {
 
-					// Store the version each time in the loop so that the problems through timeout/break/fatal errors are minimized
-					$query = "REPLACE INTO `#__configbox_system_vars` SET `key` = 'failed_update_detected', `value` = '1'";
-					$db->setQuery($query);
-					$db->query();
-
 					KLog::log($e->getMessage(), 'upgrade_errors');
-					KLog::log($e->getMessage(), 'error');
+
+					try {
+						ConfigboxSystemVars::setVar('failed_update_detected', '1');
+					}
+					catch(Exception $e) {
+						KLog::log('Could not set system var value "failed_update_detected". Exception message was '.$e->getMessage(), 'error');
+					}
 
 					// Log the issues (use getFailedQueryLog instead of the Exception message, because the Exception
 					// may not be thrown by a query failure)
@@ -293,23 +303,19 @@ class ConfigboxUpdateHelper {
 				}
 
 				if ($db->getFailedQueryCount() == 0) {
-
-					// Store the version each time in the loop so that the problems through timeout/break/fatal errors are minimized
-					$query = "REPLACE INTO `#__configbox_system_vars` SET `key` = 'latest_customization_update_version', `value` = '".$db->getEscaped(self::$currentlyProcessedVersion)."'";
-					$db->setQuery($query);
-					$db->query();
-
+					ConfigboxSystemVars::setVar('latest_customization_update_version', self::$currentlyProcessedVersion);
 				}
 
 			}
 
 		}
 
+		// Purge the case in case we actually did process any upgrade scripts
 		if ($countProcessedFiles != 0) {
 			ConfigboxCacheHelper::purgeCache();
+			sleep(1);
 		}
 
-		ini_set('display_errors', self::$oldDisplayErrorSetting);
 	}
 
 	/**

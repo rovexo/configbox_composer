@@ -6,16 +6,7 @@ define('KPATH_DIR_CB', KenedoPlatform::p()->getComponentDir('com_configbox') );
 KenedoAutoload::registerClass('ConfigboxCacheHelper',		KPATH_DIR_CB.'/helpers/cache.php');
 KenedoAutoload::registerClass('ConfigboxConfiguratorHelper',KPATH_DIR_CB.'/helpers/configurator.php');
 KenedoAutoload::registerClass('ConfigboxUpdateHelper',	KPATH_DIR_CB.'/helpers/update.php');
-
-$rulesFile = '/Users/Martin/PhpstormProjects/configbox_non_encoded/encoded/helpers/rules.php';
-if (is_file($rulesFile)) {
-    KenedoAutoload::registerClass('ConfigboxRulesHelper',		$rulesFile);
-}
-else {
-    KenedoAutoload::registerClass('ConfigboxRulesHelper',		KPATH_DIR_CB.'/helpers/rules.php');
-}
-
-
+KenedoAutoload::registerClass('ConfigboxRulesHelper',		KPATH_DIR_CB.'/helpers/rules.php');
 KenedoAutoload::registerClass('ConfigboxProductImageHelper', KPATH_DIR_CB.'/helpers/productimage.php');
 KenedoAutoload::registerClass('ConfigboxPrices',			KPATH_DIR_CB.'/helpers/prices.php');
 KenedoAutoload::registerClass('ConfigboxPositionHelper',	KPATH_DIR_CB.'/helpers/position.php');

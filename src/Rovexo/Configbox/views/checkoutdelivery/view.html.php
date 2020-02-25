@@ -50,7 +50,6 @@ class ConfigboxViewCheckoutdelivery extends KenedoView {
 		
 		$optionsHavePricing = false;
 		foreach ($shippingOptions as $option) {
-			$option->title = $option->rateTitle;
 			if ($option->priceNet) {
 				$optionsHavePricing = true;
 			}

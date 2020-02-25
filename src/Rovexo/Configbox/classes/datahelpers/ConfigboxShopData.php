@@ -33,4 +33,6 @@ class ConfigboxShopData {
 	var $shopdesc = '';
 	var $shoplogo_href = '';
 	var $shoplogo_path = '';
+	var $tac = '';
+	var $refundpolicy = '';
 }

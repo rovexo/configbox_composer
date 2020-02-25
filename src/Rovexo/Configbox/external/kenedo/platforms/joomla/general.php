@@ -182,7 +182,6 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 			$authenticate = JAuthentication::getInstance();
 			$response	  = $authenticate->authenticate($credentials, $options);
 
-			/** @noinspection PhpDeprecationInspection */
 			/** @noinspection PhpUndefinedConstantInspection */
 			if ($response->status === JAUTHENTICATE_STATUS_SUCCESS) {
 				return true;
@@ -342,6 +341,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 
 	public function addScript($path, $type = "text/javascript", $defer = false, $async = false) {
 		if ($this->getDocumentType() == 'html') {
+			/** @noinspection PhpDeprecationInspection */
 			$this->getJDocument()->addScript($path, $type, $defer , $async);
 		}
 	}
@@ -376,13 +376,14 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 
 	}
 
+
 	public function addStylesheet($path, $type = 'text/css', $media = 'all') {
 		if ($this->getDocumentType() == 'html') {
 
 			if (!in_array($path, $this->styleSheetUrls)) {
 				$this->styleSheetUrls[] = $path;
 			}
-
+			/** @noinspection PhpDeprecationInspection */
 			$this->getJDocument()->addStyleSheet($path, $type, $media);
 		}
 	}

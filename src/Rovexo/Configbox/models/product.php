@@ -168,7 +168,6 @@ class ConfigboxModelProduct extends KenedoModelLight{
 
 						KLog::log('Fixed page label with other languages\' labels. new page label is "'.$fetchedPageLabel.'", language tag is "'.$usedLanguageTag.'".');
 						$pageId = $result['id'];
-						$pageLabel = $fetchedPageLabel;
 						$pageFixed = true;
 					}
 				}

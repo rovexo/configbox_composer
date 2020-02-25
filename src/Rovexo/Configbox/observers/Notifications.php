@@ -542,7 +542,7 @@ class ObserverNotifications {
 
 		// Rewrite paths to images if necessary
 		preg_match_all("/src=\"(.*)\"/Ui", $email->body, $images);
-		preg_match_all("/url((.*))/Ui", $email->body, $backgrounds);
+		preg_match_all("/url(.*)/Ui", $email->body, $backgrounds);
 
 		//TODO: Rather low priority: Leave non URL src attributes alone to allow things like base64 encoded sources
 

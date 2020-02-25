@@ -11,10 +11,48 @@ class KSession {
 	static $lockIsAcquired = NULL;
 
 	protected function __construct() {
-		register_shutdown_function('KSession::onShutdown');
+		register_shutdown_function(array('KSession', 'onShutdown'));
 		self::onStartup();
 	}
 
+	/**
+	 * Returns the value for given key
+	 * @param string $key
+	 * @param mixed $fallback Value to return if no value for key was found
+	 * @param string $context Name space (optional)
+	 * @return mixed|null
+	 */
+	static function get($key, $fallback = NULL, $context = 'default') {
+		if (!self::$instance) {
+			self::$instance = new KSession();
+		}
+
+		if (isset(self::$data[$context][$key])) {
+			return self::$data[$context][$key];
+		}
+		else {
+			return $fallback;
+		}
+	}
+
+	/**
+	 * Returns all session data
+	 * @return array
+	 */
+	static function getProperties() {
+		if (!self::$instance) {
+			self::$instance = new KSession();
+		}
+
+		return isset(self::$data) ? self::$data : array();
+	}
+
+	/**
+	 * Sets a value in session
+	 * @param string $key Key to store value for
+	 * @param mixed $value Value to store
+	 * @param string $context Namespace (optional)
+	 */
 	static function set($key, $value, $context = 'default') {
 		if (!self::$instance) {
 			self::$instance = new KSession();
@@ -23,6 +61,11 @@ class KSession {
 		self::$data[$context][$key] = $value;
 	}
 
+	/**
+	 * Deletes the value for given key
+	 * @param string $key Key to delete
+	 * @param string $context Namespace (optional)
+	 */
 	static function delete($key, $context = 'default') {
 		if (!self::$instance) {
 			self::$instance = new KSession();
@@ -33,6 +76,9 @@ class KSession {
 		}
 	}
 
+	/**
+	 * Resets all data in session
+	 */
 	static function reset() {
 		if (!self::$instance) {
 			self::$instance = new KSession();
@@ -40,6 +86,10 @@ class KSession {
 		self::$data = array();
 	}
 
+	/**
+	 * Terminates the session (also expires the session cookie)
+	 * @return bool
+	 */
 	static function terminateSession() {
 
 		self::$data = array();
@@ -52,45 +102,29 @@ class KSession {
 		// Make the cookie expire
 		setcookie($sessionName, $sessionId, -10, '/');
 
-		$db = KenedoPlatform::getDb();
-		$query = "DELETE FROM `#__configbox_session` WHERE `id` = '".$db->getEscaped($sessionId)."'";
-		$db->setQuery($query);
-		$succ = $db->query();
+		try {
+			$db = KenedoPlatform::getDb();
+			$query = "DELETE FROM `#__configbox_session` WHERE `id` = '".$db->getEscaped($sessionId)."'";
+			$db->setQuery($query);
+			$db->query();
+		}
+		catch (Exception $e) {
+			return false;
+		}
 
-		return $succ;
+		return true;
+
 	}
 
-	static function get($key, $default = NULL, $context = 'default') {
-		if (!self::$instance) {
-			self::$instance = new KSession();
-		}
-
-		if (isset(self::$data[$context][$key])) {
-			return self::$data[$context][$key];
-		}
-		else {
-			return $default;
-		}
-	}
-
-	static function getProperties() {
-		if (!self::$instance) {
-			self::$instance = new KSession();
-		}
-
-		return isset(self::$data) ? self::$data : array();
-	}
-
+	/**
+	 * @return string Session name to use
+	 */
 	public static function getSessionName() {
 		$sessionName = 'cb_'.md5(__FILE__);
 		return $sessionName;
 	}
 
 	public static function onStartup() {
-
-		// Prepare session meta data
-		$ip = self::getIp();
-		$userAgent = !empty($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'unknown';
 
 		// Get session name
 		self::$sessionName = self::getSessionName();
@@ -114,35 +148,10 @@ class KSession {
 			$db->query();
 		}
 		catch (Exception $e) {
-			$query = "
-			CREATE TABLE IF NOT EXISTS `#__configbox_session` (
-			  `id` varchar(128) NOT NULL,
-			  `user_agent` varchar(200) NOT NULL DEFAULT '',
-			  `ip_address` varchar(100) NOT NULL DEFAULT '',
-			  `data` text NOT NULL,
-			  `updated` INT(10) unsigned NOT NULL,
-			  PRIMARY KEY (`id`),
-			  KEY `updated` (`updated`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8
-			";
-			$db->setQuery($query);
-			$db->query();
-		}
-
-		// Note that since MySQL 5.7.5 lock names cannot be longer than 64 characters.
-		// A bad lock name will lead to timeouts in typical circumstances.
-		// Using 32 is for a safety margin in case a lot of escaping is needed
-		self::$lockName = substr('lock_'.self::$sessionId, 0, 32);
-
-		// Acquire a lock to avoid race conditions
-		$success = self::acquireLock();
-
-		// Shit in the pants if the lock could not get acquired
-		if ($success == false) {
-			$messageLog = 'An error occurred while setting a lock. Lock name was "'.self::$lockName.'".';
-			$messageFeedback = 'A database server error occurred during setting a lock. See error and database log file for more information.';
-			KLog::log($messageLog, 'db_error');
-			KLog::log($messageLog, 'error', $messageFeedback);
+			// In case CB is currently being installed and a session get/set triggered startup, we won't have the
+			// session table yet. In that case we skip session setup
+			self::$data = array();
+			return;
 		}
 
 		// Load the current session entry
@@ -151,71 +160,48 @@ class KSession {
 		$record = $db->loadAssoc();
 
 		if (!$record) {
+			// Either init if there is none..
+			$ip = ConfigboxLocationHelper::getClientIpV4Address();
+			$userAgent = !empty($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'unknown';
 
-			// Add new session entry
 			$query = "INSERT INTO `#__configbox_session` (`id`, `data`, `ip_address`, `user_agent`, `updated`) VALUES ('".$db->getEscaped(self::$sessionId)."', '', '".$db->getEscaped($ip)."', '".$db->getEscaped($userAgent)."', '".(int)time()."' )";
 			$db->setQuery($query);
-			$succ = $db->query();
-			if ($succ == false) {
-				KLog::log('Could not add session record because of DB error: "'.$db->getErrorMsg().'".','error','Could not add session record');
-				return false;
-			}
+			$db->query();
 
-			self::$data = NULL;
-			return true;
+			self::$data = array();
+
+
 		}
 		else {
+			// ..or unserialize existing data
 
-			if (!empty($record['data'])) {
-				// Unserialize session data and store
+			if ($record['data'] == '') {
+				self::$data = array();
+			}
+			else {
+
 				$sessionData = unserialize($record['data']);
+
 				if ($sessionData === false) {
 					KLog::log('Could not unserialize session data. Serialized string was "'.$record['data'].'".', 'error');
-					KenedoPlatform::p()->raiseError('500','Could not load session record');
+					throw new Exception('Could not load session data. Corrupted data found');
 				}
 				else {
 					self::$data = $sessionData;
 				}
+
 			}
-			else {
-				self::$data = array();
-			}
+
 		}
-		return true;
+
 	}
 
 	static public function onShutdown() {
 
-		// Update session data
-		$sessionString = '';
-
-		if (self::$data) {
-			$sessionString = serialize(self::$data);
-
-			if ($sessionString === false) {
-				KLog::log('Serialization of session data did not work. Data was '.var_export(self::$data,true).'".','error');
-				throw new Exception('Could not serialize session data');
-			}
-		}
-
-		$sessionUpdateOk = true;
-		$dbError = '';
-
-		if (!defined('CONFIGBOX_GOT_UNINSTALLED')) {
-			$time = time();
-			$db = KenedoPlatform::getDb();
-			$query = "UPDATE `#__configbox_session` SET `data` = '".$db->getEscaped($sessionString)."', `updated` = ".(int)$time. " WHERE `id` = '".$db->getEscaped(self::$sessionId)."'";
-			$db->setQuery($query);
-			$succ = $db->query();
-			if ($succ == false) {
-				$sessionUpdateOk = false;
-				$dbError = $db->getErrorMsg();
-			}
-		}
-
+		// Release any acquired locks
 		if (self::lockIsAcquired() === true) {
 			$success = self::releaseLock();
-			// Shit in the pants if the lock could not get acquired
+			// Log on problems
 			if ($success == false) {
 				$messageLog = 'An error occurred while releasing a lock. Lock name was "'.self::$lockName.'".';
 				$messageFeedback = 'A database server error occurred during releasing a lock. See error and database log file for more information.';
@@ -224,23 +210,37 @@ class KSession {
 			}
 		}
 
-		if ($sessionUpdateOk === false) {
-			KLog::log('Could not store session record because of DB error: "'.$dbError.'".', 'error', 'Could not store session record.');
+		// Abort if CB got uninstalled in the runtime. Set in Joomla's uninstall procedure
+		if (defined('CONFIGBOX_GOT_UNINSTALLED')) {
+			return;
 		}
 
-		return true;
-	}
+		$db = KenedoPlatform::getDb();
+		try {
 
-	protected static function getIp() {
+			// Serialize..
+			if (self::$data) {
+				$sessionString = serialize(self::$data);
 
-		$ip = ConfigboxLocationHelper::getClientIpV4Address();
+				if ($sessionString === false) {
+					KLog::log('Serialization of session data did not work. Data was '.var_export(self::$data,true).'".','error');
+					throw new Exception('Could not serialize session data');
+				}
+			}
+			else {
+				$sessionString = '';
+			}
 
-		return $ip;
-	}
+			// ..and update
+			$query = "UPDATE `#__configbox_session` SET `data` = '".$db->getEscaped($sessionString)."', `updated` = ".intval(time()). " WHERE `id` = '".$db->getEscaped(self::$sessionId)."'";
+			$db->setQuery($query);
+			$db->query();
 
+		}
+		catch (Exception $e) {
+			KLog::log('Could not store session record because of a DB error: "'.$e->getMessage().'".', 'error', 'Could not store session record.');
+		}
 
-	protected static function setLockName($lockName) {
-		self::$lockName = $lockName;
 	}
 
 	public static function lockIsAcquired() {
@@ -250,18 +250,13 @@ class KSession {
 	public static function acquireLock() {
 
 		if (self::$lockIsAcquired == true) {
-			$message = 'acquireLock was called, but lock is already acquired. Lock name is "'.self::$lockName.'".';
-			KLog::log($message, 'error');
-			KLog::log($message, 'db_error');
-			return false;
+			return true;
 		}
 
-		if (empty(self::$lockName)) {
-			$message = 'acquireLock was called, but no lock name is defined.';
-			KLog::log($message, 'error');
-			KLog::log($message, 'db_error');
-			return false;
-		}
+		// Note that since MySQL 5.7.5 lock names cannot be longer than 64 characters.
+		// A bad lock name will lead to timeouts in typical circumstances.
+		// Using 32 is for a safety margin in case a lot of escaping is needed
+		self::$lockName = substr('lock_'.self::$sessionId, 0, 32);
 
 		$db = KenedoPlatform::getDb();
 		$query = "SELECT GET_LOCK('".$db->getEscaped(self::$lockName)."', 20)";
@@ -297,16 +292,12 @@ class KSession {
 	public static function releaseLock() {
 
 		if (self::$lockIsAcquired != true) {
-			$message = 'releaseLock was called, but lock is not acquired. Lock name is "'.self::$lockName.'".';
-			KLog::log($message, 'error');
-			KLog::log($message, 'db_error');
-			return false;
+			return true;
 		}
 
 		if (empty(self::$lockName)) {
 			$message = 'releaseLock was called, but no lock name is defined.';
 			KLog::log($message, 'error');
-			KLog::log($message, 'db_error');
 			return false;
 		}
 
@@ -338,6 +329,5 @@ class KSession {
 		}
 
 	}
-
 
 }

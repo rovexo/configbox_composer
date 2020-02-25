@@ -16,7 +16,7 @@ class ConfigboxModelInvoice extends KenedoModel {
 		return $invoiceData;
 	}
 	
-	function insertInvoice($orderId, $userId = 0, $customInvoicePath, $invoiceNumberPrefix, $invoiceNumberSerial) {
+	function insertInvoice($orderId, $userId, $customInvoicePath, $invoiceNumberPrefix, $invoiceNumberSerial) {
 		
 		$db = KenedoPlatform::getDb();
 		
@@ -66,7 +66,7 @@ class ConfigboxModelInvoice extends KenedoModel {
 		return $record;
 	}
 	
-	function changeInvoice($orderId, $userId = 0, $customInvoicePath, $invoiceNumberPrefix, $invoiceNumberSerial) {
+	function changeInvoice($orderId, $userId, $customInvoicePath, $invoiceNumberPrefix, $invoiceNumberSerial) {
 		
 		$db = KenedoPlatform::getDb();
 		

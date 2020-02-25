@@ -193,6 +193,7 @@ class ConfigboxControllerIPN extends KenedoController {
 
 		unset($queryParameters['controller'], $queryParameters['task'], $queryParameters['connector_name'], $queryParameters['Itemid']);
 
+		return $segments;
 	}
 
 }

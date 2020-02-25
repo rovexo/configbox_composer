@@ -12,7 +12,7 @@ defined('CB_VALID_ENTRY') or die();
 
 	<div class="current-images">
 		<?php foreach ($this->currentImageUploads as $imageData) { ?>
-			<img id="image-question-id-<?php echo intval($imageData['question_id']);?>" src="<?php echo $imageData['url'];?>" data-question-id="<?php echo intval($imageData['question_id']);?>" data-geometry-name="<?php echo hsc($imageData['geometry_name']);?>" />
+			<img alt="" id="image-question-id-<?php echo intval($imageData['question_id']);?>" src="<?php echo $imageData['url'];?>" data-question-id="<?php echo intval($imageData['question_id']);?>" data-geometry-name="<?php echo hsc($imageData['geometry_name']);?>" />
 		<?php } ?>
 	</div>
 

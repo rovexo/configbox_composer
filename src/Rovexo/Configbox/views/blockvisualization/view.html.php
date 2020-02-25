@@ -103,8 +103,9 @@ class ConfigboxViewBlockvisualization extends KenedoView {
 
 	/**
 	 * @param int $pageId
-	 * @deprecated No longer needed
 	 * @return $this
+	 * @noinspection PhpUnusedParameterInspection*
+	 * @deprecated No longer needed
 	 */
 	function setPageId($pageId) {
 		return $this;

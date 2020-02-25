@@ -84,8 +84,8 @@ CREATE TABLE `sltxh_cbcheckout_order_countries`
     `id`             int(10) unsigned NOT NULL,
     `order_id`       int(10) unsigned NOT NULL DEFAULT '0',
     `country_name`   varchar(64)               DEFAULT NULL,
-    `country_3_code` char(3)                   DEFAULT NULL,
-    `country_2_code` char(2)                   DEFAULT NULL,
+    `country_3_code` varchar(3)                   DEFAULT NULL,
+    `country_2_code` varchar(2)                   DEFAULT NULL,
     `vat_free`       int(11)                   DEFAULT '1',
     `in_eu_vat_area` varchar(1)       NOT NULL DEFAULT '0',
     `published`      int(11)                   DEFAULT '1',
@@ -316,7 +316,7 @@ CREATE TABLE `sltxh_cbcheckout_order_strings`
     `table`        varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
     `type`         int(5) unsigned                                        NOT NULL COMMENT '1:shippers',
     `key`          bigint(20) unsigned                                    NOT NULL,
-    `language_tag` char(5)                                                NOT NULL DEFAULT '',
+    `language_tag` varchar(5)                                                NOT NULL DEFAULT '',
     `text`         text                                                   NOT NULL,
     PRIMARY KEY (`order_id`, `table`, `type`, `key`, `language_tag`),
     CONSTRAINT `sltxh_cbcheckout_order_strings_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `sltxh_cbcheckout_order_records` (`id`) ON UPDATE CASCADE
@@ -443,7 +443,7 @@ CREATE TABLE `sltxh_cbcheckout_order_users`
     `custom_2`             text             NOT NULL,
     `custom_3`             text             NOT NULL,
     `custom_4`             text             NOT NULL,
-    `language_tag`         char(5)          NOT NULL,
+    `language_tag`         varchar(5)          NOT NULL,
     `county_id`            int(10) unsigned          DEFAULT NULL,
     `billingcounty_id`     int(10) unsigned          DEFAULT NULL,
     `city_id`              int(10) unsigned          DEFAULT NULL,
@@ -462,7 +462,7 @@ CREATE TABLE `sltxh_cbcheckout_order_users`
 
 CREATE TABLE `sltxh_configbox_active_languages`
 (
-    `tag` char(5) NOT NULL,
+    `tag` varchar(5) NOT NULL,
     PRIMARY KEY (`tag`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
@@ -679,7 +679,7 @@ CREATE TABLE `sltxh_configbox_config`
     `page_nav_show_tabs`                   varchar(1)       NOT NULL DEFAULT '0',
     `label_option_custom_5`                varchar(100)     NOT NULL DEFAULT '',
     `label_option_custom_6`                varchar(100)     NOT NULL DEFAULT '',
-    `language_tag`                         char(5)          NOT NULL DEFAULT '',
+    `language_tag`                         varchar(5)          NOT NULL DEFAULT '',
     `pm_regular_show_taxes`                varchar(1)       NOT NULL DEFAULT '0',
     `pm_regular_show_cart_button`          varchar(1)       NOT NULL DEFAULT '0',
     `pm_recurring_show_taxes`              varchar(1)       NOT NULL DEFAULT '0',
@@ -757,8 +757,8 @@ CREATE TABLE `sltxh_configbox_countries`
 (
     `id`             int(10) unsigned NOT NULL,
     `country_name`   varchar(64)               DEFAULT NULL,
-    `country_3_code` char(3)                   DEFAULT NULL,
-    `country_2_code` char(2)                   DEFAULT NULL,
+    `country_3_code` varchar(3)                   DEFAULT NULL,
+    `country_2_code` varchar(2)                   DEFAULT NULL,
     `vat_free`       varchar(1)       NOT NULL DEFAULT '1',
     `in_eu_vat_area` varchar(1)       NOT NULL DEFAULT '0',
     `published`      varchar(1)       NOT NULL DEFAULT '1',
@@ -829,7 +829,7 @@ CREATE TABLE `sltxh_configbox_customers`
     `vatin`                   varchar(128)              DEFAULT '',
     `group_id`                int(10) unsigned          DEFAULT NULL,
     `platform_user_id`        int(10) unsigned          DEFAULT NULL,
-    `language_tag`            char(5)                   DEFAULT NULL,
+    `language_tag`            varchar(5)                   DEFAULT NULL,
     `newsletter`              varchar(1)       NOT NULL DEFAULT '0',
     `custom_1`                text,
     `custom_2`                text,
@@ -1064,7 +1064,7 @@ CREATE TABLE `sltxh_configbox_oldlabels`
     `label`        varchar(255)        NOT NULL,
     `prod_id`      int(10) unsigned DEFAULT NULL,
     `created`      bigint(20) unsigned NOT NULL,
-    `language_tag` char(5)             NOT NULL,
+    `language_tag` varchar(5)             NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uniqe_strings` (`type`, `key`, `language_tag`),
     KEY `created` (`created`),
@@ -1356,7 +1356,7 @@ CREATE TABLE `sltxh_configbox_strings`
 (
     `type`         int(10) unsigned DEFAULT NULL,
     `key`          int(10) unsigned NOT NULL COMMENT 'Primary key value for the regarding record.',
-    `language_tag` char(5)          NOT NULL,
+    `language_tag` varchar(5)          NOT NULL,
     `text`         text             NOT NULL,
     UNIQUE KEY `uniqe_strings` (`type`, `key`, `language_tag`)
 ) ENGINE = InnoDB
@@ -1462,7 +1462,7 @@ CREATE TABLE `sltxh_configbox_users`
     `custom_2`             varchar(255)              DEFAULT '',
     `custom_3`             varchar(255)              DEFAULT '',
     `custom_4`             varchar(255)              DEFAULT '',
-    `language_tag`         char(5)          NOT NULL,
+    `language_tag`         varchar(5)          NOT NULL,
     `county_id`            int(10) unsigned          DEFAULT NULL,
     `billingcounty_id`     int(10) unsigned          DEFAULT NULL,
     `city_id`              int(10) unsigned          DEFAULT NULL,

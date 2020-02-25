@@ -6,7 +6,7 @@ class ConfigboxOverridesHelper {
 		// Do output buffering (later drop the output). Just to avoid accidental output in any of the loaded files.
 		ob_start();
 
-		$folder = CONFIGBOX_DIR_SETTINGS;
+		$folder = KenedoPlatform::p()->getDirCustomizationSettings();
 		$files = (is_dir($folder)) ? KenedoFileHelper::getFiles( $folder, '.php$', false, true) : array();
 
 		if (count($files)) {

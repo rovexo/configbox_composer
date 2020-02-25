@@ -443,7 +443,6 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 		/**
 		 *
 		 * @param data Array - two dimensional array. Keys are 'coordinates' (not input parameter values), first key is row number starting with 0
-		 * @returns {boolean}
 		 */
 		updateMatrix: function (data) {
 
@@ -455,7 +454,9 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 			var dataRowsCount = data.length;
 			var differenceRowsCount;
 
-			if(!dataRowsCount) return false;
+			if(!dataRowsCount) {
+				return;
+			}
 
 			if (currentRowsCount > dataRowsCount) {
 				differenceRowsCount = currentRowsCount - dataRowsCount;

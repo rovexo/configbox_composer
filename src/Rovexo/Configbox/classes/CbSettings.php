@@ -123,6 +123,21 @@ class CbSettings {
 
 	protected function __construct() {
 
+		//TODO: remove try/catch block after analysis with M2 tech check
+		try {
+			$db = KenedoPlatform::getDb();
+			$query = "SELECT * FROM `#__configbox_config` WHERE `id` = 1";
+			$db->setQuery($query);
+			$db->loadObject();
+		}
+		catch(Exception $e) {
+
+			$stack = debug_backtrace(false);
+			$slice = array_slice($stack, 0, 10);
+
+			throw new Exception('Config table problem. '.var_export($slice, true));
+		}
+		
 		if (empty(self::$override)) {
 			$db = KenedoPlatform::getDb();
 			$query = "SELECT * FROM `#__configbox_config` WHERE `id` = 1";

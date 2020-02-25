@@ -27,27 +27,26 @@ class CustomConditionExample extends ConfigboxCondition {
 		$forEditing = true;
 		?>
 		<!-- Each item in a rule is enclosed by a <span> element -->
-		<span
-			<!-- it always needs the class "item" and "condition" -->
-			class="item condition"
-			<!-- All data attributes end up as condition data. type and operator are required. -->
-			<!-- In this type it would be "Example" -->
-			data-type="<?php echo $conditionData['type'];?>"
-			<!--
-			The default operator. It is a machine-readable relational operator, like "==", ">", "!=" etc.
-			It will automatically be updated when the operator changes (see below)
-			-->
-			data-operator="<?php echo $conditionData['operator'];?>"
-			<!--
+		<!-- it always needs the class "item" and "condition" -->
+		<!-- All data attributes end up as condition data. type and operator are required. -->
+		<!-- In this type it would be "Example" -->
+		<!-- data-operator is the default operator. It is a machine-readable relational operator, like "==", ">", "!="
+		     etc. It will automatically be updated when a user changes the operator (see below)
+		-->
+		<!--
 			Any other data items are up to you. They will all end up as $conditionData in ::getEvaluationResult() for
 			you to see if the condition is met or not.
-			Notice the naming: 'fieldName' becomes 'data-field-name'.
-			-->
+		-->
+
+		<span
+			class="item condition"
+			data-type="<?php echo $conditionData['type'];?>"
+			data-operator="<?php echo $conditionData['operator'];?>"
 			data-field-name="<?php echo $conditionData['fieldName'];?>">
 
 			<!--
-			The text should help the user to know what the condition is about during setting up the rule. For
-			example: 'Selection in element "Color"'
+			class="condition-name", shows the user what the condition is about.
+			For example: 'Selection in element "Color"'
 			-->
 			<span class="condition-name"><?php echo $conditionData['name'];?></span>
 

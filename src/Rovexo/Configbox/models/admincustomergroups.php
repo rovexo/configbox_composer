@@ -43,7 +43,7 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'positionForm'=>200,
 		);
 
-		if (KenedoPlatform::getName() == 'joomla' && KenedoPlatform::p()->getVersionShort() != '1.5' ) {
+		if (KenedoPlatform::getName() == 'joomla') {
 
 			$propDefs['joomla_user_group_id'] = array(
 				'name'=>'joomla_user_group_id',

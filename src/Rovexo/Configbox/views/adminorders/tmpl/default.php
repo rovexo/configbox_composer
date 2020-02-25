@@ -64,7 +64,7 @@ defined('CB_VALID_ENTRY') or die();
 	</div>
 
 	
-	<table class="kenedo-listing" cellspacing="0">
+	<table class="kenedo-listing">
 	<thead>
 		<tr>
 			<th class="field-id" style="width:60px">

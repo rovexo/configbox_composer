@@ -28,7 +28,6 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 
 	function getCurrentStats() {
 
-		$extensions = $this->getPhpExtensions();
 		$dbSettings = $this->getDbSettings();
 		$dbStats = $this->getDbStats();
 
@@ -53,7 +52,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 		$stat->percentageUsed = round(100 - $stat->percentageFree, 1);
 		$stats['bufferpoolsize'] = $stat;
 
-		if ($dbSettings['query_cache_size']) {
+		if (isset($dbSettings['query_cache_size']) && $dbSettings['query_cache_size']) {
 			// Query cache size
 			$stat = new stdClass();
 			$stat->title = KText::_('DB Query cache');
@@ -94,19 +93,16 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 
 	function getPerformanceTips() {
 
-		$extensions = $this->getPhpExtensions();
 		$dbSettings = $this->getDbSettings();
 		$dbStats = $this->getDbStats();
 
 		$tips = array();
 
 		$totalSize = $dbSettings['innodb_buffer_pool_size'];
-
 		$totalPages = $dbStats['Innodb_buffer_pool_pages_total'];
 		$freePages = $dbStats['Innodb_buffer_pool_pages_free'];
 		$usedPages = $totalPages - $freePages;
 		$percentageFree = round($freePages / $usedPages * 100,2);
-
 		$recommendedTotal = $this->getInMb($totalSize * 1.25);
 
 		if ($recommendedTotal < 32) {
@@ -122,44 +118,11 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 			$tips[] = $tip;
 		}
 
-		if ($dbSettings['query_cache_size'] == 0) {
+		if (isset($dbSettings['query_cache_size']) && $dbSettings['query_cache_size'] == 0) {
 			$tip = new stdClass();
 			$tip->title = KText::_('Enable database query cache.');
 			$tip->prospect = KText::_('The query cache can give you a light to significant performance boost without using too much memory. Set the Query Cache Size to 32MB initially and check back here in 24 hours to see how much has been used.');
 			$tip->solution= KText::_('Set the database server variable query_cache_size to 32MB.');
-			$tip->access = KText::_('You normally need a VPS or root server to be able to change database server settings. If you are on a shared host or are not familiar with database server administration, consult your hosting provider, server administrator or a service partner.');
-			$tips[] = $tip;
-		}
-
-		if ($dbStats['Qcache_lowmem_prunes']) {
-			$recommendedSize = $this->getInMb($dbSettings['query_cache_size'] * 1.2);
-			$tip = new stdClass();
-			$tip->title = KText::sprintf('Raise database query cache size to %sMB.',$recommendedSize);
-			$tip->prospect = KText::sprintf('The database server reports that it had to remove %s cached queries due to low memory. Current query cache size is %sMB. Raising the memory limit by 25%% to %sMB is recommended.', $dbStats['Qcache_lowmem_prunes'], $this->getInMb($dbSettings['query_cache_size']), $recommendedSize);
-			$tip->solution= KText::sprintf('Set the database server variable query_cache_size to %sMB.',$recommendedSize);
-			$tip->access = KText::_('You normally need a VPS or root server to be able to change database server settings. If you are on a shared host or are not familiar with database server administration, consult your hosting provider, server administrator or a service partner.');
-			$tips[] = $tip;
-		}
-
-		$percentageDiskTables = round($dbStats['Created_tmp_disk_tables'] / $dbStats['Created_tmp_tables'] * 100,0);
-		$raise = $percentageDiskTables + 5;
-		$size = min($dbSettings['tmp_table_size'], $dbSettings['max_heap_table_size']);
-		$recommendedSize = $this->getInMb( $size + ($size / ($raise) * 100) );
-
-		if ($percentageDiskTables > 5) {
-			$tip = new stdClass();
-			$tip->title = KText::sprintf('Raise database tmp_table_size and max_heap_table_size limit to %sMB.',$recommendedSize);
-			$tip->prospect = KText::sprintf('%s%% (%s of %s) of the created temporary tables are written on disk instead of in memory which takes considerably more time. Your maximum table size currently is %sMB. It is the lower value of tmp_table_size and max_heap_table_size.', $percentageDiskTables, $dbStats['Created_tmp_disk_tables'], $dbStats['Created_tmp_tables'],  $this->getInMb($size));
-			$tip->solution = KText::sprintf('Raise database tmp_table_size and max_heap_table_size limit to %sMB.',$recommendedSize);
-			$tip->access = KText::_('You normally need a VPS or root server to be able to change database server settings. If you are on a shared host or are not familiar with database server administration, consult your hosting provider, server administrator or a service partner.');
-			$tips[] = $tip;
-		}
-
-		if (version_compare($dbSettings['version'], 5.5) < 0 ) {
-			$tip = new stdClass();
-			$tip->title = KText::_('Upgrade database server to version 5.5.',$recommendedSize);
-			$tip->prospect = KText::sprintf('Version 5.5 is significantly faster than previous versions. The server currently uses version %s.',$dbSettings['version']);
-			$tip->solution = KText::_('Get the latest database server version and upgrade your installation.');
 			$tip->access = KText::_('You normally need a VPS or root server to be able to change database server settings. If you are on a shared host or are not familiar with database server administration, consult your hosting provider, server administrator or a service partner.');
 			$tips[] = $tip;
 		}
@@ -240,7 +203,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 			$warning = new stdClass();
 			$warning->title = KText::_('Failure in software upgrade or installation detected.');
 			$logPath = '<span class="force-wrap">'.KenedoPlatform::p()->getLogPath().'/configbox/configbox_upgrade_errors.php'.'</span>';
-			$warning->problem = KText::_('An error occured during a ConfigBox software upgrade or installation. This is critical even if you do not notice any problems and you should not continue running the software until this issue is resolved.');
+			$warning->problem = KText::_('An error occurred during a ConfigBox software upgrade or installation. This is critical even if you do not notice any problems and you should not continue running the software until this issue is resolved.');
 			$warning->solution = KText::sprintf('CRITICAL_ISSUE_UPDATE_FAILURE_SOLUTION', $logPath);
 			$warning->access = KText::_('Software service provider, server administrator or hosting provider.');
 			$items[] = $warning;
@@ -337,6 +300,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 		// Check if catalog/product_option::groupFactory gives the right model for type configbox
 		if (KenedoPlatform::getName() == 'magento') {
 			// Get the product_option model
+			/** @noinspection PhpUndefinedClassInspection */
 			$model = Mage::getModel('catalog/product_option');
 			// See if we get the right model for type 'configbox', we can live with a third party rewrite
 
@@ -368,6 +332,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 		if (KenedoPlatform::getName() == 'magento') {
 
 			// Get the product_option model
+			/** @noinspection PhpUndefinedClassInspection */
 			$model = Mage::getModel('catalog/product_option');
 
 			// See if we get the right model for type 'configbox', we can live with a third party rewrite
@@ -403,6 +368,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 			);
 
 			foreach($rewrites as $shortCut=>$shouldClass) {
+				/** @noinspection PhpUndefinedClassInspection */
 				$model = Mage::getModel($shortCut);
 
 				if (!is_a($model, $shouldClass)) {
@@ -444,7 +410,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 				continue;
 			}
 
-			set_error_handler('ConfigboxModelAdminDashboard::storeErrorMessage');
+			set_error_handler(array('ConfigboxModelAdminDashboard', 'storeErrorMessage'));
 
 			$result = parse_ini_file($filename);
 
@@ -504,6 +470,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 		return $missingFormats;
 	}
 
+	/** @noinspection PhpUnusedParameterInspection */
 	static function storeErrorMessage($errorNo, $errorStr, $errorFile, $errorLine) {
 		self::$error = $errorStr;
 	}

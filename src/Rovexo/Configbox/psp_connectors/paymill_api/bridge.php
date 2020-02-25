@@ -55,7 +55,8 @@ else {
 								</select>
 							</div>
 							<div class="col-xs-6">
-								<select class="input-card-expiry-year form-control">
+								<label class="sr-only" for="cc-card-expiry-year">Year</label>
+								<select class="input-card-expiry-year form-control" id="cc-card-expiry-year">
 									<?php $selected = date("Y") + 1;?>
 									<?php for ($i = date("Y"); $i <= (date("Y") + 15); $i++) { ?>
 										<option value="<?php echo $i;?>"<?php echo ($i == $selected) ? ' selected="selected"':'';?>><?php echo $i;?></option>
@@ -293,7 +294,7 @@ cbrequire(['cbj'], function(cbj) {
 
 		});
 
-		return false;
+		return;
 
 	});
 

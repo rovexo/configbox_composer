@@ -48,8 +48,9 @@ else {
 						<option value="<?php echo sprintf("%02s", $i);?>"><?php echo sprintf("%02s", $i);?></option>
 					<?php } ?>
 				</select>
-				
-				<select class="input-card-expiry-year">
+
+				<label class="sr-only" for="cc-card-expiry-year">Year</label>
+				<select class="input-card-expiry-year" id="cc-card-expiry-year">
 					<?php $selected = date("Y") + 1;?>
 					<?php for ($i = date("Y"); $i <= (date("Y") + 15); $i++) { ?>
 						<option value="<?php echo $i;?>"<?php echo ($i == $selected) ? ' selected="selected"':'';?>><?php echo $i;?></option>

@@ -512,7 +512,7 @@ class ConfigboxCountryHelper {
 	}
 
 
-	static function createCountySelect($name, $selected = 0, $stateId, $nulloptionlabel = NULL, $citySelectId = NULL) {
+	static function createCountySelect($name, $selected, $stateId, $nulloptionlabel = NULL, $citySelectId = NULL) {
 
 		$options = array();
 

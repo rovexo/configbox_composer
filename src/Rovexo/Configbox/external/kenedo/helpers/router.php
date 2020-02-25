@@ -22,16 +22,9 @@ class KenedoRouterHelper {
 			if (KenedoPlatform::getName() == 'joomla') {
 
 				// Get all published frontend menu items
-				if (KenedoPlatform::p()->getVersionShort() == 1.5) {
-					$dbQuery = "SELECT `id`,`link`, '".$db->getEscaped($tag)."' AS `language` FROM `#__menu` WHERE `published` = '1' AND `type` = 'component'";
-					$db->setQuery($dbQuery);
-					$menuItems = $db->loadAssocList();
-				}
-				else {
-					$dbQuery = "SELECT `id`,`link`,`language` FROM `#__menu` WHERE `client_id` = 0 AND `published` = '1' AND `type` = 'component' ORDER BY `language` DESC";
-					$db->setQuery($dbQuery);
-					$menuItems = $db->loadAssocList();
-				}
+				$dbQuery = "SELECT `id`,`link`,`language` FROM `#__menu` WHERE `client_id` = 0 AND `published` = '1' AND `type` = 'component' ORDER BY `language` DESC";
+				$db->setQuery($dbQuery);
+				$menuItems = $db->loadAssocList();
 
 				$itemsGroupedByLang = array();
 				$languageIndependentItems = array();
@@ -218,74 +211,51 @@ class KenedoRouterHelper {
 
 		$db = KenedoPlatform::getDb();
 
-		switch (KenedoPlatform::p()->getVersionShort()) {
 
-			case '1.5':
+		// Get the current URI (drop starting slash and the last item (conveniently removing any query string or SEF suffix in the process)
+		$segments = dirname($_SERVER['REQUEST_URI']);
 
-				// Prepare an array with links (quoted and escaped)
-				$links = array();
-				foreach ($listingIds as $listingId) {
-					$links[] = "'".$db->getEscaped('index.php?option=com_configbox&view=listings&listing_id='.intval($listingId))."'";
-				}
+		// Get the path part of the base URL..
+		$base = str_replace(KPATH_SCHEME .'://'. KPATH_HOST, '', KPATH_URL_BASE);
 
-				// Simply get the deepest menu item that has a matching listing page
-				$query = "SELECT `id`, `link` FROM `#__menu` WHERE `published` = '1' AND `link` IN (".implode(',', $links).") ORDER BY `sublevel` DESC LIMIT 1";
-				$db->setQuery($query);
-				$id = $db->loadResult();
-				return ($id) ? intval($id) : NULL;
+		// ..and take it off
+		$segments = substr($segments, strlen($base));
 
-				break;
+		// Get the language code..
+		$langCode = '/'.KenedoPlatform::p()->getLanguageUrlCode($languageTag);
 
-			default:
-
-				// Get the current URI (drop starting slash and the last item (conveniently removing any query string or SEF suffix in the process)
-				$segments = dirname($_SERVER['REQUEST_URI']);
-
-				// Get the path part of the base URL..
-				$base = str_replace(KPATH_SCHEME .'://'. KPATH_HOST, '', KPATH_URL_BASE);
-
-				// ..and take it off
-				$segments = substr($segments, strlen($base));
-
-				// Get the language code..
-				$langCode = '/'.KenedoPlatform::p()->getLanguageUrlCode($languageTag);
-
-				// ..and take it off
-				if (strpos($segments, $langCode) === 0) {
-					$segments = substr($segments, strlen($langCode));
-				}
-
-				// Make an array of the individual segments
-				$segArray = explode('/',ltrim($segments, '/'));
-
-				// Make an array of parent paths from deepest to 'flattest'
-				$parentPaths = array();
-				while(count($segArray)) {
-					$parentPaths[] = "'".$db->getEscaped(implode('/', $segArray))."'";
-					array_pop($segArray);
-				}
-
-				// Get all menu items with matching path (note that we sort by level descending, level is the depth of the menu item)
-				$query = "SELECT `id`, `link` FROM `#__menu` WHERE `published` = '1' AND `path` IN (".implode(',', $parentPaths).") AND `language` IN ('*', '".$languageTag."') ORDER BY `level` DESC";
-				$db->setQuery($query);
-				$possibleItems = $db->loadAssocList();
-
-				// Check links for a product listing with a matching listing id
-				$match = NULL;
-				foreach ($listingIds as $listingId) {
-					foreach ($possibleItems as $possibleItem) {
-						if (strstr($possibleItem['link'], 'option=com_configbox') && strstr($possibleItem['link'], 'view=productlisting') && strstr($possibleItem['link'],'listing_id='.$listingId)) {
-							$match = $possibleItem['id'];
-							break;
-						}
-					}
-				}
-
-				return ($match) ? intval($match) : NULL;
-
-				break;
-
+		// ..and take it off
+		if (strpos($segments, $langCode) === 0) {
+			$segments = substr($segments, strlen($langCode));
 		}
+
+		// Make an array of the individual segments
+		$segArray = explode('/',ltrim($segments, '/'));
+
+		// Make an array of parent paths from deepest to 'flattest'
+		$parentPaths = array();
+		while(count($segArray)) {
+			$parentPaths[] = "'".$db->getEscaped(implode('/', $segArray))."'";
+			array_pop($segArray);
+		}
+
+		// Get all menu items with matching path (note that we sort by level descending, level is the depth of the menu item)
+		$query = "SELECT `id`, `link` FROM `#__menu` WHERE `published` = '1' AND `path` IN (".implode(',', $parentPaths).") AND `language` IN ('*', '".$languageTag."') ORDER BY `level` DESC";
+		$db->setQuery($query);
+		$possibleItems = $db->loadAssocList();
+
+		// Check links for a product listing with a matching listing id
+		$match = NULL;
+		foreach ($listingIds as $listingId) {
+			foreach ($possibleItems as $possibleItem) {
+				if (strstr($possibleItem['link'], 'option=com_configbox') && strstr($possibleItem['link'], 'view=productlisting') && strstr($possibleItem['link'],'listing_id='.$listingId)) {
+					$match = $possibleItem['id'];
+					break;
+				}
+			}
+		}
+
+		return ($match) ? intval($match) : NULL;
 
 	}
 
@@ -297,100 +267,48 @@ class KenedoRouterHelper {
 
 		$db = KenedoPlatform::getDb();
 
-		switch (KenedoPlatform::p()->getVersionShort()) {
+		// Get the current URI (drop starting slash and the last item (conveniently removing any query string or SEF suffix in the process)
+		$segments = dirname($_SERVER['REQUEST_URI']);
 
-			case '1.5':
+		// Get the path part of the base URL..
+		$base = str_replace(KPATH_SCHEME .'://'. KPATH_HOST, '', KPATH_URL_BASE);
 
-				$link = 'index.php?option=com_configbox&view=product&prod_id='.intval($productId);
+		// ..and take it off
+		$segments = substr($segments, strlen($base));
 
-				// Simply get the deepest menu item that has a matching listing page
-				$query = "SELECT `id`, `link` FROM `#__menu` WHERE `published` = '1' AND `link` = '".$link."' ORDER BY `sublevel` DESC LIMIT 1";
-				$db->setQuery($query);
-				$id = $db->loadResult();
-				return ($id) ? intval($id) : NULL;
+		// Get the language code..
+		$langCode = '/'.KenedoPlatform::p()->getLanguageUrlCode($languageTag);
 
-				break;
-
-			default:
-
-				// Get the current URI (drop starting slash and the last item (conveniently removing any query string or SEF suffix in the process)
-				$segments = dirname($_SERVER['REQUEST_URI']);
-
-				// Get the path part of the base URL..
-				$base = str_replace(KPATH_SCHEME .'://'. KPATH_HOST, '', KPATH_URL_BASE);
-
-				// ..and take it off
-				$segments = substr($segments, strlen($base));
-
-				// Get the language code..
-				$langCode = '/'.KenedoPlatform::p()->getLanguageUrlCode($languageTag);
-
-				// ..and take it off
-				if (strpos($segments, $langCode) === 0) {
-					$segments = substr($segments, strlen($langCode));
-				}
-
-				// Make an array of the individual segments
-				$segArray = explode('/',ltrim($segments, '/'));
-
-				// Make an array of parent paths from deepest to 'flattest'
-				$parentPaths = array();
-				while(count($segArray)) {
-					$parentPaths[] = "'".$db->getEscaped(implode('/', $segArray))."'";
-					array_pop($segArray);
-				}
-
-				// Get all menu items with matching path (note that we sort by level descending, level is the depth of the menu item)
-				$query = "SELECT `id`, `link` FROM `#__menu` WHERE `published` = '1' AND `path` IN (".implode(',', $parentPaths).") AND `language` IN ('*', '".$languageTag."') ORDER BY `level` DESC";
-				$db->setQuery($query);
-				$possibleItems = $db->loadAssocList();
-
-				// Check links for a product listing with a matching listing id
-				$match = NULL;
-				foreach ($possibleItems as $possibleItem) {
-					if (strstr($possibleItem['link'], 'option=com_configbox') && strstr($possibleItem['link'], 'view=product') && strstr($possibleItem['link'],'prod_id='.$productId)) {
-						$match = $possibleItem['id'];
-						break;
-					}
-				}
-
-				return ($match) ? intval($match) : NULL;
-
-				break;
-
+		// ..and take it off
+		if (strpos($segments, $langCode) === 0) {
+			$segments = substr($segments, strlen($langCode));
 		}
 
-	}
+		// Make an array of the individual segments
+		$segArray = explode('/',ltrim($segments, '/'));
 
-	static function getMenuItemsRoute() {
+		// Make an array of parent paths from deepest to 'flattest'
+		$parentPaths = array();
+		while(count($segArray)) {
+			$parentPaths[] = "'".$db->getEscaped(implode('/', $segArray))."'";
+			array_pop($segArray);
+		}
 
-		if (KenedoPlatform::getName() == 'joomla' && KenedoPlatform::p()->getVersionShort() == '1.5') {
+		// Get all menu items with matching path (note that we sort by level descending, level is the depth of the menu item)
+		$query = "SELECT `id`, `link` FROM `#__menu` WHERE `published` = '1' AND `path` IN (".implode(',', $parentPaths).") AND `language` IN ('*', '".$languageTag."') ORDER BY `level` DESC";
+		$db->setQuery($query);
+		$possibleItems = $db->loadAssocList();
 
-			$db = KenedoPlatform::getDb();
-			$query = "SELECT * FROM `#__menu` WHERE `published` = '1' ORDER BY `sublevel`";
-			$db->setQuery($query);
-			$items = $db->loadObjectList('id');
-
-			foreach ($items as $itemId=>&$item) {
-
-				$item->route = $item->alias;
-
-				if ($item->sublevel != 0) {
-					if (isset($items[$item->parent])) {
-						$item->route = $items[$item->parent]->route.'/'.$item->route;
-					}
-					else {
-						unset($items[$itemId]);
-					}
-				}
-
+		// Check links for a product listing with a matching listing id
+		$match = NULL;
+		foreach ($possibleItems as $possibleItem) {
+			if (strstr($possibleItem['link'], 'option=com_configbox') && strstr($possibleItem['link'], 'view=product') && strstr($possibleItem['link'],'prod_id='.$productId)) {
+				$match = $possibleItem['id'];
+				break;
 			}
-			return $items;
+		}
 
-		}
-		else {
-			return array();
-		}
+		return ($match) ? intval($match) : NULL;
 
 	}
 

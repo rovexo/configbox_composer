@@ -50,7 +50,7 @@ if (empty($data['texturedGeometries'])) {
 		<input class="form-control model-ratio" type="text" value="<?php echo hsc($data['ratioDimensions']);?>">
 	</div>
 
-	<iframe style="display:none" data-api-version="<?php echo hsc(ConfigboxShapediverHelper::getApiVersion());?>" class="shapediver-iframe" id="shapediver-iframe" width="100%" height="200px" frameborder="0" src="about:blank"></iframe>
+	<iframe style="display:none" data-api-version="<?php echo hsc(ConfigboxShapediverHelper::getApiVersion());?>" class="shapediver-iframe" id="shapediver-iframe" width="100%" height="200px" src="about:blank"></iframe>
 
 <?php } else { ?>
 

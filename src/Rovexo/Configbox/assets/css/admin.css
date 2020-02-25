@@ -50,6 +50,24 @@ div#element-box div.m {
 	background: none #f6f6f7;
 }
 
+.configbox-admin-index .page-header .page-title-wrapper {
+	display:none;
+}
+
+.configbox-admin-index #anchor-content {
+	position:relative;
+	top:-40px;
+}
+
+.configbox-admin-index .view-admin {
+	margin-top:-25px;
+}
+
+.configbox-admin-index .view-admin .configbox-heading .configbox-logo {
+	width:250px;
+}
+
+
 .platform-magento2 .view-adminconfig #property-name-maintenance_start,
 .platform-magento2 .view-adminproduct #property-name-price_module_start,
 .platform-magento2 .view-adminconfig #property-name-price_module_start {

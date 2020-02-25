@@ -155,7 +155,7 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 					// Here we add an image in case that here isn't a selection update
 					if (cbj('#image-question-id-' + questionId).length === 0) {
 
-						cbj('<img src="about:blank" id="image-question-id-' + questionId + '" data-question-id="' + questionId + '" data-geometry-name="' + geometryName + '" />')
+						cbj('<img alt="" src="about:blank" id="image-question-id-' + questionId + '" data-question-id="' + questionId + '" data-geometry-name="' + geometryName + '" />')
 							.appendTo('.view-sdvisualization .current-images');
 
 					}

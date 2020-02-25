@@ -9,7 +9,7 @@ if ($this->orderRecord->payment->params->get('choose',0) == 0) {
 }
 $params['SERVICENAME'] = "DIALOG";
 $params['BETRAG'] = round($this->orderRecord->payableAmount * 100, 0); // VR PAY requires the total without comma
-$params['WAEHRUNG'] = CONFIGBOX_CURRENCY_CODE;
+$params['WAEHRUNG'] = ConfigboxCurrencyHelper::getCurrency()->code;
 $params['INFOTEXT'] = KText::sprintf('Order ID %s from %s',$this->orderRecord->id,$this->shopData->shopname);
 $params['ARTIKELANZ'] = 0;
 $params['VERWENDANZ'] = 0;

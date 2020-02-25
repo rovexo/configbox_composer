@@ -312,12 +312,12 @@ class KenedoFileHelper {
 	 */
 	public static function zipFolder($sourcePath, $outZipPath)
 	{
-		$pathInfo = pathInfo($sourcePath);
+		$pathInfo = pathinfo($sourcePath);
 		$parentPath = $pathInfo['dirname'];
 		$dirName = $pathInfo['basename'];
 
 		$z = new ZipArchive();
-		$z->open($outZipPath, ZIPARCHIVE::CREATE);
+		$z->open($outZipPath, ZipArchive::CREATE);
 		$z->addEmptyDir($dirName);
 		self::addFolderToZip($sourcePath, $z, strlen("$parentPath/"));
 		$z->close();

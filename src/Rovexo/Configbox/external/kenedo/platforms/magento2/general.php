@@ -110,19 +110,40 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 			KRequest::setVar('option', 'com_configbox');
 		}
 	}
-	
+
+	protected $memoConnectionData;
+
 	public function getDbConnectionData() {
-		$envPath = BP.'/app/etc/env.php';
-		$info = require($envPath);
 
-		$connection = new stdClass();
-		$connection->hostname = $info['db']['connection']['default']['host'];
-		$connection->username = $info['db']['connection']['default']['username'];
-		$connection->password = $info['db']['connection']['default']['password'];
-		$connection->database = $info['db']['connection']['default']['dbname'];
-		$connection->prefix = $info['db']['table_prefix'];
+		if ($this->memoConnectionData === NULL) {
 
-		return $connection;
+			$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+			/**
+			 * @var \Magento\Framework\App\ResourceConnection $resource
+			 */
+			$resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+			$connection = $resource->getConnection('default');
+			$config = $connection->getConfig();
+
+			/**
+			 * @var \Magento\Framework\App\DeploymentConfig $deploymentConfig
+			 */
+			$deploymentConfig = $objectManager->get('Magento\Framework\App\DeploymentConfig');
+			$prefix = $deploymentConfig->get('db/table_prefix');
+
+			$connection = new stdClass();
+			$connection->hostname = $config['host'];
+			$connection->username = $config['username'];
+			$connection->password = $config['password'];
+			$connection->database = $config['dbname'];
+			$connection->prefix = $prefix;
+
+			$this->memoConnectionData = $connection;
+
+		}
+
+		return $this->memoConnectionData;
+
 	}
 	
 	public function &getDb() {
@@ -149,7 +170,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		die();
 	}
 	
-	//TODO: Implement
 	public function logout() {
 		return;
 	}
@@ -169,25 +189,25 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		return $this->memoGetApplicationVersion;
 	}
 
-	//TODO: Implement
 	public function authenticate($username, $passwordClear) {
-		return true;
+		return false;
 	}
 
-	//TODO: Implement
 	public function login($username) {
-		return true;
+		return false;
 	}
 
-	//TODO: Implement
 	public function sendSystemMessage($text, $type = NULL) {
 		return;
 	}
-	//TODO: Implement
+
 	public function getVersionShort() {
-		return '';
+		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+		$productMetadata = $objectManager->get('Magento\Framework\App\ProductMetadataInterface');
+		$version = $productMetadata->getVersion();
+		return $version;
 	}
-	//TODO: Implement
+
 	public function getDebug() {
 		return false;
 	}
@@ -196,12 +216,10 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		return 'UTC';
 	}
 
-	//TODO: Implement
 	public function getMailerFromName() {
 		return '';
 	}
 
-	//TODO: Implement
 	public function getMailerFromEmail() {
 		return '';
 	}
@@ -245,9 +263,8 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 
 	}
 	
-	//TODO: Check if good enough
 	public function getDocumentType() {
-		return KRequest::getKeyword('format','html');
+		return 'html';
 	}
 	
 	public function addScript($path, $type = "text/javascript", $defer = false, $async = false) {
@@ -261,13 +278,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
         );
 
     }
-	
-/*	public function addScriptDeclaration($js, $newTag = false, $toBody = false) {
-		$tag = '<script type="text/javascript">'."\n//<![CDATA[\n";
-		$tag.= $js;
-		$tag.= "\n//]]>\n".'</script>';
-		$this->scriptDeclarations[] = $tag;
-	}*/
 
     public function addScriptDeclaration($js, $newTag = false, $toBody = false) {
 
@@ -345,19 +355,16 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		return '<textarea name="'.hsc($dataFieldKey).'" id="'.hsc($dataFieldKey).'" class="kenedo-html-editor" style="width:'.(int)$width.'px; height:'.$height.'px" rows="'.(int)$rows.'" cols="'.(int)$cols.'">'.hsc($content).'</textarea>';
 	}
 
-	//TODO: Implement
 	public function sendEmail($from, $fromName, $recipient, $subject, $body, $isHtml = false, $cc = NULL, $bcc = NULL, $attachmentPath = NULL) {
-		return true;
+		return false;
 	}
 
-	//TODO: Use
 	public function getGeneratorTag() {
-		return (isset($GLOBALS['document']['metatags']['generator'])) ? $GLOBALS['document']['metatags']['generator'] : '';
+
 	}
 
-	//TODO: Use
 	public function setGeneratorTag($string) {
-		$GLOBALS['document']['metatags']['generator'] = $string;
+
 	}
 
 	public function getUrlBase() {
@@ -373,45 +380,37 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		return $this->getUrlBase();
 	}
 
-	//TODO: Implement
 	public function setDocumentBase($string) {
 		return true;
 	}
 
-	//TODO: Implement
 	public function setDocumentMimeType($mime) {
 		return $GLOBALS['document']['mimetype'] = $mime;
 	}
 
-	//TODO: Implement
 	public function getDocumentTitle() {
 	    return '';
 	}
 
-	//TODO: Implement
 	public function setDocumentTitle($string) {
 	}
 
-	//TODO: Use
 	public function setMetaTag($tag,$content) {
-		$GLOBALS['document']['metatags'][$tag] = $content;
+
 	}
 
 	public function isLoggedIn() {
 		return KSession::get('logged_in',false);
 	}
 
-	//TODO: Test
 	public function getUserId() {
 		return 0;
 	}
 
-	//TODO: Test
 	public function getUserName($userId = NULL) {
 		return '';
 	}
 
-	//TODO: Test
 	public function getUserFullName($userId = NULL) {
 		return '';
 	}
@@ -420,18 +419,16 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		return KSession::get('user_passwordencoded',false);
 	}
 
-	//TODO: Test
 	public function getUserIdByUsername($username) {
 		return NULL;
 	}
 
-	//TODO: Test
 	public function getUserTimezoneName($userId = NULL) {
 		return $this->getConfigOffset();
 	}
 
-	//TODO: Test
 	public function registerUser($data, $groupIds = array()) {
+
 	}
 
 	protected function unsetErrors() {
@@ -469,12 +466,10 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
         return false;
     }
 
-	//TODO: Implement
 	public function passwordsMatch($passwordClear, $passwordEncrypted) {
 		return false;
 	}
 
-	//TODO: Check actual standards
 	public function passwordMeetsStandards($password) {
 		if (mb_strlen($password) < 8) {
 			return false;
@@ -486,22 +481,18 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		return true;
 	}
 
-	//TODO: Check actual standards
 	public function getPasswordStandardsText() {
 		return KText::_('Your password should contain at least 8 characters and should contain numbers and letters.');
 	}
 
-	//TODO: Implement
 	public function changeUserPassword($userId, $passwordClear) {
 		return true;
 	}
 
-	//TODO: Test
 	public function getRootDirectory() {
         return $this->directoryList->getRoot();
 	}
 
-	//TODO: Implement
 	public function getAppParameters() {
 		$params = new KStorage();
 		return $params;
@@ -528,7 +519,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		return true;
 	}
 
-	//TODO: Implement
 	public function getPasswordResetLink() {
         return "";
 	}
@@ -595,17 +585,14 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
         return $languages;
     }
 	
-	//TODO: Implement
 	public function platformUserEditFormIsReachable() {
 		return false;
 	}
 	
-	//TODO: Implement
 	public function userCanEditPlatformUsers() {
 		return false;
 	}
 	
-	//TODO: Implement
 	public function getPlatformUserEditUrl($platformUserId) {
 		return '';
 	}

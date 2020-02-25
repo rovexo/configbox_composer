@@ -244,33 +244,6 @@ if (ConfigboxUpdateHelper::tableExists('#__cbcheckout_paymentoptions') == true) 
 	}
 }
 
-if (KenedoPlatform::getName() == 'joomla') {
-	if (KenedoPlatform::p()->getVersionShort() == '1.5') {
-		// Doesn't matter anymore, latest CB does not use the jquery includer plugin.
-	}
-	else {
-
-		$query = "SELECT * FROM `#__extensions` WHERE `folder` = 'system' AND `element` = 'jquery' LIMIT 1";
-		$db->setQuery($query);
-		$jQueryPlugin = $db->loadObject();
-
-		if ($jQueryPlugin) {
-
-			$params = new KStorage($jQueryPlugin->params);
-			$version = $params->get('version','1');
-
-			if (version_compare($version,'1.7.2','l')) {
-				$params->set('version','1.7.2');
-				$newString = $params->toString();
-				$query = "UPDATE `#__extensions` SET `params` = '".$db->getEscaped($newString)."' WHERE `extension_id` = ".(int)$jQueryPlugin->extension_id;
-				$db->setQuery($query);
-				$db->query();
-			}
-		}
-
-	}
-}
-
 if (ConfigboxUpdateHelper::tableExists('#__configbox_bundles') == false) {
 	$query = "
 	CREATE TABLE IF NOT EXISTS `#__configbox_bundles` (

@@ -1208,7 +1208,7 @@ if (ConfigboxUpdateHelper::getFkConstraintName('#__configbox_users', 'group_id')
 	// Create a group if there are none and load the group ids again
 	if (empty($groupIds)) {
 
-		$query = "INSERT INTO `#__configbox_groups` (`id`, `title`) VALUES (NULL, 'Default Group')";
+		$query = "INSERT INTO `#__configbox_groups` (`id`, `title`, `custom_1`, `custom_2`, `custom_3`, `custom_4`) VALUES (NULL, 'Default Group', '', '', '', '')";
 		$db->setQuery($query);
 		$db->query();
 

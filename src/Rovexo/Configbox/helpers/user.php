@@ -58,7 +58,7 @@ class ConfigboxUserHelper {
 	 * @param string|string[] CSS classes for the dropdown
 	 * @return string
 	 */
-	static function getSalutationDropdown($name = 'salutation_id', $selected = NULL, $cssClasses) {
+	static function getSalutationDropdown($name, $selected, $cssClasses) {
 
 		$salutations = self::getSalutations();
 
@@ -1689,7 +1689,7 @@ class ConfigboxUserHelper {
 			/** @noinspection PhpUndefinedMethodInspection */
 			$response = $vies->checkVat($param);
 		}
-		catch (SoapFault $e) {
+		catch (Exception $e) {
 			$ret = $e->getMessage();
 
 			$faults = array (

@@ -26,7 +26,7 @@ if ($currentIsAvailable == false) {
 }
 
 // Add the default customer group
-$query = "INSERT INTO `#__configbox_groups` (`id`, `title`) VALUES (1, 'Default Group')";
+$query = "INSERT INTO `#__configbox_groups` (`id`, `title`, `custom_1`, `custom_2`, `custom_3`, `custom_4`) VALUES (1, 'Default Group', '', '', '', '')";
 $db->setQuery($query);
 $db->query();
 
