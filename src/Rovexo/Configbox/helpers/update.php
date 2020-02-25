@@ -43,12 +43,19 @@ class ConfigboxUpdateHelper {
 
 		$markerPath = self::getMarkerFilePath();
 
+		clearstatcache(true, $markerPath);
+
 		if ($bool == true) {
-			touch($markerPath);
+			if (is_file($markerPath) == false) {
+				touch($markerPath);
+			}
 		}
 		else {
-			unlink($markerPath);
+			if (is_file($markerPath) == true) {
+				unlink($markerPath);
+			}
 		}
+
 		clearstatcache(true, $markerPath);
 
 	}
