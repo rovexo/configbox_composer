@@ -187,6 +187,7 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'tooltip'=>KText::sprintf('TOOLTIP_QUESTION_UPLOAD_SIZE_MB', $maxUploadSize),
 			'type'=>'string',
 			'unit'=>'MB',
+			'default'=>0,
 			'stringType'=>'number',
 			'positionForm'=>12000,
 			'appliesWhen'=>array(

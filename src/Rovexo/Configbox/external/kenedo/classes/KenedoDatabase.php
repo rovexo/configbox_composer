@@ -73,6 +73,10 @@ class KenedoDatabase {
 			return false;
 		}
 
+		$query = "SET SESSION sql_mode = '';";
+		$this->setQuery($query);
+		$this->query();
+
 		mysqli_set_charset($this->link, "utf8");
 
 		return true;

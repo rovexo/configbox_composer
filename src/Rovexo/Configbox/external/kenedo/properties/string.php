@@ -24,6 +24,10 @@ class KenedoPropertyString extends KenedoProperty {
 			}
 		}
 
+		if ($stringType == 'price' && $data->{$this->propertyName} == '') {
+			$data->{$this->propertyName} = 0;
+		}
+
 		// In case we got a number, we change the localized decimal symbol to the normalized dot
 		if ($stringType == 'number' or $stringType == 'price' or $stringType == 'time') {
 			$data->{$this->propertyName} = str_replace(KText::_('DECIMAL_MARK', '.'), '.', $data->{$this->propertyName});
