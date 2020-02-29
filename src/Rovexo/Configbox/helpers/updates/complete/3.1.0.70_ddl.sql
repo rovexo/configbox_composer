@@ -458,6 +458,7 @@ CREATE TABLE `sltxh_cbcheckout_order_users`
     KEY `order_id` (`order_id`),
     CONSTRAINT `sltxh_cbcheckout_order_users_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `sltxh_cbcheckout_order_records` (`id`) ON UPDATE CASCADE
 ) ENGINE = InnoDB
+  ROW_FORMAT = DYNAMIC
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `sltxh_configbox_active_languages`
@@ -632,33 +633,33 @@ CREATE TABLE `sltxh_configbox_config`
     `license_manager_satellites`           text,
     `page_nav_cart_button_last_page_only`  varchar(1)       NOT NULL DEFAULT '0',
     `page_nav_block_on_missing_selections` varchar(1)       NOT NULL DEFAULT '0',
-    `label_element_custom_1`               varchar(255)     NOT NULL DEFAULT '',
-    `label_element_custom_2`               varchar(255)     NOT NULL DEFAULT '',
-    `label_element_custom_3`               varchar(255)     NOT NULL DEFAULT '',
-    `label_element_custom_4`               varchar(255)     NOT NULL DEFAULT '',
-    `label_element_custom_translatable_1`  varchar(255)     NOT NULL DEFAULT '',
-    `label_element_custom_translatable_2`  varchar(255)     NOT NULL DEFAULT '',
-    `label_assignment_custom_1`            varchar(255)     NOT NULL DEFAULT '',
-    `label_assignment_custom_2`            varchar(255)     NOT NULL DEFAULT '',
-    `label_assignment_custom_3`            varchar(255)     NOT NULL DEFAULT '',
-    `label_assignment_custom_4`            varchar(255)     NOT NULL DEFAULT '',
-    `label_option_custom_1`                varchar(255)     NOT NULL DEFAULT '',
-    `label_option_custom_2`                varchar(255)     NOT NULL DEFAULT '',
-    `label_option_custom_3`                varchar(255)     NOT NULL DEFAULT '',
-    `label_option_custom_4`                varchar(255)     NOT NULL DEFAULT '',
+    `label_element_custom_1`               TEXT NULL,
+    `label_element_custom_2`               TEXT NULL,
+    `label_element_custom_3`               TEXT NULL,
+    `label_element_custom_4`               TEXT NULL,
+    `label_element_custom_translatable_1`  TEXT NULL,
+    `label_element_custom_translatable_2`  TEXT NULL,
+    `label_assignment_custom_1`            TEXT NULL,
+    `label_assignment_custom_2`            TEXT NULL,
+    `label_assignment_custom_3`            TEXT NULL,
+    `label_assignment_custom_4`            TEXT NULL,
+    `label_option_custom_1`                TEXT NULL,
+    `label_option_custom_2`                TEXT NULL,
+    `label_option_custom_3`                TEXT NULL,
+    `label_option_custom_4`                TEXT NULL,
     `use_internal_question_names`          varchar(1)       NOT NULL DEFAULT '0',
     `enable_geolocation`                   varchar(1)       NOT NULL DEFAULT '0',
     `geolocation_type`                     varchar(32)      NOT NULL DEFAULT 'maxmind_geoip2_db',
-    `maxmind_license_key`                  varchar(200)     NOT NULL DEFAULT '',
+    `maxmind_license_key`                  varchar(64)      NOT NULL DEFAULT '',
     `maxmind_user_id`                      varchar(32)               DEFAULT '',
     `pm_show_delivery_options`             int(10) unsigned          DEFAULT '0',
     `pm_show_payment_options`              int(10) unsigned          DEFAULT '0',
-    `label_product_custom_1`               varchar(200)     NOT NULL DEFAULT '',
-    `label_product_custom_2`               varchar(200)     NOT NULL DEFAULT '',
-    `label_product_custom_3`               varchar(200)     NOT NULL DEFAULT '',
-    `label_product_custom_4`               varchar(200)     NOT NULL DEFAULT '',
-    `label_product_custom_5`               varchar(200)     NOT NULL DEFAULT '',
-    `label_product_custom_6`               varchar(200)     NOT NULL DEFAULT '',
+    `label_product_custom_1`               TEXT NULL,
+    `label_product_custom_2`               TEXT NULL,
+    `label_product_custom_3`               TEXT NULL,
+    `label_product_custom_4`               TEXT NULL,
+    `label_product_custom_5`               TEXT NULL,
+    `label_product_custom_6`               TEXT NULL,
     `enable_reviews_products`              varchar(1)       NOT NULL DEFAULT '0',
     `continue_listing_id`                  int(10) unsigned          DEFAULT NULL,
     `enable_performance_tracking`          varchar(1)       NOT NULL DEFAULT '0',
@@ -677,9 +678,9 @@ CREATE TABLE `sltxh_configbox_config`
     `pm_recurring_expand_categories`       varchar(1)       NOT NULL DEFAULT '2',
     `show_conversion_table`                varchar(1)       NOT NULL DEFAULT '0',
     `page_nav_show_tabs`                   varchar(1)       NOT NULL DEFAULT '0',
-    `label_option_custom_5`                varchar(100)     NOT NULL DEFAULT '',
-    `label_option_custom_6`                varchar(100)     NOT NULL DEFAULT '',
-    `language_tag`                         varchar(5)          NOT NULL DEFAULT '',
+    `label_option_custom_5`                TEXT NULL,
+    `label_option_custom_6`                TEXT NULL,
+    `language_tag`                         varchar(5)       NOT NULL DEFAULT '',
     `pm_regular_show_taxes`                varchar(1)       NOT NULL DEFAULT '0',
     `pm_regular_show_cart_button`          varchar(1)       NOT NULL DEFAULT '0',
     `pm_recurring_show_taxes`              varchar(1)       NOT NULL DEFAULT '0',
@@ -720,7 +721,7 @@ CREATE TABLE `sltxh_configbox_config`
     CONSTRAINT `sltxh_configbox_config_ibfk_3` FOREIGN KEY (`continue_listing_id`) REFERENCES `sltxh_configbox_listings` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
-  ROW_FORMAT = COMPACT;
+  ROW_FORMAT = DYNAMIC;
 
 CREATE TABLE `sltxh_configbox_connectors`
 (
@@ -1485,6 +1486,7 @@ CREATE TABLE `sltxh_configbox_users`
     KEY `billingcity_id` (`billingcity_id`),
     CONSTRAINT `sltxh_configbox_users_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sltxh_configbox_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB
+  ROW_FORMAT = DYNAMIC
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `sltxh_configbox_xref_country_payment_method`

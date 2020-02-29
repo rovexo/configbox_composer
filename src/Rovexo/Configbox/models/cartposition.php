@@ -115,34 +115,41 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 
 	}
 
-	function createPosition($cartId, $productId = NULL, $void = NULL, $selections = array()) {
+	/**
+	 * @param int $cartId CB cart ID
+	 * @param int $productId CB product ID
+	 * @param null $void
+	 * @param array $selections - Optional if you want to make selections other than defaults
+	 * @return int
+	 * @throws Exception
+	 */
+	function createPosition($cartId, $productId, $void = NULL, $selections = array()) {
 
 		if (!$cartId) {
-			KLog::log('Could not create position, no cart id was passed','warning');
-			return false;
+			throw new Exception('Could not create position, no cart id was passed');
 		}
 
 		if (!$productId) {
-			KLog::log('Could not create position, no product id was passed','warning');
-			return false;
+			throw new Exception('Could not create position, no product id was passed');
 		}
 
 		$db = KenedoPlatform::getDb();
 
 		// Insert the position
-		$time = KenedoTimeHelper::getFormattedOnly('NOW','datetime');
-		$query = "
-		INSERT INTO `#__configbox_cart_positions` 
+		try {
+			$time = KenedoTimeHelper::getFormattedOnly('NOW','datetime');
+			$query = "
+			INSERT INTO `#__configbox_cart_positions` 
 			SET 
 			    `cart_id` = ".intval($cartId).", 
 			    `prod_id` = ".intval($productId).", 
 			    `created` = '".$db->getEscaped($time)."',
 			    `finished` = 0";
-		$db->setQuery($query);
-		$succ = $db->query();
-		if (!$succ) {
-			KLog::log('Could not insert position with cart id "'.$cartId.'" and prod id "'.$productId.'". Insert id was "'.$db->getQuery().'".','error',KText::_('A system error occured.'));
-			return false;
+			$db->setQuery($query);
+			$db->query();
+		}
+		catch (Exception $e) {
+			throw new Exception('Could not create cart position row');
 		}
 
 		$positionId = $db->insertid();
@@ -165,8 +172,8 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 			$selections = $requestSelections + $selections;
 		}
 
-		// Get the configuration and set simSelections (so we can dermine later if making the selections is possible)
-		$configuration = ConfigboxConfiguration::getInstance();
+		// Get the configuration and set simSelections (so we can determine later if making the selections is possible)
+		$configuration = ConfigboxConfiguration::getInstance($positionId);
 		$configuration->addSimSelections($selections);
 
 		foreach ($selections as $questionId => $selection) {

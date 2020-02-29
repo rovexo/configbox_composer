@@ -438,7 +438,7 @@ class ConfigboxQuestion {
 		if ($this->prefill_on_init == 1) {
 			if ($this->default_value) {
 				if ($this->getType() == 'calendar') {
-					KenedoTimeHelper::getNormalizedTime($this->default_value, 'datetime');
+					return KenedoTimeHelper::getNormalizedTime($this->default_value, 'datetime');
 				}
 				else {
 					return $this->default_value;

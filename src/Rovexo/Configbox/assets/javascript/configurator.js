@@ -64,11 +64,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		cbj(document).on('cbAnswerActivation', 			this.onAnswerActivation);
 		cbj(document).on('cbAnswerDeactivation', 		this.onAnswerDeactivation);
 
-		if (server.config.platformName === 'magento2') {
-			cbj(document).on('cbPricingChange', this.updateMagento2Total);
-			this.initMagento2Validation();
-		}
-
 		cbj(document).on('serverRequestSent', function() {
 			configurator.requestInProgress = true;
 		});
@@ -276,89 +271,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				}
 
 			});
-
-	};
-
-	/**
-	 * The method adds a jquery.validator method ('configbox_m2_validation')
-	 * It kicks in on M2 add-to-cart form submits
-	 * It checks for missing CB selections and not only responds with true/false but also shows validation messages (
-	 * until a solution is found, that
-	 */
-	configurator.initMagento2Validation = function() {
-
-		window.require(['jquery', 'mage/validation'], function($) {
-
-			$.validator.addMethod(
-				'configbox_m2_validation',
-				function (value, element) {
-
-					var missingSelections = configurator.getConfiguratorData('missingProductSelections');
-
-					if (missingSelections.length === 0) {
-
-						var questions = configurator.getConfiguratorData('questions');
-
-						cbj.each(questions, function() {
-							configurator.clearValidationError(this.id);
-						});
-
-						return true;
-					}
-					else {
-
-						var shouldPageId = parseInt(missingSelections[0].pageId);
-
-						if (shouldPageId !== configurator.getPageId()) {
-							configurator.switchPage(shouldPageId, function() {
-								configurator.addValidationErrors(missingSelections);
-							});
-						}
-						else {
-							configurator.addValidationErrors(missingSelections);
-						}
-
-						return false;
-					}
-
-				},
-				'' // Empty validation response (for not showing M2's validation message)
-			);
-
-		});
-
-	};
-
-	configurator.updateMagento2Total = function(event, pricing) {
-
-		var price = pricing.total.price;
-		var priceNet = pricing.total.priceNet;
-		var optionId = cbj('#wrapper-cb-option').data('option-id');
-		var selectorPriceBox = '.price-box';
-
-		window.require(['jquery'], function($)
-		{
-
-			var key = 'options[' + optionId + ']';
-
-			var newPrice = {};
-
-			newPrice[key] = {
-				'oldPrice': {
-					'amount': priceNet,
-					'adjustments': []
-				},
-				'basePrice': {
-					'amount': priceNet
-				},
-				'finalPrice': {
-					'amount': price
-				}
-			};
-
-			$(selectorPriceBox).trigger('updatePrice', newPrice);
-
-		});
 
 	};
 

@@ -24,7 +24,7 @@
 
 .view-adminruleeditor .editor-heading select {
 	display:inline-block;
-	width:500px;
+	width:450px!important;
 }
 
 .view-adminruleeditor .editor-heading,
