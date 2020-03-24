@@ -36,7 +36,7 @@ class ConfigboxViewAdminnotification extends KenedoView {
 				
 		$model = $this->getDefaultModel();
 
-		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&format=raw', false);
+		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&output_mode=view_only', false);
 
 		$this->userKeys = $model->getUserInfoKeys();
 		$this->orderKeys = $model->getOrderInfoKeys();

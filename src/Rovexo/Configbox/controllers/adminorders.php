@@ -48,30 +48,69 @@ class ConfigboxControllerAdminorders extends KenedoController {
 	}
 	
 	function remove() {
-		
-		// Get and sanitize record ids
-		$cids = KRequest::getString('ids');
-		$cids = explode(',',$cids);
-		foreach ($cids as &$id) {
-			$id = (int)$id;
+
+		// Check authorization, abort if negative
+		$this->isAuthorized() or $this->abortUnauthorized();
+
+		// check type
+		$responseType = (KRequest::getString('show_list') == '1') ? 'list' : 'json';
+
+		// set ids or just one id
+		$id = KRequest::getInt('id');
+		$ids = KRequest::getString('ids');
+
+		// The system takes in 'id' or 'ids'. In either case, we make an array $ids for looping later
+		if(!empty($ids)) {
+			$ids = explode(',', $ids);
+		}
+		elseif($id){
+			$ids = [$id];
+		}
+		else $ids = [];
+
+		// Cast all IDs to int for sanitation
+		foreach ($ids as &$id) {
+			$id = intval($id);
 		}
 
-		// Bounce if no cids where found
-		if (count($cids) == 0) {
-			return;
+		// Bounce if no record ID came in
+		if(empty($ids)) {
+
+			if($responseType == 'json') {
+
+				KenedoPlatform::p()->setDocumentMimeType('application/json');
+
+				echo ConfigboxJsonResponse::makeOne()
+					->setSuccess(false)
+					->setErrors(array(KText::_('Please select a record to delete')))
+					->toJson();
+
+				return;
+			}
+			else {
+				$error = KText::_('Please select a record to delete');
+				KenedoPlatform::p()->sendSystemMessage($error, 'error');
+				KenedoViewHelper::addMessage($error, 'error');
+				$this->display();
+				return;
+			}
 		}
 
-		$storeId = ConfigboxStoreHelper::getStoreId();
+
 
 		$db = KenedoPlatform::getDb();
-		$query = "SELECT `id`, `user_id`, `status` FROM `#__cbcheckout_order_records` WHERE `id` IN (".implode(',',$cids).")";
+		$query = "
+		SELECT `id`, `user_id`, `status` 
+		FROM `#__cbcheckout_order_records` 
+		WHERE `id` IN (".implode(',', $ids).")
+		";
 
+		$storeId = ConfigboxStoreHelper::getStoreId();
 		if ($storeId != 1) {
 			$query .= " AND store_id = ".(int)$storeId;
 		}
 
 		$db->setQuery($query);
-
 		$removalItems = $db->loadObjectList('id');
 
 		if (!$removalItems) {
@@ -85,35 +124,86 @@ class ConfigboxControllerAdminorders extends KenedoController {
 		foreach ($removalItems as $item) {
 
 			if ($item->user_id != $userId) {
+
 				if (ConfigboxPermissionHelper::canEditOrders($platformUserId) == false) {
-					KenedoPlatform::p()->sendSystemMessage( KText::_('You cannot remove orders of other customers.') );
+
+					// Deliver the good news
+					if($responseType == 'json') {
+
+						$feedback =  KText::_('You cannot remove orders of other customers.');
+
+						KenedoPlatform::p()->setDocumentMimeType('application/json');
+
+						echo ConfigboxJsonResponse::makeOne()
+							->setSuccess(false)
+							->setErrors([$feedback])
+							->toJson();
+
+					}
+					elseif($responseType == 'list'){
+						$msg =  KText::_('You cannot remove orders of other customers.');
+						KenedoPlatform::p()->sendSystemMessage($msg, 'notice');
+						$this->display();
+					}
+
 					return;
 				}
 			}
 
 			if (ConfigboxPermissionHelper::isPermittedAction('removeOrderRecord',$item) == false) {
 				if (ConfigboxPermissionHelper::canEditOrders($platformUserId) == false) {
-					KenedoPlatform::p()->sendSystemMessage( KText::_('You cannot remove order %s because if its status.',$item->id) );
+
+					// Deliver the good news
+					if($responseType == 'json') {
+
+						$feedback = KText::_('You cannot remove order %s because if its status.', $item->id);
+
+						KenedoPlatform::p()->setDocumentMimeType('application/json');
+
+						echo ConfigboxJsonResponse::makeOne()
+							->setSuccess(false)
+							->setErrors([$feedback])
+							->toJson();
+
+					}
+					elseif($responseType == 'list'){
+						$msg = KText::_('You cannot remove order %s because if its status.', $item->id);
+						KenedoPlatform::p()->sendSystemMessage($msg, 'notice');
+						$this->display();
+					}
+
 					return;
+
 				}
 			}
 
 		}
 
 		$model = KenedoModel::getModel('ConfigboxModelAdminorders');
-		$succ = $model->delete( array_keys($removalItems) );
+		$success = $model->delete( array_keys($removalItems) );
 
-		if (!$succ) {
-			$errors = $model->getErrors();
-			foreach ($errors as $error) {
-				KenedoPlatform::p()->sendSystemMessage($error);
-			}
+		// Deliver the good news
+		if($responseType == 'json') {
+
+			$feedback = ($success == true) ? KText::_('Records deleted.') : '';
+
+			KenedoPlatform::p()->setDocumentMimeType('application/json');
+
+			echo ConfigboxJsonResponse::makeOne()
+				->setSuccess($success)
+				->setErrors($model->getErrors())
+				->setCustomData('messages', array($feedback))
+				->setFeedback($feedback)
+				->toJson();
+
 		}
-		
-		$this->display();
+		elseif($responseType == 'list'){
+			$msg = KText::_('Records deleted.');
+			KenedoPlatform::p()->sendSystemMessage($msg, 'notice');
+			KenedoViewHelper::addMessage($msg, 'notice');
+			$this->display();
+		}
 
-		return;
-		
 	}
 	
 	function release_invoice() {

@@ -21,7 +21,6 @@ class ConfigboxModelAdmincalculations extends KenedoModel {
 			'default'=>0,
 			'label'=>KText::_('ID'),
 			'listing'=>1,
-			'listingwidth'=>'50px',
 			'order'=>100,
 			'positionForm'=>100,
 		);
@@ -84,10 +83,9 @@ class ConfigboxModelAdmincalculations extends KenedoModel {
 	function getDetailsTasks() {
 
 		$tasks = array(
-			array('title'=>KText::_('Save as copy'), 	'task'=>'copy'),
-			array('title'=>KText::_('Save and close'), 	'task'=>'store', 'primary' => true),
+			array('title'=>KText::_('Save and close'), 'task'=>'store', 'primary' => true),
 			array('title'=>KText::_('Save'), 			'task'=>'apply'),
-			array('title'=>KText::_('Cancel'), 			'task'=>'cancel'),
+			array('title'=>KText::_('Cancel'), 		'task'=>'cancel'),
 		);
 
 		return $tasks;

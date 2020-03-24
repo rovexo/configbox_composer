@@ -213,7 +213,7 @@ class ConfigboxViewProductlisting extends KenedoView {
 
 			// Set URLs
 			$this->urlsConfiguratorPage[$product->id] = KLink::getRoute('index.php?option=com_configbox&view=configuratorpage&prod_id='.$product->id.'&page_id='.$product->firstPageId, false);
-			$this->urlsReviewsPage[$product->id] = KLink::getRoute('index.php?option=com_configbox&view=reviews&format=raw&product_id='.$product->id, false);
+			$this->urlsReviewsPage[$product->id] = KLink::getRoute('index.php?option=com_configbox&view=reviews&output_mode=view_only&product_id='.$product->id, false);
 			$this->urlsAddToCart[$product->id] = KLink::getRoute('index.php?option=com_configbox&controller=cart&task=addProductToCart&prod_id='.$product->id, false);
 
 			if ($product->isConfigurable) {

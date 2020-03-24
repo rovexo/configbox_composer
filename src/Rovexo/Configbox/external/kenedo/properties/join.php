@@ -17,7 +17,6 @@ class KenedoPropertyJoin extends KenedoProperty {
 	protected $selectAliasOverride;
 	protected $groupby;
 	protected $defaultlabel;
-	protected $joinLink;
 
 	/**
 	 * Joins that come in with 0 are regarded as NULL (and will be stored in the DB as such)

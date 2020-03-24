@@ -24,6 +24,7 @@ class KText {
 		if (self::$isInitialized == true) {
 			return;
 		}
+		self::$isInitialized = true;
 
 		$languageTag = self::getLanguageTag();
 
@@ -37,8 +38,6 @@ class KText {
 			}
 
 		}
-
-		self::$isInitialized = true;
 
 	}
 
@@ -200,6 +199,8 @@ class KText {
 	 * @return bool
 	 */
 	static function load($path, $languageTag) {
+
+		self::initIfNeeded();
 		
 		if (is_file($path) == false) {
 			KLog::log('Could not find language file in "'.$path.'".', 'error');

@@ -47,7 +47,7 @@ class KenedoView {
 	public $viewCssClasses = array();
 
 	/**
-	 * @var string This will be filled into the Kenedo form's action attribute. It better mentions option, controller and format=raw
+	 * @var string This will be filled into the Kenedo form's action attribute. It better mentions option, controller and output_mode=view_only
 	 */
 	public $formAction = '';
 
@@ -136,18 +136,6 @@ class KenedoView {
 	 * @see KenedoController::display(), KenedoController::edit()
 	 */
 	public $listing = false;
-
-	/**
-	 * @var bool $isAjaxView Indicates that the view is used as an ajaxView
-	 * @see KenedoController::wrapViewAndDisplay()
-	 */
-	public $isAjaxView = false;
-
-	/**
-	 * @var bool $isIntralisting Indicates if the view displays an intralisting
-	 * @see KenedoPropertyChildentries
-	 */
-	public $isIntralisting = false;
 
 	/**
 	 * @var string $foreignKeyField Used for add-buttons of intra-listings. Holds the foreign key field name for child tables
@@ -333,22 +321,12 @@ class KenedoView {
 
 		$this->pageTasks = $model->getListingTasks();
 
-		if (empty($this->isIntralisting)) {
-			$this->isIntralisting = false;
-		}
-		if (KRequest::getKeyword('intralisting')) {
-			$this->isIntralisting = true;
-		}
-
 		$listingData = array(
 			'base-url'				=> KLink::getRoute('index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&lang='.hsc(KText::getLanguageCode())),
 			'option'				=> hsc($this->component),
+			'controller'            => hsc($this->controllerName),
 			'task'					=> 'display',
-			'ajax_sub_view'			=> ($this->isAjaxSubview()) ? '1':'0',
-			'tmpl'					=> hsc(KRequest::getKeyword('tmpl','component')),
-			'in_modal'				=> hsc(KRequest::getInt('in_modal','0')),
-			'intralisting'			=> $this->isIntralisting,
-			'format'				=> 'raw',
+			'output_mode'			=> 'view_only',
 			'groupKey'				=> hsc(KenedoViewHelper::getGroupingKey($this->properties)),
 			'limitstart'			=> hsc($this->paginationInfo['start']),
 			'limit'					=> hsc($this->paginationInfo['limit']),
@@ -362,15 +340,7 @@ class KenedoView {
 		);
 
         // START - Prepare the href for for the add button
-		if ($this->isIntralisting) {
-			$addLink = 'index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&task=edit&id=0&in_modal=1&tmpl=component';
-		}
-		else {
-			$addLink = 'index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&task=edit&id=0';
-			if ($this->isInModal()) {
-				$addLink.= '&in_modal=1';
-			}
-		}
+		$addLink = 'index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&task=edit&id=0';
 
         if (!empty($this->foreignKeyField)) {
             $addLink .= '&prefill_'.$this->foreignKeyField.'='.$this->foreignKeyPresetValue;
@@ -399,7 +369,7 @@ class KenedoView {
 			$this->record = $model->initData();
 		}
 
-		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&format=raw', false);
+		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&output_mode=view_only', false);
 
 		$this->recordUsage = $model->getRecordUsage($id);
 		$this->properties = $model->getProperties();
@@ -416,8 +386,12 @@ class KenedoView {
 
 	}
 
+    /**
+     * @deprecated Remove calls, method is no longer in use
+     * @return null
+     */
 	function isAjaxSubview() {
-		return $this->isAjaxView;
+		return NULL;
 	}
 
 	function isInModal() {
@@ -425,12 +399,13 @@ class KenedoView {
 	}
 
 	function addViewCssClasses() {
-		$this->viewCssClasses[] = 'kenedo-view';
-		if ($this->isAjaxSubview()) {
-			$this->viewCssClasses[] = 'kenedo-ajax-sub-view';
-		}
 
-		$this->viewCssClasses[] = ($this->isInModal()) ? 'in-modal':'in-tab';
+	    $this->viewCssClasses[] = 'kenedo-view';
+
+		if ($this->isInModal()) {
+            $this->viewCssClasses[] = 'in-modal';
+        }
+
 		$this->viewCssClasses[] = 'platform-'.KenedoPlatform::getName();
 		$this->viewCssClasses[] = KenedoPlatform::p()->isAdminArea() ? 'in-backend':'in-frontend';
 
@@ -733,7 +708,7 @@ class KenedoView {
 		$calls = array();
 
 		if (KenedoPlatform::p()->isAdminArea() == true || strpos($this->view, 'admin') === 0) {
-			$calls[] = 'configbox/admin::initBackend';
+			$calls[] = 'configbox/admin::initBackendOnce';
 		}
 
 		return $calls;
@@ -746,7 +721,15 @@ class KenedoView {
 	 * @return string[] AMD modules to be loaded (e.g. array('configbox/admin::initBackend')).
 	 */
 	function getJsInitCallsEach() {
-		return array();
+
+        $calls = array();
+
+        if (KenedoPlatform::p()->isAdminArea() == true || strpos($this->view, 'admin') === 0) {
+            $calls[] = 'configbox/admin::initBackendEach';
+        }
+
+        return $calls;
+
 	}
 
 	/**
@@ -773,10 +756,6 @@ class KenedoView {
 			}
 		}
 
-		if ($this->isAjaxSubview()) {
-			$classes[] = 'kenedo-ajax-sub-view';
-		}
-
 		return $classes;
 
 	}
@@ -789,9 +768,10 @@ class KenedoView {
 		$attributes = array();
 
 		$attributes['class'] = implode(' ', $this->getViewCssClasses());
+		$attributes['data-view-id'] = $this->view;
 
 		// Add required stylesheets (but only if the view gets rendered for HTML injection, because CSS combiners mess up things)
-		if (KRequest::getKeyword('format') == 'raw') {
+		if (KRequest::getKeyword('output_mode') == 'view_only') {
 			$attributes['data-stylesheets'] = json_encode($this->getOptimizedStylesheetUrls());
 		}
 		else {

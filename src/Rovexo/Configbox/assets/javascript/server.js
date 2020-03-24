@@ -45,7 +45,7 @@ define(['cbj'], function (cbj) {
 			requestData.option = 'com_configbox';
 			requestData.controller = controller;
 			requestData.task = task;
-			requestData.format = 'raw';
+			requestData.output_mode = 'view_only';
 
 			var collection = (typeof target === 'string') ? cbj(target) : target;
 
@@ -55,6 +55,30 @@ define(['cbj'], function (cbj) {
 					callback();
 				}
 			});
+		},
+
+		replaceHtml: function(target, controller, task, data) {
+
+			var requestData = data || {};
+			requestData.option = 'com_configbox';
+			requestData.controller = controller;
+			requestData.task = task;
+			requestData.output_mode = 'view_only';
+
+			var collection = (typeof target === 'string') ? cbj(target) : target;
+
+			return cbj.ajax({
+				url: server.config.urlXhr,
+				data: requestData,
+				processData: true,
+				dataType: 'html',
+				type: 'post'
+			})
+				.done(function(html) {
+					collection.replaceWith(html);
+					cbj(document).trigger('cbViewInjected');
+				});
+
 		},
 
 		/**
@@ -101,7 +125,7 @@ define(['cbj'], function (cbj) {
 				requestData.append('option', 'com_configbox');
 				requestData.append('controller', controller);
 				requestData.append('task', task);
-				requestData.append('format', 'raw');
+				requestData.append('output_mode', 'view_only');
 
 				cbj.each(data, function(key, value) {
 					if (value instanceof FileList) {
@@ -130,7 +154,7 @@ define(['cbj'], function (cbj) {
 					option: 'com_configbox',
 					controller: controller,
 					task: task,
-					format: 'raw'
+					output_mode: 'view_only'
 				};
 
 				// Mix in the data
@@ -158,7 +182,7 @@ define(['cbj'], function (cbj) {
 				option: 'com_configbox',
 				controller: 'cart',
 				task: 'checkoutCart',
-				format: 'json',
+				output_mode: 'view_only',
 				cartId: cartId
 			};
 
@@ -182,7 +206,7 @@ define(['cbj'], function (cbj) {
 				option: 'com_configbox',
 				controller: 'cart',
 				task: 'setCartPositionQuantity',
-				format: 'json',
+				output_mode: 'view_only',
 				cart_position_id: cartPositionId,
 				quantity: quantity
 			};
@@ -208,7 +232,7 @@ define(['cbj'], function (cbj) {
 				option: 'com_configbox',
 				controller: 'checkout',
 				task: 'storePaymentOption',
-				format: 'raw',
+				output_mode: 'view_only',
 				id: id
 			};
 
@@ -234,7 +258,7 @@ define(['cbj'], function (cbj) {
 				option: 'com_configbox',
 				controller: 'checkout',
 				task: 'storeDeliveryOption',
-				format: 'raw',
+				output_mode: 'view_only',
 				id: id
 			};
 
@@ -254,7 +278,7 @@ define(['cbj'], function (cbj) {
 				option: 'com_configbox',
 				controller: 'checkout',
 				task: 'placeOrder',
-				format: 'raw'
+				output_mode: 'view_only'
 			};
 
 			return cbj.ajax({
@@ -278,7 +302,7 @@ define(['cbj'], function (cbj) {
 				option: 'com_configbox',
 				controller: 'rfq',
 				task: 'createQuotation',
-				format: 'json',
+				output_mode: 'view_only',
 				cartId: cartId
 			};
 
@@ -298,7 +322,7 @@ define(['cbj'], function (cbj) {
 				option: 'com_configbox',
 				controller: 'user',
 				task: 'loginUser',
-				format: 'json',
+				output_mode: 'view_only',
 				username: username,
 				password: password
 			};
@@ -320,7 +344,7 @@ define(['cbj'], function (cbj) {
 				option: 'com_configbox',
 				controller: 'user',
 				task: 'logoutUser',
-				format: 'json'
+				output_mode: 'view_only',
 			};
 
 			return cbj.ajax({
@@ -340,7 +364,7 @@ define(['cbj'], function (cbj) {
 				option: 'com_configbox',
 				controller: 'user',
 				task: 'sendPasswordChangeVerificationCode',
-				format: 'raw',
+				output_mode: 'view_only',
 				email: email
 			};
 
@@ -361,7 +385,7 @@ define(['cbj'], function (cbj) {
 				option: 'com_configbox',
 				controller: 'user',
 				task: 'changePasswordWithCode',
-				format: 'json',
+				output_mode: 'view_only',
 				code: code,
 				password: password,
 				login: (loginUser === true) ? '1' : '0'
@@ -384,7 +408,7 @@ define(['cbj'], function (cbj) {
 			requestData.option = 'com_configbox';
 			requestData.controller = 'checkout';
 			requestData.task = 'storeOrderAddress';
-			requestData.format = 'json';
+			requestData.output_mode = 'view_only';
 			requestData.lang = server.config.languageCode;
 
 			// Do the request, pass it back

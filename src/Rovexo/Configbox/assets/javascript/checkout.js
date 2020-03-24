@@ -73,7 +73,7 @@ define(['cbj', 'configbox/server', 'configbox/ga'], function(cbj, server, gaModu
 				// Add the spinner to the button
 				cbj(this).addClass('processing');
 
-				cbrequire(['configbox/customerform', 'configbox/server'], function(customerform, server) {
+				cbrequire(['configbox/customerform'], function(customerform) {
 
 					// Get the customer data from the customer form
 					var customerData = customerform.getCustomerFormData();
@@ -133,23 +133,21 @@ define(['cbj', 'configbox/server', 'configbox/ga'], function(cbj, server, gaModu
 				cbj(this).closest('li').addClass('processing');
 				var id = cbj(this).val();
 
-				cbrequire(['configbox/server'], function(server) {
-					server.setDeliveryOption(id)
-						.done(function() {
+				server.setDeliveryOption(id)
+					.done(function() {
 
-							// Refresh the sub views
-							module.refreshPaymentOptions();
-							module.refreshOrderRecord();
-							module.refreshCartSummary();
+						// Refresh the sub views
+						module.refreshPaymentOptions();
+						module.refreshOrderRecord();
+						module.refreshCartSummary();
 
-							// Remove the loading indicator
-							cbj('#subview-delivery li.processing').removeClass('processing');
+						// Remove the loading indicator
+						cbj('#subview-delivery li.processing').removeClass('processing');
 
-							// Trigger the event for 'delivery saved'
-							cbj(document).trigger('cb.checkout.delivery_saved');
+						// Trigger the event for 'delivery saved'
+						cbj(document).trigger('cb.checkout.delivery_saved');
 
-						});
-				});
+					});
 
 			});
 
@@ -159,22 +157,20 @@ define(['cbj', 'configbox/server', 'configbox/ga'], function(cbj, server, gaModu
 				cbj(this).closest('li').addClass('processing');
 				var id = cbj(this).val();
 
-				cbrequire(['configbox/server'], function(server) {
-					server.setPaymentOption(id)
-						.done(function() {
+				server.setPaymentOption(id)
+					.done(function() {
 
-							// Refresh the sub views
-							module.refreshOrderRecord();
-							module.refreshCartSummary();
+						// Refresh the sub views
+						module.refreshOrderRecord();
+						module.refreshCartSummary();
 
-							// Remove the loading indicator
-							cbj('#subview-payment li.processing').removeClass('processing');
+						// Remove the loading indicator
+						cbj('#subview-payment li.processing').removeClass('processing');
 
-							// Trigger the event for 'payment saved'
-							cbj(document).trigger('cb.checkout.payment_saved');
+						// Trigger the event for 'payment saved'
+						cbj(document).trigger('cb.checkout.payment_saved');
 
-						});
-				});
+					});
 
 			});
 
@@ -245,7 +241,7 @@ define(['cbj', 'configbox/server', 'configbox/ga'], function(cbj, server, gaModu
 					return;
 				}
 
-				cbrequire(['configbox/server', 'configbox/customerform'], function(server, customerForm) {
+				cbrequire(['configbox/customerform'], function(customerForm) {
 
 					// Place the order (set's the status to 'ordered');
 					server.placeOrder()
@@ -312,7 +308,7 @@ define(['cbj', 'configbox/server', 'configbox/ga'], function(cbj, server, gaModu
 
 			if (url) {
 
-				cbj('.wrapper-cart-summary').load(url, {}, function() {
+				server.injectHtml(cbj('.wrapper-cart-summary'), 'cart', 'reloadCartSummary', {}, function() {
 
 					cbj('.button-copy-product, .button-edit-product, .button-remove-product, .trigger-edit-quantity, .trigger-remove-position').hide();
 

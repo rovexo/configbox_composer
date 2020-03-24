@@ -75,10 +75,9 @@ defined('CB_VALID_ENTRY') or die();
 	</div>
 
 	<div class="calc-type-subview"
-		 data-url-matrix="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalcmatrices&task=edit&ajax_sub_view=1&tmpl=component&format=raw&id='.intval($this->record->id));?>"
-		 data-url-formula="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalcformulas&task=edit&ajax_sub_view=1&tmpl=component&format=raw&id='.intval($this->record->id));?>"
-		 data-url-code="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalccodes&task=edit&ajax_sub_view=1&tmpl=component&format=raw&id='.intval($this->record->id));?>"
-		>
+	     data-controller-matrix="admincalcmatrices"
+	     data-controller-formula="admincalcformulas"
+	     data-controller-code="admincalccodes">
 		<?php
 		if ($this->record->product_id && $this->record->type) {
 			switch ($this->record->type) {
@@ -115,10 +114,6 @@ defined('CB_VALID_ENTRY') or die();
 		<input type="hidden" id="option" 		name="option" 				value="<?php echo hsc($this->component);?>" />
 		<input type="hidden" id="controller"	name="controller" 			value="<?php echo hsc($this->controllerName);?>" />
 		<input type="hidden" id="task" 			name="task" 				value="" />
-		<input type="hidden" id="ajax_sub_view" name="ajax_sub_view" 		value="<?php echo ($this->isAjaxSubview()) ? '1':'0';?>" />		
-		<input type="hidden" id="in_modal"		name="in_modal" 			value="<?php echo ($this->isInModal()) ? '1':'0';?>" />
-		<input type="hidden" id="tmpl"			name="tmpl" 				value="component" />
-		<input type="hidden" id="format"		name="format" 				value="raw" />
 		<input type="hidden" id="id"			name="id" 					value="<?php echo !empty($this->record->id) ? intval($this->record->id) : 0; ?>" />
 		<input type="hidden" id="lang"			name="lang" 				value="<?php echo hsc(KenedoPlatform::p()->getLanguageUrlCode());?>" />
 		<input type="hidden" id="return" 		name="return" 				value="<?php echo KLink::base64UrlEncode($this->returnUrl);?>" />

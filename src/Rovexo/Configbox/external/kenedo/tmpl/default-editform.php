@@ -3,7 +3,7 @@ defined('CB_VALID_ENTRY') or die();
 /** @var KenedoView $this */
 ?>
 <div <?php echo $this->getViewAttributes();?>>
-<div id="view-<?php echo hsc($this->view);?>" class="<?php $this->renderViewCssClasses();?>">
+<div id="view-<?php echo hsc($this->view);?>">
 
 <form data-view="<?php echo hsc($this->view);?>" class="kenedo-details-form" method="post" enctype="multipart/form-data" action="<?php echo hsc($this->formAction);?>" data-record="<?php echo hsc(json_encode($this->record));?>" data-properties="<?php echo hsc(json_encode($this->properties));?>">
 
@@ -58,10 +58,6 @@ defined('CB_VALID_ENTRY') or die();
 		<input type="hidden" id="option" 		name="option" 			value="<?php echo hsc($this->component);?>" />
 		<input type="hidden" id="controller"	name="controller" 		value="<?php echo hsc($this->controllerName);?>" />
 		<input type="hidden" id="task" 			name="task" 			value="" />
-		<input type="hidden" id="ajax_sub_view" name="ajax_sub_view" 	value="<?php echo ($this->isAjaxSubview()) ? '1':'0';?>" />
-		<input type="hidden" id="in_modal"		name="in_modal" 		value="<?php echo ($this->isInModal()) ? '1':'0';?>" />
-		<input type="hidden" id="tmpl"			name="tmpl" 			value="component" />
-		<input type="hidden" id="format"		name="format" 			value="raw" />
 		<input type="hidden" id="id"			name="id" 				value="<?php echo intval($this->record->id); ?>" />
 		<input type="hidden" id="lang"			name="lang" 			value="<?php echo hsc(KenedoPlatform::p()->getLanguageUrlCode());?>" />
 		<!-- unencoded return url "<?php echo $this->returnUrl;?>" -->

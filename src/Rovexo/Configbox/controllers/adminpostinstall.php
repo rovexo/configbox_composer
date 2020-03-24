@@ -34,7 +34,7 @@ class ConfigboxControllerAdminpostinstall extends KenedoController {
 	function display() {
 
 		$wrapperView = KenedoView::getView('ConfigboxViewBlank');
-		$wrapperView->assignRef('output', $this->getDefaultView()->getHtml());
+		$wrapperView->output = $this->getDefaultView()->getHtml();
 		$wrapperView->display();
 
 	}

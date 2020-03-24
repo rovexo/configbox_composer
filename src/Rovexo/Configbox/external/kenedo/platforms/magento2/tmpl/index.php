@@ -1,6 +1,6 @@
 <?php
 
 /**
- * @var KenedoPlatformMagento $this
+ * @var KenedoPlatformMagento2 $this
  */
 echo $output;

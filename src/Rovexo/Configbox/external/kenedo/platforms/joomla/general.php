@@ -23,19 +23,39 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 			KenedoPlatform::p()->setDocumentBase( $this->getUrlBase().'/' );
 		}
 
-		// At some Joomla 3.0 built .raw URLs with format=raw and then on routing didn't set format=raw then
+		// At some Joomla 3.0 builds SEF URLs with suffix .raw when you got format=raw in query string
+		// but does set format=raw on parsing the SEF URL - working around it here
 		if (!empty($_SERVER['REQUEST_URI']) && substr($_SERVER['REQUEST_URI'], -4) == '.raw') {
 			KRequest::setVar('format', 'raw');
-		}
-
-		// When in_modal or ajax_sub_view is in request, set tmpl=component (makes joomla output only component's output)
-		if (KRequest::getVar('in_modal') == '1' || KRequest::getVar('ajax_sub_view') == '1') {
-			KRequest::setVar('tmpl', 'component');
 		}
 
 		$this->do2Point6LegacyStuff();
 
 	}
+
+    /**
+     * @inheritDoc
+     */
+    function getOutputMode() {
+
+    	if (KRequest::getString('output_mode')) {
+    		$outputMode = KRequest::getString('output_mode');
+    		if (in_array($outputMode, ['view_only', 'in_html_doc', 'in_platform_output'])) {
+    			return $outputMode;
+		    }
+	    }
+
+        if (KRequest::getInt('ajax_sub_view') || KRequest::getString('format') == 'raw' || KRequest::getString('format') == 'json') {
+            return 'view_only';
+        }
+
+        if (KRequest::getInt('in_modal') == 1 || KRequest::getVar('tmpl') == 'component') {
+            return 'in_html_doc';
+        }
+
+        return 'in_platform_output';
+
+    }
 
 	/**
 	 * Checks for REQUEST keys that have changed between 2.6 and 3.0 and tries to 'translate'
@@ -464,9 +484,9 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 
 	public function renderHtmlEditor($dataFieldKey, $content, $width, $height, $cols, $rows) {
 
-		$style = 'width:'.intval($width).'px; height:'.intval($height).'px';
+		$style = 'width:'.$width.'; height:'.$height;
 
-		return '<textarea name="'.hsc($dataFieldKey).'" id="'.hsc($dataFieldKey).'" class="kenedo-html-editor not-initialized" style="'.$style.'" rows="'.intval($rows).'" cols="'.intval($cols).'">'.hsc($content).'</textarea>';
+		return '<textarea name="'.hsc($dataFieldKey).'" class="kenedo-html-editor not-initialized" style="'.$style.'" rows="'.intval($rows).'" cols="'.intval($cols).'">'.hsc($content).'</textarea>';
 
 	}
 

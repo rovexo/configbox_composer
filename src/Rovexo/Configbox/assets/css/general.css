@@ -34,7 +34,7 @@ body.modal-open .cb-content .modal {
 
 .cb-content label.radio,
 .cb-content label.checkbox {
-	min-height:0px;
+	min-height:0;
 	padding-left:20px;
 }
 
@@ -191,9 +191,9 @@ body.single-cb_internal .entry-header {
 }
 
 .cb-content a.fa {
-	text-decoration:none;
+	text-decoration:none!important;
 }
 
 .cb-content a.btn {
-	text-decoration:none;
+	text-decoration:none!important;
 }

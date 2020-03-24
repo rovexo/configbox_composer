@@ -40,7 +40,7 @@ class ConfigboxViewAdmincustomer extends KenedoView {
 			$this->record = $model->initData();
 		}
 
-		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&format=raw', false);
+		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&output_mode=view_only', false);
 
 		$view = KenedoView::getView('ConfigboxViewCustomerform');
 		$view->customerFields = ConfigboxUserHelper::getUserFields();
@@ -48,21 +48,19 @@ class ConfigboxViewAdmincustomer extends KenedoView {
 		$view->formType = 'profile';
 		$view->useLoginForm = false;
 		$view->prepareTemplateVars();
-		$formHtml = $view->getViewOutput();
+		$this->customerFormHtml = $view->getViewOutput();
 
-		$this->assign('customerFormHtml', $formHtml);
-
-		$this->assignRef('recordUsage', $model->getRecordUsage($id));
+		$this->recordUsage = $model->getRecordUsage($id);
 
 		if (!empty($this->record->title)) {
-			$this->assignRef('pageTitle', $this->getPageTitle() . ': ' . $this->record->title);
+			$this->pageTitle = $this->getPageTitle() . ': ' . $this->record->title;
 		} elseif (!empty($this->record->name)) {
-			$this->assignRef('pageTitle', $this->record->name);
+			$this->pageTitle = $this->record->name;
 		} else {
-			$this->assignRef('pageTitle', $this->getPageTitle());
+			$this->pageTitle = $this->getPageTitle();
 		}
 
-		$this->assignRef('pageTasks', $model->getDetailsTasks());
+		$this->pageTasks = $model->getDetailsTasks();
 
 	}
 

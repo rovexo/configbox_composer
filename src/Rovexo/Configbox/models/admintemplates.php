@@ -126,7 +126,7 @@ class ConfigboxModelAdmintemplates extends KenedoModel {
 		// Put together the ID
 		$data->id = $data->templateType.'.'.$data->templateName;
 
-		$data->content = KRequest::getVar('content', '', 'METHOD', 'raw');
+		$data->content = KRequest::getVar('content', '');
 
 		return $data;
 

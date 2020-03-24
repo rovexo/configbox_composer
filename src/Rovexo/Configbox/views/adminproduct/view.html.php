@@ -17,7 +17,16 @@ class ConfigboxViewAdminproduct extends KenedoView {
 		return KText::_('Product');
 	}
 
-	/**
+    /**
+     * @inheritDoc
+     */
+    function getJsInitCallsOnce() {
+        $calls = parent::getJsInitCallsOnce();
+        $calls[] = 'configbox/adminShapediver::initBackendPropsOnce';
+        return $calls;
+    }
+
+    /**
 	 * For Wordpress it adds the product's shortcode under the title
 	 */
 	function prepareTemplateVarsForm() {

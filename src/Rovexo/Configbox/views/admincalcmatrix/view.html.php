@@ -95,21 +95,23 @@ class ConfigboxViewAdmincalcmatrix extends KenedoView {
 
 	function getJsInitCallsOnce() {
 		$js = parent::getJsInitCallsOnce();
-
 		$js[] = 'configbox/calcmatrix::initMatrixViewOnce';
-
 		return $js;
 	}
 
 	function getJsInitCallsEach() {
 		$js = parent::getJsInitCallsEach();
-
 		$js[] = 'configbox/calcmatrix::initMatrixViewEach';
-
 		return $js;
 	}
 
-	function prepareTemplateVars() {
+	function getStyleSheetUrls() {
+        $urls = parent::getStyleSheetUrls();
+        $urls[] = KenedoPlatform::p()->getUrlAssets().'/css/calc-matrix.css';
+        return $urls;
+    }
+
+    function prepareTemplateVars() {
 
 		// Get and prepare the id
 		if (empty($this->matrixId)) {

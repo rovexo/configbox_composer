@@ -19,7 +19,7 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 
 				cbj(this).closest('.product-tree-wrapper').load(url, {list_id: listId}, function(msg, textStatus) {
 
-					if (textStatus == 'error') {
+					if (textStatus === 'error') {
 						window.alert('System Error!');
 						return;
 					}
@@ -109,7 +109,7 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 
 								cbj(document).trigger('cbViewInjected');
 
-								// Mark the new recored as active one
+								// Mark the new recorded as active one
 								cbj(this).closest('.view-adminproducttree').find('.active').removeClass('active');
 								var selector = '#' + shortName + '-' + response.newId;
 								cbj(this).closest('.view-adminproducttree').find(selector).addClass('active');
@@ -144,7 +144,7 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 					success: function(data) {
 						btn.removeClass('processing');
 
-						if (data.success == false) {
+						if (data.success === false) {
 							window.alert(data.errors.join("\n"));
 						}
 						else {
@@ -165,35 +165,43 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 
 			});
 
-			// Make product tree refresh when form data of certain views was changed
-			cbj(document).on('kenedoFormResponseReceived', function(event, data) {
+			cbj(document).on('cbFormTaskResponseReceivedGlobal', function(event, xhr, taskInfo) {
 
-				if (data.response.success != true) {
+				try {
+					var response = JSON.parse(xhr.responseText);
+				}
+				catch(e) {
+					console.warn('Could not parse JSON response. Response text was: "' + xhr.responseText + '"');
+					console.warn('Error message follows:');
+					console.warn(e);
 					return;
 				}
-				if (typeof(data.viewName) == 'undefined' || data.viewName == '' || !data.response.data || !data.response.data.id) {
+
+				if (response.success !== true) {
 					return;
 				}
 
 				var productId;
-				var recordId = data.response.data.id;
-				var recordType = data.viewName.replace('admin', '');
+				var recordId = response.data.id;
+				var recordType = taskInfo.viewName.replace('admin', '');
 				var isProductInsert = false;
 
-				if (data.viewName == 'adminproduct') {
-					productId = data.response.data.id;
+				if (taskInfo.viewName === 'adminproduct') {
+					productId = response.data.id;
 					recordId = productId;
-					isProductInsert = data.response.wasInsert;
+					isProductInsert = response.wasInsert;
 				}
-				if (data.viewName == 'adminpage') {
-					productId = cbj('#product_id').val();
+				if (taskInfo.viewName === 'adminpage') {
+					productId = response.data.product_id;
 				}
 
-				if (data.viewName == 'adminelement') {
-					productId = cbj('#page-'+ cbj('#page_id').val()).closest('.product-item').attr('id').replace('product-','');
+				if (taskInfo.viewName === 'adminelement') {
+					var pageId = response.data.page_id;
+					productId = cbj('.view-adminproducttree').find('#page-' + pageId).closest('.product-item').attr('id').replace('product-','');
 				}
 
 				module.refreshProductTree(recordId, recordType, productId, isProductInsert);
+
 
 			});
 
@@ -236,26 +244,27 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 						key = 'answer-';
 					}
 
-					var ordering = [];
 					var position = 10;
 
+					var updates = {};
 					for (var i in items) {
 						if (items.hasOwnProperty(i)) {
-							if (items[i].indexOf(key) != -1) {
-								ordering.push('"' + items[i].replace(key, '') + '" : ' + position);
+							if (items[i].indexOf(key) !== -1) {
+								var recordId = items[i].replace(key, '');
+								updates[recordId] = position;
 								position += 10;
 							}
 						}
 					}
+					
+					var data = {
+						updates: JSON.stringify(updates)
+					};
 
-					var serial = '{' + ordering.join(',') + '}';
-
-					// Set the data as query string
-					var query = 'option=com_configbox&controller=' + controller + '&task=storeOrdering&format=raw&tmpl=component&ordering-items=' + encodeURIComponent(serial);
-
-					cbj.post(server.config.urlXhr, query, function() {
-						list.sortable('enable');
-					});
+					server.makeRequest(controller, 'storeOrdering', data)
+						.done(function() {
+							list.sortable('enable');
+						});
 
 				}
 			});
@@ -273,7 +282,7 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 		refreshProductTree: function(recordId, recordType, productId, isProductInsert) {
 
 			// No product tree, no refresh
-			if (cbj('.view-adminproducttree').length == 0) {
+			if (cbj('.view-adminproducttree').length === 0) {
 				return;
 			}
 
@@ -283,13 +292,13 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 			// Get the currently opened nodes in the tree and make it query string ready json
 			var treeIds = encodeURIComponent(JSON.stringify( this.getOpenProductTreeBranchIds() ));
 
-			if (server.config.platformName == 'magento') {
+			if (server.config.platformName === 'magento') {
 				// Add the info to the url (only_product_id is there to get only the tree data of a single product)
 				url += 'open_branch_ids/'+treeIds+'/only_product_id/'+productId;
 			}
 			else {
 				// Append & or ? and the params later because we take it easy
-				url += (url.indexOf('?') == -1) ? '?' : '&';
+				url += (url.indexOf('?') === -1) ? '?' : '&';
 
 				// Add the info to the url (only_product_id is there to get only the tree data of a single product)
 				url += 'open_branch_ids='+treeIds+'&only_product_id='+productId;
@@ -313,7 +322,7 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 
 				// recordType derives from KenedoController's response data.viewName (which is still adminelement)
 				// Here we just spot-fix it to question till it's all normalized in the Controller
-				if (recordType == 'element') {
+				if (recordType === 'element') {
 					recordType = 'question';
 				}
 
@@ -343,13 +352,13 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 					var id = cbj(this).attr('id');
 
 					if (id) {
-						if (id.indexOf('product-trigger') != -1) {
+						if (id.indexOf('product-trigger') !== -1) {
 							treeData.products.push(id.replace('product-trigger-',''));
 						}
-						if (id.indexOf('page-trigger') != -1) {
+						if (id.indexOf('page-trigger') !== -1) {
 							treeData.pages.push(id.replace('page-trigger-',''));
 						}
-						if (id.indexOf('question-trigger') != -1) {
+						if (id.indexOf('question-trigger') !== -1) {
 							treeData.questions.push(id.replace('question-trigger-',''));
 						}
 					}

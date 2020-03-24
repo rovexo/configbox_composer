@@ -98,6 +98,15 @@ interface InterfaceKenedoPlatform {
 	public function passwordsMatch($passwordClear, $passwordEncrypted);
 	public function getRootDirectory();
 	public function getAppParameters();
+
+    /**
+     * Tells how to respond to an HTTP request
+     * - 'view_only': Output only the content of the requested view (with nothing wrapping the output)
+     * - 'in_html_doc': Output the view's content within a HTML doc (containing nothing but the view content and head data)
+     * - 'in_platform_output': Output the view within the platform's output (as in along with the Joomla/WP/M1/M2 page)
+     * @return string (view_only, in_html_doc, in_platform_output)
+     */
+	public function getOutputMode();
 	public function renderOutput(&$output);
 	public function startSession();
 	public function getPasswordResetLink();

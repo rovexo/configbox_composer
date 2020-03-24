@@ -1783,7 +1783,6 @@ class ConfigboxCacheHelper {
 	 * @param string $key Cache key, anything unique to the data you're storing
 	 * @param mixed $data Only serializable data please
 	 * @return bool
-	 * @throws Exception If writing to cache fails. Puts log message in CB error log file.
 	 */
 	public static function writeToCache($key, &$data) {
 
@@ -1798,17 +1797,12 @@ class ConfigboxCacheHelper {
 
 			$serialized = serialize($data);
 
-			if (apcu_exists($wholeKey)) {
-				$success = apcu_store($wholeKey, $serialized);
-			}
-			else {
-				$success = apcu_add($wholeKey, $serialized);
+			$success = apcu_store($wholeKey, $serialized);
+
+			if ($success === false) {
+				KLog::log('Error writing to APCu cache. Key (non-prefixed) was "'.$key.'". Data (unserialized) was '.var_export($data, true), 'warning');
 			}
 
-			if ($success == false) {
-				KLog::log('Error writing to APCu cache. Key (non-prefixed) was "'.$key.'". Data (unserialized) was '.var_export($data, true), 'error');
-				throw new Exception('Could not write cache data to APCu. See CB error log file.', 500);
-			}
 			return true;
 
 		}

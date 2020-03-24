@@ -216,7 +216,7 @@ define(['cbj', 'kenedo', 'configbox/server'], function(cbj, kenedo, server) {
 
 			// Cancel button
 			cbj('.view-adminruleeditor').on('click', '.button-cancel', function() {
-				cbj(this).closest('.modal').modal('hide');
+				cbj(this).closest('.modal').modal('hide').find('.modal-content').html('');
 			});
 
 			// Tab functionality for switching between condition types
@@ -345,12 +345,7 @@ define(['cbj', 'kenedo', 'configbox/server'], function(cbj, kenedo, server) {
 
 			});
 
-			// Make the conditions of the first shown question show up
-			// cbj('.view-adminruleeditor .question-picker .shown').first().trigger('click');
-
-
 		},
-
 
 		storeRule : function() {
 
@@ -359,8 +354,7 @@ define(['cbj', 'kenedo', 'configbox/server'], function(cbj, kenedo, server) {
 			// Remove all drop areas (just in case there are any left)
 			view.find('.rule-area .drop-area').remove();
 
-			// Get the ID of the return field
-			var returnId = view.data('return-field-id');
+			var property = view.closest('.rule-editor-modal').data('form-property');
 
 			// Prepare the rule JSON
 			var jsonRule = '';
@@ -394,7 +388,8 @@ define(['cbj', 'kenedo', 'configbox/server'], function(cbj, kenedo, server) {
 			}
 
 			// Write the rule json string to the input field of the form
-			cbj('#' + returnId).val(jsonRule).trigger('change');
+			var dataField = property.find('.data-field');
+			dataField.val(jsonRule).trigger('change');
 
 			// Make the edit controls of the rule into display-only fields
 			// Got to be done on the original in the rule editor, when copying the HTML the values of the inputs aren't updated.
@@ -409,17 +404,19 @@ define(['cbj', 'kenedo', 'configbox/server'], function(cbj, kenedo, server) {
 			}
 			html += view.find('.rule-area').html();
 
-			cbj('#rule-text-' + returnId).html(html);
+			// Copy the rule HTML over to the display wrapper of the parent's form (To show the rule)
+			var ruleHtml = property.find('.rule-html');
+			ruleHtml.html(html);
 
 			if (jsonRule) {
-				cbj('#rule-text-' + returnId).closest('.rule-wrapper').addClass('has-rule').removeClass('has-no-rule');
+				ruleHtml.closest('.rule-wrapper').addClass('has-rule').removeClass('has-no-rule');
 			}
 			else {
-				cbj('#rule-text-' + returnId).closest('.rule-wrapper').removeClass('has-rule').addClass('has-no-rule');
+				ruleHtml.closest('.rule-wrapper').removeClass('has-rule').addClass('has-no-rule');
 			}
 
 			// Close the modal window
-			cbj(this).closest('.modal').modal('hide');
+			cbj(this).closest('.modal').modal('hide').find('.modal-content').html('');
 
 		},
 

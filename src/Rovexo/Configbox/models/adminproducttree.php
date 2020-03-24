@@ -46,7 +46,7 @@ class ConfigboxModelAdminproducttree extends KenedoModel {
 		foreach ($products as &$product) {
 			$product['title'] = ConfigboxCacheHelper::getTranslation('#__configbox_strings', 1, $product['id']);
 			$product['pages'] = array();
-			$query = 'index.php?option=com_configbox&controller=adminproducts&task=ajaxDelete&id='.intval($product['id']).'&format=raw&lang='.KText::getLanguageCode();
+			$query = 'index.php?option=com_configbox&controller=adminproducts&task=ajaxDelete&id='.intval($product['id']).'&output_mode=view_only&lang='.KText::getLanguageCode();
 			$product['url_delete'] = KLink::getRoute($query);
 		}
 	
@@ -61,7 +61,7 @@ class ConfigboxModelAdminproducttree extends KenedoModel {
 		foreach ($pages as &$page) {
 			$page['title'] = ConfigboxCacheHelper::getTranslation('#__configbox_strings', 3, $page['id']);
 			$page['questions'] = array();
-			$query = 'index.php?option=com_configbox&controller=adminpages&task=ajaxDelete&id='.intval($page['id']).'&format=raw&lang='.KText::getLanguageCode();
+			$query = 'index.php?option=com_configbox&controller=adminpages&task=ajaxDelete&id='.intval($page['id']).'&output_mode=view_only&lang='.KText::getLanguageCode();
 			$page['url_delete'] = KLink::getRoute($query);
 		}
 		
@@ -85,7 +85,7 @@ class ConfigboxModelAdminproducttree extends KenedoModel {
 		foreach ($questions as &$question) {
 			$question['title'] = ConfigboxCacheHelper::getTranslation('#__configbox_strings', 4, $question['id']);
 			$question['answers'] = array();
-			$query = 'index.php?option=com_configbox&controller=adminelements&task=ajaxDelete&id='.intval($question['id']).'&format=raw&lang='.KText::getLanguageCode();
+			$query = 'index.php?option=com_configbox&controller=adminelements&task=ajaxDelete&id='.intval($question['id']).'&output_mode=view_only&lang='.KText::getLanguageCode();
 			$question['url_delete'] = KLink::getRoute($query);
 		}
 		

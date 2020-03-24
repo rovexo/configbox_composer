@@ -153,6 +153,11 @@
 
 			cbj('.cb-content:not(.view-processed)').each(function() {
 
+				var view = cbj(this);
+
+				// Finally, add a CSS class so subsequent calls won't process that view again
+				cbj(this).addClass('view-processed');
+
 				// Get data from view wrapper
 				var styleSheets = cbj(this).data('stylesheets');
 				var moduleCallsOnce = cbj(this).data('init-calls-once');
@@ -272,7 +277,7 @@
 									}
 
 									// Now call that method
-									args[i][call]();
+									args[i][call](view);
 
 								}
 
@@ -283,9 +288,6 @@
 					}
 
 				}
-
-				// Finally, add a CSS class so subsequent calls won't process that view again
-				cbj(this).addClass('view-processed');
 
 			});
 

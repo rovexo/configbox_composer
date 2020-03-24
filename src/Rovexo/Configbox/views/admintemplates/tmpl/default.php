@@ -4,7 +4,7 @@ defined('CB_VALID_ENTRY') or die();
 ?>
 <div <?php echo $this->getViewAttributes();?>>
 
-<div class="kenedo-listing-form">
+<div class="kenedo-listing-form" data-view="<?php echo hsc($this->view);?>">
 	
 	<h1 class="kenedo-page-title"><?php echo KText::_('Templates');?></h1>
 	
@@ -12,7 +12,9 @@ defined('CB_VALID_ENTRY') or die();
 		
 		<div class="kenedo-tasks">
 			<ul class="kenedo-task-list">
-				<li class="task task-add"><a class="backend-button-small"><?php echo KText::_('Add');?></a></li>
+				<li class="task task-add">
+					<a class="trigger-kenedo-form-task btn btn-primary" data-task="add"><?php echo KText::_('Add');?></a>
+				</li>
 			</ul>
 		</div>
 		

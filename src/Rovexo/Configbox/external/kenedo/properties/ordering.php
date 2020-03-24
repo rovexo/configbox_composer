@@ -13,7 +13,7 @@ class KenedoPropertyOrdering extends KenedoProperty {
 		ob_start();
 		?>
 		<span class="sort-handle fa fa-bars"></span>
-		<input type="text" class="ordering-text-field" name="ordering-item[<?php echo hsc($record->{$this->model->getTableKey()});?>]" value="<?php echo intval($record->{$this->propertyName});?>" />
+		<input type="text" class="ordering-text-field" name="ordering-item[<?php echo hsc($record->{$this->model->getTableKey()});?>]" value="<?php echo intval($record->{$this->propertyName});?>" autocomplete="off" />
 		<?php
 		return ob_get_clean();
 	}

@@ -33,20 +33,15 @@ foreach ($overrides as $override) {
 }
 
 $label = $this->getOverrideLabel();
-
-$calcs = $this->getCalculations($productId);
-
+$calculations = $this->getCalculations($productId);
 $dropDownOptions = $this->getCalculationsDropdownOptions($productId);
-
-
 ?>
 
 <input type="hidden"
 	   name="<?php echo hsc($this->propertyName);?>"
 	   id="<?php echo hsc($this->propertyName);?>"
 	   class="overrides-json-data"
-	   value="<?php echo hsc(json_encode($overrides));?>"
-	   />
+	   value="<?php echo hsc(json_encode($overrides));?>" />
 
 <div class="price-overrides">
 	<?php foreach ($overrides as $override) { ?>
@@ -58,22 +53,64 @@ $dropDownOptions = $this->getCalculationsDropdownOptions($productId);
 			</div>
 
 			<div class="select-and-links">
-				<?php $id = 'dummy-id-for-chosen-'.rand(0,10000);?>
-				<?php echo KenedoHtml::getSelectField($id, $dropDownOptions, $override['calculation_id'], 0, false, 'chosen-calculation make-me-chosen');?>
+				<?php $dropdownId = 'dummy-id-for-chosen-'.rand(0,10000);?>
+				<?php echo KenedoHtml::getSelectField($dropdownId, $dropDownOptions, $override['calculation_id'], 0, false, 'calculation-select make-me-chosen');?>
 
+				<span class="join-link">
+					<a class="trigger-open-join-link-modal btn btn-default"
+					   data-controller="admincalculations"
+					   data-task="edit"
+					   data-selected-id="<?php echo intval($override['calculation_id']);?>"
+					   data-name-form-control="<?php echo hsc($dropdownId);?>"
+					   data-link-text-new="<?php echo KText::_('New');?>"
+					   data-link-text-open="<?php echo KText::_('Open');?>"
+					   data-request-data="<?php echo hsc(json_encode(['prefill_product_id'=>intval($productId)]));?>">
+							<?php echo ($override['calculation_id'] == 0) ? KText::_('New') : KText::_('Open');?>
+						</a>
+				</span>
+
+				<div class="modal join-link-modal" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content"></div>
+					</div>
+				</div>
+
+				<?php if (false) { ?>
 				<span class="join-links">
 
 					<span class="join-link join-link-0" style="display: <?php echo ($override['calculation_id'] == 0) ? 'inline':'none'; ?>">
-						<a class="trigger-open-modal btn btn-primary" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&task=edit&in_modal=1&id=0&prefill_form_custom_4='.$id);?>"><?php echo KText::_('New');?></a>
+
+						<a class="trigger-open-join-link-modal btn btn-default"
+						   data-controller="admincalculations"
+						   data-task="edit"
+						   data-name-form-control="<?php echo hsc($id);?>"
+						   data-request-data="<?php echo hsc(json_encode(['id'=>0, 'prefill_product_id'=>intval($productId), 'form_custom_4'=>$id ]));?>"
+						   href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&in_modal=1&tmpl=component&task=edit&id=0&prefill_product_id='.intval($productId).'&form_custom_4='.$this->propertyName);?>">
+						<?php echo KText::_('New');?>
+						</a>
+
 					</span>
 
-					<?php foreach ($calcs as $calc) { ?>
-						<span class="join-link join-link-<?php echo intval($calc->id)?>" style="display: <?php echo ($calc->id == $override['calculation_id']) ? 'inline':'none'; ?>">
-						<a class="trigger-open-modal btn btn-default" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&task=edit&in_modal=1&id='.intval($calc->id));?>"><?php echo KText::_('Open');?></a>
-					</span>
+					<?php foreach ($calculations as $calc) { ?>
+						<span class="join-link join-link-<?php echo intval($calc->id);?>" style="display: <?php echo ($calc->id == $override['calculation_id']) ? 'inline':'none'; ?>">
+
+							<a class="trigger-open-join-link-modal btn btn-default"
+							   data-controller="admincalculations"
+							   data-task="edit"
+							   data-request-data="<?php echo hsc(json_encode(['id'=>intval($calc->id), 'prefill_product_id'=>intval($productId), 'form_custom_4'=>$id ]));?>"
+							   href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&in_modal=1&tmpl=component&task=edit&id=0&prefill_product_id='.intval($productId).'&form_custom_4='.$this->propertyName);?>">
+							<?php echo KText::_('Open');?>
+							</a>
+						</span>
 					<?php } ?>
 				</span>
 
+				<div class="modal join-link-modal" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content"></div>
+					</div>
+				</div>
+				<?php } ?>
 			</div>
 
 		</div>
@@ -102,20 +139,61 @@ $dropDownOptions = $this->getCalculationsDropdownOptions($productId);
 		</div>
 
 		<div class="select-and-links">
+			<?php
+			$dropdownId = 'dummy-id-for-chosen-'.rand(0,10000);
+			?>
 
-			<?php echo KenedoHtml::getSelectField('dummy-id-for-chosen-'.rand(0,10000), $dropDownOptions, 0, 0, false, 'chosen-calculation');?>
+			<?php echo KenedoHtml::getSelectField($dropdownId, $dropDownOptions, 0, 0, false, 'calculation-select');?>
 
+			<div class="modal join-link-modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content"></div>
+				</div>
+			</div>
+
+			<span class="join-link">
+				<a class="trigger-open-join-link-modal btn btn-default"
+				   data-controller="admincalculations"
+				   data-task="edit"
+				   data-selected-id="0"
+				   data-name-form-control="PLACEHOLDER_CALC_SELECT"
+				   data-link-text-new="<?php echo KText::_('New');?>"
+				   data-link-text-open="<?php echo KText::_('Open');?>"
+				   data-request-data="<?php echo hsc(json_encode(['prefill_product_id'=>intval($productId)]));?>">
+						<?php echo KText::_('New');?>
+					</a>
+			</span>
+			<?php if (false) { ?>
 			<span class="join-links">
 				<span class="join-link join-link-0" style="display:inline">
-					<a class="trigger-open-modal btn btn-default" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&task=edit&in_modal=1&id=0&prefill_product_id='.intval($productId).'&prefill_form_custom_4=PLACEHOLDER_CALC_SELECT');?>"><?php echo KText::_('New');?></a>
+
+					<a class="trigger-open-join-link-modal btn btn-default"
+					   data-controller="admincalculations"
+					   data-task="edit"
+					   data-name-form-control="PLACEHOLDER_CALC_SELECT"
+					   data-request-data="<?php echo hsc(json_encode(['id'=>0, 'prefill_product_id'=>intval($productId), 'form_custom_4'=>'PLACEHOLDER_CALC_SELECT']));?>"
+					   href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&in_modal=1&tmpl=component&task=edit&id=0&prefill_product_id='.intval($productId).'&form_custom_4=PLACEHOLDER_CALC_SELECT');?>">
+						<?php echo KText::_('New');?>
+					</a>
+
 				</span>
 
-				<?php foreach ($calcs as $calc) { ?>
+				<?php foreach ($calculations as $calc) { ?>
 					<span class="join-link join-link-<?php echo intval($calc->id)?>" style="display:none">
-						<a class="trigger-open-modal btn btn-default" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&task=edit&in_modal=1&id='.intval($calc->id));?>"><?php echo KText::_('Open');?></a>
+
+						<a class="trigger-open-join-link-modal btn btn-default"
+						   data-controller="admincalculations"
+						   data-task="edit"
+						   data-name-form-control="PLACEHOLDER_CALC_SELECT"
+						   data-request-data="<?php echo hsc(json_encode(['id'=>intval($calc->id), 'prefill_product_id'=>intval($productId), 'form_custom_4'=>'PLACEHOLDER_CALC_SELECT' ]));?>"
+						   href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&in_modal=1&tmpl=component&task=edit&id=0&prefill_product_id='.intval($productId).'&form_custom_4=PLACEHOLDER_CALC_SELECT');?>">
+							<?php echo KText::_('Open');?>
+							</a>
+
 					</span>
 				<?php } ?>
 			</span>
+			<?php } ?>
 
 		</div>
 

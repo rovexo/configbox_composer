@@ -120,7 +120,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 	 * @param int $productId CB product ID
 	 * @param null $void
 	 * @param array $selections - Optional if you want to make selections other than defaults
-	 * @return int
+	 * @return int The new cart position ID
 	 * @throws Exception
 	 */
 	function createPosition($cartId, $productId, $void = NULL, $selections = array()) {
@@ -679,7 +679,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 		$values = array();
 		foreach ($elementIds as $elementId) {
 			$element = ConfigboxQuestion::getQuestion($elementId);
-			if (!$element->calcmodel_id_min_val && !$element->calcmodel_id_min_val) {
+			if (!$element->calcmodel_id_min_val && !$element->calcmodel_id_max_val) {
 				continue;
 			}
 			$values[$elementId]['minval'] = $element->getMinimumValue();

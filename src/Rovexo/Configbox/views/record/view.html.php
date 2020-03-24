@@ -51,7 +51,7 @@ class ConfigboxViewRecord extends KenedoView {
 
 	function getJsInitCallsOnce() {
 		$calls = parent::getJsInitCallsOnce();
-		$calls[] = 'configbox/orderrecord::initOrderReord';
+		$calls[] = 'configbox/orderrecord::initOrderRecord';
 		return $calls;
 	}
 

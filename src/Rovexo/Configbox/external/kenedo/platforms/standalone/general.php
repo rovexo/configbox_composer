@@ -15,7 +15,28 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 			KRequest::setVar('option', 'com_configbox');
 		}
 	}
-	
+
+    function getOutputMode() {
+
+        if (KRequest::getString('output_mode')) {
+            $outputMode = KRequest::getString('output_mode');
+            if (in_array($outputMode, ['view_only', 'in_html_doc', 'in_platform_output'])) {
+                return $outputMode;
+            }
+        }
+
+        if (KRequest::getInt('ajax_sub_view') || KRequest::getString('format') == 'raw' || KRequest::getString('format') == 'json') {
+            return 'view_only';
+        }
+
+        if (KRequest::getInt('in_modal') == 1 || KRequest::getVar('tmpl') == 'component') {
+            return 'in_html_doc';
+        }
+
+        return 'in_platform_output';
+
+    }
+
 	public function getDbConnectionData() {
 				
 		require_once(KPATH_ROOT.'/configuration.php');
@@ -188,10 +209,11 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	public function raiseError($errorCode, $errorMessage) {
 		die($errorCode . ' - '.$errorMessage);
 	}
-	
-	public function renderHtmlEditor($dataFieldKey, $content, $width, $height, $cols, $rows) {	
-		return '<textarea name="'.hsc($dataFieldKey).'" id="'.hsc($dataFieldKey).'" class="kenedo-html-editor not-initialized" style="width:'.(int)$width.'px; height:'.$height.'px" rows="'.(int)$rows.'" cols="'.(int)$cols.'">'.hsc($content).'</textarea>';
-	}
+
+    public function renderHtmlEditor($dataFieldKey, $content, $width, $height, $cols, $rows) {
+        $style = 'width:'.$width.'; height:'.$height;
+        return '<textarea name="'.hsc($dataFieldKey).'" class="kenedo-html-editor not-initialized" style="'.$style.'" rows="'.intval($rows).'" cols="'.intval($cols).'">'.hsc($content).'</textarea>';
+    }
 	//TODO: Implement
 	public function sendEmail($from, $fromName, $recipient, $subject, $body, $isHtml = false, $cc = NULL, $bcc = NULL, $attachmentPath = NULL) {
 		return true;

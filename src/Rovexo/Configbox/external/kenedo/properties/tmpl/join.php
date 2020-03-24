@@ -39,10 +39,6 @@ foreach ($ungroupedItems as $item) {
 		$outputValue = $item->{$this->getPropertyDefinition('propNameDisplay')};
 	}
 }
-
-// See if we got join links
-$joinLink = $this->getPropertyDefinition('joinLink')
-
 ?>
 
 <?php if ($this->getPropertyDefinition('lockedAfterStore') && !empty($this->data->{$this->propertyName})) { ?>
@@ -52,7 +48,7 @@ $joinLink = $this->getPropertyDefinition('joinLink')
 
 <?php } else { ?>
 
-	<select name="<?php echo $this->propertyName;?>" id="<?php echo $this->propertyName;?>" class="join-select<?php echo ($joinLink) ? ' with-join-links':'';?>">
+	<select name="<?php echo $this->propertyName;?>" id="<?php echo $this->propertyName;?>" class="join-select">
 		<?php if ($this->getPropertyDefinition('defaultlabel')) { ?>
 			<option value="0"><?php echo hsc($this->getPropertyDefinition('defaultlabel'));?></option>
 		<?php } ?>
@@ -84,23 +80,3 @@ $joinLink = $this->getPropertyDefinition('joinLink')
 	</select>
 
 <?php } ?>
-
-<?php
-if ($joinLink) {
-	?>
-	<span class="join-links">
-		<?php if (!empty($joinLink['allowNew'])) { ?>
-			<span class="join-link join-link-0" <?php echo ($selected == 0) ? 'style="display:inline"':'style="display:none"'; ?>>
-				<a class="trigger-open-modal btn btn-primary" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute($joinLink['linkNew'].'&form_custom_4='.$this->propertyName);?>"><?php echo KText::_('New');?></a>
-			</span>
-		<?php } ?>
-		
-		<?php foreach ($ungroupedItems as $joinedRecord) { ?>
-			<span class="join-link join-link-<?php echo hsc($joinedRecord->{$this->getPropertyDefinition('propNameKey')})?>" <?php echo ($selected == $joinedRecord->{$this->getPropertyDefinition('propNameKey')}) ? 'style="display:inline"':'style="display:none"'; ?>>
-				<a class="trigger-open-modal btn btn-default" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute($joinLink['linkEdit'] . $joinedRecord->{$joinLink['idField']});?>"><?php echo KText::_('Open');?></a>
-			</span>
-		<?php } ?>
-	</span>
-	<?php
-}
-?>

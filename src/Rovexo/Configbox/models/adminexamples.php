@@ -21,7 +21,6 @@ class ConfigboxModelAdminexamples extends KenedoModel {
 			'default'=>0,
 			'label'=>KText::_('ID'),
 			'listing'=>1,
-			'listingwidth'=>'50px',
 			'order'=>100,
 			'positionForm'=>1000,
 		);

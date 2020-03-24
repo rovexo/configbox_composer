@@ -21,7 +21,6 @@ class ConfigboxModelAdmincalcmatrices extends KenedoModel {
 			'default'=>0,
 			'label'=>KText::_('ID'),
 			'listing'=>1,
-			'listingwidth'=>'50px',
 			'order'=>100,
 			'positionForm'=>10,
 		);
@@ -39,13 +38,6 @@ class ConfigboxModelAdmincalcmatrices extends KenedoModel {
 
 			'required'=>0,
 
-			'joinLink' => array(
-				'linkEdit'=>'index.php?option=com_configbox&controller=adminelements&task=edit&in_modal=1&id=',
-				'linkNew'=>'index.php?option=com_configbox&controller=adminelements&task=edit&id=0&in_modal=1',
-				'idField'=>'id',
-				'allowNew'=>true,
-			),
-
 			'positionForm'=>20,
 		);
 
@@ -61,13 +53,6 @@ class ConfigboxModelAdmincalcmatrices extends KenedoModel {
 			'modelMethod'=>'getRecords',
 
 			'required'=>0,
-
-			'joinLink' => array(
-				'linkEdit'=>'index.php?option=com_configbox&controller=adminelements&task=edit&in_modal=1&id=',
-				'linkNew'=>'index.php?option=com_configbox&controller=adminelements&task=edit&id=0&in_modal=1',
-				'idField'=>'id',
-				'allowNew'=>true,
-			),
 
 			'positionForm'=>30,
 		);
@@ -89,14 +74,6 @@ class ConfigboxModelAdmincalcmatrices extends KenedoModel {
 
 			'modelClass'=>'ConfigboxModelAdmincalculations',
 			'modelMethod'=>'getRecords',
-
-			'joinLink' => array(
-				'linkEdit'=>'index.php?option=com_configbox&controller=admincalculations&task=edit&in_modal=1&id=',
-				'idField'=>'id',
-				'allowNew'=>true,
-				'linkNew'=>'index.php?option=com_configbox&controller=admincalculations&task=edit&id=0&in_modal=1',
-			),
-
 			'positionForm'=>40,
 
 		);
@@ -112,14 +89,6 @@ class ConfigboxModelAdmincalcmatrices extends KenedoModel {
 
 			'modelClass'=>'ConfigboxModelAdmincalculations',
 			'modelMethod'=>'getRecords',
-
-			'joinLink' => array(
-				'linkEdit'=>'index.php?option=com_configbox&controller=admincalculations&task=edit&in_modal=1&id=',
-				'idField'=>'id',
-				'allowNew'=>true,
-				'linkNew'=>'index.php?option=com_configbox&controller=admincalculations&task=edit&id=0&in_modal=1',
-			),
-
 			'positionForm'=>50,
 
 		);
@@ -197,12 +166,6 @@ class ConfigboxModelAdmincalcmatrices extends KenedoModel {
 
 			'required'=>0,
 
-			'joinLink' => array(
-				'linkEdit'=>'index.php?option=com_configbox&controller=adminelements&task=edit&in_modal=1&id=',
-				'linkNew'=>'index.php?option=com_configbox&controller=adminelements&task=edit&id=0&in_modal=1',
-				'idField'=>'id',
-				'allowNew'=>true,
-			),
 			'positionForm'=>120,
 		);
 
@@ -219,12 +182,6 @@ class ConfigboxModelAdmincalcmatrices extends KenedoModel {
 			'modelClass'=>'ConfigboxModelAdmincalculations',
 			'modelMethod'=>'getRecords',
 
-			'joinLink' => array(
-				'linkEdit'=>'index.php?option=com_configbox&controller=admincalculations&task=edit&in_modal=1&id=',
-				'idField'=>'id',
-				'allowNew'=>true,
-				'linkNew'=>'index.php?option=com_configbox&controller=admincalculations&in_modal=1&task=edit&id=0',
-			),
 			'positionForm'=>130,
 
 		);

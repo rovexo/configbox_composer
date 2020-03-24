@@ -129,7 +129,7 @@ class ConfigboxViewAdminproducttree extends KenedoView {
 
 		$openIds['questions'] = array();
 
-		$this->treeUpdateUrl = KLink::getRoute('index.php?option=com_configbox&controller=adminproducttree&lang='.KText::getLanguageCode().'&format=raw', false);
+		$this->treeUpdateUrl = KLink::getRoute('index.php?option=com_configbox&controller=adminproducttree&lang='.KText::getLanguageCode().'&output_mode=view_only', false);
 
 		$this->tree = $tree;
 		$this->openIds = $openIds;

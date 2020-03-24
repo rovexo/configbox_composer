@@ -14,6 +14,12 @@ class ConfigboxViewAdmincurrencies extends KenedoView {
 		return KenedoModel::getModel('ConfigboxModelAdmincurrencies');
 	}
 
+	function getJsInitCallsEach() {
+		$calls = parent::getJsInitCallsEach();
+		$calls[] = 'configbox/adminCurrencies::initListEach';
+		return $calls;
+	}
+
 	function getPageTitle() {
 		return KText::_('Currencies');
 	}

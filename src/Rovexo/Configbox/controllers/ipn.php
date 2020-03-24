@@ -33,7 +33,6 @@ class ConfigboxControllerIPN extends KenedoController {
 
 	function processIpn() {
 		$responseString = $this->processTransactionFeedback();
-		KRequest::setVar('format', 'raw');
 		$levels = ob_get_level();
 		for ($i = $levels; $i > 1; $i--) {
 			ob_end_clean();

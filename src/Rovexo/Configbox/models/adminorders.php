@@ -185,88 +185,70 @@ class ConfigboxModelAdminorders extends KenedoModel {
 		
 	}
 	
-	function getOrders($paginationInfo = array(), $orderingInfo = array()) {
+	function getOrders($filters = array(), $paginationInfo = array(), $orderingInfo = array()) {
 		
-		if (!$this->memoOrders) {
-			$query = "	
-			SELECT 	o.*,
-					a.billingfirstname,
-					a.billinglastname,
-					a.billingcompanyname
-			FROM `#__cbcheckout_order_records` AS o
-			LEFT JOIN `#__cbcheckout_order_users` AS a ON a.order_id = o.id
-			";
+		$selectQuery = $this->_buildQuery();
 
-			$queryWhere = $this->_buildQueryWhere();
+		$queryWhere = $this->_buildQueryWhere($filters);
 
-			$orderBys = array();
-			$allowedCustomColRefs = array('o.user_id','o.created_on','o.status');
+		$orderBys = array();
+		$allowedCustomColRefs = array('o.user_id','o.created_on','o.status');
 
-			foreach ($orderingInfo as $orderingInfoItem) {
+		foreach ($orderingInfo as $orderingInfoItem) {
 
-				$columnReference = $orderingInfoItem['propertyName'];
+			$columnReference = $orderingInfoItem['propertyName'];
 
-				if ($columnReference == 'o.user_id') {
-					$orderBys[] 	= 'o.user_id '.$orderingInfoItem['direction'];
-				}
-				elseif ($columnReference == 'o.created_on') {
-					$orderBys[] 	= 'o.created_on '.$orderingInfoItem['direction'];
-				}
-				elseif ($columnReference == 'a.lastname') {
-					$orderBys[] 	= 'a.lastname '.$orderingInfoItem['direction'];
-				}
-				elseif ($columnReference == 'a.billinglastname') {
-					$orderBys[] 	= 'a.billinglastname '.$orderingInfoItem['direction'];
-				}
-				elseif ($columnReference == 'o.status') {
-					$orderBys[] 	= 'o.status '.$orderingInfoItem['direction'];
-				}
-				elseif ($columnReference == 'o.id') {
-					$orderBys[] 	= 'o.id '.$orderingInfoItem['direction'];
-				}
-				elseif (in_array($columnReference, $allowedCustomColRefs)) {
-					$orderBys[] 	= $columnReference.' '.$orderingInfoItem['direction'];
-				}
-				else {
-					$orderBys[] 	= 'o.created_on '.$orderingInfoItem['direction'];
-				}
-
+			if ($columnReference == 'o.user_id') {
+				$orderBys[] 	= 'o.user_id '.$orderingInfoItem['direction'];
 			}
-
-			if (count($orderBys)) {
-				$queryOrder = ' ORDER BY '.implode(', ', $orderBys);
+			elseif ($columnReference == 'o.created_on') {
+				$orderBys[] 	= 'o.created_on '.$orderingInfoItem['direction'];
+			}
+			elseif ($columnReference == 'a.lastname') {
+				$orderBys[] 	= 'a.lastname '.$orderingInfoItem['direction'];
+			}
+			elseif ($columnReference == 'a.billinglastname') {
+				$orderBys[] 	= 'a.billinglastname '.$orderingInfoItem['direction'];
+			}
+			elseif ($columnReference == 'o.status') {
+				$orderBys[] 	= 'o.status '.$orderingInfoItem['direction'];
+			}
+			elseif ($columnReference == 'o.id') {
+				$orderBys[] 	= 'o.id '.$orderingInfoItem['direction'];
+			}
+			elseif (in_array($columnReference, $allowedCustomColRefs)) {
+				$orderBys[] 	= $columnReference.' '.$orderingInfoItem['direction'];
 			}
 			else {
-				$queryOrder = '';
+				$orderBys[] 	= 'o.created_on '.$orderingInfoItem['direction'];
 			}
 
-			$listing = new stdClass();
-			$listing->limit = KenedoViewHelper::getUpdatedState( strtolower($this->getModelName()).'_listing_limit', 	'limit', 		20, 		'int');
-			$listing->start	= KenedoViewHelper::getUpdatedState( strtolower($this->getModelName()).'_listing_start',	 	'limitstart', 	0,	'int');
-			
-			// So that the frontend pagination works happily
-			$listing->start = KRequest::getInt('limitstart',0);
-			if ($listing->start == 0) {
-				KRequest::setVar('limitstart',0);
-			}
-
-			$db = KenedoPlatform::getDb();
-			$db->setQuery($query.$queryWhere.$queryOrder, $listing->start, $listing->limit);
-			$this->memoOrders = $db->loadObjectList();
-
-			$statusCodes = KenedoObserver::triggerEvent('onConfigBoxGetStatusCodes', array(), true);
-
-			if ($this->memoOrders) {
-				foreach ($this->memoOrders as $order) {
-					if (isset($statusCodes[$order->status])) $order->statusCodeString = $statusCodes[$order->status];
-					else $order->statusCodeString = $statusCodes[0];
-				}
-			}
-		
 		}
-		
-		return $this->memoOrders;
-		
+
+		if (count($orderBys)) {
+			$queryOrder = ' ORDER BY '.implode(', ', $orderBys);
+		}
+		else {
+			$queryOrder = '';
+		}
+
+		$db = KenedoPlatform::getDb();
+		$query = $selectQuery.$queryWhere.$queryOrder;
+		$db->setQuery($query, $paginationInfo['start'], $paginationInfo['limit']);
+		$query = $db->getQuery();
+		$orders = $db->loadObjectList();
+
+		$statusCodes = KenedoObserver::triggerEvent('onConfigBoxGetStatusCodes', array(), true);
+
+		foreach ($orders as $order) {
+			if (isset($statusCodes[$order->status])) {
+				$order->statusCodeString = $statusCodes[$order->status];
+			}
+			else {
+				$order->statusCodeString = $statusCodes[0];
+			}
+		}
+		return $orders;
 	}
 	
 	function _buildQuery() {
@@ -277,98 +259,78 @@ class ConfigboxModelAdminorders extends KenedoModel {
 							a.billingcompanyname
 					FROM `#__cbcheckout_order_records` AS o
 					LEFT JOIN `#__cbcheckout_order_users` AS a ON a.order_id = o.id";
-		
+
 		return $query;
 	}
 
-	/*function _getOrdersQuery() {
-
-		$query  = $this->_buildQuery();
-		$query .= $this->_buildQueryWhere();
-		$query .= $this->_buildQueryOrder();
-		
-		return $query;
-	}*/
-	
-	function _buildQueryWhere() {
+	function _buildQueryWhere($filters) {
 	    
 		$db = KenedoPlatform::getDb();
 	    
 	    // prepare the WHERE clause 
 		$where = array();
-	    		
-		$filterStatus = KenedoViewHelper::getUpdatedState('com_configbox.filter_status', 'filter_status',-1);
-		if ($filterStatus >= 0) {
-			$where[] = 'o.status = '.(int)$filterStatus;
+
+		if ($filters['filter_status'] != '' && $filters['filter_status'] != -1) {
+			$where[] = 'o.status = '.intval($filters['filter_status']);
 		}
-				
-		$filterName = KenedoViewHelper::getUpdatedState('com_configbox.filter_nameorder', 'filter_nameorder',NULL,'string');
-		if (!empty($filterName)) {
-			$filterName = mb_strtolower($filterName);
-			$words = explode(' ', $filterName);
-			foreach ($words as &$word) {
-				$word = $db->getEscaped($word);
+
+		if ($filters['filter_nameorder']) {
+
+			$filterValue = mb_strtolower($filters['filter_nameorder']);
+			$filterWords = explode(' ', $filterValue);
+			$orWheres = [];
+			foreach ($filterWords as $filterWord) {
+				$orWheres[] = "LOWER(CONCAT_WS(' ', a.firstname, a.lastname, a.companyname, a.email)) LIKE '%".$db->getEscaped($filterWord)."%'";
+				$orWheres[] = "LOWER(CONCAT_WS(' ', a.billingfirstname, a.billinglastname, a.billingcompanyname, a.billingemail)) LIKE '%".$db->getEscaped($filterWord)."%'";
 			}
-			$oaWhere = array();
-			foreach ($words as $word) {
-				$oaWhere[] = "(LOWER(CONCAT_WS(' ',a.firstname, a.lastname, a.companyname)) LIKE '%".$word."%' OR LOWER( CONCAT_WS(' ',a.firstname, a.lastname, a.companyname) ) LIKE '%".$word."%')";
-				$oaWhere[] = "(LOWER(CONCAT_WS(' ',a.billingfirstname, a.billinglastname, a.billingcompanyname)) LIKE '%".$word."%' OR LOWER( CONCAT_WS(' ',a.billingfirstname, a.billinglastname, a.billingcompanyname) ) LIKE '%".$word."%')";
+			if (count($orWheres)) {
+				$where[] = "(".implode(" OR \n", $orWheres).")";
 			}
-			if (count($oaWhere)) {
-				$where[] = "(".implode(" OR \n",$oaWhere).")";
-			}
+
 		}
-		
-		$filterStartDate = KenedoViewHelper::getUpdatedState('com_configbox.filters.filter_startdate', 'filter_startdate',NULL,'string');		
-		
-		if (!empty($filterStartDate)) {
-			$filterStartDate = KenedoTimeHelper::getNormalizedTime($filterStartDate,'datetime');
-			$cond = " o.created_on > '".$db->getEscaped($filterStartDate)."'";
-			$where[] = $cond;			
+
+		if ($filters['filter_startdate']) {
+			$filterStartDate = KenedoTimeHelper::getNormalizedTime($filters['filter_startdate'],'datetime');
+			$where[] = "o.created_on > '".$db->getEscaped($filterStartDate)."'";
 		}
-		
-		$filterEndDate = KenedoViewHelper::getUpdatedState('com_configbox.filters.filter_enddate', 'filter_enddate',NULL,'string');
-		if (!empty($filterEndDate)) {
-			
+
+		if ($filters['filter_enddate']) {
+			$filterEndDate = $filters['filter_enddate'];
 			if (strlen($filterEndDate) <= 10) {
 				$filterEndDate .= ' 23:59';
 			}
 			$filterEndDate = KenedoTimeHelper::getNormalizedTime($filterEndDate,'datetime');
-			
-			$where[] = " o.created_on <= '".$db->getEscaped($filterEndDate)."'";
+
+			$where[] = "o.created_on <= '".$db->getEscaped($filterEndDate)."'";
 		}
-		
-		$filterUserId = KRequest::getInt('filter_user_id');
-		if (!empty($filterUserId)) {
-			$where[] = " o.user_id = ".(int)$filterUserId;
+
+		if ($filters['filter_user_id']) {
+			$where[] = "o.user_id = ".intval($filters['filter_user_id']);
 		}
-		
+
 		$storeId = ConfigboxStoreHelper::getStoreId();
 		if ($storeId != 1) {
-			$where[] = " o.store_id = ".(int)$storeId;
+			$where[] = "o.store_id = ".intval($storeId);
 		}
-		
-		// return the WHERE clause 
-	    return (count($where)) ? ' WHERE '.implode(" AND \n", $where) : ''; 
-	}
-	
-	function _buildQueryOrder() {
-		return '';
+
+		// return the WHERE clause
+		return (count($where)) ? ' WHERE '.implode(" AND \n", $where) : '';
+
 	}
 
-	function getTotalRecords() {
+	function getTotalRecords($filters) {
 		$query = $this->_buildQuery();
-		$query.= $this->_buildQueryWhere();
+		$query.= $this->_buildQueryWhere($filters);
 
 		$db = KenedoPlatform::getDb();
-		$db->setQuery( $query );
+		$db->setQuery($query);
 		$db->query();
 
 		$total = $db->getReturnedRows();
 		return $total;
 	}
 
-	function getStatusDropdown() {
+	function getStatusDropdown($filters) {
 
 		$statusCodes = KenedoObserver::triggerEvent('onConfigBoxGetStatusCodes', array(), true);
 
@@ -379,7 +341,7 @@ class ConfigboxModelAdminorders extends KenedoModel {
 			$options[$key] = $code;
 		}
 		
-		$selectedStatusId = KenedoViewHelper::getUpdatedState('com_configbox.filter_status', 'filter_status');
+		$selectedStatusId = $filters['filter_status'];
 		$selectBox = KenedoHtml::getSelectField('filter_status', $options, $selectedStatusId, -1, false, 'listing-filter');
 		
 		return $selectBox;

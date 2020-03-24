@@ -18,7 +18,16 @@ class ConfigboxViewAdminLicense extends KenedoView {
 		return NULL;
 	}
 
-	function prepareTemplateVars() {
+    /**
+     * @inheritDoc
+     */
+	function getJsInitCallsOnce() {
+        $calls =  parent::getJsInitCallsOnce();
+        $calls[] = 'configbox/adminLicense::initLicenseViewOnce';
+        return $calls;
+    }
+
+    function prepareTemplateVars() {
 		$this->licenseKey = CbSettings::getInstance()->get('product_key');
 	}
 

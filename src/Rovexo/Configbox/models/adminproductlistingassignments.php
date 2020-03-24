@@ -21,7 +21,6 @@ class ConfigboxModelAdminproductlistingassignments extends KenedoModel {
 			'default'=>0,
 			'label'=>KText::_('ID'),
 			'listing'=>1,
-			'listingwidth'=>'50px',
 			'positionForm'=>100,
 		);
 

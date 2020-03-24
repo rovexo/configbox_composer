@@ -10,7 +10,7 @@ if ($this->getPropertyDefinition('toggle') == true) {
 	$defaultState = $this->getPropertyDefinition('defaultState', 'closed');
 	$state = KSession::get($sessionKey, $defaultState, 'kenedo');
 
-	$fieldsetClasses = 'property-group property-group-'.$this->propertyName.' property-group-using-toggles';
+	$fieldsetClasses = 'property-group property-group-'.$this->propertyName.' property-name-'.$this->propertyName.' property-group-using-toggles';
 	
 	if ($state == 'opened') {
 		$fieldsetClasses .= ' property-group-opened';
@@ -20,7 +20,7 @@ if ($this->getPropertyDefinition('toggle') == true) {
 	}
 }
 else {
-	$fieldsetClasses = 'property-group property-group-'.$this->propertyName.' property-group-opened';
+	$fieldsetClasses = 'property-group property-group-'.$this->propertyName.' property-name-'.$this->propertyName.' property-group-opened';
 	$state = 'opened';
 }
 

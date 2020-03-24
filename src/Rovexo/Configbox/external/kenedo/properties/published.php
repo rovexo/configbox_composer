@@ -9,7 +9,7 @@ class KenedoPropertyPublished extends KenedoProperty {
 
 		if ($record->{$this->propertyName}) {
 			?>
-			<span class="kenedo-active kenedo-trigger-toggle-active" data-active="1" data-id="<?php echo intval($record->{$this->model->getTableKey()});?>">
+			<span class="trigger-toggle-record-activation" data-active="1" data-id="<?php echo intval($record->{$this->model->getTableKey()});?>">
 				<span class="fa fa-check-circle fa-lg pull-left"></span>
 				<?php echo KText::_('CBYES');?>
 			</span>
@@ -17,7 +17,7 @@ class KenedoPropertyPublished extends KenedoProperty {
 		}
 		else {
 			?>
-			<span class="kenedo-inactive kenedo-trigger-toggle-active" data-active="0" data-id="<?php echo intval($record->{$this->model->getTableKey()});?>">
+			<span class="trigger-toggle-record-activation" data-active="0" data-id="<?php echo intval($record->{$this->model->getTableKey()});?>">
 				<span class="fa fa-ban fa-lg pull-left"></span>
 				<?php echo KText::_('CBNO');?>
 			</span>

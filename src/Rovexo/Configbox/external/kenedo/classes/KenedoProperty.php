@@ -555,12 +555,20 @@ class KenedoProperty {
 
 		$option = $this->getPropertyDefinition('component');
 		$controller = $this->getPropertyDefinition('controller');
+		$recordId = $record->{$this->model->getTableKey()};
 		$returnUrl = KLink::base64UrlEncode(KLink::getRoute( 'index.php?option='.hsc($option).'&controller='.hsc($controller), false ));
-		$href = KLink::getRoute('index.php?option='.hsc($option).'&controller='.hsc($controller).'&task=edit&id='.intval($record->{$this->model->getTableKey()}) . '&return=' . $returnUrl);
+		$href = KLink::getRoute('index.php?option='.hsc($option).'&controller='.hsc($controller).'&task=edit&id='.intval($recordId) . '&return=' . $returnUrl);
 
 		ob_start();
 		?>
-		<a class="listing-link" href="<?php echo $href;?>"><?php echo $cellContent;?></a>
+		<a class="listing-link"
+		   data-controller="<?php echo hsc($controller);?>"
+		   data-task="edit"
+		   data-id="<?php echo intval($recordId);?>"
+		   data-return-url="<?php echo hsc($returnUrl);?>"
+		   href="<?php echo $href;?>">
+			<?php echo $cellContent;?>
+		</a>
 		<?php
 		return ob_get_clean();
 
@@ -599,7 +607,7 @@ class KenedoProperty {
 
 		// Prime settings for ordering
 		$isActive = false;
-		$direction = 'ASC';
+		$direction = '';
 
 		// Check ordering instructions and get settings for this prop
 		foreach ($orderingInstructions as $orderingInfoItem) {
@@ -610,8 +618,9 @@ class KenedoProperty {
 		}
 
 		?>
-		<a id="order-property-name-<?php echo hsc($this->propertyName);?>"
-			class="order-property <?php echo ($isActive) ? 'active':'inactive';?> <?php echo ($direction == 'desc') ? 'direction-desc' : 'direction-asc';?>">
+		<a data-property-name="<?php echo hsc($this->propertyName);?>"
+		   data-current-direction="<?php echo ($direction);?>"
+		   class="trigger-order-list <?php echo ($isActive) ? 'active':'inactive';?> <?php echo ($direction == 'desc') ? 'direction-desc' : 'direction-asc';?>">
 			<?php echo hsc($label);?>
 		</a>
 		<?php
@@ -619,7 +628,7 @@ class KenedoProperty {
 		// Ordering props get a special link-button that triggers storing the user's ordering
 		if ($this->getType() == 'ordering') {
 			?>
-			<a class="link-save-item-ordering" title="<?php echo KText::_('Save ordering');?>">
+			<a class="trigger-store-record-ordering" title="<?php echo KText::_('Save ordering');?>">
 				<span class="fa fa-floppy-o"></span>
 			</a>
 			<?php

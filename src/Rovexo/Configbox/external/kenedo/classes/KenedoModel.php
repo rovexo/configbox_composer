@@ -1048,9 +1048,8 @@ class KenedoModel {
 			}
 
 
-			// If we do $countOnly, replace the made selects with a simply COUNT(*) and drop ORDER BY
+			// If we do $countOnly drop ORDER BY for a bit of performance gain
 			if ($countOnly == true) {
-				$selects = array('COUNT(*)');
 				$orderBys = array();
 			}
 
@@ -1080,6 +1079,13 @@ class KenedoModel {
 				$query .= "\n\n ORDER BY ".implode(', ', $orderBys);
 			}
 
+			// If it's about counting only, skip all else and count up
+			if ($countOnly == true) {
+				$db->setQuery($query);
+				$records = $db->loadObjectList();
+				return count($records);
+			}
+
 			// As per pagination, do LIMIT
 			if (!empty($pagination) && $pagination['limit'] != 0) {
 				$query .= "\n\n LIMIT ".intval($pagination['start']).", ".intval($pagination['limit']);
@@ -1087,21 +1093,6 @@ class KenedoModel {
 
 			// Set the query and get the data
 			$db->setQuery($query);
-
-			// If it's about counting only, get the results
-			// In case we got multi-selects in the model, we get multiple counts due to the GROUP BYs, so we count how
-			// many counts we got
-			if ($countOnly == true) {
-
-				$counts = $db->loadResultList();
-
-				if (count($counts) == 1) {
-					return $counts[0];
-				}
-				else {
-					return count($counts);
-				}
-			}
 
 			$records = $db->loadObjectList();
 
@@ -1231,6 +1222,19 @@ class KenedoModel {
 	 * @return bool
 	 */
 	function delete($ids) {
+
+		// Trying to track down an elusive case where NULL gets passed - logging a backtrace and normalizing $ids to empty array
+		if ($ids === NULL) {
+
+			ob_start();
+			debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+			$trace = ob_get_contents();
+			ob_end_clean();
+
+			KLog::log('NULL passed as parameter $ids to KenedoModel::delete(). Model name was "'.$this->getModelName().'". Backtrace was "'.$trace.'"', 'warning');
+			$ids = array();
+
+		}
 
 		if (is_numeric($ids)) {
 			$ids = array($ids);

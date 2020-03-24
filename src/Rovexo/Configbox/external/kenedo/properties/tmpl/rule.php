@@ -29,7 +29,7 @@ else {
 $ruleIsSet = !empty($this->data->{$this->propertyName}) && $this->data->{$this->propertyName} != '[]';
 
 // Prepare the URL for the editor
-$editUrl = KLink::getRoute('index.php?option=com_configbox&controller=adminruleeditor&format=raw', false);
+$editUrl = KLink::getRoute('index.php?option=com_configbox&controller=adminruleeditor&output_mode=view_only', false);
 
 // There is a piece of JS in the admin.js that handles showing the editor
 
@@ -39,7 +39,6 @@ $editUrl = KLink::getRoute('index.php?option=com_configbox&controller=adminrulee
 
 	<input class="data-field"
 	       data-editor-url="<?php echo $editUrl;?>"
-	       data-return-field-id="<?php echo $this->propertyName;?>"
 	       data-product-id="<?php echo intval($productId);?>"
 	       data-page-id="<?php echo intval($pageId);?>"
 	       data-usage-in="<?php echo hsc($type);?>"
@@ -56,7 +55,7 @@ $editUrl = KLink::getRoute('index.php?option=com_configbox&controller=adminrulee
 	<a class="backend-button-small trigger-edit-rule"><?php echo KText::_('Change')?></a>
 	<a class="backend-button-small trigger-delete-rule"><?php echo KText::_('Delete');?></a>
 
-	<div class="modal" role="dialog">
+	<div class="modal rule-editor-modal" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
 

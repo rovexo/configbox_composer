@@ -101,8 +101,14 @@ class ConfigboxViewCheckoutpspbridge extends KenedoView {
 		$failurePath = KLink::getRoute('index.php?option=com_configbox&view=checkout', false);
 		$cancelPath = KLink::getRoute('index.php?option=com_configbox&view=checkout', false);
 
-		$prefixNormal = 'http://'.KPATH_HOST;
-		$prefixSecure = 'https://'.KPATH_HOST;
+		if (KenedoPlatform::getName() == 'joomla') {
+			$prefixNormal = 'http://'.KPATH_HOST;
+			$prefixSecure = 'https://'.KPATH_HOST;
+		}
+		else {
+			$prefixNormal = '';
+			$prefixSecure = '';
+		}
 
 		if (CbSettings::getInstance()->get('securecheckout')) {
 			$successUrl 		= $prefixSecure . $successPath;

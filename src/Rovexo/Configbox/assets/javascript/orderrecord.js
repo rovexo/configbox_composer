@@ -10,7 +10,7 @@ define(['cbj'], function(cbj) {
 	 */
 	var module = {
 
-		initOrderReord: function() {
+		initOrderRecord: function() {
 
 			cbj(document).on('click', '.trigger-show-position-modal', function() {
 

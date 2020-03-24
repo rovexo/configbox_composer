@@ -36,7 +36,7 @@ class ConfigboxViewAdminshopdata extends KenedoView {
 		$this->pageTasks = $model->getDetailsTasks();
 		$this->recordUsage = array();
 
-		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&format=raw', false);
+		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&output_mode=view_only', false);
 
 	}
 

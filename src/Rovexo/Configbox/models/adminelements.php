@@ -34,7 +34,6 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'default'=>0,
 			'label'=>KText::_('ID'),
 			'listing'=>1,
-			'listingwidth'=>'50px',
 			'order'=>100,
 			'positionForm'=>1000,
 		);
@@ -416,6 +415,9 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'foreignKeyField'=>'element_id',
 			'parentKeyField'=>'id',
 			'positionForm'=>27500,
+			'appliesWhen' => array(
+				'question_type'=>array('checkbox', 'radiobuttons', 'dropdown', 'images'),
+			)
 		);
 
 		$propDefs['assignments_group_end'] = array(
@@ -521,9 +523,9 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'toggle' => true,
 			'defaultState' => 'closed',
 			'positionForm' => 34010,
-//			'appliesWhen'=>array(
-//				'joinedby_page_id_to_adminpages_visualization_type'=>'shapediver',
-//			),
+			'appliesWhen'=>array(
+				'joinedby_page_id_to_adminpages_visualization_type'=>'shapediver',
+			),
 		);
 
 		$propDefs['is_shapediver_control'] = array(
@@ -533,6 +535,9 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'type' => 'boolean',
 			'default' => 0,
 			'positionForm' => 34020,
+			'appliesWhen'=>array(
+				'joinedby_page_id_to_adminpages_visualization_type'=>'shapediver',
+			),
 		);
 
 		$propDefs['shapediver_parameter_id'] = array(
@@ -1228,12 +1233,42 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			}
 		}
 
-		if ($occurencesInRules == 0) {
-			return true;
-		}
-		else {
+		if ($occurencesInRules > 0) {
 			return false;
 		}
+
+		// Check formulas if they use the question
+		$ass = ConfigboxCacheHelper::getAssignments();
+		$productId = $ass['element_to_product'][$id];
+
+		$filters = array(
+			'admincalculations.type'=>'formula',
+			'admincalculations.product_id'=>$productId,
+		);
+
+		$formulaCalculations = KenedoModel::getModel('ConfigboxModelAdmincalculations')->getRecords($filters);
+		$formulaModel = KenedoModel::getModel('ConfigboxModelAdmincalcformulas');
+		$occurrencesInFormulas = 0;
+
+		foreach ($formulaCalculations as $calculation) {
+			$formulaJson = $formulaModel->getCalculationJson($calculation->id);
+			$contains = ConfigboxCalculation::formulaContainsQuestion($formulaJson, $id);
+
+			if ($contains) {
+				// Get the titles for the error message
+				$questionTitle 		= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 4, $id);
+				$message = KText::sprintf('QUESTION_CAN_DELETE_FEEDBACK_QUESTION_USED_IN_FORMULAS', $questionTitle, $id, $calculation->name);
+				$this->setError($message);
+				$occurrencesInFormulas++;
+			}
+
+		}
+
+		if ($occurrencesInFormulas > 0) {
+			return false;
+		}
+
+		return true;
 
 	}
 

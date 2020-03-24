@@ -48,6 +48,34 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 
 	}
 
+    /**
+     * Tells how to respond to an HTTP request
+     * - 'view_only': Output only the content of the requested view (with nothing wrapping the output)
+     * - 'in_html_doc': Output the view's content within a HTML doc (containing nothing but the view content and head data)
+     * - 'in_platform_output': Output the view within the platform's output (as in along with the Joomla/WP/M1/M2 page)
+     * @return string (view_only, in_html_doc, in_platform_output)
+     */
+    function getOutputMode() {
+
+        if (KRequest::getString('output_mode')) {
+            $outputMode = KRequest::getString('output_mode');
+            if (in_array($outputMode, ['view_only', 'in_html_doc', 'in_platform_output'])) {
+                return $outputMode;
+            }
+        }
+
+        if (KRequest::getInt('ajax_sub_view') || KRequest::getString('format') == 'raw' || KRequest::getString('format') == 'json') {
+            return 'view_only';
+        }
+
+        if (KRequest::getInt('in_modal') == 1 || KRequest::getVar('tmpl') == 'component') {
+            return 'in_html_doc';
+        }
+
+        return 'in_platform_output';
+
+    }
+
 	public function getDbConnectionData() {
 
 		$config  = Mage::getConfig()->getResourceConnectionConfig("default_setup");
@@ -271,7 +299,8 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	}
 
 	public function renderHtmlEditor($dataFieldKey, $content, $width, $height, $cols, $rows) {
-		return '<textarea name="'.hsc($dataFieldKey).'" id="'.hsc($dataFieldKey).'" class="kenedo-html-editor" style="width:'.(int)$width.'px; height:'.$height.'px" rows="'.(int)$rows.'" cols="'.(int)$cols.'">'.hsc($content).'</textarea>';
+        $style = 'width:'.$width.'; height:'.$height;
+        return '<textarea name="'.hsc($dataFieldKey).'" class="kenedo-html-editor not-initialized" style="'.$style.'" rows="'.intval($rows).'" cols="'.intval($cols).'">'.hsc($content).'</textarea>';
 	}
 	//TODO: Implement
 	public function sendEmail($from, $fromName, $recipient, $subject, $body, $isHtml = false, $cc = NULL, $bcc = NULL, $attachmentPath = NULL) {
@@ -490,20 +519,20 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 
 	public function renderOutput(&$output) {
 
-		$getRawOutput = (KRequest::getVar('format') == 'raw' || KRequest::getVar('ajax_sub_view') == '1');
-		$getAsHtmlDoc = (KRequest::getVar('in_modal') == '1' || KRequest::getVar('tmpl') == 'component');
+        $outputMode = $this->getOutputMode();
 
-		if ($getRawOutput) {
-			require(__DIR__.'/tmpl/raw.php');
-			return;
-		} elseif($getAsHtmlDoc) {
-			require(__DIR__.'/tmpl/component.php');
-			return;
-		}
-		else {
-			require(__DIR__.'/tmpl/raw.php');
-			return;
-		}
+        if ($outputMode == 'view_only') {
+            require(__DIR__.'/tmpl/raw.php');
+            return;
+        }
+        elseif ($outputMode == 'in_html_doc') {
+            require(__DIR__.'/tmpl/component.php');
+            return;
+        }
+        else {
+            require(__DIR__.'/tmpl/raw.php');
+            return;
+        }
 
 	}
 

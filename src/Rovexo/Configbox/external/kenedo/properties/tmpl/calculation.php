@@ -40,28 +40,41 @@ foreach ($calculations as $calculation) {
 }
 
 // Convenience var for the currently selected calculation
-$selected = $this->data->{$this->propertyName};
+$selectedId = $this->data->{$this->propertyName};
 
-// If we show links to the calculations, we need to add a few CSS classes (works like join's joinLinks)
+$dropdownClasses = 'calculation-select make-me-chosen';
 $showLinks = $this->getPropertyDefinition('showLinks');
-$dropdownClasses = ($showLinks) ? 'make-me-chosen with-join-links join-select' : 'make-me-chosen';
-
-// Render the dropdown
-echo KenedoHtml::getSelectField($this->propertyName, $options, $selected, 0, false, $dropdownClasses);
-
-// If instructed, render the links
 if ($showLinks) {
-	?>
-	<span class="join-links">
-		<span class="join-link join-link-0" <?php echo ($selected == 0) ? 'style="display:inline"':'style="display:none"'; ?>>
-			<a class="trigger-open-modal btn btn-default" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&in_modal=1&tmpl=component&task=edit&id=0&prefill_product_id='.intval($productId).'&form_custom_4='.$this->propertyName);?>"><?php echo KText::_('New');?></a>
+    $dropdownClasses .= ' join-select';
+}
+
+?>
+<div class="select-and-links">
+
+	<?php echo KenedoHtml::getSelectField($this->propertyName, $options, $selectedId, 0, false, $dropdownClasses);?>
+
+    <?php if ($showLinks) { ?>
+
+		<span class="join-link">
+			<a class="trigger-open-join-link-modal btn btn-default"
+			   data-controller="admincalculations"
+			   data-task="edit"
+			   data-selected-id="<?php echo intval($selectedId);?>"
+			   data-name-form-control="<?php echo hsc($this->propertyName);?>"
+			   data-link-text-new="<?php echo KText::_('New');?>"
+			   data-link-text-open="<?php echo KText::_('Open');?>"
+			   data-request-data="<?php echo hsc(json_encode(['prefill_product_id'=>intval($productId)]));?>">
+					<?php echo ($selectedId == 0) ? KText::_('New') : KText::_('Open');?>
+				</a>
 		</span>
 
-		<?php foreach ($calculations as $calculation) { ?>
-			<span class="join-link join-link-<?php echo intval($calculation->id)?>" <?php echo ($selected == $calculation->id) ? 'style="display:inline"':'style="display:none"'; ?>>
-				<a class="trigger-open-modal btn btn-default" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&in_modal=1&tmpl=component&task=edit&id='.$calculation->id.'&form_custom_4='.$this->propertyName);?>"><?php echo KText::_('Open');?></a>
-			</span>
-		<?php } ?>
-	</span>
-	<?php
-}
+		<div class="modal join-link-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content"></div>
+			</div>
+		</div>
+
+    <?php } ?>
+
+</div>
+

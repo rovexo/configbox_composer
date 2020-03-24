@@ -4,15 +4,20 @@ defined('CB_VALID_ENTRY') or die();
 ?>
 <div <?php echo $this->getViewAttributes();?>>
 <div id="view-<?php echo hsc($this->view);?>" class="<?php $this->renderViewCssClasses();?>">
+<form class="kenedo-details-form"
+      method="post"
+      enctype="multipart/form-data"
+      action="<?php echo hsc($this->formAction);?>"
+      data-view="<?php echo hsc($this->view);?>"
+      data-record="<?php echo hsc(json_encode($this->record));?>"
+      data-properties="<?php echo hsc(json_encode($this->properties));?>">
 
-<form class="kenedo-details-form" method="post" enctype="multipart/form-data" action="<?php echo hsc($this->formAction);?>" data-view="<?php echo hsc($this->view);?>" data-record="<?php echo hsc(json_encode($this->record));?>" data-properties="<?php echo hsc(json_encode($this->properties));?>">
-		
 	<?php echo (count($this->pageTasks)) ? KenedoViewHelper::renderTaskItems($this->pageTasks) : ''; ?>
-	
+
 	<?php if (!empty($this->pageTitle)) { ?><h1 class="kenedo-page-title"><?php echo hsc($this->pageTitle);?></h1><?php } ?>
-	
+
 	<div class="clear"></div>
-	
+
 	<div class="kenedo-messages">
 		<div class="kenedo-messages-error"></div>
 		<div class="kenedo-messages-notice"></div>
@@ -84,15 +89,11 @@ defined('CB_VALID_ENTRY') or die();
 
 	<div class="kenedo-hidden-fields">
 
-		<input type="hidden" id="option_assignment_load_url" name="option_assignment_load_url" value="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminoptions&task=edit&id=placeholder_option_id');?>" />
+		<input type="hidden" id="option_assignment_load_url" name="option_assignment_load_url" value="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminoptions&task=edit&output_mode=view_only&id=placeholder_option_id');?>" />
 
 		<input type="hidden" id="option" 		name="option" 			value="<?php echo hsc($this->component);?>" />
 		<input type="hidden" id="controller"	name="controller" 		value="<?php echo hsc($this->controllerName);?>" />
 		<input type="hidden" id="task" 			name="task" 			value="" />
-		<input type="hidden" id="ajax_sub_view" name="ajax_sub_view" 	value="<?php echo ($this->isAjaxSubview()) ? '1':'0';?>" />
-		<input type="hidden" id="in_modal"		name="in_modal" 		value="<?php echo ($this->isInModal()) ? '1':'0';?>" />
-		<input type="hidden" id="tmpl"			name="tmpl" 			value="component" />
-		<input type="hidden" id="format"		name="format" 			value="raw" />
 		<input type="hidden" id="id"			name="id" 				value="<?php echo intval($this->record->id); ?>" />
 		<input type="hidden" id="lang"			name="lang" 			value="<?php echo hsc(KenedoPlatform::p()->getLanguageUrlCode());?>" />
 		<!-- unencoded return url "<?php echo $this->returnUrl;?>" -->
@@ -108,7 +109,7 @@ defined('CB_VALID_ENTRY') or die();
 		       value="<?php echo hsc(KenedoPlatform::p()->getCsrfTokenValue());?>" />
 
 	</div>
-	
+
 </form>
 </div>
 </div>

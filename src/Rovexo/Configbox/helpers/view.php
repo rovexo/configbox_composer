@@ -95,7 +95,7 @@ class ConfigboxViewHelper {
 			'decimalSymbol'     => KText::_('DECIMAL_MARK', '.'),
 			'thousandsSeparator'=> KText::_('DIGIT_GROUPING_SYMBOL', ','),
 			'cacheVar'			=> $cacheVar,
-			'urlXhr'            => KLink::getRoute('index.php?option=com_configbox&format=raw', false),
+			'urlXhr'            => KLink::getRoute('index.php?option=com_configbox&output_mode=view_only', false),
 			'useMinifiedJs'		=> $useMinifiedJs,
 			'useMinifiedCss'	=> $useMinifiedCss,
 			'useAssetsCacheBuster' 		=> $useCacheBuster,

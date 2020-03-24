@@ -63,7 +63,7 @@ if ($stringType == 'time') {
 		<?php
 	}
 	elseif(isset($tags['USE_HTMLEDITOR'])) {
-		$width = ($this->getPropertyDefinition('editorWidth')) ? $this->getPropertyDefinition('editorWidth') : '600px';
+		$width = ($this->getPropertyDefinition('editorWidth')) ? $this->getPropertyDefinition('editorWidth') : '100%';
 		$height = ($this->getPropertyDefinition('editorHeight')) ? $this->getPropertyDefinition('editorHeight') : '400px';
 		echo KenedoPlatform::p()->renderHtmlEditor( $this->propertyName,  $value , $width, $height, '40', '5' );
 	}

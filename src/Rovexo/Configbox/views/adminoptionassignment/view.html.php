@@ -29,11 +29,17 @@ class ConfigboxViewAdminoptionassignment extends KenedoView {
 		return KText::_('Answer');
 	}
 
-	function prepareTemplateVars() {
+	function getJsInitCallsOnce() {
+        $calls = parent::getJsInitCallsOnce();
+        $calls[] = 'configbox/adminAnswer::initAnswerViewOnce';
+        return $calls;
+    }
+
+    function prepareTemplateVars() {
 
 		$id = KRequest::getInt('id');
 
-		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&format=raw', false);
+		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&output_mode=view_only', false);
 
 		$model = KenedoModel::getModel('ConfigboxModelAdminoptionassignments');
 

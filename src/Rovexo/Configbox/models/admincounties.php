@@ -29,7 +29,6 @@ class ConfigboxModelAdmincounties extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listingwidth'=>'50px',
 			'listing'=>10,
 			'positionForm'=>200,
 		);

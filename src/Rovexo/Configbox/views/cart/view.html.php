@@ -302,8 +302,8 @@ class ConfigboxViewCart extends KenedoView {
 		$this->urlSaveOrder = KLink::getRoute('index.php?option=com_configbox&view=saveorder&cart_id='.$this->cart->id, false);
 		$this->urlCheckout = KLink::getRoute('index.php?option=com_configbox&controller=cart&task=checkoutCart&cart_id='.$this->cart->id, false);
 
-		$this->urlCheckoutView = KLink::getRoute('index.php?option=com_configbox&view=checkout&format=raw', false);
-		$this->urlCartSummary = KLink::getRoute('index.php?option=com_configbox&controller=cart&task=reloadCartSummary&format=raw', false);
+		$this->urlCheckoutView = KLink::getRoute('index.php?option=com_configbox&view=checkout&output_mode=view_only', false);
+		$this->urlCartSummary = KLink::getRoute('index.php?option=com_configbox&controller=cart&task=reloadCartSummary&output_mode=view_only', false);
 
 		// Prepare position button urls
 		$this->positionUrls = array();
@@ -316,7 +316,7 @@ class ConfigboxViewCart extends KenedoView {
 
 		$attributes = array(
 			'data-cart-id' => intval($this->cartId),
-			'data-url-checkout-view' => KLink::getRoute('index.php?option=com_configbox&view=checkout&format=raw'),
+			'data-url-checkout-view' => KLink::getRoute('index.php?option=com_configbox&view=checkout&output_mode=view_only'),
 			'data-url-cart-summary' => $this->urlCartSummary,
 		);
 

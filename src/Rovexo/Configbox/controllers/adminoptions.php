@@ -31,4 +31,10 @@ class ConfigboxControllerAdminoptions extends KenedoController {
 		return KenedoView::getView('ConfigboxViewAdminoption');
 	}
 
+	function getPropertiesHtml() {
+        $view = $this->getDefaultViewForm();
+        $view->prepareTemplateVars();
+        $view->renderView('props_only');
+    }
+
 }

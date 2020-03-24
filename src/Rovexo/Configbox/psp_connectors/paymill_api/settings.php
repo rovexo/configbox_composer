@@ -12,11 +12,11 @@ defined('CB_VALID_ENTRY') or die();
 	</div>
 	<div class="property-body">
 		<input id="testmodeyes" type="radio" name="testmode" value="1" <?php echo ($this->settings->get('testmode') == 1) ? 'checked = "checked"':''; ?> /><label for="testmodeyes"><?php echo KText::_('Test system');?></label>
-		<input id="testmodeno" type="radio" name="testmode" value="0" <?php  echo ($this->settings->get('testmode') == 0) ? 'checked = "checked"':''; ?> /><label for="testmodeno"><?php echo KText::_('Production system');?></label>
+		<input id="testmodeno" type="radio" name="testmode" value="0" <?php  echo ($this->settings->get('testmode') == 0) ? 'checked = "checked"':''; ?> /><label for="testmodeno"><?php echo KText::_('Live system');?></label>
 	</div>
 </div>
 
-<div class="clear"><b><?php echo KText::_('Test system');?></b></div>
+<div class="clear"><h4><?php echo KText::_('Test system');?></h4></div>
 
 <div id="property-name-private_api_key_test" class="property-name-private_api_key_test kenedo-property property-type-string">
 	<div class="property-label">
@@ -52,7 +52,6 @@ defined('CB_VALID_ENTRY') or die();
 		</div>
 	</div>
 </div>
-
 
 <div id="property-name-public_api_key_production" class="property-name-public_api_key_production kenedo-property property-type-string">
 	<div class="property-label">

@@ -212,7 +212,7 @@ class ConfigboxControllerUser extends KenedoController {
 			
 		}
 		
-		if (in_array(KRequest::getString('format', ''), array('json', 'raw'))) {
+		if (in_array(KRequest::getString('output_mode', ''), array('view_only'))) {
 			$jsonResponse = new stdClass();
 			$jsonResponse->success = $response;
 			if ($response == false) {

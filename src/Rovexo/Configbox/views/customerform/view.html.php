@@ -174,7 +174,7 @@ class ConfigboxViewCustomerform extends KenedoView {
 
 		$viewData = array(
 			'customer-fields' => json_encode($this->customerFields),
-			'view-url' => KLink::getRoute('index.php?option=com_configbox&view=customerform&formType='.$this->formType.'&format=raw', false),
+			'view-url' => KLink::getRoute('index.php?option=com_configbox&view=customerform&formType='.$this->formType.'&output_mode=view_only', false),
 		);
 		$this->viewDataAttributes = '';
 		foreach ($viewData as $key=>$value) {

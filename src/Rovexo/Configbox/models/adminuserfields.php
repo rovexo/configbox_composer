@@ -57,16 +57,11 @@ class ConfigboxModelAdminuserfields extends KenedoModel {
 			if (!isset($field['show_profile'])) $field['show_profile'] = 0;
 			if (!isset($field['require_profile'])) $field['require_profile'] = 0;
 
-			if (!isset($field['validation_browser'])) $field['validation_browser'] = '';
-			if (!isset($field['validation_server'])) $field['validation_server'] = '';
-
 			$inserts[] = "(	NULL ,  '".$db->getEscaped($field['field_name'])."', 
 			'".(int)$field['show_checkout']."',  '".(int)$field['require_checkout']."',  
 			'".(int)$field['show_quotation']."',  '".(int)$field['require_quotation']."',  
 			'".(int)$field['show_saveorder']."',  '".(int)$field['require_saveorder']."',  
-			'".(int)$field['show_profile']."',  '".(int)$field['require_profile']."',  
-			
-			'".$db->getEscaped($field['validation_browser'])."',  '".$db->getEscaped($field['validation_server'])."')";
+			'".(int)$field['show_profile']."',  '".(int)$field['require_profile']."')";
 
 		}
 
@@ -98,9 +93,7 @@ class ConfigboxModelAdminuserfields extends KenedoModel {
 				`show_saveorder` ,
 				`require_saveorder` ,
 				`show_profile` ,
-				`require_profile` ,
-				`validation_browser` ,
-				`validation_server`
+				`require_profile`
 				)
 				VALUES
 				".implode(", \n", $inserts);

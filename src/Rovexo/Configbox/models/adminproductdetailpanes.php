@@ -21,7 +21,6 @@ class ConfigboxModelAdminproductdetailpanes extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'listing'=>10,
-			'listingwidth'=>'50px',
 			'order'=>100,
 			'positionForm'=>100,
 		);

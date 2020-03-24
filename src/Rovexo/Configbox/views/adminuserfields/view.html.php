@@ -16,7 +16,16 @@ class ConfigboxViewAdminuserfields extends KenedoView {
 	 */
 	public $userFieldTranslations;
 
-	/**
+    /**
+     * @inheritDoc
+     */
+	function getJsInitCallsEach() {
+        $calls = parent::getJsInitCallsEach();
+        $calls[] = 'configbox/adminUserFields::initUserFieldsEach';
+        return $calls;
+    }
+
+    /**
 	 * @return ConfigboxModelAdminuserfields
 	 */
 	function getDefaultModel() {

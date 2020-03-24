@@ -20,7 +20,6 @@ class ConfigboxModelAdminzones extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listingwidth'=>'50px',
 			'positionForm'=>100,
 		);
 

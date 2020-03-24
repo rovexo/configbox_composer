@@ -20,7 +20,6 @@ class ConfigboxModelAdminlistings extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listingwidth'=>'50px',
 			'listing'=>10000,
 			'order'=>10000,
 			'positionForm'=>10000,

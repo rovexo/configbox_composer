@@ -5,25 +5,25 @@ define('KPATH_DIR_CB', KenedoPlatform::p()->getComponentDir('com_configbox') );
 
 KenedoAutoload::registerClass('ConfigboxCacheHelper',		KPATH_DIR_CB.'/helpers/cache.php');
 KenedoAutoload::registerClass('ConfigboxConfiguratorHelper',KPATH_DIR_CB.'/helpers/configurator.php');
-KenedoAutoload::registerClass('ConfigboxUpdateHelper',	KPATH_DIR_CB.'/helpers/update.php');
+KenedoAutoload::registerClass('ConfigboxUpdateHelper',		KPATH_DIR_CB.'/helpers/update.php');
 KenedoAutoload::registerClass('ConfigboxRulesHelper',		KPATH_DIR_CB.'/helpers/rules.php');
 KenedoAutoload::registerClass('ConfigboxProductImageHelper', KPATH_DIR_CB.'/helpers/productimage.php');
 KenedoAutoload::registerClass('ConfigboxPrices',			KPATH_DIR_CB.'/helpers/prices.php');
 KenedoAutoload::registerClass('ConfigboxPositionHelper',	KPATH_DIR_CB.'/helpers/position.php');
 KenedoAutoload::registerClass('ConfigboxLocationHelper',	KPATH_DIR_CB.'/helpers/location.php');
 KenedoAutoload::registerClass('ConfigboxQuickeditHelper',	KPATH_DIR_CB.'/helpers/quickedit.php');
-KenedoAutoload::registerClass('ConfigboxRatingsHelper',	KPATH_DIR_CB.'/helpers/ratings.php');
+KenedoAutoload::registerClass('ConfigboxRatingsHelper',		KPATH_DIR_CB.'/helpers/ratings.php');
 KenedoAutoload::registerClass('ConfigboxCacheHelper',		KPATH_DIR_CB.'/helpers/cache.php');
 KenedoAutoload::registerClass('ConfigboxCalculation',		KPATH_DIR_CB.'/helpers/calculation.php');
 KenedoAutoload::registerClass('ConfigboxUserHelper',		KPATH_DIR_CB.'/helpers/user.php');
-KenedoAutoload::registerClass('ConfigboxShapediverHelper',KPATH_DIR_CB.'/helpers/shapediver.php');
-KenedoAutoload::registerClass('ConfigboxDeviceHelper',	KPATH_DIR_CB.'/helpers/device.php');
+KenedoAutoload::registerClass('ConfigboxShapediverHelper',	KPATH_DIR_CB.'/helpers/shapediver.php');
+KenedoAutoload::registerClass('ConfigboxDeviceHelper',		KPATH_DIR_CB.'/helpers/device.php');
 KenedoAutoload::registerClass('ConfigboxStoreHelper',		KPATH_DIR_CB.'/helpers/store.php');
 KenedoAutoload::registerClass('ConfigboxSystemVars',		KPATH_DIR_CB.'/helpers/systemvars.php');
 KenedoAutoload::registerClass('ConfigboxDataHelper',		KPATH_DIR_CB.'/helpers/data.php');
 KenedoAutoload::registerClass('ConfigboxCurrencyHelper',	KPATH_DIR_CB.'/helpers/currency.php');
 KenedoAutoload::registerClass('ConfigboxViewHelper',		KPATH_DIR_CB.'/helpers/view.php');
-KenedoAutoload::registerClass('ConfigboxVersionHelper',	KPATH_DIR_CB.'/helpers/version.php');
+KenedoAutoload::registerClass('ConfigboxVersionHelper',		KPATH_DIR_CB.'/helpers/version.php');
 KenedoAutoload::registerClass('ConfigboxAddonHelper',		KPATH_DIR_CB.'/helpers/addon.php');
 
 KenedoAutoload::registerClass('ConfigboxCountryHelper',	    KPATH_DIR_CB.'/helpers/country.php');
@@ -36,11 +36,11 @@ KenedoAutoload::registerClass('ConfigboxOverridesHelper', 	KPATH_DIR_CB.'/helper
 
 KenedoAutoload::registerClass('ConfigboxCalcTerm',			KPATH_DIR_CB.'/classes/ConfigboxCalcTerm.php');
 KenedoAutoload::registerClass('ConfigboxCondition',			KPATH_DIR_CB.'/classes/ConfigboxCondition.php');
-KenedoAutoload::registerClass('ConfigboxElement',				KPATH_DIR_CB.'/classes/ConfigboxElement.php');
-KenedoAutoload::registerClass('ConfigboxOption',				KPATH_DIR_CB.'/classes/ConfigboxOption.php');
+KenedoAutoload::registerClass('ConfigboxElement',			KPATH_DIR_CB.'/classes/ConfigboxElement.php');
+KenedoAutoload::registerClass('ConfigboxOption',			KPATH_DIR_CB.'/classes/ConfigboxOption.php');
 KenedoAutoload::registerClass('ConfigboxConfiguration',		KPATH_DIR_CB.'/classes/ConfigboxConfiguration.php');
 KenedoAutoload::registerClass('ConfigboxQuestion',		    KPATH_DIR_CB.'/classes/ConfigboxQuestion.php');
-KenedoAutoload::registerClass('ConfigboxAnswer',		    	KPATH_DIR_CB.'/classes/ConfigboxAnswer.php');
+KenedoAutoload::registerClass('ConfigboxAnswer',		    KPATH_DIR_CB.'/classes/ConfigboxAnswer.php');
 KenedoAutoload::registerClass('ConfigboxJsonResponse',		KPATH_DIR_CB.'/classes/ConfigboxJsonResponse.php');
 KenedoAutoload::registerClass('ConfigboxLocation',		    KPATH_DIR_CB.'/classes/ConfigboxLocation.php');
 KenedoAutoload::registerClass('CbSettings',		    		KPATH_DIR_CB.'/classes/CbSettings.php');

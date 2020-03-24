@@ -257,8 +257,14 @@ class ConfigboxViewBlockpricing extends KenedoView {
 			$this->assign('totalGrossKey',			'priceGross');
 			
 			$this->assign('isRegular',			true);
-			
-			$regularTree = $this->getViewOutput();
+
+
+            if (KenedoPlatform::getName() == 'magento') {
+                $this->assign('showCartButton', 		0);
+            }
+
+
+            $regularTree = $this->getViewOutput();
 			
 		}
 		else {
@@ -291,13 +297,20 @@ class ConfigboxViewBlockpricing extends KenedoView {
 			$this->assign('totalGrossKey',			'priceRecurringGross');
 			
 			$this->assign('isRegular',				false);
-			
-			$recurringTree = $this->getViewOutput();
+
+
+            if (KenedoPlatform::getName() == 'magento') {
+                $this->assign('showCartButton', 		0);
+            }
+
+
+            $recurringTree = $this->getViewOutput();
 		
 		}
 		else {
 			$recurringTree = '';
 		}
+
 		$this->assign('priceKey', ( ConfigboxPrices::showNetPrices() ) ? 'priceNet':'priceGross');
 		?>
 		<div class="<?php echo hsc($this->wrapperClasses);?>">

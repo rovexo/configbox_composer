@@ -37,18 +37,38 @@ class KenedoPropertyDropdown extends KenedoProperty {
 
 	protected function getPossibleFilterValues() {
 
-		$db = KenedoPlatform::getDb();
-		$query = "SELECT DISTINCT `".$this->propertyName."` AS `id`, `".$this->propertyName."` AS `title` FROM `".$this->model->getTableName()."`";
-		$db->setQuery($query);
-		$values = $db->loadObjectList('id');
-		if ($values) {
-			if (in_array($this->getType(), array('boolean', 'published', 'checkbox') ) ) {
-				foreach ($values as $value) {
-					$value->title = ($value->id) ? KText::_('CBYES') : KText::_('CBNO');
-				}
-			}
+		if ($this->getPropertyDefinition('storeExternally')) {
+			$tableName = $this->getPropertyDefinition('foreignTableName'); // Foreign as in the table we store the property's data in
 		}
-		return $values;
+		else {
+			$tableName = $this->model->getTableName();
+		}
+		$db = KenedoPlatform::getDb();
+		$query = "SELECT DISTINCT `".$this->propertyName."` AS `value` FROM `".$tableName."`";
+		$db->setQuery($query);
+		$values = $db->loadResultList('value');
+
+		$options = array();
+		$options['all'] = KText::sprintf('No %s filter', $this->getPropertyDefinition('label'));
+
+		$choices = $this->getPropertyDefinition('choices', array());
+
+		foreach ($values as $value) {
+
+			if ($value) {
+
+				if (isset($choices[$value])) {
+					$options[$value] = $choices[$value];
+				}
+				else {
+					$options[$value] = $value;
+				}
+
+			}
+
+		}
+
+		return $options;
 
 	}
 		

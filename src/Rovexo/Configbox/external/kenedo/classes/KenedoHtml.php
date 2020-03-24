@@ -45,7 +45,7 @@ class KenedoHtml {
 		
 		<div class="kenedo-popup-trigger" id="<?php echo hsc($idTrigger);?>">
 			<div class="kenedo-popup-trigger-content"><?php echo $triggerHtml;?></div>
-			<div id="<?php echo hsc($idPopup);?>" class="kenedo-popup cb-content <?php echo hsc($popupCssClasses);?> <?php echo ($position == 'bottom') ? 'position-prefer-bottom': 'position-prefer-top';?>"<?php echo ($style) ? ' style="min-width:'.$styles['min-width'].'max-width'.$styles['max-width'].'"': '';?>>
+			<div id="<?php echo hsc($idPopup);?>" class="kenedo-popup cb-content <?php echo hsc($popupCssClasses);?> <?php echo ($position == 'bottom') ? 'position-prefer-bottom': 'position-prefer-top';?>"<?php echo ($style) ? ' style="min-width:'.$styles['min-width'].'max-width:'.$styles['max-width'].'"': '';?>>
 				<div class="kenedo-popup-content"<?php echo ($style) ? ' style="'.$style.'"': '';?>>
 					<div class="kenedo-popup-content-inner">
 						<?php echo $contentHtml;?>

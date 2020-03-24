@@ -9,7 +9,7 @@ defined('CB_VALID_ENTRY') or die();
 	<?php if ($this->showQuotationDownload) { ?>
 		<div class="quotation-download">
 			<p><?php echo KText::_('Thank you, your quotation is ready to download.');?></p>
-			<p><a class="new-tab btn btn-primary button-quotation-download" download href="<?php echo $this->urlQuotationDownload;?>"><?php echo KText::_('Download');?></a></p>
+			<p><a class="btn btn-primary button-quotation-download" download href="<?php echo $this->urlQuotationDownload;?>"><?php echo KText::_('Download');?></a></p>
 		</div>
 	<?php } ?>
 

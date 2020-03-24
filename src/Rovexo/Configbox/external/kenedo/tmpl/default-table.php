@@ -60,7 +60,7 @@ defined('CB_VALID_ENTRY') or die();
 	<thead>
 		<tr>
 			<?php foreach ($this->properties as $property) { ?>
-				<th class="field-<?php echo hsc($property->propertyName);?>" style="width:<?php echo ($property->getPropertyDefinition('listingwidth')) ? hsc($property->getPropertyDefinition('listingwidth')) : 'auto';?>">
+				<th class="field-<?php echo hsc($property->propertyName);?>"<?php echo ($property->getPropertyDefinition('listingwidth')) ? ' style="width:'.hsc($property->getPropertyDefinition('listingwidth')).'"' : '';?>>
 					<?php echo $property->getHeaderCellContentInListingTable($this->orderingInfo);?>
 				</th>
 			<?php } ?>

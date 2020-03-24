@@ -5,7 +5,7 @@ defined('CB_VALID_ENTRY') or die();
  */
 ?>
 
-<div <?php echo $this->getViewAttributes();?> data-return-field-id="<?php echo hsc($this->returnFieldId);?>">
+<div <?php echo $this->getViewAttributes();?>>
 
 	<div id="buttons">
 

@@ -775,4 +775,41 @@ class KenedoPropertyImage extends KenedoProperty {
 
 	}
 
+	/**
+	 * Experimental function - not to be used yet
+	 * @throws Exception
+	 */
+	function recreateMutations() {
+
+		$records = $this->model->getRecords();
+		$missingFiles = [];
+
+		// Check for mutations
+		$mutations = $this->getPropertyDefinition('mutations', array());
+		$baseDir = $this->getPropertyDefinition('dirBase');
+
+		foreach ($records as $record) {
+
+			$fileName = $record->{$this->propertyName};
+
+			if (!is_file($baseDir.'/'.$fileName)) {
+				$missingFiles[] = $fileName;
+				continue;
+			}
+
+			if (count($mutations)) {
+
+				// Prepare all file names
+				$mutationFileNames = $this->getMutationFileNames($fileName);
+
+				// Go through all mutations and make them
+				foreach ($mutations as $mutationName => $mutation) {
+					$this->makeMutation($fileName, $mutationFileNames[$mutationName], $mutation['mode'], $mutation['params']);
+				}
+			}
+
+		}
+
+	}
+
 }

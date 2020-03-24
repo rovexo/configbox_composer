@@ -20,7 +20,7 @@ class ConfigboxViewAdminconfig extends KenedoView {
 
 	protected function prepareTemplateVarsForm() {
 
-		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&format=raw', false);
+		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&output_mode=view_only', false);
 
 		$model = $this->getDefaultModel();
 		$this->record = $model->getRecord(1);

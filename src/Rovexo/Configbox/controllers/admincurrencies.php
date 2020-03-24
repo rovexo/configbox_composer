@@ -32,19 +32,79 @@ class ConfigboxControllerAdmincurrencies extends KenedoController {
 	}
 	
 	function makeBase() {
+
+		// Check authorization, abort if negative
+		$this->isAuthorized() or $this->abortUnauthorized();
+
+		KenedoPlatform::p()->setDocumentMimeType('application/json');
+
 		$model = $this->getDefaultModel();
 		$id = KRequest::getInt('ids');
-		$model->makeBase($id);
-		$this->purgeCache();
-		parent::display();
+
+		if ($id == 0) {
+			echo ConfigboxJsonResponse::makeOne()
+				->setSuccess(false)
+				->setErrors([KText::_('CURRENCIES_FAILURE_MSG_MAKE_BASE_NO_RECORD_CHOSEN')])
+				->toJson();
+			return;
+		}
+
+		$success = $model->makeBase($id);
+
+		if ($success == true) {
+			$this->purgeCache();
+
+			echo ConfigboxJsonResponse::makeOne()
+				->setSuccess($success)
+				->setCustomData('messages', [KText::_('CURRENCIES_SUCCESS_MSG_MAKE_BASE')])
+				->toJson();
+
+		}
+		else {
+			echo ConfigboxJsonResponse::makeOne()
+				->setSuccess($success)
+				->setCustomData('messages', [KText::_('CURRENCIES_FAILURE_MSG_MAKE_BASE')])
+				->toJson();
+
+		}
+
 	}
 	
 	function makeDefault() {
+
+		// Check authorization, abort if negative
+		$this->isAuthorized() or $this->abortUnauthorized();
+
 		$model = $this->getDefaultModel();
 		$id = KRequest::getInt('ids');
-		$model->makeDefault($id);
-		$this->purgeCache();
-		parent::display();
+
+		KenedoPlatform::p()->setDocumentMimeType('application/json');
+
+		if ($id == 0) {
+			echo ConfigboxJsonResponse::makeOne()
+				->setSuccess(false)
+				->setErrors([KText::_('CURRENCIES_FAILURE_MSG_MAKE_DEFAULT_NO_RECORD_CHOSEN')])
+				->toJson();
+			return;
+		}
+
+		$success = $model->makeDefault($id);
+		if ($success == true) {
+			$this->purgeCache();
+
+			echo ConfigboxJsonResponse::makeOne()
+				->setSuccess($success)
+				->setCustomData('messages', [KText::_('CURRENCIES_SUCCESS_MSG_MAKE_DEFAULT')])
+				->toJson();
+
+		}
+		else {
+			echo ConfigboxJsonResponse::makeOne()
+				->setSuccess($success)
+				->setCustomData('messages', [KText::_('CURRENCIES_FAILURE_MSG_MAKE_DEFAULT')])
+				->toJson();
+
+		}
 	}
 	
 }

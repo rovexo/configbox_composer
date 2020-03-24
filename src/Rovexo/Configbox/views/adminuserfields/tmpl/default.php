@@ -2,6 +2,7 @@
 defined('CB_VALID_ENTRY') or die();
 /** @var $this ConfigboxViewAdminuserfields */
 ?>
+<div <?php echo $this->getViewAttributes();?>>
 <div id="view-<?php echo hsc($this->view);?>" class="<?php $this->renderViewCssClasses();?>">
 <form data-view="<?php echo hsc($this->view);?>" class="kenedo-details-form" method="post" enctype="multipart/form-data" action="<?php echo hsc($this->formAction);?>" data-record="<?php echo hsc(json_encode($this->record));?>" data-properties="<?php echo hsc(json_encode($this->properties));?>">
 
@@ -17,9 +18,6 @@ defined('CB_VALID_ENTRY') or die();
 
 	<br />
 	<p><?php echo KText::_('You can define which customer information has to be entered at checkout address entry and quotation requests. Certain fields are required by the system and cannot be changed.');?></p>
-	<p><?php echo KText::_('If you need to validate customer information you can enter regular expressions to check for valid input. Non-required fields are still being validated if the field is filled by the customer.');?></p>
-	<p><?php echo KText::_("Server Validation takes PCRE compatible regular expressions to check customer input.");?></p>
-	<p><?php echo KText::_("Browser validation takes JavaScript compatible expressions.");?></p>
 	<p><?php echo KText::_('Billing related information is only required if the billing address and delivery address differs.');?>
 	<br /><br />
 
@@ -32,10 +30,8 @@ defined('CB_VALID_ENTRY') or die();
 			<th colspan="2"><?php echo KText::_('Quotation');?></th>
 			<th colspan="2"><?php echo KText::_('Save');?></th>
 			<th colspan="2"><?php echo KText::_('Account');?></th>
-
-			<th rowspan="2" class="browser-validation"><?php echo KText::_('Browser Validation');?></th>
-			<th rowspan="2" class="server-validation"><?php echo KText::_('Server Validation');?></th>
 			<th style="display:none">&nbsp;</th>
+
 		</tr>
 
 		<tr>
@@ -72,13 +68,8 @@ defined('CB_VALID_ENTRY') or die();
 				<td class="show-profile"><input type="checkbox" name="data[<?php echo $userField->id;?>][show_profile]" value="1" <?php echo ($userField->show_profile) ? 'checked="checked"':'';?> /></td>
 				<td class="require-profile"><input type="checkbox" name="data[<?php echo $userField->id;?>][require_profile]" value="1" <?php echo ($userField->require_profile) ? 'checked="checked"':'';?> /></td>
 
-				<td class="browser-validation"><input type="text" name="data[<?php echo $userField->id;?>][validation_browser]" value="<?php echo hsc($userField->validation_browser);?>" /></td>
-				<td class="server-validation">
-					<input type="text" name="data[<?php echo $userField->id;?>][validation_server]" value="<?php echo hsc($userField->validation_server);?>" />
-					<span class="loading-symbol"></span>
-				</td>
 				<td style="display:none">
-					<input type="hidden" name="data[<?php echo $userField->id;?>][field_name]" value="<?php echo hsc($userField->field_name);?>" />
+					<input type="hidden" name="data[<?php echo intval($userField->id);?>][field_name]" value="<?php echo hsc($userField->field_name);?>" />
 				</td>
 			</tr>
 		<?php } ?>
@@ -90,10 +81,6 @@ defined('CB_VALID_ENTRY') or die();
 		<input type="hidden" id="option" 		name="option" 			value="<?php echo hsc($this->component);?>" />
 		<input type="hidden" id="controller"	name="controller" 		value="<?php echo hsc($this->controllerName);?>" />
 		<input type="hidden" id="task" 			name="task" 			value="" />
-		<input type="hidden" id="ajax_sub_view" name="ajax_sub_view" 	value="<?php echo ($this->isAjaxSubview()) ? '1':'0';?>" />
-		<input type="hidden" id="in_modal"		name="in_modal" 		value="<?php echo ($this->isInModal()) ? '1':'0';?>" />
-		<input type="hidden" id="tmpl"			name="tmpl" 			value="component" />
-		<input type="hidden" id="format"		name="format" 			value="raw" />
 		<input type="hidden" id="lang"			name="lang" 			value="<?php echo hsc(KenedoPlatform::p()->getLanguageUrlCode());?>" />
 		<!-- unencoded return url "<?php echo $this->returnUrl;?>" -->
 		<input type="hidden" id="return" 		name="return" 			value="<?php echo KLink::base64UrlEncode($this->returnUrl);?>" />
@@ -110,4 +97,5 @@ defined('CB_VALID_ENTRY') or die();
 	</div>
 	
 </form>
+</div>
 </div>

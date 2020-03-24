@@ -786,19 +786,6 @@ class ConfigboxModelAdmincustomers extends KenedoModel {
 					}
 					break;
 
-				default:
-					$validationExpression = trim($fieldDefinition->validation_server);
-					if ($validationExpression) {
-						$res = preg_match($validationExpression, $value);
-						if (!$res) {
-							$validationIssues[] = array(
-								'fieldName' => $fieldName,
-								'errorCode' => 'invalid_value',
-								'message' => KText::sprintf('%s is invalid.', $fieldTranslations[$fieldName]),
-							);
-						}
-					}
-					break;
 			}
 
 

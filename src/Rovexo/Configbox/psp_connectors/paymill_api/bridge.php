@@ -19,16 +19,11 @@ else {
 
 <div class="payment-form row">
 	<div class="col-md-6 col-md-offset-3">
-
-
 		<div class="paymill-payment-info">
 			<?php echo $this->orderRecord->payment->description; ?>
 		</div>
-
 		<div class="payment-form-credit-card">
-
 			<div class="form-items">
-
 				<div class="form-item form-item-card-number">
 					<label class="label-card-number" for="cc-card-number"><?php echo KText::_('Credit Card');?></label>
 					<input class="form-control input-card-number" id="cc-card-number" type="text" value="<?php echo ($testMode) ? '4111111111111111':'';?>" />
@@ -42,8 +37,6 @@ else {
 						</div>
 					</div>
 					<div class="col-xs-6">
-
-
 						<label class="label-expiry" for="cc-card-expiry-month"><?php echo KText::_('Valid until');?></label>
 
 						<div class="row">
@@ -55,8 +48,7 @@ else {
 								</select>
 							</div>
 							<div class="col-xs-6">
-								<label class="sr-only" for="cc-card-expiry-year">Year</label>
-								<select class="input-card-expiry-year form-control" id="cc-card-expiry-year">
+								<select class="input-card-expiry-year form-control">
 									<?php $selected = date("Y") + 1;?>
 									<?php for ($i = date("Y"); $i <= (date("Y") + 15); $i++) { ?>
 										<option value="<?php echo $i;?>"<?php echo ($i == $selected) ? ' selected="selected"':'';?>><?php echo $i;?></option>
@@ -77,228 +69,200 @@ else {
 			<div class="payment-feedback"></div>
 
 			<div class="form-buttons">
-				<a class="trigger-capture-payment btn btn-primary" type="submit"><span class="btn-text"><?php echo KText::_('Pay');?></span></a>
+				<a class="trigger-capture-payment btn btn-primary"><?php echo KText::_('Pay');?></a>
 			</div>
-
 		</div>
-
 	</div>
 </div>
 
 <div class="clear"></div>
 
-<script type="text/javascript" src="https://bridge.paymill.com/"></script>
-
-
 <script type="text/javascript">
-//TODO: see how to make this AMD-like
-// Set the public key
-var PAYMILL_PUBLIC_KEY = '<?php echo hsc($apiKey);?>';
 
+	cbrequire(['cbj', 'configbox/server'], function(cbj, server) {
 
-var formlang = 'dummy';
+		// Show the payment form, hide other buttons
+		cbj('.wrapper-psp-bridge').show();
+		cbj('.button-back-to-cart').hide();
+		cbj('.trigger-place-order').hide();
 
-//Creditcard
-var translation = [];
-translation[formlang] = {};
-translation[formlang]["error"] = {};
-translation[formlang]["error"]["form"] = {};
-translation[formlang]["error"]["form"]["card-paymentname"] = '<?php echo KText::_('Credit card');?>';
-translation[formlang]["error"]["form"]["card-number"] = '<?php echo KText::_('Card number');?>';
-translation[formlang]["error"]["form"]["card-cvc"] = '<?php echo KText::_('CVC');?>';
-translation[formlang]["error"]["form"]["card-holdername"] = '<?php echo KText::_('Card holder');?>';
-translation[formlang]["error"]["form"]["card-expiry"] = '<?php echo KText::_('Valid until');?>';
-translation[formlang]["error"]["form"]["amount"] = '<?php echo KText::_('Amount');?>';
-translation[formlang]["error"]["form"]["currency"] = '<?php echo KText::_('Currency');?>';
-translation[formlang]["error"]["form"]["submit-button"] = '<?php echo KText::_('Submit');?>';
+		cbj('#agreement-terms').prop('disabled', true);
+		cbj('#agreement-refund-policy').prop('disabled', true);
 
-//Elv
-translation[formlang]["error"]["form"]["elv-paymentname"] = '<?php echo KText::_('Direct Debit');?>';
-translation[formlang]["error"]["form"]["elv-account"] = '<?php echo KText::_('Account number');?>';
-translation[formlang]["error"]["form"]["elv-holdername"] = '<?php echo KText::_('Account holder');?>';
-translation[formlang]["error"]["form"]["elv-bankcode"] = '<?php echo KText::_('Bankcode');?>';
-
-//Error
-translation[formlang]["error"] = {};
-translation[formlang]["error"]["field_invalid_card_number"] = '<?php echo KText::_('Invalid card number.');?>';
-translation[formlang]["error"]["field_invalid_card_cvc"] = '<?php echo KText::_('Invalid CVC.');?>';
-translation[formlang]["error"]["field_invalid_card_exp"] = '<?php echo KText::_('Invalid expiration date.');?>';
-translation[formlang]["error"]["field_invalid_card_holder"] = '<?php echo KText::_('Please enter the card holders name.');?>';
-translation[formlang]["error"]["invalid-elv-holdername"] = '<?php echo KText::_('Please enter the account holders name.');?>';
-translation[formlang]["error"]["invalid-elv-accountnumber"] = '<?php echo KText::_('Please enter a valid account number.');?>';
-translation[formlang]["error"]["invalid-elv-bankcode"] = '<?php echo KText::_('Please enter a valid bank code.');?>';
-
-
-if (typeof(com_configbox) == 'undefined') {
-	com_configbox = {};
-}
-
-com_configbox.amount = <?php echo number_format($this->orderRecord->payableAmount,2);?>;
-com_configbox.amountInt = <?php echo number_format($this->orderRecord->payableAmount,2) * 100;?>;
-com_configbox.currencyCode = '<?php echo hsc($this->orderRecord->currency->code);?>';
-com_configbox.successUrl = '<?php echo $this->successUrl;?>';
-
-cbrequire(['cbj'], function(cbj) {
-
-	// Show the payment form, hide other buttons
-	cbj('.wrapper-psp-bridge').show();
-	cbj('.button-back-to-cart').hide();
-	cbj('.trigger-place-order').hide();
-
-	cbj('#agreement-terms').prop('disabled',true);
-	cbj('#agreement-refund-policy').prop('disabled',true);
-
-	if (typeof(cbj.scrollTo) != 'undefined') {
-		cbj.scrollTo('.wrapper-psp-bridge', 800);
-	}
-
-
-	cbj(document).on('click', '.trigger-capture-payment', function(){
-
-		// Block clicks while processing
-		if (cbj(this).hasClass('processing')) {
-			return;
+		if (typeof (cbj.scrollTo) != 'undefined') {
+			cbj.scrollTo('.wrapper-psp-bridge', 800);
 		}
 
-		// Set the CSS class flag for processing
-		cbj(this).addClass('processing');
+		cbj(document).on('click', '.trigger-capture-payment', function() {
 
-		// Set the language for translations
-		var formlang = 'dummy';
+			// Block clicks while processing
+			if (cbj(this).hasClass('processing')) {
+				return;
+			}
 
-		// Prepare the params for the token request
-		var params = {
-			amount_int	: com_configbox.amountInt,
-			currency	: com_configbox.currencyCode,
-			number		: cbj(this).closest('.payment-form').find('.input-card-number').val(),
-			exp_month	: cbj(this).closest('.payment-form').find('.input-card-expiry-month').val(),
-			exp_year	: cbj(this).closest('.payment-form').find('.input-card-expiry-year').val(),
-			cvc			: cbj(this).closest('.payment-form').find('.input-card-cvc').val(),
-			cardholder	: cbj(this).closest('.payment-form').find('.input-card-holder').val()
-		};
+			// Set the CSS class flag for processing
+			cbj(this).addClass('processing');
 
-		// Initialize validation
-		cbj('.form-item.invalid').removeClass('invalid');
-		var dataValid = true;
+			cbj.getScript('https://bridge.paymill.com/', function() {
 
-		// Check card number
-		if (paymill.validateCardNumber(params.number) == false) {
-			cbj(".payment-feedback").text(translation[formlang]["error"]["field_invalid_card_number"]);
-			cbj('.form-item-card-number').addClass('invalid');
-			dataValid = false;
-		}
+				var formlang = '<?php echo KText::getLanguageCode();?>';
 
-		// Check CVC
-		if (cbj.trim(params.cvc) == '') {
-			cbj(".payment-feedback").text(translation[formlang]["error"]["field_invalid_card_cvc"]);
-			cbj('.form-item-card-cvc').addClass('invalid');
-			dataValid = false;
-		}
+				var translation = [];
+				translation[formlang] = {};
+				translation[formlang]["error"] = {};
+				translation[formlang]["error"]["form"] = {};
+				translation[formlang]["error"]["form"]["card-paymentname"] = '<?php echo KText::_('Credit card');?>';
+				translation[formlang]["error"]["form"]["card-number"] = '<?php echo KText::_('Card number');?>';
+				translation[formlang]["error"]["form"]["card-cvc"] = '<?php echo KText::_('CVC');?>';
+				translation[formlang]["error"]["form"]["card-holdername"] = '<?php echo KText::_('Card holder');?>';
+				translation[formlang]["error"]["form"]["card-expiry"] = '<?php echo KText::_('Valid until');?>';
+				translation[formlang]["error"]["form"]["amount"] = '<?php echo KText::_('Amount');?>';
+				translation[formlang]["error"]["form"]["currency"] = '<?php echo KText::_('Currency');?>';
+				translation[formlang]["error"]["form"]["submit-button"] = '<?php echo KText::_('Submit');?>';
 
-		// Check card holder
-		if (cbj.trim(params.cardholder) == '') {
-			cbj(".payment-feedback").text(translation[formlang]["error"]["field_invalid_card_holder"]);
-			cbj('.form-item-card-holder').addClass('invalid');
-			dataValid = false;
-		}
+				translation[formlang]["error"]["form"]["elv-paymentname"] = '<?php echo KText::_('Direct Debit');?>';
+				translation[formlang]["error"]["form"]["elv-account"] = '<?php echo KText::_('Account number');?>';
+				translation[formlang]["error"]["form"]["elv-holdername"] = '<?php echo KText::_('Account holder');?>';
+				translation[formlang]["error"]["form"]["elv-bankcode"] = '<?php echo KText::_('Bankcode');?>';
 
-		// Check expiry date
-		if (paymill.validateExpiry(params.exp_month, params.exp_year) == false) {
-			cbj(".payment-feedback").text(translation[formlang]["error"]["field_invalid_card_exp"]);
-			cbj('.form-item-card-expiry').addClass('invalid');
-			dataValid = false;
-		}
+				translation[formlang]["error"] = {};
+				translation[formlang]["error"]["field_invalid_card_number"] = '<?php echo KText::_('Invalid card number.');?>';
+				translation[formlang]["error"]["field_invalid_card_cvc"] = '<?php echo KText::_('Invalid CVC.');?>';
+				translation[formlang]["error"]["field_invalid_card_exp"] = '<?php echo KText::_('Invalid expiration date.');?>';
+				translation[formlang]["error"]["field_invalid_card_holder"] = '<?php echo KText::_('Please enter the card holders name.');?>';
+				translation[formlang]["error"]["invalid-elv-holdername"] = '<?php echo KText::_('Please enter the account holders name.');?>';
+				translation[formlang]["error"]["invalid-elv-accountnumber"] = '<?php echo KText::_('Please enter a valid account number.');?>';
+				translation[formlang]["error"]["invalid-elv-bankcode"] = '<?php echo KText::_('Please enter a valid bank code.');?>';
 
-		// Show the payment feedback and bounce
-		if (dataValid == false) {
-			cbj(this).removeClass('processing');
-			cbj(".payment-feedback").show();
-			return;
-		}
-		else {
-			cbj(".payment-feedback").hide();
-		}
+				// Set the public key
+				window.PAYMILL_PUBLIC_KEY = '<?php echo hsc($apiKey);?>';
 
-		// Get the token
-		paymill.createToken(params, function(error, result){
+				// Prepare the params for the token request
+				var params = {
+					amount_int	: <?php echo number_format($this->orderRecord->payableAmount, 2) * 100;?>,
+					currency	: '<?php echo hsc($this->orderRecord->currency->code);?>',
+					number		: cbj('.payment-form').find('.input-card-number').val(),
+					exp_month	: cbj('.payment-form').find('.input-card-expiry-month').val(),
+					exp_year	: cbj('.payment-form').find('.input-card-expiry-year').val(),
+					cvc			: cbj('.payment-form').find('.input-card-cvc').val(),
+					cardholder	: cbj('.payment-form').find('.input-card-holder').val()
+				};
 
+				console.log(params);
 
-			if (error) {
-
-				// Show feedback on errors
-				cbj(".payment-feedback").text(translation[formlang]["error"][error.apierror]).show();
-
-				// Init the validation flags
+				// Initialize validation
 				cbj('.form-item.invalid').removeClass('invalid');
+				var dataValid = true;
 
-				// Mark the invalid fields
-				switch (error.apierror) {
-					case 'field_invalid_card_number':
-						cbj('.form-item-card-number').addClass('invalid');
-						break;
-
-					case 'field_invalid_card_cvc':
-						cbj('.form-item-card-cvc').addClass('invalid');
-						break;
-
-					case 'field_invalid_card_exp':
-						cbj('.form-item-card-expiry').addClass('invalid');
-						break;
+				// Check card number
+				if (paymill.validateCardNumber(params.number) === false) {
+					cbj(".payment-feedback").text(translation[formlang]["error"]["field_invalid_card_number"]);
+					cbj('.form-item-card-number').addClass('invalid');
+					dataValid = false;
 				}
 
-				cbj(".trigger-capture-payment").removeClass('processing');
-			}
-			else {
+				// Check CVC
+				if (cbj.trim(params.cvc) === '') {
+					cbj(".payment-feedback").text(translation[formlang]["error"]["field_invalid_card_cvc"]);
+					cbj('.form-item-card-cvc').addClass('invalid');
+					dataValid = false;
+				}
 
-				// Hide any leftover feedback
-				cbj(".payment-feedback").hide();
+				// Check card holder
+				if (cbj.trim(params.cardholder) === '') {
+					cbj(".payment-feedback").text(translation[formlang]["error"]["field_invalid_card_holder"]);
+					cbj('.form-item-card-holder').addClass('invalid');
+					dataValid = false;
+				}
 
-				// Go and capture that payment
-				cbj.ajax({
-					url: com_configbox.entryFile,
-					dataType: 'json',
+				// Check expiry date
+				if (paymill.validateExpiry(params.exp_month, params.exp_year) === false) {
+					cbj(".payment-feedback").text(translation[formlang]["error"]["field_invalid_card_exp"]);
+					cbj('.form-item-card-expiry').addClass('invalid');
+					dataValid = false;
+				}
 
-					data: {
-						option			: 'com_configbox',
-						controller		: 'payments',
-						task			: 'capturePayment',
-						lang			: com_configbox.langSuffix,
-						format			: 'raw',
-						tmpl			: 'component',
-						token			: result.token,
-						connector_name 	: 'paymill_api'
-					},
+				// Show the payment feedback and bounce
+				if (dataValid === false) {
+					cbj(this).removeClass('processing');
+					cbj(".payment-feedback").show();
+					return;
+				}
+				else {
+					cbj(".payment-feedback").hide();
+				}
 
-					success: function(data) {
+				// Get the token
+				paymill.createToken(params, function (error, tokenResponse) {
+
+					console.log('token created');
+
+					if (error) {
+
+						// Show feedback on errors
+						cbj(".payment-feedback").text(translation[formlang]["error"][error.apierror]).show();
+
+						// Init the validation flags
+						cbj('.form-item.invalid').removeClass('invalid');
+
+						// Mark the invalid fields
+						switch (error.apierror) {
+							case 'field_invalid_card_number':
+								cbj('.form-item-card-number').addClass('invalid');
+								break;
+
+							case 'field_invalid_card_cvc':
+								cbj('.form-item-card-cvc').addClass('invalid');
+								break;
+
+							case 'field_invalid_card_exp':
+								cbj('.form-item-card-expiry').addClass('invalid');
+								break;
+						}
 
 						cbj(".trigger-capture-payment").removeClass('processing');
+					} else {
 
-						// Go to the successUrl
-						if (data.success == true) {
-							window.location.href = com_configbox.successUrl;
-						}
-						// Show the feedback
-						else {
-							if (data.errors) {
-								cbj('.payment-feedback').text(data.errors.join('<br />')).show();
-							}
-							else {
-								cbj('.payment-feedback').hide();
-							}
-						}
+						// Hide any leftover feedback
+						cbj(".payment-feedback").hide();
+
+						var data = {
+							token: tokenResponse.token,
+							connector_name: 'paymill_api'
+						};
+
+						console.log('capturing payment');
+
+						server.makeRequest('payments', 'capturePayment', data)
+
+							.done(function(response) {
+
+								console.log('payment capture response ready');
+
+								cbj(".trigger-capture-payment").removeClass('processing');
+
+								// Go to the successUrl
+								if (response.success === true) {
+									window.location.href = '<?php echo $this->successUrl;?>';
+								}
+								// Show the feedback
+								else {
+									if (response.errors) {
+										cbj('.payment-feedback').text(response.errors.join('<br />'));
+									} else {
+										cbj('.payment-feedback').hide();
+									}
+								}
+
+							});
+
 					}
 
 				});
 
-			}
+			});
 
 		});
 
-		return;
-
 	});
-
-
-});
-
 </script>

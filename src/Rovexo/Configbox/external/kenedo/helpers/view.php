@@ -10,6 +10,11 @@ class KenedoViewHelper {
 	 */
 	static function getGroupingKey($properties) {
 		$groupKey = NULL;
+
+		if (empty($properties)) {
+			return $groupKey;
+		}
+
 		foreach ($properties as $property) {
 			if ($property->getPropertyDefinition('type') == 'ordering') {
 				$groupKey = $property->getPropertyDefinition('group');
@@ -157,16 +162,19 @@ class KenedoViewHelper {
 		<div class="kenedo-tasks">
 			<ul class="kenedo-task-list">
 				<?php foreach ($taskItems as $task) {
-					$cssClasses = 'btn '.( (!empty($task['primary'])) ? ' btn-primary' : 'btn-default');
+					$cssClasses = 'trigger-kenedo-form-task btn '.( (!empty($task['primary'])) ? ' btn-primary' : 'btn-default');
 					?>
 					<?php if (!empty($task['link'])) { ?>
-						<li class="link"><a href="<?php echo $task['link'];?>" class="<?php echo hsc($cssClasses);?> trigger-open-modal"><?php echo hsc($task['title']);?></a></li>
+						<li class="link">
+							<a href="<?php echo $task['link'];?>" class="<?php echo hsc($cssClasses);?> trigger-open-modal"><?php echo hsc($task['title']);?></a>
+						</li>
 					<?php } else { ?>
-						<li class="task task-<?php echo hsc($task['task'])?><?php echo (!empty($task['non-ajax'])) ? ' non-ajax':'';?>"><a class="<?php echo hsc($cssClasses);?>"><?php echo hsc($task['title']);?></a></li>
+						<li class="task task-<?php echo hsc($task['task']);?><?php echo (!empty($task['non-ajax'])) ? ' non-ajax':'';?>">
+							<a data-task="<?php echo hsc($task['task']);?>" class="<?php echo hsc($cssClasses);?>"><?php echo hsc($task['title']);?></a>
+						</li>
 					<?php } ?>
 				<?php } ?>
 			</ul>
-			<div class="clear"></div>
 		</div>
 		<?php 
 		$tabs = ob_get_clean();
@@ -216,7 +224,9 @@ class KenedoViewHelper {
 				<div class="pagination-label"><?php echo KText::_('Go to page');?></div>
 				<ul>
 					<?php foreach ($pageLinks as $pageLink) { ?>
-						<li <?php echo ($pageLink['start'] == $listingInfo['start']) ? 'class="active"':'';?>><a class="page-start-<?php echo (int)$pageLink['start'];?>"><?php echo (int)$pageLink['page'];?></a></li>
+						<li <?php echo ($pageLink['start'] == $listingInfo['start']) ? 'class="active"':'';?>>
+							<a class="trigger-change-page" data-start="<?php echo intval($pageLink['start']);?>"><?php echo intval($pageLink['page']);?></a>
+						</li>
 					<?php } ?>
 				</ul>
 			</div>

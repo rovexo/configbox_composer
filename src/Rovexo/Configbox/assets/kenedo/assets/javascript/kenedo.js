@@ -10,10 +10,55 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 	 */
 	var kenedo = {
 
-		initAdminPage : function() {
+		initAdminPageEach: function(view) {
 
-			this.initNewContent(cbj('.view-admin, .view-blank'));
-			this.afterInitNewContent(cbj('.view-admin, .view-blank'));
+			// Attach task button listeners to lists
+			view.find('.kenedo-listing-form:not(.default-handlers-attached)').each(function() {
+
+				var list = cbj(this);
+
+				list.find('.trigger-kenedo-form-task').each(function() {
+					cbj(this).on('click', kenedo.onListTaskButtonClicked);
+				});
+
+				list.on('cbListTaskTriggered', kenedo.onListTaskTriggered);
+				list.on('cbListTaskResponseReceived', kenedo.onListTaskResponseReceived);
+
+				list.addClass('default-handlers-attached');
+				list.trigger('cbDefaultHandlersAttached');
+
+			});
+
+			// Attach task button listeners to detail forms
+			view.find('.kenedo-details-form:not(.default-handlers-attached)').each(function() {
+
+				var form = cbj(this);
+
+				form.find('.trigger-kenedo-form-task').each(function() {
+					cbj(this).on('click', kenedo.onFormTaskButtonClicked);
+				});
+
+				form.on('cbFormTaskTriggered', kenedo.onFormTaskTriggered);
+				form.on('cbFormTaskResponseReceived', kenedo.onFormTaskResponseReceived);
+
+				form.addClass('default-handlers-attached');
+				form.trigger('cbDefaultHandlersAttached');
+
+			});
+
+		},
+
+		initAdminPageOnce: function() {
+
+			// Event handlers for common Kenedo form and listing tasks
+			cbj(document).on('click',  '.kenedo-listing-form .trigger-order-list', kenedo.onChangeListOrder);
+			cbj(document).on('click',  '.kenedo-listing-form .trigger-change-page', kenedo.onChangeListPage);
+			cbj(document).on('change', '.kenedo-listing-form .kenedo-limit-select', kenedo.onChangeListLimit);
+			cbj(document).on('change', '.kenedo-listing-form .listing-filter', kenedo.onChangeListFilters);
+			cbj(document).on('click',  '.kenedo-listing-form .trigger-toggle-record-activation', kenedo.onToggleRecordActivation);
+			cbj(document).on('click', '.kenedo-listing-form .trigger-store-record-ordering', kenedo.onStoreOrdering);
+			cbj(document).on('click', '.kenedo-listing-form .kenedo-check-all-items', kenedo.toggleCheckboxes);
+			cbj(document).on('click', '.kenedo-listing-form .listing-link', kenedo.openListingLink);
 
 			window.addEventListener('popstate', function(event) {
 
@@ -27,54 +72,30 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			// ajax-target-links do a pushState and load via loadSubview
 			cbj(document).on('click', '.ajax-target-link', function(event) {
 
+				event.preventDefault();
+
 				// If the user held shift or the Win/Cmd button, let the browser open a new tab/window
-				if (event.shiftKey == true && event.metaKey == true) {
+				if (event.shiftKey === true && event.metaKey === true) {
 					return;
 				}
 
-				// Otherwise do the push-state loadSubView thing
-				kenedo.loadSubview( cbj(this).attr('href') );
-				event.preventDefault();
+				var url = cbj(this).attr('href');
+				kenedo.loadSubview(url);
 
 			});
 
 			cbj(document).on('click', '.task-toggle-help', function() {
-				cbj(this).toggleClass('active');
-				cbj('.kenedo-details-form').toggleClass('show-help');
+				var btn = cbj(this);
+				btn.toggleClass('active');
+				btn.closest('.kenedo-details-form').toggleClass('show-help');
 			});
+
 
 			// Handler for opening modals on clicks on .trigger-open-modal
-			cbj(document).on('click', '.trigger-open-modal', function(event) {
-
-				event.preventDefault();
-
-				var modalWidth	= cbj(this).data('modal-width');
-				var modalHeight	= cbj(this).data('modal-height');
-				var href = cbj(this).attr('href');
-
-				if (!modalWidth) {
-					modalWidth = 900;
-				}
-				if (!modalHeight) {
-					modalHeight = 600;
-				}
-
-				cbrequire(['cbj.colorbox'], function() {
-					cbj.colorbox({
-						transition 		: 'fade',
-						href 			: href,
-						overlayClose 	: true,
-						iframe 			: true,
-						fastIframe		: false,
-						width			: modalWidth,
-						height			: modalHeight
-					});
-				});
-
-			});
+			cbj(document).on('click', '.trigger-open-modal', kenedo.onOpenColorBoxModal);
 
 			// New tab links
-			cbj(document).on('click','.kenedo-new-tab, .new-tab', function(event) {
+			cbj(document).on('click','.kenedo-new-tab', function(event) {
 				window.open(this.href);
 				event.preventDefault();
 			});
@@ -93,9 +114,10 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			// Trigger event when form content changes
 			cbj(document).on('change','.kenedo-property :input', function(){
 
+				var form = cbj(this).closest('.kenedo-details-form');
 				var propName = cbj(this).closest('.kenedo-property').attr('id').replace('property-name-','');
 				var value = cbj(this).val();
-				var record = cbj(this).closest('.kenedo-details-form').data('record');
+				var record = form.data('record');
 
 				if (typeof(record[propName]) != 'undefined') {
 					record[propName] = value;
@@ -104,12 +126,12 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				/**
 				 * @event kenedoFormDataChanged
 				 */
-				cbj(this).closest('.kenedo-details-form').trigger('kenedoFormDataChanged', [record, propName, value]);
+				cbj(this).closest('.kenedo-details-form').trigger('kenedoFormDataChanged', [record, form]);
 
 			});
 
 			// Toggle form field groups display
-			cbj(document).on('click','.property-group-using-toggles>.property-group-legend', function (){
+			cbj(document).on('click','.property-group-using-toggles>.property-group-legend', function() {
 
 				if (cbj(this).closest('.property-group').hasClass('property-group-opened')) {
 					cbj(this).closest('.property-group').removeClass('property-group-opened').addClass('property-group-closed');
@@ -120,12 +142,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 					cbj(this).closest('.property-group').find('.property-group-toggle-state').val('opened');
 				}
 
-			});
-
-			// JOIN LINKS: Show the right edit link when join selects are changed
-			cbj(document).on('change', '.join-select', function(){
-				cbj(this).closest('.property-body').find('.join-link').hide();
-				cbj(this).closest('.property-body').find('.join-link-' + cbj(this).val() ).show();
 			});
 
 			// Link to show the file upload input for file upload fields
@@ -157,23 +173,13 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 			});
 
-			// Event handlers for common Kenedo form and listing tasks
-			cbj(document).on('click', '.order-property', 									kenedo.changeListingOrder );
-			cbj(document).on('change','.listing-filter', 									kenedo.changeListingFilters );
-			cbj(document).on('click', '.link-save-item-ordering', 							kenedo.storeOrdering );
-			cbj(document).on('click', '.kenedo-check-all-items', 							kenedo.toggleCheckboxes );
-			cbj(document).on('click', '.kenedo-pagination-list a', 							kenedo.changeListingStart );
-			cbj(document).on('change','.kenedo-limit-select', 								kenedo.changeListingLimit );
-			cbj(document).on('click', '.kenedo-trigger-toggle-active', 						kenedo.toggleActive );
-			cbj(document).on('click', '.kenedo-details-form .kenedo-task-list .task', 		kenedo.executeFormTask );
-			cbj(document).on('click', '.kenedo-listing-form .kenedo-task-list .task', 		kenedo.executeListingTask );
-			cbj(document).on('click', '.listing-link', 										kenedo.openListingLink );
+
 
 			/* SORTABLE SETUP - START */
 
 			// Show the save button for ordering after a change in ordering
 			cbj(document).on('keyup', '.ordering-text-field', function() {
-				cbj(this).closest('.kenedo-listing').find('.link-save-item-ordering').show();
+				cbj(this).closest('.kenedo-listing').find('.trigger-store-record-ordering').show();
 			});
 
 			/* SORTABLE SETUP - END */
@@ -217,30 +223,386 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 		},
 
+		onChangeListOrder: function() {
+			var link = cbj(this);
+			var list = link.closest('.kenedo-listing-form');
+			var propertyName = link.data('property-name');
+			var currentDir = link.data('current-direction');
+			var direction = (currentDir === '' || currentDir === 'desc') ? 'asc':'desc';
+
+			kenedo.setListParameter(list, 'listing_order_property_name', propertyName);
+			kenedo.setListParameter(list, 'listing_order_dir', direction);
+			kenedo.refreshList(list);
+		},
+
+		onChangeListPage: function() {
+			var link = cbj(this);
+			var list = link.closest('.kenedo-listing-form');
+			var start = parseInt(link.data('start'));
+			kenedo.setListParameter(list, 'limitstart', start);
+			kenedo.refreshList(list);
+		},
+
+		onChangeListLimit: function() {
+			var select = cbj(this);
+			var list = select.closest('.kenedo-listing-form');
+			kenedo.setListParameter(list, 'limit', select.val());
+			kenedo.refreshList(list);
+		},
+
+		onChangeListFilters: function() {
+			var list = cbj(this).closest('.kenedo-listing-form');
+			kenedo.refreshList(list);
+		},
+
+
+		setListParameter: function(list, key, value) {
+			list.find('.listing-data[data-key=' + key + ']').data('value', value);
+		},
+
+		/**
+		 *
+		 * @param {jQuery} list
+		 * @param {String} key
+		 * @param {=mixed} fallback
+		 * @returns {*}
+		 */
+		getListParameter: function(list, key, fallback) {
+			var value = list.find('.listing-data[data-key=' + key + ']').data('value');
+			if (typeof value === 'undefined') {
+				return fallback;
+			}
+			else {
+				return value;
+			}
+		},
+
+		getListParameters: function(list) {
+			var parameters = {};
+			list.find('.listing-data').each(function() {
+				var key = cbj(this).data('key');
+				parameters[key] = cbj(this).data('value');
+			});
+			return parameters;
+		},
+
+		getListFilters: function(list) {
+			var filters = {};
+			list.find('.listing-filter').each(function() {
+				var key = cbj(this).attr('name');
+				filters[key] = cbj(this).val();
+			});
+			return filters;
+		},
+
+		/**
+		 * Returns an array of IDs of currently checked list items in given kenedo list
+		 * @param {jQuery} list
+		 * @returns {Number[]}
+		 */
+		getCheckedListItemIds: function(list) {
+			var checkedIds = [];
+			list.find('.kenedo-item-checkbox').each(function() {
+				if (cbj(this).prop('checked') === true) {
+					checkedIds.push(cbj(this).val());
+				}
+			});
+			return checkedIds;
+		},
+
+		/**
+		 *
+		 * @param {jQuery} list Kenedo list to refresh
+		 * @param {=function} callback Optional callback function
+		 */
+		refreshList: function(list, callback) {
+			var params = kenedo.getListParameters(list);
+			var filters = kenedo.getListFilters(list);
+
+			var view = list.closest('.kenedo-view.cb-content');
+
+			var data = {};
+
+			cbj.each(params, function(key, value) {
+				data[key] = value;
+			});
+
+			cbj.each(filters, function(key, value) {
+				data[key] = value;
+			});
+
+			cbrequire(['configbox/server'], function(server) {
+				server.replaceHtml(
+					view,
+					params.controller,
+					params.task,
+					data)
+					.done(callback);
+			});
+		},
+
+		/**
+		 *
+		 * @param {jQuery} form Kenedo form to refresh
+		 * @param {=function} callback Optional callback function
+		 */
+		refreshForm: function(form, callback) {
+			var controller = kenedo.getFormParameter(form, 'controller');
+			var task = 'edit';
+			var data = {
+				'id': kenedo.getFormParameter(form, 'id'),
+				'return': kenedo.getFormParameter(form, 'return')
+			};
+			server.replaceHtml(form.closest('.kenedo-view'), controller, task, data)
+				.done(callback);
+		},
+
+		getFormParameter: function(form, key, fallback) {
+			var val = form.find(':input[name='+key+']').val();
+			if (typeof val === 'undefined' && typeof fallback !== 'undefined') {
+				return fallback;
+			}
+			else {
+				return val;
+			}
+		},
+
+		setFormParameter: function(form, key, value) {
+			form.find(':input[name='+key+']').val(value);
+		},
+
+		/**
+		 * @typedef {Object} taskInfo
+		 * @property {jQuery} btn
+		 * @property {string} task
+		 * @property {jQuery} form
+		 * @property {jQuery} list
+		 * @property {string} viewName
+		 * @property {Event} event
+		 *
+		 * @fires cbFormTaskTriggered
+		 * @param event
+		 */
+		onFormTaskButtonClicked: function(event) {
+
+			var btn = cbj(this);
+			var task = btn.data('task');
+			var form = btn.closest('.kenedo-details-form');
+			var viewName = form.data('view');
+
+			var taskInfo = {
+				btn: btn,
+				task: task,
+				form: form,
+				viewName: viewName,
+				event: event
+			};
+
+			if (btn.hasClass('disabled')) {
+				return;
+			}
+			btn.addClass('disabled');
+
+			kenedo.setFormParameter(form, 'task', task);
+
+			/**
+			 * @event cbFormTaskTriggered
+			 */
+			form.trigger('cbFormTaskTriggered', taskInfo);
+
+		},
+
+		/**
+		 *
+		 * @listens event:cbFormTaskTriggered
+		 * @param event
+		 * @param {taskInfo} taskInfo
+		 */
+		onFormTaskTriggered: function(event, taskInfo) {
+
+			switch (taskInfo.task) {
+				case 'cancel':
+
+					if (taskInfo.form.closest('.modal').length > 0) {
+						cbrequire(['cbj.bootstrap'], function() {
+							taskInfo.form.closest('.modal').modal('hide').find('.modal-content').html('');
+						});
+					}
+					else {
+						var returnUrlEncoded = taskInfo.form.find('input[name=return]').val();
+						if (returnUrlEncoded) {
+							window.location.href = kenedo.base64UrlDecode(returnUrlEncoded);
+						}
+					}
+					break;
+
+				case 'store':
+				case 'apply':
+				case 'storeAndNew':
+
+					cbrequire(['tinyMCE'], function(tinyMCE) {
+
+						tinyMCE.triggerSave();
+
+						var xhr = new XMLHttpRequest();
+						xhr.onload = function() {
+							/**
+							 * @event cbFormTaskResponseReceived
+							 */
+							taskInfo.form.trigger('cbFormTaskResponseReceived', [this, taskInfo]);
+						};
+						xhr.open("post", taskInfo.form[0].action, true);
+						xhr.send(new FormData(taskInfo.form[0]));
+
+					});
+					break;
+			}
+
+		},
+
+		/**
+		 * @listens event:cbFormTaskResponseReceived
+		 *
+		 * @param {event} event
+		 * @param {XMLHttpRequest} xhr
+		 * @param {taskInfo} taskInfo
+		 */
+		onFormTaskResponseReceived: function(event, xhr, taskInfo) {
+
+			try {
+				var data = JSON.parse(xhr.responseText);
+			}
+			catch(e) {
+				console.warn('Could not parse JSON response. Response text was: "' + xhr.responseText + '"');
+				console.warn('Error message follows:');
+				console.warn(e);
+				return;
+			}
+
+			taskInfo.btn.removeClass('disabled');
+
+			switch (taskInfo.task) {
+
+				case 'store':
+
+					if (data.success === false) {
+						kenedo.showResponseMessages(taskInfo.form, data.errors || [], data.messages || []);
+						return;
+					}
+
+					if (taskInfo.form.closest('.modal').length > 0) {
+						taskInfo.form.closest('.modal').modal('hide').find('.modal-content').html('');
+					}
+					else {
+
+						var url = kenedo.base64UrlDecode(kenedo.getFormParameter(taskInfo.form, 'return'));
+						var callback = function() {
+							var form = cbj('.kenedo-listing-form:first');
+							kenedo.showResponseMessages(form, data.errors || [], data.messages || []);
+						};
+
+						kenedo.loadSubview(url, null, callback);
+
+					}
+
+					break;
+
+				case 'storeAndNew':
+
+					kenedo.showResponseMessages(taskInfo.form, data.errors || [], data.messages || []);
+
+					if (data.success === true && data.data && data.data.id) {
+						kenedo.setFormParameter(taskInfo.form, 'id', '');
+					}
+
+					break;
+					
+				case 'apply':
+
+					if (data.success === false) {
+						kenedo.showResponseMessages(taskInfo.form, data.errors || [], data.messages || []);
+						return;
+					}
+
+					if (data.success === true && data.data && data.data.id) {
+						kenedo.setFormParameter(taskInfo.form, 'id', data.data.id);
+					}
+
+					kenedo.refreshForm(taskInfo.form, function() {
+						taskInfo.form = cbj('.kenedo-details-form:first');
+						kenedo.showResponseMessages(taskInfo.form, data.errors || [], data.messages || []);
+					});
+
+					break;
+
+			}
+
+			/**
+			 * @event cbFormTaskResponseReceivedGlobal
+			 */
+			cbj(document).trigger('cbFormTaskResponseReceivedGlobal', [xhr, taskInfo]);
+
+		},
+
+		showResponseMessages: function(form, errors, notices) {
+
+			var wrapper = form.find('.kenedo-messages:first');
+
+			wrapper.find('.kenedo-messages-error').html('<ul></ul>');
+			wrapper.find('.kenedo-messages-notice').html('<ul></ul>');
+
+			if (errors.length !== 0) {
+
+				cbj.each(errors, function(i, item) {
+					wrapper.find('.kenedo-messages-error ul').append('<li>'+item+'</li>');
+				});
+
+				wrapper.find('.kenedo-messages-error').show();
+
+				wrapper.find('.kenedo-messages-error').addClass('flash');
+				window.setTimeout(function(){
+					wrapper.find('.kenedo-messages-error').removeClass('flash');
+				}, 1000);
+			}
+
+			if (notices.length !== 0) {
+
+				cbj.each(notices, function(i, item) {
+					wrapper.find('.kenedo-messages-notice ul').append('<li>'+item+'</li>');
+				});
+
+				wrapper.find('.kenedo-messages-notice').show();
+
+				wrapper.find('.kenedo-messages-notice').addClass('flash');
+				window.setTimeout(function(){
+					wrapper.find('.kenedo-messages-notice').removeClass('flash');
+				}, 1000);
+			}
+
+			if (notices.length > 0 || errors.length > 0) {
+				wrapper.show();
+			}
+
+		},
+
+
 		/**
 		 * Loads a subview into the ajax target div (currently hard-coded as .configbox-ajax-target)
 		 * Takes care of things like of executing the subview's loading scripts
 		 * @param {(String|Event)} parameter - URL to load or event object (takes the URL from jQuery(this).attr('href') then)
-		 * @param {String=} targetSelector - CSS selector for the element to put the view in
+		 * @param {String=} targetSelector - CSS selector of the div that gets the view
 		 * @param {Function=} callbackFunction - Optional callback function
 		 * @param {Boolean=} skipPushState - Optional, defaults to false. Use true to avoid a pushState call
 		 */
 		loadSubview: function(parameter, targetSelector, callbackFunction, skipPushState) {
 
-			if (!targetSelector) {
-				targetSelector = '.configbox-ajax-target';
-			}
+			var selector = (targetSelector) ? targetSelector : '.configbox-ajax-target';
+
 			// The URL we will load eventually
 			var url;
 
 			// If used as a click handler, get the URL through cbj(this)
 			if (typeof(parameter) == 'object') {
-
-				// This is for listing links in intra-listings (i.e. lists in settings page)
-				// These open in modals, we prevent subview loading on the cheap here
-				if (cbj(this).closest('.intra-listing').length) {
-					return;
-				}
 
 				// Get the URL from the link
 				url = parameter.value;
@@ -248,7 +610,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			}
 
 			// If used as a regular function call, get the URL from the parameter
-			if (typeof(parameter) == 'string' && parameter != '') {
+			if (typeof(parameter) == 'string' && parameter !== '') {
 				url = parameter;
 			}
 
@@ -257,24 +619,24 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			}
 
 			// Change the history state and push one in (unless we deal with a load via back button)
-			if (skipPushState !== false) {
+			if (skipPushState === undefined || skipPushState === false) {
 				var state = {
 					isSubview: true,
 					url : url,
-					targetSelector: targetSelector,
-					callbackFunction: callbackFunction
+					targetSelector: selector
 				};
 
 				window.history.pushState(state, '', url);
 			}
 
-			// Add the ajax_sub_view parameter in case it's not there
-			if (url.indexOf('ajax_sub_view') == -1) {
-				if (server.config.platformName == 'magento') {
-					url += 'ajax_sub_view/1/format/raw';
+			// Add the output_mode query string param in case it is missing
+			if (url.indexOf('output_mode') === -1) {
+				if (server.config.platformName === 'magento' || server.config.platformName === 'magento2') {
+					url += 'output_mode/view_only';
 				}
 				else {
-					url += (url.indexOf('?') == -1) ? '?ajax_sub_view=1&format=raw' : '&ajax_sub_view=1&format=raw';
+					url += (url.indexOf('?') === -1) ? '?' : '&';
+					url += 'output_mode=view_only';
 				}
 			}
 
@@ -287,34 +649,31 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			// Load the sub view with a nice fade effect
 
 			// First fade out the current target area
-			cbj(targetSelector).animate( {'opacity':'.0'}, 200, function() {
+			cbj(selector).animate( {'opacity':'.0'}, 200, function() {
 
 				// Then load the new content into the target area (look careful - we're injecting only the first
 				// .kenedo-view element we find in the response.
-				cbj(targetSelector).load(url + ' .kenedo-view:first', function(responseText, textStatus, jqXHR){
+				cbj(selector).load(url + ' .kenedo-view:first', function(responseText, textStatus, jqXHR){
 
 					if (jqXHR.status !== 200) {
 
-						var text = '<div id="view-error" class="kenedo-view kenedo-ajax-sub-view">';
+						var text = '<div id="view-error" class="kenedo-view">';
 						text += '<div class="kenedo-listing-form">';
 						text += '<p>Encountered a system error: HTTP code is ' + jqXHR.status + '. Text message is: ' + jqXHR.statusText + '</p>';
 						text += '</div>';
 						text += '</div>';
-						cbj(targetSelector).html(text);
+						cbj(selector).html(text);
 
 					}
-
-					// When done, init the the new content
-					kenedo.initNewContent(cbj(targetSelector));
 
 					// Now fade in the content
-					cbj(targetSelector).animate( {'opacity':'1'}, 400, function(){
+					cbj(selector).animate( {'opacity':'1'}, 200, function(){
 
 						// When done, do the rest of the initialization
-						kenedo.afterInitNewContent(cbj(targetSelector));
+						cbj(document).trigger('cbViewInjected');
 
 						if (typeof(callbackFunction) == 'function') {
-							callbackFunction(cbj(targetSelector));
+							callbackFunction(cbj(selector));
 						}
 
 					});
@@ -326,192 +685,38 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		},
 
 		/**
-		 * This method initializes any JS-dependent stuff on the page (use wrapper to limit the 'area' to run it)
-		 * @param {jQuery} wrapper - jQuery object representing the DOM elements with stuff that needs initialization
+		 * Click target should have data attributes modal-width and modal-height (number telling pixel values)
+		 * Click target should have href attribute for the URL to load in modal
+		 * @param event
 		 */
-		initNewContent : function(wrapper) {
+		onOpenColorBoxModal: function(event) {
 
-			if (cbj(wrapper).length == 0) {
-				return;
+			var btn = cbj(this);
+			event.preventDefault();
+
+			var modalWidth	= btn.data('modal-width');
+			var modalHeight	= btn.data('modal-height');
+			var href = btn.attr('href');
+
+			if (!modalWidth) {
+				modalWidth = 900;
+			}
+			if (!modalHeight) {
+				modalHeight = 600;
 			}
 
-			if (cbj(wrapper).find('select.listing-filter, select.join-select, .property-type-dropdown select, .make-me-chosen, .chosen-dropdown').length) {
-
-				cbrequire(['cbj.chosen'], function() {
-
-					// Init the chosen select form items
-					cbj(wrapper).find('select.listing-filter, select.join-select, .property-type-dropdown select, .make-me-chosen, .chosen-dropdown').chosen({
-						disable_search_threshold : 10,
-						search_contains : true,
-						inherit_select_classes : true,
-						width:'100%'
-					});
-
-					// Deal with the width problem of initially hidden drop-downs
-					cbj(wrapper).find('.chosen-container:hidden').each(function(){
-						if (cbj(this).is('.join-select')) {
-							cbj(this).css('width','100%');
-						}
-						else {
-							if (cbj(this).closest('.kenedo-properties').length) {
-								cbj(this).css('width','100%');
-							}
-							else {
-								cbj(this).css('width','auto');
-							}
-
-						}
-					});
-
+			cbrequire(['cbj.colorbox'], function() {
+				cbj.colorbox({
+					transition 		: 'fade',
+					href 			: href,
+					overlayClose 	: true,
+					iframe 			: true,
+					fastIframe		: false,
+					className		: 'cb-modal',
+					width			: modalWidth,
+					height			: modalHeight
 				});
-
-			}
-
-			// Init jQueryUI sortables
-			if (cbj(wrapper).find('.sortable-listing tbody').length) {
-				cbrequire(['cbj.ui'], function() {
-					cbj(wrapper).find('.sortable-listing tbody').sortable(kenedo.listingSortableSettings);
-				});
-			}
-
-			// Init jQueryUI date pickers
-			if (cbj(wrapper).find('.datepicker').length) {
-				cbrequire(['cbj.ui'], function() {
-					cbj(wrapper).find('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
-				});
-			}
-
-			if (cbj(wrapper).find('.kenedo-datepicker').length !== 0) {
-				cbrequire(['cbj.ui'], function() {
-
-					cbj(wrapper).find('.kenedo-datepicker').each(function() {
-
-						var altField = cbj(this).closest('.kenedo-property').find('.form-control');
-						var value = altField.val();
-
-						var params = {
-							dateFormat: 'yy-mm-dd',
-							altFormat: 'yy-mm-dd',
-							altField: altField,
-						};
-
-						cbj(wrapper).find('.kenedo-datepicker').datepicker(params);
-
-						if (value && value !== '0000-00-00') {
-							cbj(wrapper).find('.kenedo-datepicker').datepicker('setDate', value);
-						}
-
-					});
-
-				});
-			}
-
-			// Go through all views and run the ready functions
-			cbj(wrapper).find('.kenedo-view').each(function() {
-				var viewId = cbj(this).attr('id');
-				if (viewId) {
-					kenedo.runSubviewReadyFunctions(viewId);
-				}
 			});
-
-			cbj(wrapper).find('.kenedo-details-form').each(function(){
-				var record = cbj(this).closest('.kenedo-details-form').data('record');
-				kenedo.setPropertyVisibility(null, record);
-				cbj(this).on('kenedoFormDataChanged', kenedo.setPropertyVisibility);
-			});
-
-
-			// Turn off auto-complete for ordering fields in listing
-			cbj(wrapper).find('.kenedo-listing .ordering-text-field').attr('autocomplete','off');
-
-			cbj(document).trigger('cbViewInjected');
-
-		},
-
-		/**
-		 * This method is supposed to run after kenedo.initNewContent and contains the code that may be heavier. This
-		 * is simply for making subview loading appear a bit quicker.
-		 *
-		 * @see kenedo.initNewContent
-		 * @see kenedo.loadSubview
-		 * @param {jQuery=} wrapper - jQuery object representing the DOM elements with stuff that needs initialization
-		 */
-		afterInitNewContent : function(wrapper) {
-
-			if (wrapper.find('.kenedo-html-editor').length !== 0) {
-
-				cbrequire(['tinyMCE', 'configbox/server'], function(tinyMCE, server) {
-
-					try {
-						tinyMCE.init({
-							convert_urls : false,
-							document_base_url : server.config.urlBase,
-							documentBaseURL : server.config.urlBase,
-							baseURL : server.config.urlTinyMceBase,
-							suffix : (server.config.useMinifiedJs === true) ? '.min' : '',
-
-							// General options
-							mode 		: "textareas",
-							selector 	: '.kenedo-html-editor',
-							plugins		: [
-								"advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-								"searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime nonbreaking",
-								"save table directionality emoticons template paste"
-							],
-							toolbar		: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-							template_external_list_url 	: "js/template_list.js",
-							external_link_list_url 		: "js/link_list.js",
-							external_image_list_url 	: "js/image_list.js",
-							media_external_list_url 	: "js/media_list.js",
-
-							style_formats: [
-								{title: 'Headers', items: [
-										{title: 'Header 1', format: 'h1'},
-										{title: 'Header 2', format: 'h2'},
-										{title: 'Header 3', format: 'h3'},
-										{title: 'Header 4', format: 'h4'},
-										{title: 'Header 5', format: 'h5'},
-										{title: 'Header 6', format: 'h6'}
-									]},
-								{title: 'Inline', items: [
-										{title: 'Bold', icon: 'bold', format: 'bold'},
-										{title: 'Italic', icon: 'italic', format: 'italic'},
-										{title: 'Underline', icon: 'underline', format: 'underline'},
-										{title: 'Strikethrough', icon: 'strikethrough', format: 'strikethrough'},
-										{title: 'Superscript', icon: 'superscript', format: 'superscript'},
-										{title: 'Subscript', icon: 'subscript', format: 'subscript'},
-										{title: 'Code', icon: 'code', format: 'code'}
-									]},
-								{title: 'Blocks', items: [
-										{title: 'Paragraph', format: 'p'},
-										{title: 'Blockquote', format: 'blockquote'},
-										{title: 'Div', format: 'div'},
-										{title: 'Pre', format: 'pre'}
-									]},
-								{title: 'Alignment', items: [
-										{title: 'Left', icon: 'alignleft', format: 'alignleft'},
-										{title: 'Center', icon: 'aligncenter', format: 'aligncenter'},
-										{title: 'Right', icon: 'alignright', format: 'alignright'},
-										{title: 'Justify', icon: 'alignjustify', format: 'alignjustify'}
-									]},
-								{title: 'Others', items: [
-										{title : 'Custom 1', selector : 'p', classes : 'custom-1'},
-										{title : 'Custom 2', selector : 'p', classes : 'custom-2'},
-										{title : 'Custom 3', selector : 'p', classes : 'custom-3'},
-										{title : 'Custom 4', selector : 'p', classes : 'custom-4'}
-									]}
-							]
-
-						});
-					} catch(error) {
-						console.log('Init of TinyMCE failed. Error message was ' + error);
-					}
-
-				});
-
-
-
-			}
 
 		},
 
@@ -535,7 +740,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		 *  @var {{Function[]}} subviewReadyFunctions
 		 *  @see kenedo.registerSubviewReadyFunction
 		 *	@see kenedo.runSubviewReadyFunctions
-		 *	@see kenedo.initNewContent
 		 */
 		subviewReadyFunctions : {},
 
@@ -549,92 +753,84 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			return Base64.decode(unreplaced);
 		},
 
-		openListingLink : function(event) {
+		openDetailsFormModal: function(list, form, controller, task, id, prefillPropName, prefillValue) {
 
-			// Links within intra-listings are handled differently: They will open in a modal window
-			if (cbj(this).closest('.intra-listing').length) {
+			var modalParent = cbj('.view-admin .configbox-modals');
 
-				event.preventDefault();
+			var modal;
+			if (modalParent.find('.intra-listing-modal').length > 0) {
+				modal = modalParent.find('.intra-listing-modal');
+			}
+			else {
+				modal = cbj('<div class="modal intra-listing-modal" tabindex="-1" role="dialog"><div class="modal-dialog" role="document"><div class="modal-content"></div></div></div>');
+				modal.appendTo(modalParent);
+			}
 
-				// Prepare a function that resizes the modal (to be used in callbacks later on)
-				var maximizeHeight = function() {
-					cbj.colorbox.resize({
-						height:'95%',
-						width:'95%'
-					});
-				};
+			modal.data('parent-form', form);
+			modal.data('parent-intra-listing', list);
 
-				var params = {
-					transition 		: 'fade',
-					href 			: cbj(this).attr('href'),
-					overlayClose	: true,
-					iframe 			: true,
-					fastIframe		: false,
-					width			: '95%',
-					height			: '95%',
+			cbrequire(['cbj', 'cbj.bootstrap'], function(cbj) {
 
-					onComplete: function() {
-
-						// Maximize height on window resize
-						cbj(window.parent).on('resize', maximizeHeight);
-
-						// Prevent scrolling outside the modal
-						cbj(window.top.document).find('body').css('overflow','hidden');
-
-						// FF/Win positions the modal badly if overflow:hidden is active, this works around it
-						cbj(window.top).trigger('resize');
-
-					},
-
-					onClosed: function() {
-
-						// Turn off the resize handler
-						cbj(window.parent).off('resize', maximizeHeight);
-
-						// Allow scrolling outside the modal again
-						cbj(window.top.document).find('body').css('overflow','auto');
-
-					}
-
-				};
-
-				// Add param in_modal to the URL (so that the view is loaded accordingly
-				// (see KenedoController::wrapViewAndDisplay() for reference)
-
-				if (server.config.platformName == 'magento') {
-					params.href += 'in_modal/1/tmpl/component';
-				}
-				else {
-					if (params.href.indexOf('?') == -1) {
-						params.href += '?in_modal=1&tmpl=component';
-					}
-					else {
-						params.href += '&in_modal=1&tmpl=component';
-					}
-				}
-
-				cbrequire(['cbj.colorbox'], function() {
-					cbj.colorbox(params);
+				modal.one('hide.bs.modal', function() {
+					kenedo.refreshList(list);
 				});
 
-				return;
+				var data = {
+					id: id
+				};
+
+				if (prefillPropName) {
+					data['prefill_' + prefillPropName] = prefillValue;
+				}
+
+				server.injectHtml(
+					modal.find('.modal-content'),
+					controller,
+					task,
+					data,
+					function() {
+						modal.modal({keyboard: false, backdrop: 'static'});
+					});
+
+			});
+
+		},
+
+		openListingLink : function(event) {
+
+			event.preventDefault();
+
+			var link = cbj(this);
+
+			if (link.closest('.intra-listing').length > 0) {
+
+				var list = link.closest('.kenedo-listing-form');
+				var form = link.closest('.kenedo-details-form');
+				var controller = link.data('controller');
+				var task = link.data('task');
+				var id = link.data('id');
+				var prefillPropName = kenedo.getListParameter(list, 'foreignKeyField');
+				var prefillValue = kenedo.getListParameter(list, 'foreignKeyPresetValue');
+
+				kenedo.openDetailsFormModal(list, form, controller, task, id, prefillPropName, prefillValue);
+
 			}
 			else {
 				var url = cbj(this).attr('href');
 				kenedo.loadSubview(url);
 			}
 
-			event.preventDefault();
-
 		},
 
 		/**
 		 * @listens Event:kenedoFormDataChanged
-		 * @param event
-		 * @param settings
+		 * @param {event} event
+		 * @param {string[]} settings
+		 * @param {jQuery} form Kenedo form to deal with
 		 */
-		setPropertyVisibility : function(event, settings) {
+		setPropertyVisibility : function(event, settings, form) {
 
+			var property;
 			var propDef = {};
 			var testProp;
 			var currentValue;
@@ -643,13 +839,14 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			var conditionUnfulfilled;
 			var showProperty;
 			var groupId;
+			var input;
 
 			if (!settings) {
 				settings = {};
 			}
 
-			// Groupstart/Groupend properties do not show up in the record data, so we add them for easier processing later.
-			cbj('.kenedo-details-form .property-group').each(function(){
+			// Group start/Group end properties do not show up in the record data, so we add them for easier processing later.
+			form.find('.property-group').each(function(){
 				groupId = cbj(this).attr('id');
 				groupId = groupId.replace('property-name-', '');
 				settings[groupId] = '';
@@ -660,7 +857,10 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				if (settings.hasOwnProperty(propertyName)) {
 
 					// Get the prop defs of the setting (somehow either jQuery or HTML5 gives you a JS object already, not JSON)
-					propDef = cbj('#property-name-' + propertyName).data('propertyDefinition');
+					// propDef = cbj('#property-name-' + propertyName).data('propertyDefinition');
+
+					property = form.find('.property-name-' + propertyName);
+					propDef = property.data('propertyDefinition');
 
 					// Just in case somehow there is no propdef JSON
 					if (!propDef) {
@@ -671,7 +871,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 					showProperty = true;
 
 					// In case we deal with an invisible field, leave it be (invisible-field comes from propDef 'invisible')
-					if (cbj('#property-name-' + propertyName).hasClass('invisible-field')) {
+					if (property.hasClass('invisible-field')) {
 						continue;
 					}
 
@@ -702,7 +902,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 										var operator = 'is';
 
 										// An exclamation mark in the beginning of the shouldValue means 'is not'
-										if (typeof(shouldValues[i]) == 'string' && shouldValues[i].substr(0, 1) == '!') {
+										if (typeof(shouldValues[i]) == 'string' && shouldValues[i].substr(0, 1) === '!') {
 											shouldValues[i] = shouldValues[i].substr(1);
 											operator = 'is not';
 										}
@@ -710,7 +910,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 										if (operator === 'is') {
 
 											// Asterisk as shouldValue means that any non-empty value is good
-											if (shouldValues[i] == '*') {
+											if (shouldValues[i] === '*') {
 												if (currentValue && currentValue != '0') {
 													foundMatch = true;
 													break;
@@ -727,7 +927,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 										else {
 
 											// Asterisk as shouldValue means that any non-empty value is good
-											if (shouldValues[i] == '*') {
+											if (shouldValues[i] === '*') {
 												if (!currentValue || currentValue == '0') {
 													foundMatch = true;
 													break;
@@ -745,7 +945,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 									}
 								}
 
-								if (foundMatch == false) {
+								if (foundMatch === false) {
 									showProperty = false;
 								}
 
@@ -755,20 +955,30 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 					if (showProperty) {
 
-						if (cbj('#property-name-' + propertyName).css('display') == 'none') {
+						if (property.css('display') === 'none') {
 
-							cbj('#property-name-' + propertyName).show();
+							property.show();
 
-							var defaultValue = (typeof(propDef['default']) !== 'undefined') ? propDef['default'] : '';
+							var defaultValue = (typeof(propDef['default']) === 'undefined') ? '' : propDef['default'];
 
 							if (defaultValue) {
 
-								if (cbj('#' + propertyName).is('select')) {
-									cbj('#' + propertyName).val(defaultValue).change().trigger('chosen:updated');
+								input = property.find(':input[name=' + propertyName + ']');
+
+								if (input.is('select')) {
+									input.val(defaultValue).change().trigger('chosen:updated');
 								}
 								else {
-									cbj('#' + propertyName).val(defaultValue);
+									if (input.is('[type=radio]')) {
+										property.find('input[value=' + defaultValue + ']').prop('checked', true);
+									}
+									else {
+										input.val(defaultValue);
+									}
+
 								}
+
+								input.change();
 
 								settings[propertyName] = defaultValue;
 
@@ -779,26 +989,35 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 					}
 					else {
 
-						if (cbj('#property-name-' + propertyName).css('display') != 'none') {
+						if (property.css('display') !== 'none') {
 
-							cbj('#property-name-' + propertyName).hide();
+							property.hide();
 
-							var nullValue = (typeof(propDef['default']) !== 'undefined') ? propDef['default'] : '';
+							var nullValue;
 
-							if (cbj('#' + propertyName).is('select')) {
+							input = property.find(':input[name=' + propertyName + ']');
 
-								if (nullValue == '') {
-									nullValue = 0;
-								}
-
-								cbj('#' + propertyName).val(nullValue).trigger('chosen:updated');
+							if (input.is('select')) {
+								nullValue = (typeof(propDef['default']) === 'undefined') ? '0' : propDef['default'];
+								input.val(nullValue).trigger('chosen:updated');
 
 							}
 							else {
-								cbj('#' + propertyName).val(nullValue).trigger('chosen:updated');
-							}
 
-							cbj('#property-name-' + propertyName + '.property-type-translatable .form-control').val(nullValue);
+								if (input.is('[type=radio]')) {
+									nullValue = (typeof(propDef['default']) === 'undefined') ? '0' : propDef['default'];
+									property.find('input[value=' + nullValue + ']').prop('checked', true);
+								}
+								else {
+									nullValue = (typeof(propDef['default']) === 'undefined') ? '' : propDef['default'];
+									input.val(nullValue);
+								}
+
+								if (property.hasClass('property-type-translatable')) {
+									property.find('.form-control').val(nullValue).change();
+								}
+								
+							}
 
 							settings[propertyName] = nullValue;
 
@@ -811,201 +1030,142 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 		},
 
-		listingSortableSettings : {
+		onToggleRecordActivation: function() {
 
-			handle 		: '.sort-handle',
-			items		: 'tr',
-			axis		: 'y',
-			scroll		: false,
+			var btn = cbj(this);
+			var list = btn.closest('.kenedo-listing-form');
 
-			helper		: function(e, ui) {
-				ui.children().each(function() {
-					cbj(this).width(cbj(this).width());
-				});
-				return ui;
-			},
+			var id = btn.data('id');
+			var task = (btn.data('active')) ? 'unpublish' : 'publish';
 
-			start		: function() {
+			btn.find('.fa').addClass('fa-spinner fa-spin');
 
-				// Init the current ordering arrays
-				var currentOrdering = [];
-				var currentItemIds = [];
+			kenedo.setListParameter(list, 'task', task);
+			kenedo.setListParameter(list, 'ids', id);
+			kenedo.refreshList(list);
 
-				var sortableArray = cbj(this).sortable('toArray');
-				// sortableArray.pop();
+		},
 
-				// Loop through the current sortable ordering and set current values
-				for (var i in sortableArray) {
-					if (sortableArray.hasOwnProperty(i) === true) {
-						currentOrdering.push(cbj('#'+sortableArray[i] + ' .ordering-text-field').val());
-						currentItemIds.push(sortableArray[i].replace('item-id-',''));
-					}
-				}
+		/**
+		 * @param event
+		 * @fires cbFormTaskTriggered
+		 */
+		onListTaskButtonClicked: function(event) {
 
-				// Store them in the its data object
-				cbj(this).data('currentOrdering',currentOrdering);
-				cbj(this).data('currentItemIds',currentItemIds);
+			var btn = cbj(this);
+			var task = btn.data('task');
+			var list = btn.closest('.kenedo-listing-form');
+			var viewName = list.data('view');
 
-			},
+			var taskInfo = {
+				btn: btn,
+				task: task,
+				list: list,
+				viewName: viewName,
+				event: event
+			};
 
-			update: function() {
-
-				// Show the save symbol
-				cbj(this).closest('.kenedo-listing-form').find('.link-save-item-ordering').show();
-
-				// Init the arrays for new ordering values
-				var updatedOrdering = [];
-				var updatedItemIds = [];
-
-				// Get current ordering from sortable's data
-				var currentOrdering = cbj(this).data('currentOrdering');
-
-				// Loop through the updated ordering and set the update arrays
-				var ordering = cbj(this).sortable('toArray');
-
-				var i;
-
-				// Put together the new ordering
-				for (i in ordering) {
-					if (ordering.hasOwnProperty(i) === true) {
-						updatedItemIds.push( ordering[i].replace('item-id-','') );
-						updatedOrdering.push( currentOrdering[i] );
-					}
-				}
-
-				// Update the ordering text fields
-				for (i in updatedOrdering) {
-					if (updatedOrdering.hasOwnProperty(i) === true) {
-						cbj(this).find('#item-id-'+updatedItemIds[i] + ' .ordering-text-field').val(currentOrdering[i]);
-					}
-				}
-
-				// Renew the current arrays for next sort
-				currentOrdering = updatedOrdering;
-				var currentItemIds = updatedItemIds;
-
-				// Store them in its data object
-				cbj(this).data('currentOrdering',currentOrdering);
-				cbj(this).data('currentItemIds',currentItemIds);
-
+			if (btn.hasClass('disabled')) {
+				return;
 			}
+			btn.addClass('disabled');
+
+			/**
+			 * @event cbListTaskTriggered
+			 */
+			list.trigger('cbListTaskTriggered', taskInfo);
+
 		},
 
-		requiredFields : [],
-		messages : { error : [], notice : [] },
-		success : false,
+		/**
+		 *
+		 * @listens event:cbListTaskTriggered
+		 * @param event
+		 * @param {taskInfo} taskInfo
+		 */
+		onListTaskTriggered: function(event, taskInfo) {
 
-		reloadIntraListings : function() {
-			cbj('.intra-listing').each(function(){
-				var url = cbj(this).data('listing-url');
-				cbj(this).load(url, function(){
-					cbj(this).find('.sortable-listing tbody').sortable(kenedo.listingSortableSettings);
-				});
-			});
-		},
+			switch (taskInfo.task) {
 
-		toggleActive: function() {
+				case 'add':
 
-			var id = cbj(this).data('id');
-			var task = (cbj(this).data('active')) ? 'unpublish' : 'publish';
+					var isIntraListing = taskInfo.list.closest('.intra-listing').length > 0;
 
-			cbj(this).find('.fa').addClass('fa-spinner fa-spin');
+					if (isIntraListing === false) {
+						var encodedUrl = kenedo.getListParameter(taskInfo.list, 'add-link');
+						var url = kenedo.base64UrlDecode(encodedUrl);
+						kenedo.loadSubview(url);
+					}
+					else {
+						var form = taskInfo.list.closest('.kenedo-details-form');
+						var controller = kenedo.getListParameter(taskInfo.list, 'controller');
+						var prefillPropName = kenedo.getListParameter(taskInfo.list, 'foreignKeyField');
+						var prefillValue = kenedo.getListParameter(taskInfo.list, 'foreignKeyPresetValue');
+						kenedo.openDetailsFormModal(taskInfo.list, form, controller, 'edit', 0, prefillPropName, prefillValue);
+					}
 
-			cbj(this).closest('.kenedo-listing-form').find('.listing-data-ids').data('value',id);
-			cbj(this).closest('.kenedo-listing-form').find('.listing-data-task').data('value',task);
+					break;
 
-			kenedo.updateListingForm(cbj(this));
-		},
+				case 'copy':
+				case 'remove':
+				case 'delete':
 
-		executeListingTask: function(event) {
-			event.stopPropagation();
-			var task = cbj(this).attr('class').replace('task-','').replace('task','').replace('non-ajax','').replace(' ','');
-
-			var checkedIds = [];
-			cbj(this).closest('.kenedo-listing-form').find('.kenedo-item-checkbox').each(function(){
-				if (cbj(this).prop('checked') === true) {
-					checkedIds.push(cbj(this).val());
-				}
-			});
-
-			var ids = checkedIds.join(',');
-
-			cbj(this).closest('.kenedo-listing-form').find('.listing-data-ids').data('value',ids);
-
-			if (task === 'add') {
-
-				var encodedUrl = cbj(this).closest('.kenedo-listing-form').find('.listing-data-add-link').data('value');
-
-				// The URL for adding records is always stored in a data attribute, all that is set in the template for listings
-				var url = kenedo.base64UrlDecode(encodedUrl);
-
-				if (cbj(this).closest('.intra-listing').length) {
-
-					var maximizeHeight = function() {
-						cbj.colorbox.resize({
-							height:'95%',
-							width:'95%'
+					var deleteController = kenedo.getListParameter(taskInfo.list, 'controller');
+					var data = {
+						'ids': kenedo.getCheckedListItemIds(taskInfo.list).join(',')
+					};
+					
+					server.makeRequest(deleteController, taskInfo.task, data)
+						.then(function(data, textStatus, jqXhr) {
+							/**
+							 * @event cbListTaskResponseReceived
+							 */
+							taskInfo.list.trigger('cbListTaskResponseReceived', [jqXhr, taskInfo]);
 						});
-					};
+					break;
 
-					var params = {
-						transition 		: 'fade',
-						href 			: url,
-						overlayClose 	: true,
-						iframe 			: true,
-						fastIframe		: false,
-						width			: 1000,
-						height			: '95%',
-
-						onComplete: function() {
-
-							// Maximize height on window resize
-							cbj(window.parent).on('resize', maximizeHeight);
-
-							// Prevent scrolling outside the modal
-							cbj(window.top.document).find('body').css('overflow','hidden');
-
-							// FF/Win positions the modal badly if overflow:hidden is active, this works around it
-							cbj(window.top).trigger('resize');
-
-						},
-
-						onClosed: function() {
-
-							// Turn off the resize handler
-							cbj(window.parent).off('resize', maximizeHeight);
-
-							// Allow scrolling outside the modal again
-							cbj(window.top.document).find('body').css('overflow','auto');
-
-						}
-
-					};
-
-					cbrequire(['cbj.colorbox'], function() {
-						cbj.colorbox(params);
-					});
-
-					return;
-				}
-
-				if (cbj(this).closest('.kenedo-listing-form').find('.listing-data-ajax_sub_view').data('value') == 1) {
-					kenedo.loadSubview(url);
-				}
-				else {
-					window.location.href = url;
-				}
-
-			}
-			else {
-
-				cbj(this).closest('.kenedo-listing-form').find('.listing-data-task').data('value',task);
-				kenedo.updateListingForm(cbj(this));
+				default:
+					console.log('Unknown task "' + taskInfo.task + '"');
 			}
 
 		},
 
+		/**
+		 * @listens event:cbListTaskResponseReceived
+		 *
+		 * @param {event} event
+		 * @param {jqXHR} xhr
+		 * @param {taskInfo} taskInfo
+		 */
+		onListTaskResponseReceived: function(event, xhr, taskInfo) {
 
+			taskInfo.btn.removeClass('disabled');
+
+			try {
+				var data = JSON.parse(xhr.responseText);
+			}
+			catch(e) {
+				console.warn('Could not parse JSON response. Response text was: "' + xhr.responseText + '"');
+				console.warn('Error message follows:');
+				console.warn(e);
+				return;
+			}
+
+			switch (taskInfo.task) {
+				case 'copy':
+				case 'remove':
+					kenedo.refreshList(taskInfo.list, function() {
+						taskInfo.list = cbj('.kenedo-listing-form:first');
+						kenedo.showResponseMessages(taskInfo.list, data.errors || [], data.messages || []);
+					});
+			}
+
+
+			/**
+			 * @event cbFormTaskResponseReceivedGlobal
+			 */
+			cbj(document).trigger('cbListTaskResponseReceivedGlobal', [xhr, taskInfo]);
+		},
 
 		/**
 		 * Registers a function to be executed when a certain subview is loaded via kenedo.loadSubview().
@@ -1029,7 +1189,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		 * Checks for a registered ready function and executes the function
 		 * This is used to run any JS needed for the content of an ajax subview.
 		 * @see kenedo.loadSubview for reference on loading subviews
-		 * @see kenedo.initNewContent for reference on initializing content
 		 * @see kenedo.registerSubviewReadyFunction for reference on registering subview ready functions
 		 * @param {String} viewId Content of the ID HTML attribute of the subview's wrapping div
 		 */
@@ -1043,614 +1202,40 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			}
 		},
 
-		changeListingStart: function() {
-			var start = cbj(this).attr('class').replace('page-start-','');
-			cbj(this).closest('.kenedo-listing-form').find('.listing-data-limitstart').data('value',start);
-			kenedo.updateListingForm(cbj(this));
-		},
-
-		changeListingFilters: function() {
-			kenedo.updateListingForm(cbj(this));
-		},
-
-		changeListingLimit: function() {
-			var limit = cbj(this).val();
-			cbj(this).closest('.kenedo-listing-form').find('.listing-data-limit').data('value',limit);
-			kenedo.updateListingForm(cbj(this));
-		},
-
-		/**
-		 * Update (Refresh) the listing. Depending on its location within the html doc
-		 *
-		 * @param {jQuery} item - Simply regard it as some element within the kenedo-listing-form
-		 */
-		updateListingForm: function(item) {
-
-			if (!item) {
-				item = cbj(this);
-			}
-
-			// Get the 'base' url dealing with the given type of record (see kenedoView template default-table.php)
-			var url = cbj(item).closest('.kenedo-listing-form').find('.listing-data-base-url').data('value');
-
-			// Add ? for the query string in case
-			if (url.indexOf('?') === -1) {
-				url += '?';
-			}
-
-			// Loop through the listing-data fields and append them to the query string
-			cbj(item).closest('.kenedo-listing-form').find('.listing-data').each(function(){
-				var key = cbj(this).data('key');
-				// Leave out base-url, no use for it plus probably trouble
-				if (key === 'base-url') {
-					return;
-				}
-				var value = cbj(this).data('value');
-				url += '&' + key + '=' + encodeURIComponent(value);
-			});
-
-			// Do the same for the filters
-			cbj(item).closest('.kenedo-listing-form').find('.listing-filter').each(function(){
-				var key = cbj(this).attr('name');
-				var value = cbj(this).val();
-				url += '&' + key + '=' + encodeURIComponent(value);
-			});
-
-			// If the link has the .non-ajax class, do a regular page load
-			if (item.hasClass('non-ajax')) {
-				window.location.href = url;
-				return;
-			}
-
-			// Init the target div where the view should be inserted in
-			var target = cbj('.view-admin');
-
-			// If we're dealing with a link in an intra-listing, target is the parent intra-listing
-			if (cbj(item).closest('.intra-listing').length) {
-				target = cbj(item).closest('.intra-listing');
-			}
-			else {
-				// In case we got a link within the ConfigBox target area, use that one
-				if (cbj(item).closest('.configbox-ajax-target').length) {
-					target = cbj(item).closest('.configbox-ajax-target');
-				}
-			}
-
-			// Load the contents
-			target.load(url + ' .kenedo-view:first', function() {
-
-				// Init the new content
-				kenedo.initNewContent(target);
-				kenedo.afterInitNewContent(target);
-
-				// Note: We do not (yet) deal with messages in listings like we do in forms because listing views are still
-				// completely reloaded and carry messages with them already (as opposed to populating and showing messages
-				// using JS.
-
-				// Show messages
-				if (cbj(this).find('.kenedo-messages li').length !== 0) {
-					cbj(this).find('.kenedo-messages').slideDown(200);
-				}
-
-				// Show error messages if any
-				if (cbj(this).find('.kenedo-messages-error li').length !== 0) {
-					cbj(this).find('.kenedo-messages-error').slideDown(200);
-				}
-
-				// Show notices if any
-				if (cbj(this).find('.kenedo-messages-notice li').length !== 0) {
-					cbj(this).find('.kenedo-messages-notice').slideDown(200);
-				}
-
-			});
-
-		},
-
 		toggleCheckboxes: function() {
 			var checked = cbj(".kenedo-listing .kenedo-check-all-items").prop('checked');
 			cbj(this).closest('.kenedo-listing').find('.kenedo-item-checkbox').prop('checked',checked);
 		},
 
-		storeOrdering: function() {
+		onStoreOrdering: function() {
 
 			if (cbj(this).hasClass('clicked')) {
 				return;
 			}
 
 			cbj(this).addClass('clicked');
+
+			var list = cbj(this).closest('.kenedo-listing-form');
+
 			cbj(this).find('.fa').removeClass('fa-floppy-o').addClass('fa-spinner').addClass('fa-spin');
 
-			cbj(this).closest('.kenedo-listing-form').find('.listing-data-task').data('value', 'storeOrdering');
-
-			var orderingPairs = [];
-			cbj(this).closest('.kenedo-listing-form').find('.item-row').each(function(){
-				var itemId = cbj(this).data('item-id');
-				var order = cbj(this).find('.ordering-text-field').val();
-				orderingPairs.push( '"' + itemId + '":' + order);
+			var updates = {};
+			list.find('.item-row').each(function() {
+				var recordId = cbj(this).data('item-id');
+				updates[recordId] = parseInt(cbj(this).find('.ordering-text-field').val());
 			});
-
-			var string = '{' + orderingPairs.join(',') + '}';
-
-			cbj(this).closest('.kenedo-listing-form').find('.listing-data-ordering-items').data('value', string);
-
-			kenedo.updateListingForm(cbj(this));
-		},
-
-		changeListingOrder: function() {
-
-			var propertyName = cbj(this).attr('id').replace('order-property-name-','');
-			var direction = '';
-
-			if (cbj(this).hasClass('active')) {
-				direction = (cbj(this).hasClass('direction-asc')) ? 'desc' : 'asc';
-			}
-			else {
-				direction = 'asc';
-			}
-
-			cbj(this).closest('.kenedo-listing-form').find('.listing-data-listing_order_property_name').data('value', propertyName);
-			cbj(this).closest('.kenedo-listing-form').find('.listing-data-listing_order_dir').data('value', direction);
-
-			kenedo.updateListingForm(cbj(this));
-		},
-
-		isViewInModal: function() {
-			return ( cbj('#in_modal').val() === '1');
-		},
-
-		isViewAjaxView: function() {
-			return ( cbj('#ajax_sub_view').val() === '1');
-		},
-
-		getReturnUrl: function() {
-			return kenedo.base64UrlDecode(cbj('#return').val());
-		},
-
-		getTask: function() {
-			return cbj('#task').val();
-		},
-
-		getViewName: function() {
-			return cbj('.kenedo-details-form').data('view');
-		},
-
-		/**
-		 * @see kenedo.getFormTaskHandler
-		 * @see kenedo.setFormTaskHandler
-		 */
-		formTaskHandlers : {},
-
-		getFormTaskHandler: function(viewName) {
-			return this.formTaskHandlers[viewName] || kenedo.defaultFormTaskHandler;
-		},
-
-		setFormTaskHandler: function(viewName, fn) {
-			this.formTaskHandlers[viewName] = fn;
-		},
-
-		/**
-		 * @see kenedo.getFormTaskResponseHandler
-		 * @see kenedo.setFormTaskResponseHandler
-		 */
-		formTaskResponseHandlers : {},
-
-		getFormTaskResponseHandler: function(viewName) {
-			return this.formTaskResponseHandlers[viewName] || kenedo.defaultFormTaskResponseHandler;
-		},
-
-		setFormTaskResponseHandler: function(viewName, fn) {
-			this.formTaskResponseHandlers[viewName] = fn;
-		},
-
-		/**
-		 * Event handler for clicks on task buttons. Figures out what task to run, get's the right handler to run it.
-		 */
-		executeFormTask: function(event) {
-
-			// Whoops, that is actually a listing task (when listings are within detail forms)!
-			// Let's just move away before someone notices us...
-			if (cbj(this).closest('.kenedo-listing-form').length) {
-				return;
-			}
-
-			// Alright, looks like we're in the clear. Get the task name
-			var task = cbj(this).attr('class').replace('task-','').replace('task','').replace(' ','');
-			var viewName = kenedo.getViewName();
-
-			// Set the task, gotta be done at some point.
-			cbj('#task').val(task);
-
-			// Get the handler for tasks
-			var formTaskHandler = kenedo.getFormTaskHandler(viewName);
-
-			// Run the handler
-			formTaskHandler(viewName, task, event);
-
-		},
-
-		defaultFormTaskHandler: function(viewName, task, event) {
-
-			switch (task) {
-
-				case 'cancel':
-					kenedo.defaultFormTaskHandlerCancel(viewName, event);
-					break;
-				case 'store':
-					kenedo.defaultFormTaskHandlerStore(viewName, event);
-					break;
-				case 'storeAndNew':
-					kenedo.defaultFormTaskHandlerStore(viewName, event);
-					break;
-				case 'apply':
-					kenedo.defaultFormTaskHandlerApply(viewName, event);
-					break;
-			}
-
-		},
-
-		defaultFormTaskHandlerCancel: function(viewName, event) {
-
-			if (cbj(event.target).closest('.modal').length) {
-				cbrequire('cbj.bootstrap', function() {
-					cbj(event.target).closest('.modal').modal('hide');
-				});
-				return;
-			}
-
-			kenedo.isViewInModal();
-
-			var inIframe = false;
-
-			// May throw an error if we got an iframe, but parent window is from a different source
-			try {
-				inIframe = (window.parent !== window.self);
-			}
-			catch(e) {
-				inIframe = true;
-			}
-
-			if (inIframe == true) {
-				window.parent.cbrequire(['cbj', 'cbj.colorbox'], function(parentCbj) {
-					parentCbj.colorbox.close();
-				});
-				return;
-			}
-
-			if (kenedo.isViewAjaxView()) {
-				kenedo.loadSubview(kenedo.getReturnUrl());
-			}
-			else {
-				window.location.href = kenedo.getReturnUrl();
-			}
-
-		},
-
-		defaultFormTaskHandlerStore: function(viewName, event) {
-
-			cbrequire(['tinyMCE'], function(tinyMCE) {
-
-				tinyMCE.triggerSave();
-
-				var form = cbj('.kenedo-details-form');
-				var xhr = new XMLHttpRequest();
-				xhr.onload = kenedo.getFormTaskResponseHandler(viewName);
-				xhr.open("post", form[0].action, true);
-				xhr.send(new FormData(form[0]));
-
-			});
-
-		},
-
-		defaultFormTaskHandlerApply: function(viewName, event) {
-
-			cbrequire(['tinyMCE'], function(tinyMCE) {
-
-				tinyMCE.triggerSave();
-
-				var form = cbj('.kenedo-details-form');
-				var xhr = new XMLHttpRequest();
-				xhr.onload = kenedo.getFormTaskResponseHandler(viewName);
-				xhr.open("post", form[0].action, true);
-				xhr.send(new FormData(form[0]));
-
-			});
-
-		},
-
-		/**
-		 * Default callback function for receiving Kenedoform submits
-		 * @see kenedo.getFormTaskResponseHandler
-		 */
-		defaultFormTaskResponseHandler: function() {
-
-			var response = JSON.parse(this.responseText);
-			var task = kenedo.getTask();
-			var viewName = kenedo.getViewName();
-
-			// On inserts, run addNewJoinRecord. It checks if we should add the new record to some join drop-down.
-			if (response.wasInsert) {
-				kenedo.addNewJoinRecord(response);
-			}
-
-			cbj(document).trigger('kenedoFormResponseReceived', {'response': response, 'viewName': viewName, 'task': task} );
-
-			switch (task) {
-
-				case 'store':
-					kenedo.defaultFormTaskResponseHandlerStore(viewName, response);
-					break;
-				case 'storeAndNew':
-					kenedo.defaultFormTaskResponseHandlerStoreAndNew(viewName, response);
-					break;
-				case 'apply':
-					kenedo.defaultFormTaskResponseHandlerApply(viewName, response);
-					break;
-			}
-
-		},
-
-		/**
-		 * @param {String} viewName
-		 * @param {JsonResponses.kenedoStoreResponse} response
-		 */
-		defaultFormTaskResponseHandlerStore: function(viewName, response) {
-
-			// Show messages
-			if (response.success === false) {
-				kenedo.processResponseMessages(response);
-				return;
-			}
-
-			// If we're in a modal, reload any intra listings and close the modal
-			if (kenedo.isViewInModal()) {
-				parent.window.cbrequire(['cbj', 'kenedo', 'cbj.colorbox'], function(parentCbj, parentKenedo) {
-					parentKenedo.reloadIntraListings();
-					parentCbj.colorbox.close();
-				});
-				return;
-			}
-
-			// Redirect to the return URL
-			if (kenedo.isViewAjaxView()) {
-				kenedo.loadSubview(kenedo.getReturnUrl());
-			}
-			else {
-				window.location.href = kenedo.getReturnUrl();
-			}
-
-		},
-
-		/**
-		 * @param {String} viewName
-		 * @param {JsonResponses.kenedoStoreResponse} response
-		 */
-		defaultFormTaskResponseHandlerStoreAndNew: function(viewName, response) {
-
-			// Show any error or notice messages
-			kenedo.processResponseMessages(response);
-
-			// Set all data in the form, overwriting what may needs overwriting
-			if (response.data) {
-				cbj.each(response.data, function(propertyName, value) {
-					cbj('#'+propertyName).val(value);
-				});
-			}
-
-			// Reset id field to 0 to allow for new insert
-			cbj('#id').val('0');
-
-			// If we're in a modal, reload any intra listings and close the modal
-			if (kenedo.isViewInModal()) {
-				parent.window.cbrequire(['cbj', 'kenedo', 'cbj.colorbox'], function(parentCbj, parentKenedo) {
-					parentKenedo.reloadIntraListings();
-				});
-				return;
-			}
-
-			// Redirect to the return URL
-			if (kenedo.isViewAjaxView()) {
-				kenedo.loadSubview(kenedo.getReturnUrl());
-			}
-			else {
-				window.location.href = kenedo.getReturnUrl();
-			}
-		},
-
-		/**
-		 *
-		 * @param {String} viewName
-		 * @param {JsonResponses.kenedoStoreResponse} response
-		 */
-		defaultFormTaskResponseHandlerApply: function(viewName, response) {
-
-			// Show any error or notice messages
-			kenedo.processResponseMessages(response);
-
-			// All done in case storing didn't work out
-			if (response.success === false) {
-				return;
-			}
-
-			// Set all data in the form, overwriting what may needs overwriting
-			if (response.data) {
-				cbj.each(response.data, function(propertyName, value) {
-					cbj('#'+propertyName).val(value);
-				});
-			}
-
-			// If we're in a modal, reload any intra listings
-			if (kenedo.isViewInModal()) {
-				parent.window.cbrequire(['kenedo'], function(parentKenedo) {
-					parentKenedo.reloadIntraListings();
-				});
-				return;
-			}
-
-			// The server's controller may set the redirectUrl (normally for changing the URL after an insert - replacing
-			// the URL query string's ID value).
-			if (response.redirectUrl) {
-
-				// Redirect to the return URL
-				if (kenedo.isViewAjaxView()) {
-					kenedo.loadSubview(response.redirectUrl);
-				}
-				else {
-					window.location.href = response.redirectUrl;
-				}
-
-			}
-
-		},
-
-		/**
-		 * Adds an item to the join dropdowns (and makes a join link) once a related form gets saved.
-		 * I know I deserve jail time for this code.
-		 * @param {JsonResponses.kenedoStoreResponse} response
-		 */
-		addNewJoinRecord: function(response) {
-
-			// This input holds the HTML id for the drop-down (Field is set automatically by setting the form_custom_4 param in the URL)
-			var joinSelectId = cbj('#form_custom_4').val();
-
-			// Check if the id is actually there, to avoid 'misunderstandings'
-			if (joinSelectId) {
-
-				var recordId = response.data.id;
-
-				// Get a title, simply using typical fields (consider using a form_custom field to have it specified clearly)
-				var title = (response.data.name) ? response.data.name : '';
-
-				if (!title) {
-					title = (response.data.title) ? response.data.title : '';
-				}
-				if (!title) {
-					title = 'New item';
-				}
-
-				window.parent.cbrequire(['cbj'], function(parentCbj) {
-
-					// Finally, get the drop-down in the parent..
-					var select = parentCbj('#' + joinSelectId);
-
-					// ..do a quick check, add the record, set the value
-					if (select.is('select')) {
-						if (select.find('option[value='+recordId+']').length === 0) {
-							select.append('<option value="'+recordId+'">'+title+'</option>');
-							select.val(recordId).change().trigger('chosen:updated');
-						}
-					}
-
-					var joinLinks = select.closest('.property-body').find('.join-links');
-					if (joinLinks.length) {
-
-						var newLink = select.closest('.property-body').find('.join-link-0').clone();
-						newLink.removeClass('join-link-0').addClass('join-link-' + recordId);
-						var href = newLink.find('a').attr('href');
-
-						href = href.replace('id=0', 'id=' + recordId); // Joomla way
-						href = href.replace('/id/0/', '/id/' + recordId + '/'); // Magento way
-
-						newLink.find('a').attr('href', href);
-
-						newLink.css('display', 'inline-block');
-
-						var text = joinLinks.find('.join-link:not(.join-link-0) a').eq(1).text();
-						if (!text) {
-							text = 'Open';
-						}
-						newLink.find('a').text(text);
-
-						joinLinks.append(newLink);
-
-					}
+			
+			var controller = kenedo.getListParameter(list, 'controller');
+
+			var data = {
+				updates: JSON.stringify(updates)
+			};
+
+			server.makeRequest(controller, 'storeOrdering', data)
+				.done(function() {
+					kenedo.refreshList(list);
 				});
 
-			}
-
-		},
-
-		getFormSettings: function() {
-
-			var values = cbj('.kenedo-property :input').serializeArray();
-			var settings = [];
-
-			cbj.each(values, function() {
-				settings[this.name] = this.value;
-			});
-
-			return settings;
-		},
-
-		/**
-		 * Takes the kenedo form's response data, set's messages and displays them
-		 * @param {JsonResponses.kenedoStoreResponse} response
-		 */
-		processResponseMessages: function(response) {
-
-			kenedo.clearMessages();
-			if (response.success === false) {
-				cbj.each(response.errors, function(i, error) {
-					kenedo.addMessage(error, 'error');
-				});
-			}
-			else {
-				cbj.each(response.messages, function(i, messages) {
-					kenedo.addMessage(messages, 'notice');
-				});
-			}
-			kenedo.showMessages();
-
-		},
-
-		/**
-		 * Looks into kenedo.messages and renders the HTML for the messages. Makes them show
-		 */
-		showMessages: function() {
-
-			if (this.messages.error.length !== 0) {
-				cbj('.kenedo-messages-error').html('<ul></ul>');
-				cbj.each(this.messages.error, function(i, item) {
-					cbj('.kenedo-messages-error ul').append('<li>'+item+'</li>');
-				});
-				cbj('.kenedo-messages-error:first').show();
-
-				cbj('.kenedo-messages-error').addClass('flash');
-				window.setTimeout(function(){
-					cbj('.kenedo-messages-error').removeClass('flash');
-				}, 1000);
-			}
-
-			if (this.messages.notice.length !== 0) {
-				cbj('.kenedo-messages-notice').html('<ul></ul>');
-				cbj.each(this.messages.notice, function(i, item) {
-					cbj('.kenedo-messages-notice ul').append('<li>'+item+'</li>');
-				});
-				cbj('.kenedo-messages-notice:first').show();
-
-				cbj('.kenedo-messages-notice').addClass('flash');
-				window.setTimeout(function(){
-					cbj('.kenedo-messages-notice').removeClass('flash');
-				}, 1000);
-			}
-
-			cbj('.kenedo-messages:first').show();
-		},
-
-		addMessage: function(message, type) {
-
-			if (typeof(this.messages[type]) == 'undefined') {
-				this.messages[type] = [];
-			}
-
-			this.messages[type].push(message);
-
-		},
-
-		clearMessages: function() {
-			cbj('.kenedo-messages').hide();
-			cbj('.kenedo-messages-error').html('').hide();
-			cbj('.kenedo-messages-notice').html('').hide();
-			this.messages = { error : [], notice : [] };
 		}
 
 	};
@@ -1939,8 +1524,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 	 *  http://www.webtoolkit.info/
 	 *
 	 **/
-
-
 	var Base64 = {
 
 		// private property

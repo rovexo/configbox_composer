@@ -11,17 +11,30 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		initDashboard: function() {
 
 			// Update news and software update check
+			module.adaptNewsBoxHeight();
 			module.addDashboardInfo();
 			module.addLicenseInfo();
 
-			cbj(document).on('click', '.view-admindashboard .trigger-remove-file-structure-warning', function() {
-
-				server.makeRequest('admindashboard', 'removeFileStructureWarning', []);
-
-				cbj(this).closest('.issue-item').remove();
-
+			// Clicks on accordion toggles (in critical issues, health checks etc) toggle detail content
+			cbj(document).on('click', '.view-admindashboard .dashboard-toggle-wrapper .toggle-handle', function() {
+				cbj(this).closest('.dashboard-toggle-wrapper').find('.toggle-content').toggle();
+				cbj(this).toggleClass('opened');
 			});
 
+			// Health check has a warning that can be permanently ignored, this does the click event on 'ignore'
+			cbj(document).on('click', '.view-admindashboard .trigger-remove-file-structure-warning', function() {
+				server.makeRequest('admindashboard', 'removeFileStructureWarning', []);
+				cbj(this).closest('.issue-item').remove();
+			});
+
+		},
+
+		/**
+		 * Makes the dashboard news div as tall as the wrapping dashboard view div
+		 */
+		adaptNewsBoxHeight: function() {
+			var height = cbj('.view-admindashboard').height();
+			cbj('.view-admindashboard .news').height(height);
 		},
 
 		addDashboardInfo : function() {

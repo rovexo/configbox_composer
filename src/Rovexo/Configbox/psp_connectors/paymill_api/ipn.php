@@ -3,7 +3,10 @@ defined('CB_VALID_ENTRY') or die();
 
 class IpnPaymill_api {
 	
-	private $settings;
+	/**
+	 * @var KStorage $settings
+	 */
+	protected $settings;
 	
 	function __construct() {
 		KLog::log(__CLASS__ .' gateway selected.','payment');

@@ -19,7 +19,16 @@ class ConfigboxViewAdmincalccode extends KenedoView {
 		return KenedoModel::getModel('ConfigboxModelAdmincalccodes');
 	}
 
-	function prepareTemplateVars() {
+    /**
+     * @inheritDoc
+     */
+	function getJsInitCallsEach() {
+        $calls = parent::getJsInitCallsEach();
+        $calls[] = 'configbox/calcCode::initCalcCodeViewEach';
+        return $calls;
+    }
+
+    function prepareTemplateVars() {
 		
 		$model 	= KenedoModel::getModel('ConfigboxModelAdmincalccodes');
 		$id = KRequest::getInt('id');

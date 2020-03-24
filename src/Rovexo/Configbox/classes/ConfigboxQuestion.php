@@ -688,19 +688,22 @@ class ConfigboxQuestion {
 		if (strstr($path,'.')) {
 			$attributePath = explode('.',$path);
 			$obj = $this;
+
 			foreach ($attributePath as $attributeCrumb) {
 
 				if (strtolower($attributeCrumb) == 'regardingoption' && $regardingAnswerId) {
+					unset($obj); // Unset to avoid overwriting question or answer data
 					$obj = $this->answers[$regardingAnswerId];
 					continue;
 				}
 
 				if (strtolower($attributeCrumb) == 'selectedoption') {
 
-					$answerId = ConfigboxConfiguration::getInstance()->getSelection($this->id);
+					$selection = ConfigboxConfiguration::getInstance()->getSelection($this->id);
 
-					if ($answerId) {
-						$obj = $this->answers[$answerId];
+					if ($selection && isset($this->answers[$selection])) {
+						unset($obj); // Unset to avoid overwriting question or answer data
+						$obj = $this->answers[$selection];
 						continue;
 					}
 
@@ -708,10 +711,13 @@ class ConfigboxQuestion {
 
 				if (!empty($obj->$attributeCrumb) && (is_string($obj->$attributeCrumb) || $obj->$attributeCrumb != 0)) {
 					// Replace the object (if the looping is ongoing, this will be replaced again until we reached the last one).
-					$obj = $obj->$attributeCrumb;
+					$newObj = $obj->$attributeCrumb;
+					unset($obj); // Unset to avoid overwriting question or answer data
+					$obj = $newObj;
 				}
 				else {
 					KLog::log('Attribute "'.$attributeCrumb.'" not found in question with ID "'.$this->id.'" or the attribute has no value. Attribute path was "'.$path.'". Using "'.$default.'" as fallback value.', 'debug');
+					unset($obj); // Unset to avoid overwriting question or answer data
 					$obj = $default;
 					break;
 				}

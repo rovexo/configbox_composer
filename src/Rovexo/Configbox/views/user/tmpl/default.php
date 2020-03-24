@@ -166,7 +166,7 @@ defined('CB_VALID_ENTRY') or die();
 
 						<?php if ($orderRecord->invoice_released) { ?>
 							<span class="download-invoice">
-								<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=invoice&format=raw&order_id='.(int)$orderRecord->id, true);?>"><?php echo KText::_('Download Invoice')?></a>
+								<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=invoice&output_mode=view_only&order_id='.(int)$orderRecord->id, true);?>"><?php echo KText::_('Download Invoice')?></a>
 							</span>
 						<?php } ?>
 					</td>

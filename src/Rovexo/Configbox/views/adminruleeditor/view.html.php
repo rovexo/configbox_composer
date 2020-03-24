@@ -17,11 +17,6 @@ class ConfigboxViewAdminRuleeditor extends KenedoView {
 	public $ruleHtml;
 
 	/**
-	 * @var string The ID of the parent property that holds to rule value. On store the editor will put the rule JSON there
-	 */
-	public $returnFieldId;
-
-	/**
 	 * @var string[] Tab info for the condition panels (key is condition type, value is the condition type's title)
 	 * @see ConfigboxCondition::getTypeName, ConfigboxCondition::getTypeTitle
 	 */
@@ -102,7 +97,6 @@ class ConfigboxViewAdminRuleeditor extends KenedoView {
 		$rule = KRequest::getVar('rule','');
 		$this->productId = KRequest::getInt('productId');
 		$this->pageId = KRequest::getInt('pageId');
-		$this->returnFieldId = KRequest::getString('returnFieldId', '');
 		$this->usageIn = KRequest::getString('usageIn');
 
 		// Get the rule HTML and assign it

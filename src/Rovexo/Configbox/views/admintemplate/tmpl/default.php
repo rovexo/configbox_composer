@@ -52,10 +52,6 @@ defined('CB_VALID_ENTRY') or die();
 		<input type="hidden" id="controller"	name="controller" 		value="<?php echo hsc($this->controllerName);?>" />
 		<input type="hidden" id="task" 			name="task" 			value="" />
 		<input type="hidden" id="id" 			name="id" 				value="" />
-		<input type="hidden" id="ajax_sub_view" name="ajax_sub_view" 	value="<?php echo ($this->isAjaxSubview()) ? '1':'0';?>" />
-		<input type="hidden" id="in_modal"		name="in_modal" 		value="<?php echo ($this->isInModal()) ? '1':'0';?>" />
-		<input type="hidden" id="tmpl"			name="tmpl" 			value="component" />
-		<input type="hidden" id="format"		name="format" 			value="raw" />
 		<input type="hidden" id="lang"			name="lang" 			value="<?php echo hsc(KenedoPlatform::p()->getLanguageUrlCode());?>" />
 		<!-- unencoded return url "<?php echo $this->returnUrl;?>" -->
 		<input type="hidden" id="return" 		name="return" 			value="<?php echo KLink::base64UrlEncode($this->returnUrl);?>" />

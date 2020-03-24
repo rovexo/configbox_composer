@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @var KenedoPlatformMagento $this
+ * @var KenedoPlatformMagento2 $this
  */
 ?>
 <!DOCTYPE html>

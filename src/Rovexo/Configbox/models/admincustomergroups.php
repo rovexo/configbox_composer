@@ -27,7 +27,6 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'listing'=>10,
-			'listingwidth'=>'50px',
 			'positionForm'=>100,
 		);
 

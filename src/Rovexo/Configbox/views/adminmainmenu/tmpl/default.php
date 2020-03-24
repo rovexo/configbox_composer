@@ -2,8 +2,7 @@
 defined('CB_VALID_ENTRY') or die();
 /** @var $this ConfigboxViewAdminmainmenu */
 ?>
-
-<div id="view-<?php echo hsc($this->view);?>" class="<?php $this->renderViewCssClasses();?>">
+<div <?php echo $this->getViewAttributes();?>>
 	<ul class="menu-list">
 		<li class="menu-list-item item-admindashboard">
 			<a class="menu-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admindashboard');?>"><?php echo KText::_('Dashboard');?></a>

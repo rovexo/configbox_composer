@@ -162,7 +162,7 @@ class ConfigboxControllerCart extends KenedoController {
 
 		$cartModel->forgetMemoizedData();
 
-		$checkoutViewUrl = KLink::getRoute('index.php?option=com_configbox&view=checkout&format=raw', false, CbSettings::getInstance()->get('securecheckout'));
+		$checkoutViewUrl = KLink::getRoute('index.php?option=com_configbox&view=checkout&output_mode=view_only', false, CbSettings::getInstance()->get('securecheckout'));
 
 
 		echo json_encode(array(
@@ -337,30 +337,7 @@ class ConfigboxControllerCart extends KenedoController {
 		$cartDetails = $cartModel->getCartDetails($cartId);
 		KenedoObserver::triggerEvent('onConfigBoxAddToCart',array(&$cartDetails));
 
-		if (KRequest::getKeyword('format','html') == 'json') {
-			// Set the old position id
-			if ($positionId) {
-				$positionModel->setId($positionId);
-			}
-			KRequest::setVar('layout','component');
-			$response = new stdClass();
-			$response->success = 1;
-			$response->message = KText::_('Product added to the cart.');
-			echo json_encode($response);
-		}
-		else {
-			if (KRequest::getInt('stay')) {
-				// Set the old position id
-				if ($positionId) {
-					$positionModel->setId($positionId);
-				}
-				KenedoPlatform::p()->sendSystemMessage(KText::_('Product added to the cart.'),'notice');
-				$this->setRedirect($_SERVER['HTTP_REFERER']);
-			}
-			else {
-				$this->setRedirect( KLink::getRoute($cartDetails->redirectURL,false) );
-			}
-		}
+		$this->setRedirect( KLink::getRoute($cartDetails->redirectURL,false) );
 		return;
 
 	}

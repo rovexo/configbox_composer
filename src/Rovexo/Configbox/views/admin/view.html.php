@@ -14,20 +14,8 @@ class ConfigboxViewAdmin extends KenedoView {
 		return $cssClasses;
 	}
 
-	function getJsInitCallsOnce() {
-		$calls = parent::getJsInitCallsOnce();
-		$calls[] = 'configbox/admin::initBackend';
-		return $calls;
-	}
-
 	function prepareTemplateVars() {
-
 		$this->addViewCssClasses();
-		
-		if (empty($this->contentHtml)) {
-			$this->contentHtml = KenedoView::getView('ConfigboxViewAdmindashboard')->getHtml();
-		}
-		
 	}
 	
 }

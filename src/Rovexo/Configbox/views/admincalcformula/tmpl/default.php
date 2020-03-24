@@ -2,6 +2,7 @@
 defined('CB_VALID_ENTRY') or die();
 /** @var $this ConfigboxViewAdmincalcformula */
 ?>
+<div <?php echo $this->getViewAttributes();?>>
 <div id="view-<?php echo hsc($this->view);?>" class="<?php $this->renderViewCssClasses();?>">
 
 	<div id="calc-editor">
@@ -76,4 +77,5 @@ defined('CB_VALID_ENTRY') or die();
 		</div>
 
 	</div>
+</div>
 </div>

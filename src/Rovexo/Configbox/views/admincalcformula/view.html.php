@@ -40,7 +40,25 @@ class ConfigboxViewAdmincalcformula extends KenedoView {
 	 */
 	public $operatorData;
 
-	function prepareTemplateVars() {
+	function getJsInitCallsOnce() {
+        $calls = parent::getJsInitCallsOnce();
+        $calls[] = 'configbox/calcEditor::initCalcEditorOnce';
+        return $calls;
+    }
+
+    function getJsInitCallsEach() {
+        $calls = parent::getJsInitCallsEach();
+        $calls[] = 'configbox/calcEditor::initCalcEditorEach';
+        return $calls;
+    }
+
+    function getStyleSheetUrls() {
+        $urls = parent::getStyleSheetUrls();
+        $urls[] = KenedoPlatform::p()->getUrlAssets().'/css/calc-editor.css';
+        return $urls;
+    }
+
+    function prepareTemplateVars() {
 
 		// Get the id of the requested calculation
 		if (empty($this->id)) {

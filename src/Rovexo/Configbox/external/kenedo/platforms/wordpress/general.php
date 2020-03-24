@@ -78,13 +78,9 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 		}
 
-		if (KRequest::getVar('format') == 'raw' || KRequest::getVar('format') == 'json') {
-			KRequest::setVar('noheader', '1', 'GET');
-		}
-
-		// renderOutput will make an HTML doc for us
-		if (KRequest::getVar('tmpl') == 'component') {
-			KRequest::setVar('noheader', '1', 'GET');
+		// Set WP noheader if we deal with view_only or blank body
+		if (in_array($this->getOutputMode(), array('view_only', 'in_html_doc') )) {
+            KRequest::setVar('noheader', '1', 'GET');
 		}
 
 		// Add the actions that make inline script tags rendered in template
@@ -93,6 +89,34 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 		add_action('admin_head', array($this, 'renderHeadScriptDeclarations'), 100000);
 		add_action('admin_footer', array($this, 'renderBodyScriptDeclarations'), 100000);
+
+	}
+
+    /**
+     * Tells how to respond to an HTTP request
+     * - 'view_only': Output only the content of the requested view (with nothing wrapping the output)
+     * - 'in_html_doc': Output the view's content within a HTML doc (containing nothing but the view content and head data)
+     * - 'in_platform_output': Output the view within the platform's output (as in along with the Joomla/WP/M1/M2 page)
+     * @return string (view_only, in_html_doc, in_platform_output)
+     */
+	function getOutputMode() {
+
+        if (KRequest::getString('output_mode')) {
+            $outputMode = KRequest::getString('output_mode');
+            if (in_array($outputMode, ['view_only', 'in_html_doc', 'in_platform_output'])) {
+                return $outputMode;
+            }
+        }
+
+		if (KRequest::getInt('ajax_sub_view') || KRequest::getString('format') == 'raw' || KRequest::getString('format') == 'json') {
+			return 'view_only';
+		}
+
+		if (KRequest::getInt('in_modal') == 1 || KRequest::getVar('tmpl') == 'component') {
+			return 'in_html_doc';
+		}
+
+		return 'in_platform_output';
 
 	}
 	
@@ -367,12 +391,11 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	public function raiseError($errorCode, $errorMessage) {
 		throw new Exception($errorMessage, intval($errorCode));
 	}
-	
-	public function renderHtmlEditor($dataFieldKey, $content, $width, $height, $cols, $rows) {
-		$style = 'width:'.intval($width).'px; height:'.intval($height).'px';
 
-		return '<textarea name="'.hsc($dataFieldKey).'" id="'.hsc($dataFieldKey).'" class="kenedo-html-editor not-initialized" style="'.$style.'" rows="'.intval($rows).'" cols="'.intval($cols).'">'.hsc($content).'</textarea>';
-	}
+    public function renderHtmlEditor($dataFieldKey, $content, $width, $height, $cols, $rows) {
+        $style = 'width:'.$width.'; height:'.$height;
+        return '<textarea name="'.hsc($dataFieldKey).'" class="kenedo-html-editor not-initialized" style="'.$style.'" rows="'.intval($rows).'" cols="'.intval($cols).'">'.hsc($content).'</textarea>';
+    }
 
 	public function sendEmail($from, $fromName, $recipient, $subject, $body, $isHtml = false, $cc = NULL, $bcc = NULL, $attachmentPath = NULL) {
 
@@ -611,33 +634,31 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	
 	public function renderOutput(&$output) {
 
-		$format = KRequest::getKeyword('format');
+		$outputMode = $this->getOutputMode();
 
-		if ($format == 'json' || $format == 'raw') {
+		if ($outputMode == 'view_only') {
 
-			$level = ob_get_level();
+            $level = ob_get_level();
 
-			for ($i = 0; $i < $level; $i++) {
-				ob_clean();
-			}
+            for ($i = 0; $i < $level; $i++) {
+                ob_clean();
+            }
 
-			echo $output;
+            echo $output;
 
-			die();
+            exit();
 
 		}
-
-		if (KRequest::getKeyword('tmpl') == 'component' || KRequest::getKeyword('in_modal') == '1') {
-			require(__DIR__.'/tmpl/component.php');
-			exit();
+		elseif ($outputMode == 'in_html_doc') {
+            require(__DIR__.'/tmpl/component.php');
+            exit();
 		}
-
-		if ($this->isAdminArea()) {
-			echo $output;
-		}
-		else {
-			require(__DIR__.'/tmpl/index.php');
-		}
+		elseif ($this->isAdminArea()) {
+            echo $output;
+        }
+        else {
+            require(__DIR__.'/tmpl/index.php');
+        }
 
 	}
 	
@@ -794,7 +815,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 		if ($this->isAdminArea()) {
 
-			if (strstr($url, 'format=raw') || strstr($url, 'format=json')) {
+			if (strstr($url, 'output_mode=view_only') || strstr($url, 'format=raw') || strstr($url, 'format=json')) {
 				$frontController = 'admin-ajax.php';
 			}
 			else {

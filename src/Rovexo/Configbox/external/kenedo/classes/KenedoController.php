@@ -556,7 +556,8 @@ abstract class KenedoController {
 	}
 
 	/**
-	 * Removes one or more items using KenedoModel::delete() and loads the default view
+	 * Takes in 'ids' (comma-separated ids) or 'id' for a single record and deletes records
+	 * Returns JSON response (or the view's output if show_list=1 is in the request data
 	 *
 	 * @see KenedoModel::delete()
 	 */
@@ -565,83 +566,11 @@ abstract class KenedoController {
 		// Check authorization, abort if negative
 		$this->isAuthorized() or $this->abortUnauthorized();
 
-		$model = $this->getDefaultModel();
-
-		$ids = KRequest::getString('ids');
-		$cid = KRequest::getInt('cid');
-
-		if (!$ids && !$cid) {
-			return;
-		}
-
-		if ($ids) {
-			$ids = explode(',',$ids);
-			foreach ($ids as &$id) {
-				$id = intval($id);
-			}
-			unset($id);
-		}
-		if ($cid) {
-			$ids = array($cid);
-		}
-
-		$success = $model->delete($ids);
-
-		KenedoViewHelper::clearMessages();
-
-		if ($success == false) {
-
-			KenedoPlatform::p()->sendSystemMessage(KText::_('Could not delete record.'), 'error');
-
-			$errors = $model->getErrors();
-
-			foreach ($errors as $error) {
-				KenedoPlatform::p()->sendSystemMessage($error, 'error');
-				KenedoViewHelper::addMessage($error, 'error');
-			}
-
-		}
-		else {
-
-			$message = KText::_('Record deleted.');
-
-			KenedoPlatform::p()->sendSystemMessage($message);
-			KenedoViewHelper::addMessage($message);
-
-			$this->purgeCache();
-			$model->forgetRecords();
-
-		}
-
-		if (KRequest::getInt('quickedit', 0) == 1) {
-			$this->setRedirect($_SERVER['HTTP_REFERER']);
-		}
-		else {
-			$this->display();
-		}
-
-	}
-
-	/**
-	 * Takes in parameter id of the record (or comma-separated 'ids' for multiple records) and it will copy the record(s)
-	 * and its child records.
-	 * Responds with a JSON string or returns the Kenedo List HTML if parameter tmpl=component
-	 */
-    public function copy() {
-
-		// check authorization, abort if negative
-		$this->isAuthorized() or $this->abortUnauthorized();
-
 		// check type
-		$responseType = (KRequest::getString('tmpl') == 'component') ? 'list' : 'json';
-
-		// Set the mime type for the response for JSON response
-		if($responseType == 'json') {
-			KenedoPlatform::p()->setDocumentMimeType('application/json');
-		}
+		$responseType = (KRequest::getString('show_list') == '1') ? 'list' : 'json';
 
 		// set ids or just one id
-        $id = KRequest::getInt('id');
+		$id = KRequest::getInt('id');
 		$ids = KRequest::getString('ids');
 
 		// The system takes in 'id' or 'ids'. In either case, we make an array $ids for looping later
@@ -656,6 +585,104 @@ abstract class KenedoController {
 		// Cast all IDs to int for sanitation
 		foreach ($ids as &$id) {
 			$id = intval($id);
+		}
+
+		// Bounce if no record ID came in
+		if(empty($ids)) {
+
+			if($responseType == 'json') {
+
+				KenedoPlatform::p()->setDocumentMimeType('application/json');
+
+				echo ConfigboxJsonResponse::makeOne()
+					->setSuccess(false)
+					->setErrors(array(KText::_('Please select a record to delete')))
+					->toJson();
+
+				return;
+			}
+			else {
+				$error = KText::_('Please select a record to delete');
+				KenedoPlatform::p()->sendSystemMessage($error, 'error');
+				KenedoViewHelper::addMessage($error, 'error');
+				$this->display();
+				return;
+			}
+		}
+
+		$model = $this->getDefaultModel();
+		$success = $model->delete($ids);
+
+		$this->purgeCache();
+		$model->forgetRecords();
+
+		if (KRequest::getInt('quickedit', 0) == 1) {
+			$msg = KText::_('Records deleted.');
+			KenedoPlatform::p()->sendSystemMessage($msg, 'notice');
+			$this->setRedirect($_SERVER['HTTP_REFERER']);
+			return;
+		}
+
+		// Deliver the good news
+		if($responseType == 'json') {
+
+			$feedback = ($success == true) ? KText::_('Records deleted.') : '';
+
+			KenedoPlatform::p()->setDocumentMimeType('application/json');
+
+			echo ConfigboxJsonResponse::makeOne()
+				->setSuccess($success)
+				->setErrors($model->getErrors())
+				->setCustomData('messages', array($feedback))
+				->setFeedback($feedback)
+				->toJson();
+
+		}
+		elseif($responseType == 'list'){
+			$msg = KText::_('Records deleted.');
+			KenedoPlatform::p()->sendSystemMessage($msg, 'notice');
+			KenedoViewHelper::addMessage($msg, 'notice');
+			$this->display();
+		}
+
+		return;
+
+	}
+
+	/**
+	 * Takes in parameter id of the record (or comma-separated 'ids' for multiple records) and it will copy the record(s)
+	 * and its child records.
+	 * Responds with a JSON string or returns the Kenedo List HTML if parameter tmpl=component
+	 */
+    public function copy() {
+
+		// check authorization, abort if negative
+		$this->isAuthorized() or $this->abortUnauthorized();
+
+		// check type
+		$responseType = (KRequest::getString('show_list') == '1') ? 'list' : 'json';
+
+		// set ids or just one id
+		$id = KRequest::getInt('id');
+		$ids = KRequest::getString('ids');
+
+		// The system takes in 'id' or 'ids'. In either case, we make an array $ids for looping later
+		if(!empty($ids)) {
+			$ids = explode(',', $ids);
+		}
+		elseif($id){
+			$ids = [$id];
+		}
+		else $ids = [];
+
+		// Cast all IDs to int for sanitation
+		foreach ($ids as &$id) {
+			$id = intval($id);
+		}
+
+		// Set the mime type for the response for JSON response
+		if($responseType == 'json') {
+			KenedoPlatform::p()->setDocumentMimeType('application/json');
 		}
 
 		// Bounce if no record ID came in
@@ -737,6 +764,7 @@ abstract class KenedoController {
 			if($responseType == 'json') {
 				echo json_encode(array(
 					'success' => true,
+					'messages'=>array(KText::_('Records copied')),
 					'newId' => $newId,
 					'newIds' => $newIds,
 					'redirectUrl' => KLink::getRoute('index.php?option=' . $this->component . '&controller=' . $controllerName . '&task=edit&id=' . $newId, false),
@@ -861,9 +889,9 @@ abstract class KenedoController {
 	}
 
 	/**
-	 * Takes a JSON string from request, sets the ordering and displays the default view
+	 * Takes in 'updates' (JSON-encoded object, keys record ids, values ordering numbers)
 	 *
-	 * See JS Kenedo.storeOrdering how the JSON string comes to be
+	 * See JS module kenedo storeOrdering.
 	 *
 	 * @see KenedoModel::storeOrdering()
 	 */
@@ -874,20 +902,28 @@ abstract class KenedoController {
 
 		$model = $this->getDefaultModel();
 
-		$items = json_decode(html_entity_decode( KRequest::getString('ordering-items','') ), true);
+		$json = KRequest::getVar('updates');
+		$updates = json_decode($json, true);
 
-		$success = $model->storeOrdering($items);
+		$ordering = array();
+		foreach ($updates as $recordId=>$position) {
+			$ordering[(int)$recordId] = (int)$position;
+		}
+
+		$success = $model->storeOrdering($ordering);
 
 		if ($success) {
 			$this->purgeCache();
-			$model->forgetRecords();
 		}
 		else {
-			KenedoPlatform::p()->sendSystemMessage(KText::_('Saving ordering failed.'), 'error');
-			KenedoPlatform::p()->sendSystemMessage($model->getError(), 'error');
+			KLog::log('Storing record ordering failed. Error messages were '.var_export($model->getErrors(), true), 'error');
 		}
 
-		$this->display();
+		KenedoPlatform::p()->setDocumentMimeType('application/json');
+
+		echo ConfigboxJsonResponse::makeOne()
+			->setSuccess($success)
+			->toJson();
 
 	}
 
@@ -947,77 +983,27 @@ abstract class KenedoController {
 	}
 
 	/**
-	 * Helper function, not an actual task. Takes a view that is ready to go and wraps it
-	 *
-	 * What you need to know before looking at the concept:
-	 *
-	 * - The component's output is thrown into the output buffer, the contents are in turn picked up by the platform
-	 *   then it inserts the contents in its template
-	 *
-	 * - The request parameter format=raw changes the platform's behavior so that it outputs the component's output alone
-	 *
-	 * - The request parameter tmpl=component makes the platform put the output in a blank HTML document (blank as in
-	 *   nothing but the component in the body tag, but a head tag as the platform and its template sees fit.
-	 *
-	 * Concept:
-	 *
-	 * Via HTTP request, you can get the content of a KenedoView in 3 ways:
-	 *
-	 * - The view within the component's admin view (ConfigboxViewAdmin) within the platform's template/HTML doc
-	 * - The view within the component's blank view (ConfigboxViewBlank)
-	 * - The view alone
-	 *
-	 * What's the admin and blank view?
-	 *
-	 * - The blank view has nothing but a div with CSS class cb-content.
-	 * - The admin view has the same 2 div and a simple layout (header, left and right column)
-	 *
-	 * What's the blank template for?
-	 *
-	 * In a nutshell 2 important things:
-	 *
-	 * - Have reliable HTML elements for attaching delegated JS event handlers
-	 * - Have a clearly defined wrapping HTML element so we can write CSS selectors that limit to the component's HTML
-	 *
+	 * Takes a KenedoView and wraps another view around it, depending on output mode
 	 * @param KenedoView $view
 	 */
 	protected function wrapViewAndDisplay($view) {
 
-		// Ajax Subview needs nothing, this is also used for the push state updates
-		if (KRequest::getInt('ajax_sub_view') == 1) {
+	    $outputMode = KenedoPlatform::p()->getOutputMode();
 
-			$view->isAjaxView = true;
-			$view->display();
-
-		}
-		// Modal view, means that we wrap the view in the blank view (almost nothing, just a div wrapper with our .cb-content class)
-		elseif (KRequest::getKeyword('tmpl') == 'component' || KRequest::getInt('in_modal') == 1) {
-
-			ob_start();
-			$view->display();
-			$output = ob_get_clean();
-
-			$wrapperView = KenedoView::getView('ConfigboxViewBlank');
-			$wrapperView->assignRef('output', $output);
-			$wrapperView->display();
-
-		}
-		// This is the basic full page load of an admin page, the view gets wrapped in the header, menu, content structure
-		elseif (KRequest::getKeyword('format') != 'raw' && strpos($view->view,'admin') === 0 && $view->view != 'admin') {
-
-			ob_start();
-			$view->display();
-			$output = ob_get_clean();
-
-			$wrapperView = KenedoView::getView('ConfigboxViewAdmin');
-			$wrapperView->assignRef('contentHtml', $output);
-			$wrapperView->display();
-
-		}
-		// I think that case never comes into play
-		else {
-			$view->display();
-		}
+	    if ($outputMode == 'view_only') {
+            $view->display();
+        }
+        elseif ($outputMode == 'in_html_doc') {
+            $view->display();
+        }
+        elseif (strpos($view->view,'admin') === 0 && $view->view != 'admin') {
+            $wrapperView = KenedoView::getView('ConfigboxViewAdmin');
+            $wrapperView->contentHtml = $view->getHtml();
+            $wrapperView->display();
+        }
+	    else {
+            $view->display();
+        }
 
 	}
 

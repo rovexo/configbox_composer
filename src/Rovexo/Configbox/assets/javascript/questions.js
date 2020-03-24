@@ -1455,7 +1455,7 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 							option: 	'com_configbox',
 							controller: 'configuratorpage',
 							task: 		'makeSelection',
-							format: 	'json',
+							display_mode: 'view_only',
 							questionId: questionId,
 							selection: 	JSON.stringify( {name: droppedFiles[0].name, size: droppedFiles[0].size, type: droppedFiles[0].type} ),
 							confirmed: 	false,

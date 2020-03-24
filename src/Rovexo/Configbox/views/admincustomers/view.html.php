@@ -19,57 +19,40 @@ class ConfigboxViewAdmincustomers extends KenedoView {
 
 	protected function prepareTemplateVarsList() {
 
-		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&format=raw', false);
+		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&output_mode=view_only', false);
 
 		$model = $this->getDefaultModel();
 
-		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&format=raw', false);
+		$this->pageTitle = $this->getPageTitle();
 
-		$this->assignRef('pageTitle', $this->getPageTitle());
+		$this->filters = array_merge($this->filters, $this->getFiltersFromUpdatedState());
 
-		$filters = array_merge($this->filters, $this->getFiltersFromUpdatedState());
+		$this->filters['admincustomers.is_temporary'] = '0';
 
-		$fixedFilters = array(
-			'admincustomers.is_temporary'=>'0',
-		);
+		$this->paginationInfo = $this->getPaginationFromUpdatedState();
+		$this->orderingInfo = $this->getOrderingFromUpdatedState();
 
-		$filters = array_merge($filters, $fixedFilters);
+		$this->records = $model->getRecords($this->filters, $this->paginationInfo, $this->orderingInfo);
+		$this->properties = $model->getPropertiesForListing();
 
-		$paginationInfo = $this->getPaginationFromUpdatedState();
-		$orderingInfo = $this->getOrderingFromUpdatedState();
-
-		$records = $model->getRecords($filters, $paginationInfo, $orderingInfo);
-		$properties = $model->getPropertiesForListing();
-
-		$filterInputs = $this->getFilterInputs($filters);
-
-		$this->assignRef('filterInputs', $filterInputs);
-		$this->assignRef('orderingInfo', $orderingInfo);
-		$this->assignRef('paginationInfo', $paginationInfo);
-		$this->assignRef('records', $records);
-		$this->assignRef('properties', $properties);
-		$this->assignRef('filters', $filters);
+		$this->filterInputs = $this->getFilterInputs($this->filters);
 
 		// Add pagination HTML
-		$totalCount = $model->getRecords($filters, array(), array(), NULL, true);
+		$totalCount = $model->getRecords($this->filters, array(), array(), NULL, true);
 
-		$pagination = KenedoViewHelper::getListingPagination($totalCount, $paginationInfo);
-		$this->assignRef('pagination', $pagination);
+		$this->pagination = KenedoViewHelper::getListingPagination($totalCount, $this->paginationInfo);
 
-		$this->assignRef('pageTasks', $model->getListingTasks());
+		$this->pageTasks = $model->getListingTasks();
 
 		$listingData = array(
 			'base-url'				=> KLink::getRoute('index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&lang='.hsc(KText::getLanguageCode())),
 			'option'				=> hsc($this->component),
+			'controller'            => hsc($this->controllerName),
 			'task'					=> 'display',
-			'ajax_sub_view'			=> ($this->isAjaxSubview()) ? '1':'0',
-			'tmpl'					=> hsc(KRequest::getKeyword('tmpl','component')),
-			'in_modal'				=> hsc(KRequest::getInt('in_modal','0')),
-			'intralisting'			=> $this->isIntralisting,
-			'format'				=> 'raw',
+			'output_mode'			=> 'view_only',
 			'groupKey'				=> hsc(KenedoViewHelper::getGroupingKey($this->properties)),
-			'limitstart'			=> hsc($paginationInfo['start']),
-			'limit'					=> hsc($paginationInfo['limit']),
+			'limitstart'			=> hsc($this->paginationInfo['start']),
+			'limit'					=> hsc($this->paginationInfo['limit']),
 			'listing_order_property_name'	=> hsc(count($this->orderingInfo) ? $this->orderingInfo[0]['propertyName'] : ''),
 			'listing_order_dir'				=> hsc(count($this->orderingInfo) ? $this->orderingInfo[0]['direction'] : ''),
 			'return'				=> KLink::base64UrlEncode( KLink::getRoute('index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&lang='.hsc(KText::getLanguageCode()), false) ),
@@ -79,24 +62,21 @@ class ConfigboxViewAdmincustomers extends KenedoView {
 			'foreignKeyPresetValue'	=> KRequest::getKeyword('foreignKeyPresetValue', (!empty($this->foreignKeyPresetValue)) ? $this->foreignKeyPresetValue : ''),
 		);
 
-		// Prepare the href for for the add button
-		$link = 'index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&task=edit&id=0';
-
-		if ($this->isInModal()) {
-			$link.= '&in_modal=1';
-		}
+		// START - Prepare the href for for the add button
+		$addLink = 'index.php?option='.hsc($this->component).'&controller='.hsc($this->controllerName).'&task=edit&id=0';
 
 		if (!empty($this->foreignKeyField)) {
-			$link .= '&'.$this->foreignKeyField.'='.$this->foreignKeyPresetValue;
+			$addLink .= '&prefill_'.$this->foreignKeyField.'='.$this->foreignKeyPresetValue;
 		}
 		if (KRequest::getKeyword('foreignKeyField')) {
-			$link .= '&'.KRequest::getKeyword('foreignKeyField').'='.KRequest::getInt('foreignKeyPresetValue', '0');
+			$addLink .= '&prefill_'.KRequest::getKeyword('foreignKeyField').'='.KRequest::getInt('foreignKeyPresetValue', '0');
 		}
-		$link .= '&return='.$listingData['return'];
+		$addLink .= '&return='.$listingData['return'];
 
-		$listingData['add-link'] = KLink::base64UrlEncode( KLink::getRoute($link, false) );
+		$listingData['add-link'] = KLink::base64UrlEncode( KLink::getRoute($addLink, false) );
+		// END - Prepare the href for for the add button
 
-		$this->assignRef('listingData', $listingData);
+		$this->listingData = $listingData;
 
 	}
 

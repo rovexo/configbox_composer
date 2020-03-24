@@ -1,4 +1,5 @@
 <?php
+/*
 class_alias('\Joomla\Registry\Registry', 'JRegistry');
 class_alias('\Joomla\Registry\AbstractRegistryFormat', 'JRegistryFormat');
 class_alias('\Joomla\Registry\Format\Ini', 'JRegistryFormatIni');
@@ -364,3 +365,4 @@ class_alias('\Joomla\CMS\Extension\ExtensionHelper', 'JExtensionHelper');
 class_alias('\Joomla\CMS\HTML\HTMLHelper', 'JHtml');
 class_alias('JApplicationAdministrator', 'JAdministrator');
 class_alias('JApplicationSite', 'JSite');
+*/

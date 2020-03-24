@@ -48,9 +48,6 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 
 		initMatrixViewOnce: function() {
 
-			// Set the callback that handles clicks on the 'store' button
-			kenedo.setFormTaskHandler('admincalculation', module.taskHandler);
-
 			// Clicks on the gear symbol show things like the remove and reorder buttons
 			cbj(document).on('click', '.view-admincalcmatrix .toggle-matrix-tools', module.onShowMatrixTools);
 
@@ -122,7 +119,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 
 			// First we need to figure out if we deal with the input for rows or columns
 			// The picker is either within a div of class .column-parameter-picker or .row-parameter-picker
-			var axis = (picker.closest('.column-parameter-picker').length !== 0) ? 'column' : 'row';
+			var axis = (picker.closest('.column-parameter-picker').length === 0) ? 'row' : 'column';
 
 			// There are hidden Kenedo props in the form where we store the type and ID of question or calculation
 			// We set them now so they get stored once the user clicks on 'store'
@@ -182,7 +179,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 
 					// First we need to figure out if we deal with the input for rows or columns
 					// The picker is either within a div of class .column-parameter-picker or .row-parameter-picker
-					var axis = (picker.closest('.column-parameter-picker').length !== 0) ? 'column' : 'row';
+					var axis = (picker.closest('.column-parameter-picker').length === 0) ? 'row' : 'column';
 
 					// There are hidden Kenedo props in the form where we store the type and ID of question or calculation
 					// We set them now so they get stored once the user clicks on 'store'
@@ -321,7 +318,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 
 			// First we need to figure out if we deal with the input for rows or columns
 			// The picker is either within a div of class .column-parameter-picker or .row-parameter-picker
-			var axis = (picker.closest('.column-parameter-picker').length !== 0) ? 'column' : 'row';
+			var axis = (picker.closest('.column-parameter-picker').length === 0) ? 'row' : 'column';
 
 			// There are hidden Kenedo props in the form where we store the type and ID of question or calculation
 			// We set them now so they get stored once the user clicks on 'store'
@@ -396,7 +393,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 				option: 	'com_configbox',
 				controller: 'admincalcmatrices',
 				task: 		'getMatrixDataFromSpreadsheet',
-				format: 	'json'
+				output_mode:'view_only'
 			};
 
 			// Put the POST data into the formData
@@ -444,7 +441,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 		 *
 		 * @param data Array - two dimensional array. Keys are 'coordinates' (not input parameter values), first key is row number starting with 0
 		 */
-		updateMatrix: function (data) {
+		updateMatrix: function(data) {
 
 			var matrix = cbj('.calc-matrix');
 			var i;
@@ -528,26 +525,56 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 
 		},
 
-		taskHandler : function(viewName, task, event) {
+		onStoreMatrix: function(event) {
 
-			// Close or cancel can be handled with the default handler
-			if (task === 'close' || task === 'cancel') {
-				return kenedo.defaultFormTaskHandler(viewName, 'cancel', event);
+			var btn = cbj(this);
+			var task = btn.data('task');
+			var form = btn.closest('.kenedo-details-form');
+			var viewName = form.data('view');
+
+			var taskInfo = {
+				btn: btn,
+				task: task,
+				form: form,
+				viewName: viewName,
+				event: event
+			};
+
+			kenedo.setFormParameter(form, 'task', task);
+
+			var matrixView = form.find('.view-admincalcmatrix');
+			var matrixJson = module.getMatrixJson(matrixView);
+
+			if (matrixJson === false) {
+				return;
 			}
 
-			// All that is only for storing calculation matrix data. If matrix isn't selected, let the default handler work.
-			if (cbj('.view-admincalcmatrix').length === 0) {
-				return kenedo.defaultFormTaskHandler(viewName, task, event);
-			}
+			form.find('input[name=matrix]').val(matrixJson);
 
-			cbj('.calc-matrix .missing-value, .calc-matrix .invalid').removeClass('missing-value').removeClass('invalid');
+			/**
+			 * @event cbFormTaskTriggered
+			 */
+			form.trigger('cbFormTaskTriggered', taskInfo);
+
+		},
+
+		/**
+		 *
+		 * @param {jQuery} matrixView jQuery holding the matrix view
+		 * @return {string|boolean} Matrix data JSON or false if data is not right
+		 */
+		getMatrixJson: function(matrixView) {
+
+			matrixView.find('.calc-matrix .missing-value, .calc-matrix .invalid')
+				.removeClass('missing-value')
+				.removeClass('invalid');
 
 			var columnParameters = [];
 			var rowParameters = [];
 			var valuesMissing = false;
 			var duplicateValues = false;
 
-			cbj('.calc-matrix .column-parameter').each(function() {
+			matrixView.find('.calc-matrix .column-parameter').each(function() {
 
 				var value = '';
 
@@ -558,25 +585,27 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 					value = cbj(this).find('input').val();
 				}
 
-				if (!value) {
-					cbj(this).addClass('missing-value');
-					valuesMissing = true;
-				}
-				else {
+				if (value) {
 
-					if (columnParameters.indexOf(value) !== -1) {
+					if (columnParameters.indexOf(value) === -1) {
+						columnParameters.push(value);
+					}
+					else {
 						cbj(this).addClass('duplicate-value');
 						duplicateValues = true;
 					}
-					else {
-						columnParameters.push(value);
-					}
+
+				}
+				else {
+
+					cbj(this).addClass('missing-value');
+					valuesMissing = true;
 
 				}
 
 			});
 
-			cbj('.calc-matrix .row-parameter').each(function(){
+			matrixView.find('.calc-matrix .row-parameter').each(function(){
 
 				var value = '';
 
@@ -587,20 +616,20 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 					value = cbj(this).find('input').val();
 				}
 
-				if (!value) {
-					cbj(this).addClass('missing-value');
-					valuesMissing = true;
-				}
-				else {
+				if (value) {
 
-					if (rowParameters.indexOf(value) !== -1) {
+					if (rowParameters.indexOf(value) === -1) {
+						rowParameters.push(value);
+					}
+					else {
 						cbj(this).addClass('duplicate-value');
 						duplicateValues = true;
 					}
-					else {
-						rowParameters.push(value);
-					}
 
+				}
+				else {
+					cbj(this).addClass('missing-value');
+					valuesMissing = true;
 				}
 
 			});
@@ -620,7 +649,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 
 			var valuesValid = true;
 
-			cbj('.calc-matrix tr:not(.column-parameters)').each(function(){
+			matrixView.find('.calc-matrix tr:not(.column-parameters)').each(function() {
 				var columnCount = 0;
 				cbj(this).find('.price').each(function() {
 
@@ -661,10 +690,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 				return false;
 			}
 
-			cbj('#matrix').val( JSON.stringify(matrixItems) );
-
-			// All done, let the default task handler do the rest
-			return kenedo.defaultFormTaskHandler(viewName, task, event);
+			return JSON.stringify(matrixItems);
 
 		}
 

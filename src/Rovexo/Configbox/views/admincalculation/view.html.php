@@ -18,9 +18,27 @@ class ConfigboxViewAdmincalculation extends KenedoView {
 		return KText::_('Calculation');
 	}
 
-	function prepareTemplateVars() {
+    /**
+     * @inheritDoc
+     */
+	function getJsInitCallsOnce() {
+        $calls = parent::getJsInitCallsOnce();
+        $calls[] = 'configbox/adminCalculation::initCalcViewOnce';
+        return $calls;
+    }
+
+	/**
+	 * @inheritDoc
+	 */
+	function getJsInitCallsEach() {
+		$calls = parent::getJsInitCallsEach();
+		$calls[] = 'configbox/adminCalculation::initCalcViewEach';
+		return $calls;
+	}
+
+    function prepareTemplateVars() {
 		
-		$model = KenedoModel::getModel('ConfigboxModelAdmincalculations');
+		$model = $this->getDefaultModel();
 		$id = KRequest::getInt('id');
 
 		if ($id) {
@@ -30,7 +48,7 @@ class ConfigboxViewAdmincalculation extends KenedoView {
 			$record = $model->initData();
 		}
 
-		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&format=raw', false);
+		$this->formAction = KLink::getRoute('index.php?option='.$this->component.'&controller='.$this->controllerName.'&output_mode=view_only', false);
 		$this->pageTitle = ($record->name) ? $record->name : $this->getPageTitle();
 		$this->pageTasks = $model->getDetailsTasks();
         $this->record = $record;

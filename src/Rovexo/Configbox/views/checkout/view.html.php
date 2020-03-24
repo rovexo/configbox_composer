@@ -166,11 +166,11 @@ class ConfigboxViewCheckout extends KenedoView {
 		$this->useGaEnhancedTracking = (CbSettings::getInstance()->get('use_ga_enhanced_ecommerce') == '1');
 
 		$attributes = array(
-			'data-url-address-view' => KLink::getRoute('index.php?option=com_configbox&view=checkoutaddress&format=raw', false),
-			'data-url-delivery-view' => KLink::getRoute('index.php?option=com_configbox&view=checkoutdelivery&format=raw', false),
-			'data-url-payment-view' => KLink::getRoute('index.php?option=com_configbox&view=checkoutpayment&format=raw', false),
-			'data-url-order-view' => KLink::getRoute('index.php?option=com_configbox&view=record&format=raw', false),
-			'data-url-psp-view' => KLink::getRoute('index.php?option=com_configbox&view=checkoutpspbridge&format=raw', false),
+			'data-url-address-view' => KLink::getRoute('index.php?option=com_configbox&view=checkoutaddress&output_mode=view_only', false),
+			'data-url-delivery-view' => KLink::getRoute('index.php?option=com_configbox&view=checkoutdelivery&output_mode=view_only', false),
+			'data-url-payment-view' => KLink::getRoute('index.php?option=com_configbox&view=checkoutpayment&output_mode=view_only', false),
+			'data-url-order-view' => KLink::getRoute('index.php?option=com_configbox&view=record&output_mode=view_only', false),
+			'data-url-psp-view' => KLink::getRoute('index.php?option=com_configbox&view=checkoutpspbridge&output_mode=view_only', false),
 			'data-agree-to-terms' => CbSettings::getInstance()->get('explicit_agreement_terms'),
 			'data-agree-to-rp' => CbSettings::getInstance()->get('explicit_agreement_rp'),
 			'data-text-agree-terms' => KText::_('Please agree to the terms and conditions.'),

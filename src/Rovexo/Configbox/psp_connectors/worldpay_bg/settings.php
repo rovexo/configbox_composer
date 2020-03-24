@@ -33,7 +33,7 @@ defined('CB_VALID_ENTRY') or die();
 	<li>Select the Save Changes button.</li>
 </ul>
 <?php
-$requestUrl = KPATH_URL_BASE.'/index.php?option=com_configbox&controller=ajaxapi&format=raw&task=getNotificationUrl&payment_class=worldpay_bg';
+$requestUrl = KPATH_URL_BASE.'/index.php?option=com_configbox&controller=ajaxapi&output_mode=view_only&task=getNotificationUrl&payment_class=worldpay_bg';
 $feedbackUrl = file_get_contents($requestUrl);
 if ($feedbackUrl == false) {
 	?>

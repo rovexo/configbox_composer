@@ -2,7 +2,7 @@
 defined('CB_VALID_ENTRY') or die();
 /** @var $this ConfigboxViewAdmincalccode */
 ?>
-<div id="view-<?php echo hsc($this->view);?>" class="<?php $this->renderViewCssClasses();?>">
+<div <?php echo $this->getViewAttributes();?>>
 	<div class="kenedo-properties">
 
 		<?php

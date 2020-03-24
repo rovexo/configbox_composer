@@ -4,7 +4,15 @@ defined('CB_VALID_ENTRY') or die();
 class ConfigboxCalcTermFunction extends ConfigboxCalcTerm {
 
 	function containsQuestionId($termData, $questionId) {
-		return false;
+
+		if (count($termData['parameters']) == 0) {
+			return false;
+		}
+
+		$contains = ConfigboxCalculation::scanTermsForQuestion($termData['parameters'], $questionId);
+
+		return $contains;
+
 	}
 
 	function containsAnswerId($termData, $answerId) {

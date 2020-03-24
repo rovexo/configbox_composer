@@ -54,7 +54,7 @@ class ConfigboxModelCart extends KenedoModelLight {
 	}
 
 	/**
-	 * Creates a new cart record, sets ID with the remember option. Returns the new cart ID.
+	 * Creates a new cart record, returns the new cart ID.
 	 * @return bool|int Cart Id
 	 * @throws Exception if inserting cart record fails
 	 */

@@ -3,12 +3,12 @@ class ConfigboxRatingsHelper {
 
 	static function getRatingCountHtml($productId, $count) {
 
-		$url = KLink::getRoute('index.php?option=com_configbox&view=reviews&format=raw&product_id='.$productId, false);
+		$url = KLink::getRoute('index.php?option=com_configbox&view=reviews&output_mode=view_only&product_id='.$productId, false);
 		$triggerClass = 'trigger-show-reviews';
 
 		if ($count == 0) {
 			$text = KText::_('Write a review');
-			$url = KLink::getRoute('index.php?option=com_configbox&view=reviewform&format=raw&product_id='.$productId, false);
+			$url = KLink::getRoute('index.php?option=com_configbox&view=reviewform&output_mode=view_only&product_id='.$productId, false);
 			$triggerClass = 'trigger-show-review-form-modal';
 		}
 		elseif ($count == 1) {

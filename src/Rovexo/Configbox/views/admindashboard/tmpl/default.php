@@ -20,7 +20,7 @@ defined('CB_VALID_ENTRY') or die();
 					<h2><?php echo KText::_('Critical Issues');?></h2>
 					<ul class="issue-list">
 						<?php foreach ($this->criticalIssues as $issue) { ?>
-							<li class="issue-item toggle-wrapper">
+							<li class="issue-item dashboard-toggle-wrapper">
 								<h3 class="issue-title toggle-handle"><span></span><?php echo hsc($issue->title);?></h3>
 								<div class="issue-details toggle-content">
 									<h4><?php echo KText::_('Problem');?></h4>
@@ -46,7 +46,7 @@ defined('CB_VALID_ENTRY') or die();
 				<?php if (count($this->issues)) { ?>
 					<ul class="issue-list">
 						<?php foreach ($this->issues as $issue) { ?>
-							<li class="issue-item toggle-wrapper">
+							<li class="issue-item dashboard-toggle-wrapper">
 								<h3 class="issue-title toggle-handle"><span></span><?php echo hsc($issue->title);?></h3>
 								<div class="issue-details toggle-content">
 									<h4><?php echo KText::_('Problem');?></h4>
@@ -69,7 +69,7 @@ defined('CB_VALID_ENTRY') or die();
 				<?php if (count($this->performanceTips)) { ?>
 					<ul class="tip-list">
 						<?php foreach ($this->performanceTips as $tip) { ?>
-							<li class="tip-item toggle-wrapper">
+							<li class="tip-item dashboard-toggle-wrapper">
 								<h3 class="k-tip-title toggle-handle"><span></span><?php echo hsc($tip->title);?></h3>
 								<div class="tip-details toggle-content">
 									<h4><?php echo KText::_('Prospect');?></h4>
@@ -122,7 +122,7 @@ defined('CB_VALID_ENTRY') or die();
 				<?php if (count($this->currentStats)) { ?>
 					<ul class="stat-list">
 						<?php foreach ($this->currentStats as $stat) { ?>
-							<li class="stat-item toggle-wrapper">
+							<li class="stat-item dashboard-toggle-wrapper">
 								<h3 class="stat-title toggle-handle"><span></span><?php echo KText::sprintf('%s uses %s%%', $stat->title, $stat->percentageUsed);?></h3>
 								<div class="stat-values toggle-content">
 									<span class="stat-used"><?php echo KText::sprintf('Using %s%s', $stat->used, $stat->unit);?></span>
