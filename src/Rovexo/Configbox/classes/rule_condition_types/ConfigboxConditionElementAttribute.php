@@ -3,8 +3,8 @@ defined('CB_VALID_ENTRY') or die();
 
 class ConfigboxConditionElementAttribute extends ConfigboxCondition {
 
-	function containsQuestionId($conditionData, $answerId) {
-		return ($answerId == $conditionData['elementId']);
+	function containsQuestionId($conditionData, $questionId) {
+		return ($questionId == $conditionData['elementId']);
 	}
 
 	function containsAnswerId($conditionData, $answerId) {
@@ -27,6 +27,33 @@ class ConfigboxConditionElementAttribute extends ConfigboxCondition {
 
 		return false;
 
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	function getCopiedConditionData($conditionData, $copyIds) {
+
+		$oldQuestionId = $conditionData['elementId'];
+		if ($oldQuestionId) {
+			$hasNewId = isset($copyIds['adminelements'][$conditionData['elementId']]);
+			if ($hasNewId) {
+				$conditionData['elementId'] = $copyIds['adminelements'][$conditionData['elementId']];
+			}
+		}
+
+		if ($conditionData['field'] == 'selectedOption.id') {
+			$oldAnswerId = $conditionData['value'];
+			if ($oldAnswerId) {
+				$hasNewAnswerId = isset($copyIds['adminoptionassignments'][$conditionData['value']]);
+				if ($hasNewAnswerId) {
+					$conditionData['value'] = $copyIds['adminoptionassignments'][$conditionData['value']];
+				}
+			}
+
+		}
+
+		return $conditionData;
 	}
 
 	/**

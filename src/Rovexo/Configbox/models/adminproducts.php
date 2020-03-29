@@ -1120,6 +1120,25 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 	}
 
 	/**
+	 * @return object[]
+	 */
+	function getFilterSelectData() {
+		$languageTag = KText::getLanguageTag();
+		$db = KenedoPlatform::getDb();
+		$query = "
+		SELECT p.id, t.text AS `title`
+		FROM `#__configbox_products` AS `p`
+		LEFT JOIN `#__configbox_strings` AS t ON 
+		    t.key = p.id AND 
+		    t.type = '1' AND 
+		    t.language_tag = '".$db->getEscaped($languageTag)."'
+		";
+		$db->setQuery($query);
+		$records = $db->loadObjectList();
+		return $records;
+	}
+
+	/**
 	 * Auto-fills empty URL segments (label) and runs the parent prepare method.
 	 *
 	 * @see ConfigboxModelAdminproducts::fillEmptyUrlSegments
@@ -1212,6 +1231,20 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 		return true;
 
 	}
+
+	/**
+	 * On product copies, rules get copied by replacing IDs
+	 * @param object $data
+	 * @return bool|int
+	 */
+	function copy($data) {
+		$id = parent::copy($data);
+		$copyIds = self::$copyIds;
+		$this->copyRules($id, $copyIds);
+		$this->copyCalculations($id, $copyIds);
+		return $id;
+	}
+
 
 	/**
 	 * Helper method for prepareForStorage().

@@ -108,4 +108,76 @@ class ConfigboxModelAdmincalccodes extends KenedoModel {
 
 	}
 
+	function copyAcrossProducts($sourceCalcId, $copyCalcId, $copyIds) {
+
+		$db = KenedoPlatform::getDb();
+		$query = "SELECT * FROM #__configbox_calculation_codes WHERE `id` = ".$sourceCalcId;
+		$db->setQuery($query);
+		$codeRow = $db->loadObject();
+
+		$codeRow->id = $copyCalcId;
+
+		$calcModel = KenedoModel::getModel('ConfigboxModelAdmincalculations');
+
+		if ($codeRow->element_id_a != null) {
+			$codeRow->element_id_a = $copyIds['adminelements'][$codeRow->element_id_a];
+		}
+
+		if ($codeRow->element_id_b != null) {
+			$codeRow->element_id_b = $copyIds['adminelements'][$codeRow->element_id_b];
+		}
+
+		if ($codeRow->element_id_c != null) {
+			$codeRow->element_id_c = $copyIds['adminelements'][$codeRow->element_id_c];
+		}
+
+		if ($codeRow->element_id_d != null) {
+			$codeRow->element_id_d = $copyIds['adminelements'][$codeRow->element_id_d];
+		}
+
+		$rawCode = $codeRow->code;
+
+		if (stristr($rawCode,'ElementEntry') ) {
+			preg_match_all("/ElementEntry\((.*?)\)/i", $rawCode, $matches);
+			if (isset($matches[0])) {
+				$questionId = $matches[1][0];
+				$newQuestionId = $copyIds['adminelements'][$questionId];
+				$rawCode = str_ireplace($matches[0][0], 'ElementEntry('.$newQuestionId.')', $rawCode);
+			}
+		}
+
+		if (stristr($rawCode,'ElementPrice') ) {
+			preg_match_all("/ElementPrice\((.*?)\)/i", $rawCode, $matches);
+			if (isset($matches[0])) {
+				$questionId = $matches[1][0];
+				$newQuestionId = $copyIds['adminelements'][$questionId];
+				$rawCode = str_ireplace($matches[0][0], 'ElementPrice('.$newQuestionId.')', $rawCode);
+			}
+		}
+
+		if (stristr($rawCode,'ElementPriceRecurring') ) {
+			preg_match_all("/ElementPriceRecurring\((.*?)\)/i", $rawCode, $matches);
+			if (isset($matches[0])) {
+				$questionId = $matches[1][0];
+				$newQuestionId = $copyIds['adminelements'][$questionId];
+				$rawCode = str_ireplace($matches[0][0], 'ElementPriceRecurring('.$newQuestionId.')', $rawCode);
+			}
+		}
+
+		if (stristr($rawCode,'Calculation') ) {
+			preg_match_all("/Calculation\((.*?)\)/i", $rawCode, $matches);
+			if (isset($matches[0])) {
+				$calcId = $matches[1][0];
+				$newCalcId = $calcModel->copyAcrossProducts($calcId, $copyIds);
+				$rawCode = str_ireplace($matches[0][0], 'Calculation('.$newCalcId.')', $rawCode);
+			}
+		}
+
+		$codeRow->code = $rawCode;
+
+		$db->insertObject('#__configbox_calculation_codes', $codeRow, 'id');
+
+
+	}
+
 }

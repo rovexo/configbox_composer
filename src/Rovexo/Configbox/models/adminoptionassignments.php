@@ -239,20 +239,20 @@ class ConfigboxModelAdminoptionassignments extends KenedoModel {
 		}
 	}
 
-	function copy($data) {
-
-		KLog::log('Unsetting calcs and rules in data', 'custom_my');
-
-		$data->calcmodel = NULL;
-		$data->calcmodel_recurring = NULL;
-
-		$data->calcmodel_weight = NULL;
-		$data->rules = '';
-
-		$data->price_calculation_overrides = '[]';
-		$data->price_recurring_calculation_overrides = '[]';
-
-		return parent::copy($data);
-
-	}
+//	function copy($data) {
+//
+//		KLog::log('Unsetting calcs and rules in data', 'custom_copying');
+//
+//		$data->calcmodel = NULL;
+//		$data->calcmodel_recurring = NULL;
+//
+//		$data->calcmodel_weight = NULL;
+//		$data->rules = '';
+//
+//		$data->price_calculation_overrides = '[]';
+//		$data->price_recurring_calculation_overrides = '[]';
+//
+//		return parent::copy($data);
+//
+//	}
 }

@@ -139,7 +139,7 @@ else {
 
 				// Prepare the params for the token request
 				var params = {
-					amount_int	: <?php echo number_format($this->orderRecord->payableAmount, 2) * 100;?>,
+					amount_int	: <?php echo number_format($this->orderRecord->payableAmount, 2, '.', '') * 100;?>,
 					currency	: '<?php echo hsc($this->orderRecord->currency->code);?>',
 					number		: cbj('.payment-form').find('.input-card-number').val(),
 					exp_month	: cbj('.payment-form').find('.input-card-expiry-month').val(),

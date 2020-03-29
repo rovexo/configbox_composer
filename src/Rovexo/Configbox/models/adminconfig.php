@@ -1218,7 +1218,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'label'=>KText::_('LABEL_USE_GA_ECOMMERCE'),
 				'tooltip'=>KText::_('TOOLTIP_USE_GA_ECOMMERCE'),
 				'type'=>'boolean',
-				'default'=>1,
+				'default'=>0,
 				'positionForm'=>2000,
 			);
 
@@ -1227,7 +1227,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'label'=>KText::_('LABEL_GA_PROPERTY_ID'),
 				'tooltip'=>KText::_('TOOLTIP_GA_PROPERTY_ID'),
 				'type'=>'string',
-				'required'=>0,
+				'required'=>1,
 				'appliesWhen'=>array(
 					'use_ga_ecommerce'=>'1',
 				),

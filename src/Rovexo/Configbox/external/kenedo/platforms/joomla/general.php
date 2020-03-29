@@ -20,7 +20,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		// Set the document base in frontend (since many templates neglect to do so)
 		if ($this->isAdminArea() == false) {
 			// Set the base URL
-			KenedoPlatform::p()->setDocumentBase( $this->getUrlBase().'/' );
+			$this->setDocumentBase( $this->getUrlBase().'/' );
 		}
 
 		// At some Joomla 3.0 builds SEF URLs with suffix .raw when you got format=raw in query string
@@ -28,6 +28,8 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		if (!empty($_SERVER['REQUEST_URI']) && substr($_SERVER['REQUEST_URI'], -4) == '.raw') {
 			KRequest::setVar('format', 'raw');
 		}
+
+		$this->setGeneratorTag($this->getGeneratorTag().' and ConfigBox (https://www.configbox.at)');
 
 		$this->do2Point6LegacyStuff();
 

@@ -46,7 +46,7 @@ class ConfigboxModelAdminexamples extends KenedoModel {
 			'type'=>'join',
 
 			'modelClass'=>'ConfigboxModelAdminproducts',
-			'modelMethod'=>'getRecords',
+			'modelMethod'=>'getFilterSelectData',
 
 			'propNameKey'=>'id',
 			'propNameDisplay'=>'title',

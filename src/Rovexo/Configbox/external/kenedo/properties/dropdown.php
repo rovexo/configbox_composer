@@ -36,40 +36,16 @@ class KenedoPropertyDropdown extends KenedoProperty {
 	}
 
 	protected function getPossibleFilterValues() {
-
-		if ($this->getPropertyDefinition('storeExternally')) {
-			$tableName = $this->getPropertyDefinition('foreignTableName'); // Foreign as in the table we store the property's data in
-		}
-		else {
-			$tableName = $this->model->getTableName();
-		}
-		$db = KenedoPlatform::getDb();
-		$query = "SELECT DISTINCT `".$this->propertyName."` AS `value` FROM `".$tableName."`";
-		$db->setQuery($query);
-		$values = $db->loadResultList('value');
-
 		$options = array();
 		$options['all'] = KText::sprintf('No %s filter', $this->getPropertyDefinition('label'));
 
 		$choices = $this->getPropertyDefinition('choices', array());
 
-		foreach ($values as $value) {
-
-			if ($value) {
-
-				if (isset($choices[$value])) {
-					$options[$value] = $choices[$value];
-				}
-				else {
-					$options[$value] = $value;
-				}
-
-			}
-
+		foreach ($choices as $key=>$value) {
+			$options[$key] = $value;
 		}
 
 		return $options;
-
 	}
 		
 }

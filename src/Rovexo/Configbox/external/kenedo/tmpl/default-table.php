@@ -21,7 +21,7 @@ defined('CB_VALID_ENTRY') or die();
 		<div class="kenedo-filters">
 			<div class="kenedo-filter-list form-inline">
 				<?php foreach ($this->filterInputs as $key=>$filterInput) { ?>
-					<div class="kenedo-filter input-group"><?php echo $filterInput;?></div>
+					<div class="kenedo-filter input-group <?php echo hsc(str_replace('.', '_', $key));?>"><?php echo $filterInput;?></div>
 				<?php } ?>
 			</div>
 		</div>

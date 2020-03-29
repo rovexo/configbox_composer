@@ -268,20 +268,20 @@ class KenedoPropertyFile extends KenedoProperty {
 
 		$logPrefix = get_class($this->model).'\\'.$this->propertyName.'. Type "'.$this->getType().'": ';
 
-		KLog::log($logPrefix.'Checking if there is a file. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
+		KLog::log($logPrefix.'Checking if there is a file. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
         $filename = $data->{$this->propertyName};
 
         // If there is no filename, there is nothing to copy
         if(empty($filename)) {
-			KLog::log($logPrefix.'No file, moving on. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
+			KLog::log($logPrefix.'No file, moving on. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 			return true;
 		}
 
         // get newFilename
         $newFilename = $this->_getNewFileNameForCopy($data, $newId); // method rewrite without FILES array use
 		$logPrefix = get_class($this->model).'\\'.$this->propertyName.'. Type "'.$this->getType().'": ';
-		KLog::log($logPrefix.'Got a file, new filename will be "'.$newFilename.'". Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
+		KLog::log($logPrefix.'Got a file, new filename will be "'.$newFilename.'". Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
 		$directory = $this->getPropertyDefinition('dirBase');
 
@@ -289,7 +289,7 @@ class KenedoPropertyFile extends KenedoProperty {
 		if (is_file($directory.DS.$filename) == false) {
 			$msg = $logPrefix.'Issue with copying: Data shows there is a file, but we do not find it where it should be. Record ID was '.$oldId.'. Ignoring it for copying. Path was "'.$directory.DS.$filename.'"';
 			KLog::log($msg, 'warning');
-			KLog::log($msg, 'custom_my');
+			KLog::log($msg, 'custom_copying');
 
 			// Do store in any case (because we might deal with a prop using storeExternally and the table has just this column and there must be a row for the record)
 			$data->{$this->propertyName} = '';
@@ -304,7 +304,7 @@ class KenedoPropertyFile extends KenedoProperty {
 			$this->setError($feedback);
 			$msg = $logPrefix.$feedback;
 			KLog::log($msg, 'warning');
-			KLog::log($msg, 'custom_my');
+			KLog::log($msg, 'custom_copying');
 			return false;
 		}
 
@@ -317,12 +317,12 @@ class KenedoPropertyFile extends KenedoProperty {
 			if ($error) {
 				$msg = $logPrefix.'Copying file failed. Last PHP error message was '.$error['message'].'. Source path was "'.$directory.DS.$filename.'". Destination path was '.$directory.DS.$newFilename;
 				KLog::log($msg, 'error');
-				KLog::log($msg, 'custom_my');
+				KLog::log($msg, 'custom_copying');
 			}
 			else {
 				$msg = $logPrefix.'Copying file failed. No PHP error message was issued. Source path was "'.$directory.DS.$filename.'". Destination path was '.$directory.DS.$newFilename;
 				KLog::log($msg, 'error');
-				KLog::log($msg, 'custom_my');
+				KLog::log($msg, 'custom_copying');
 			}
 
 			$feedback = 'Copying file for '.$this->getPropertyDefinition('label').' failed. See ConfigBox error log file for details.';
@@ -380,14 +380,14 @@ class KenedoPropertyFile extends KenedoProperty {
 		}
 		catch(Exception $e) {
 			$logPrefix = get_class($this->model).'\\'.$this->propertyName.'. Type "'.$this->getType().'": ';
-			KLog::log($logPrefix.'SQL error during data copying. Error was '.$db->getErrorMsg(), 'custom_my');
+			KLog::log($logPrefix.'SQL error during data copying. Error was '.$db->getErrorMsg(), 'custom_copying');
 			KLog::log('SQL error during data copying. Error was '.$db->getErrorMsg(), 'error');
 			$this->setError('A database error occured during file data copying');
 			return false;
 		}
 
 		$logPrefix = get_class($this->model).'\\'.$this->propertyName.'. Type "'.$this->getType().'": ';
-		KLog::log($logPrefix.'Copying successful - ' . KLog::time('ModelCopyMethod'), 'custom_my');
+		KLog::log($logPrefix.'Copying successful - ' . KLog::time('ModelCopyMethod'), 'custom_copying');
 		return true;
 	}
 

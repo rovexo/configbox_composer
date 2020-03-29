@@ -20,9 +20,9 @@ class ConfigboxModelAdminelements extends KenedoModel {
 		return '';
 	}
 
-    function getChildModelForeignKey() {
-        return '';
-    }
+	function getChildModelForeignKey() {
+		return '';
+	}
 
 	function getPropertyDefinitions() {
 
@@ -960,6 +960,29 @@ class ConfigboxModelAdminelements extends KenedoModel {
 
 	}
 
+	/**
+	 * @return object[]
+	 */
+	function getFilterSelectData() {
+		$languageTag = KText::getLanguageTag();
+		$db = KenedoPlatform::getDb();
+		$query = "
+		SELECT p.id, t.text AS `title`
+		FROM `#__configbox_elements` AS `p`
+		LEFT JOIN `#__configbox_strings` AS t ON 
+		    t.key = p.id AND 
+		    t.type = '4' AND 
+		    t.language_tag = '".$db->getEscaped($languageTag)."'
+		";
+		$db->setQuery($query);
+		$records = $db->loadObjectList();
+		return $records;
+	}
+
+	/**
+	 * @param ConfigboxQuestion $data
+	 * @return bool
+	 */
 	function prepareForStorage($data) {
 
 		$response = parent::prepareForStorage($data);
@@ -982,6 +1005,12 @@ class ConfigboxModelAdminelements extends KenedoModel {
 		return true;
 	}
 
+	/**
+	 * @param ConfigboxQuestion $data
+	 * @param string $context
+	 * @return bool
+	 * @throws Exception
+	 */
 	function validateData($data, $context = '')
 	{
 
@@ -1323,19 +1352,19 @@ class ConfigboxModelAdminelements extends KenedoModel {
 		return $types;
 	}
 
-	function copy($data) {
-
-        $data->calcmodel_id_min_val = NULL;
-        $data->calcmodel_id_max_val = NULL;
-
-        $data->calcmodel = NULL;
-        $data->calcmodel_recurring = NULL;
-
-        $data->calcmodel_weight = NULL;
-        $data->rules = '';
-
-	    return parent::copy($data);
-
-    }
+//	function copy($data) {
+//
+//		$data->calcmodel_id_min_val = NULL;
+//		$data->calcmodel_id_max_val = NULL;
+//
+//		$data->calcmodel = NULL;
+//		$data->calcmodel_recurring = NULL;
+//
+//		$data->calcmodel_weight = NULL;
+//		$data->rules = '';
+//
+//		return parent::copy($data);
+//
+//	}
 
 }

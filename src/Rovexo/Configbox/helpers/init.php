@@ -6,7 +6,21 @@ define('KPATH_DIR_CB', KenedoPlatform::p()->getComponentDir('com_configbox') );
 KenedoAutoload::registerClass('ConfigboxCacheHelper',		KPATH_DIR_CB.'/helpers/cache.php');
 KenedoAutoload::registerClass('ConfigboxConfiguratorHelper',KPATH_DIR_CB.'/helpers/configurator.php');
 KenedoAutoload::registerClass('ConfigboxUpdateHelper',		KPATH_DIR_CB.'/helpers/update.php');
-KenedoAutoload::registerClass('ConfigboxRulesHelper',		KPATH_DIR_CB.'/helpers/rules.php');
+
+if (is_file('/Users/martin/PhpstormProjects/configbox_non_encoded/encoded/helpers/rules.php')) {
+	KenedoAutoload::registerClass('ConfigboxRulesHelper',		'/Users/martin/PhpstormProjects/configbox_non_encoded/encoded/helpers/rules.php');
+}
+else {
+	KenedoAutoload::registerClass('ConfigboxRulesHelper',		KPATH_DIR_CB.'/helpers/rules.php');
+}
+
+if (is_file('/Users/martin/PhpstormProjects/configbox_non_encoded/encoded/helpers/calculation.php')) {
+	KenedoAutoload::registerClass('ConfigboxCalculation',		'/Users/martin/PhpstormProjects/configbox_non_encoded/encoded/helpers/calculation.php');
+}
+else {
+	KenedoAutoload::registerClass('ConfigboxCalculation',		KPATH_DIR_CB.'/helpers/calculation.php');
+}
+
 KenedoAutoload::registerClass('ConfigboxProductImageHelper', KPATH_DIR_CB.'/helpers/productimage.php');
 KenedoAutoload::registerClass('ConfigboxPrices',			KPATH_DIR_CB.'/helpers/prices.php');
 KenedoAutoload::registerClass('ConfigboxPositionHelper',	KPATH_DIR_CB.'/helpers/position.php');
@@ -14,7 +28,6 @@ KenedoAutoload::registerClass('ConfigboxLocationHelper',	KPATH_DIR_CB.'/helpers/
 KenedoAutoload::registerClass('ConfigboxQuickeditHelper',	KPATH_DIR_CB.'/helpers/quickedit.php');
 KenedoAutoload::registerClass('ConfigboxRatingsHelper',		KPATH_DIR_CB.'/helpers/ratings.php');
 KenedoAutoload::registerClass('ConfigboxCacheHelper',		KPATH_DIR_CB.'/helpers/cache.php');
-KenedoAutoload::registerClass('ConfigboxCalculation',		KPATH_DIR_CB.'/helpers/calculation.php');
 KenedoAutoload::registerClass('ConfigboxUserHelper',		KPATH_DIR_CB.'/helpers/user.php');
 KenedoAutoload::registerClass('ConfigboxShapediverHelper',	KPATH_DIR_CB.'/helpers/shapediver.php');
 KenedoAutoload::registerClass('ConfigboxDeviceHelper',		KPATH_DIR_CB.'/helpers/device.php');

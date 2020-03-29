@@ -1762,25 +1762,21 @@ body>#footer {
 	padding-right:7px;
 }
 
-#view-admincustomer .view-customerform {
+.view-admincustomer .view-customerform {
 	padding:0px;
 	clear:both;
 	margin-top:20px;
 }
 
-.cb-content #view-adminproductlistingassignments .tasks-and-filters {
-	display:none;
+.cb-content .view-adminproductlistingassignments .tasks-and-filters {
+	display:none!important;
 }
 
-.cb-content #view-adminproduct .property-group-detail_panes_start .property-group-properties {
+.cb-content .view-adminproduct .property-group-detail_panes_start .property-group-properties {
 	float:none;
 }
 
-.cb-content #view-adminproduct #property-name-product_detail_panes>.property-body {
-	margin-top:-40px;
-}
-
-.cb-content #view-adminproduct .property-name-product_listing_ids .multiselect-toggles {
+.cb-content .view-adminproduct .property-name-product_listing_ids .multiselect-toggles {
 	display:none;
 }
 
@@ -1831,65 +1827,51 @@ body>#footer {
 	padding-left:0px;
 }
 
-.cb-content #view-adminproduct .property-group-price_module_start_recurring,
-.cb-content #view-adminproduct .property-group-price_module_start_regular {
+.cb-content .view-adminproduct .property-group-price_module_start_recurring,
+.cb-content .view-adminproduct .property-group-price_module_start_regular {
 	float:left;
 	clear:none;
 	width:calc(50% - 15px);
 }
 
-.cb-content #view-adminproduct #property-name-price_module_start_regular {
+.cb-content .view-adminproduct #property-name-price_module_start_regular {
 	margin-right:30px;
 }
 
-.cb-content #view-adminproduct .property-group-price_module_start_recurring .property-group-content,
-.cb-content #view-adminproduct .property-group-price_module_start_regular   .property-group-content {
+.cb-content .view-adminproduct .property-group-price_module_start_recurring .property-group-content,
+.cb-content .view-adminproduct .property-group-price_module_start_regular   .property-group-content {
 	padding-left:0px;
 }
 
-#property-name-price_module_start_recurring .kenedo-property,
-#property-name-price_module_start_regular .kenedo-property {
+.property-name-price_module_start_recurring .kenedo-property,
+.property-name-price_module_start_regular .kenedo-property {
 	width:100%;
 }
 
-.cb-content #view-adminelement .kenedo-properties {
-	border-bottom-left-radius:0px;
-	border-bottom-right-radius:0px;
+
+.view-adminoptionassignment .xref-data>h2,
+.view-adminoptionassignment .option-data>h2{
+	font-size:20px;
 }
 
-.cb-content #view-adminelement #view-adminoptionassignments .tasks-and-filters {
-	margin-top: -35px;
-	margin-bottom: 0px;
-}
-
-.cb-content #view-adminoptionassignment .kenedo-property {
+.cb-content .view-adminoptionassignment .kenedo-property {
 	width:auto;
 }
 
-.cb-content #view-adminoptionassignment .option-fields-target .kenedo-properties {
+.cb-content .view-adminoptionassignment .option-fields-target .kenedo-properties {
 	margin-top:0;
 }
 
-.cb-content #view-adminelement .property-group-assignments_group .property-group-properties {
+.cb-content .view-adminelement .property-group-assignments_group .property-group-properties {
 	float:none;
 }
 
-.cb-content #view-adminelement .element-option-assignments .property-group-content {
+.cb-content .view-adminelement .element-option-assignments .property-group-content {
 	padding-top:10px;
 }
 
-.cb-content #view-admincounties .kenedo-filter #xref_admincountries_adminzones_zone_id_chosen,
-.cb-content #view-admincounties .kenedo-filter #xref_admincountries_adminzones_zone_id_chosen + a
-.cb-content #view-admincounties .kenedo-filter #adminstates_name,
-.cb-content #view-admincounties .kenedo-filter #adminstates_name + a,
-.cb-content #view-admincounties .kenedo-filter #xref_admincountries_adminzones_zone_id,
-.cb-content #view-admincounties .kenedo-filter #xref_admincountries_adminzones_zone_id + a,
-.cb-content #view-admincounties .kenedo-filter #admincountries_state_name,
-.cb-content #view-admincounties .kenedo-filter #admincountries_state_name + a,
-.cb-content #view-admincounties .kenedo-filter #admincountries_country_name,
-.cb-content #view-admincounties .kenedo-filter #admincountries_country_name + a,
-.cb-content #view-admincounties .kenedo-filter #adminstates_name,
-.cb-content #view-admincounties .kenedo-filter #adminstates_name + a {
+.view-admincounties .kenedo-filter.admincounties_state_id,
+.view-admincounties .kenedo-filter.adminstates_name {
 	display:none;
 }
 
@@ -1992,15 +1974,15 @@ body>#footer {
 	padding: 3px 3px 0px;
 }
 
-.cb-content #view-admincalculation .calc-type-subview .kenedo-view {
+.cb-content .view-admincalculation .calc-type-subview .kenedo-view {
 	padding:0;
 }
 
-.cb-content #view-admincalculation .calc-type-subview .panel {
+.cb-content .view-admincalculation .calc-type-subview .panel {
 	border:none;
 }
 
-.cb-content #view-admincalculation .calculation-table-notes {
+.cb-content .view-admincalculation .calculation-table-notes {
 	float:right;
 	width:350px;
 	padding-left:10px;
@@ -2008,131 +1990,20 @@ body>#footer {
 	margin-top:-106px;
 }
 
-.cb-content #view-admincalculation.in-modal .task-copy {
+.cb-content .view-admincalculation.in-modal .task-copy {
 	display:none;
 }
 
-.cb-content #view-admincalculation.in-modal #property-name-product_id {
+.cb-content .view-admincalculation.in-modal #property-name-product_id {
 	display:none;
 }
 
-.cb-content #view-admincalculation #property-name-matrix .property-label {
+.cb-content .view-admincalculation #property-name-matrix .property-label {
 	display:none;
 }
 
 .cb-content .join-link-modal .view-admincalculation .task-store {
 	display:block;
-}
-
-.cb-content #view-adminelement .draghandler {
-	width:17px;
-	cursor:move;
-}
-
-.cb-content #view-adminelement .draghandler .fa {
-	margin-top:1px;
-	font-size:15px;
-	color:#666;
-}
-
-.cb-content #view-adminelement .draghandler:hover {
-	background-position: 0 -20px;
-}
-
-.cb-content #view-adminelement #optionList {
-	min-width:820px;
-	margin-bottom:20px;
-}
-
-.cb-content #view-adminelement #optionList ul {
-	margin:0px;
-	padding:0px;
-}
-
-.cb-content #view-adminelement #optionList li {
-	margin:5px 0px;
-	padding:5px;
-	list-style:none;
-	border:1px solid #ccc;
-	background:none;
-}
-
-.cb-content #view-adminelement #optionList .heading .ordering {
-	margin-left:6px;
-}
-
-.cb-content #view-adminelement #optionList .heading {
-	font-weight:bold;
-}
-
-.cb-content #view-adminelement #optionList .ordering {
-	float:left;
-	width:30px;
-}
-
-.cb-content #view-adminelement #optionList .heading .default {
-	position:relative;
-	left:-20px;
-}
-
-.cb-content #view-adminelement #optionList .default {
-	float:left;
-	width:50px;
-}
-
-.cb-content #view-adminelement #optionList .default input {
-	margin:0px;
-}
-
-.cb-content #view-adminelement #optionList .id {
-	float:left;
-	width:40px;
-	overflow:hidden;
-}
-
-.cb-content #view-adminelement #optionList .title {
-	float:left;
-	width:200px;
-	overflow:hidden;
-}
-
-.cb-content #view-adminelement #optionList .sku {
-	float:left;
-	width:100px;
-	overflow:hidden;
-}
-
-.cb-content #view-adminelement #optionList .has-rule {
-	float:left;
-	width:50px;
-	overflow:hidden;
-}
-
-.cb-content #view-adminelement #optionList .has-image {
-	float:left;
-	width:50px;
-	overflow:hidden;
-}
-
-.cb-content #view-adminelement #optionList .has-calc {
-	float:left;
-	width:50px;
-	overflow:hidden;
-}
-
-.cb-content #view-adminelement #optionList .published {
-	float:left;
-	width:40px;
-	overflow:hidden;
-}
-
-.cb-content #view-adminelement #optionList .tools {
-	float:right;
-}
-
-.cb-content #view-adminelement #optionList .tools a {
-	padding-right:10px;
-	white-space: nowrap;
 }
 
 .cb-content #view-admintemplates .kenedo-tasks {
@@ -2852,13 +2723,6 @@ body>#footer {
 .view-adminmainmenu .product-tree-wrapper.shows-edit-buttons .trigger-copy {
 	display:inline-block;
 }
-
-
-#view-adminoptionassignment .xref-data>h2,
-#view-adminoptionassignment .option-data>h2{
-	font-size:20px;
-}
-
 
 /* BACKEND - END */
 

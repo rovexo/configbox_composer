@@ -1,8 +1,8 @@
-<?php 
+<?php
 defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyPublished extends KenedoProperty {
-	
+
 	function getCellContentInListingTable($record) {
 
 		ob_start();
@@ -25,7 +25,7 @@ class KenedoPropertyPublished extends KenedoProperty {
 		}
 
 		return ob_get_clean();
-		
+
 	}
 
 	function getOutputValueFromRecordData($record) {
@@ -38,5 +38,13 @@ class KenedoPropertyPublished extends KenedoProperty {
 		}
 
 	}
-	
+
+	protected function getPossibleFilterValues() {
+		$options = array();
+		$options['all'] = KText::sprintf('No %s filter', $this->getPropertyDefinition('label'));
+		$options['1'] = KText::_('CBYES');
+		$options['0'] = KText::_('CBNO');
+		return $options;
+	}
+
 }

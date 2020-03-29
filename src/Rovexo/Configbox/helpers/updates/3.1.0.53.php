@@ -13,7 +13,7 @@ if (ConfigboxUpdateHelper::tableFieldExists('#__cbcheckout_order_records', 'ga_c
 
 if (ConfigboxUpdateHelper::tableFieldExists('#__configbox_config', 'use_ga_ecommerce') == false) {
 
-	$query = "ALTER TABLE `#__configbox_config` ADD `use_ga_ecommerce` ENUM('0', '1') DEFAULT '1' AFTER `structureddata_in`";
+	$query = "ALTER TABLE `#__configbox_config` ADD `use_ga_ecommerce` ENUM('0', '1') DEFAULT '0' AFTER `structureddata_in`";
 	$db->setQuery($query);
 	$db->query();
 

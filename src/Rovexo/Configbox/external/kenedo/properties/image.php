@@ -770,7 +770,7 @@ class KenedoPropertyImage extends KenedoProperty {
 			// Append a number to circumvent outdated cache data
 			$newFilename .= '-'.str_pad(rand(1,1000),4,0);
 		}
-		KLog::log('PropertyFileCopyMethodGotFilename - Class(' . get_class($this) . ') - ' . KLog::time('ModelCopyMethod'), 'custom_my');
+		KLog::log('PropertyFileCopyMethodGotFilename - Class(' . get_class($this) . ') - ' . KLog::time('ModelCopyMethod'), 'custom_copying');
 		return $newFilename.'.'.$fileExtension;
 
 	}

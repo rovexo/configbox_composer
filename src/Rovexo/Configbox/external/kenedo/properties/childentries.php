@@ -48,7 +48,7 @@ class KenedoPropertyChildentries extends KenedoProperty {
 
 		$logPrefix = get_class($this->model).'\\'.$this->propertyName.'. Type "'.$this->getType().'": ';
 
-		KLog::log($logPrefix.' Searching for child records. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
+		KLog::log($logPrefix.' Searching for child records. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
         // Get the child view..
         $view = KenedoView::getView($this->getPropertyDefinition('viewClass'));
@@ -72,8 +72,8 @@ class KenedoPropertyChildentries extends KenedoProperty {
         // This should give you all the child records to copy
         $recordsToCopy = $model->getRecords($filters);
 
-		KLog::log($logPrefix.' Child model is '.get_class($model).'. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
-		KLog::log($logPrefix.' Got '.count($recordsToCopy).' child records to copy. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
+		KLog::log($logPrefix.' Child model is '.get_class($model).'. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
+		KLog::log($logPrefix.' Got '.count($recordsToCopy).' child records to copy. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
         // Loop through them..
         foreach ($recordsToCopy as $recordToCopy) {

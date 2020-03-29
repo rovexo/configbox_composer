@@ -1,4 +1,4 @@
-<?php 
+<?php
 defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyRadio extends KenedoProperty {
@@ -17,5 +17,23 @@ class KenedoPropertyRadio extends KenedoProperty {
 
 		return (isset($choices[$value])) ? $choices[$value] : '';
 	}
+
+	protected function getPossibleFilterValues() {
+		$options = array();
+		$options['all'] = KText::sprintf('No %s filter', $this->getPropertyDefinition('label'));
+
+		$choices = $this->getPropertyDefinition('choices', array());
+		// Legacy - old name was items
+		if (count($choices) == 0) {
+			$choices = $this->getPropertyDefinition('radios', array());
+		}
+
+		foreach ($choices as $key=>$value) {
+			$options[$key] = $value;
+		}
+
+		return $options;
+	}
+
 
 }

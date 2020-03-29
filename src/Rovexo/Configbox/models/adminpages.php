@@ -140,7 +140,7 @@ class ConfigboxModelAdminpages extends KenedoModel {
 			'defaultlabel'=>KText::_('Select Product'),
 
 			'modelClass'=>'ConfigboxModelAdminproducts',
-			'modelMethod'=>'getRecords',
+			'modelMethod'=>'getFilterSelectData',
 
 			'joinAdditionalProps'=>array(
 				array('propertyName'=>'published', 				'selectAliasOverride'=>'product_published'),

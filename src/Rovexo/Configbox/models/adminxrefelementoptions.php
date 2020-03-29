@@ -18,9 +18,9 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 	}
 
 	function getPropertyDefinitions() {
-		
+
 		$propDefs = array();
-		
+
 		$propDefs['id'] = array(
 			'name'=>'id',
 			'type'=>'id',
@@ -41,9 +41,8 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'defaultlabel'=>KText::_('Select Question'),
 
 			'modelClass'=>'ConfigboxModelAdminelements',
-			'modelMethod'=>'getRecords',
+			'modelMethod'=>'getFilterSelectData',
 
-			'groupby'=>'joinedby_page_id_to_adminpages_product_id_display_value',
 			'required'=>1,
 
 			'joinAdditionalProps'=>array(
@@ -55,7 +54,7 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'parent'=>1,
 			'order'=>10,
 			'filter'=>10,
-			'filterparents'=>1,
+			'filterparents'=>0,
 			'invisible'=>true,
 			'positionForm'=>20000,
 		);
@@ -69,15 +68,10 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'propNameKey'=>'id',
 			'propNameDisplay'=>'title',
 			'modelClass'=>'ConfigboxModelAdminoptions',
-			'modelMethod'=>'getRecords',
+			'modelMethod'=>'getFilterSelectData',
 			'required'=>0,
 			'listing'=>50,
 			'order'=>20,
-
-			'filter'=>20,
-			'parent'=>1,
-			'filterparents'=>0,
-
 			'invisible'=>false,
 			'listingwidth'=>'150px',
 			'listinglink'=>1,
@@ -103,8 +97,6 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'type'=>'string',
 			'required'=>0,
 			'order'=>20,
-			'search'=>1,
-			'filter'=>2,
 			'invisible'=>true,
 			'listingwidth'=>'150px',
 			'positionForm'=>41000,
@@ -552,21 +544,21 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 
 	}
 
-    function copy($data) {
-
-		KLog::log('Unsetting calcs and rules in data', 'custom_my');
-
-        $data->calcmodel = NULL;
-        $data->calcmodel_recurring = NULL;
-
-        $data->calcmodel_weight = NULL;
-        $data->rules = '';
-
-        $data->price_calculation_overrides = '[]';
-        $data->price_recurring_calculation_overrides = '[]';
-
-        return parent::copy($data);
-
-    }
+//	function copy($data) {
+//
+//		KLog::log('Unsetting calcs and rules in data', 'custom_copying');
+//
+//		$data->calcmodel = NULL;
+//		$data->calcmodel_recurring = NULL;
+//
+//		$data->calcmodel_weight = NULL;
+//		$data->rules = '';
+//
+//		$data->price_calculation_overrides = '[]';
+//		$data->price_recurring_calculation_overrides = '[]';
+//
+//		return parent::copy($data);
+//
+//	}
 
 }

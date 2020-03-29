@@ -261,4 +261,14 @@ abstract class ConfigboxCondition {
 		return false;
 	}
 
+	/**
+	 * Replaces IDs of anything copied and returns the condition data with the new ids
+	 * @param string[] $conditionData
+	 * @param array $copyIds
+	 * @return array
+	 */
+	function getCopiedConditionData($conditionData, $copyIds) {
+		return $conditionData;
+	}
+
 }

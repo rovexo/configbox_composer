@@ -225,20 +225,30 @@ class ConfigboxQuestion {
 
 		if ($this->getType() == 'upload') {
 
-			if ($prevSelection) {
+			if ($selection == '') {
+				if ($prevSelection) {
+					$oldData = json_decode($prevSelection, true);
 
-				$oldData = json_decode($prevSelection, true);
+					KLog::log('Prev selection was: '. var_export($oldData, true), 'custom_uploads');
 
-				KLog::log('Prev selection was: '. var_export($oldData, true), 'custom_uploads');
-
-				if (isset($oldData['path']) && is_file($oldData['path'])) {
-					KLog::log('Deleting old file', 'custom_uploads');
-					unlink($oldData['path']);
+					if (isset($oldData['path']) && is_file($oldData['path'])) {
+						KLog::log('Deleting old file', 'custom_uploads');
+						unlink($oldData['path']);
+					}
 				}
-
 			}
+			elseif ($selection != '' && !empty($_FILES['file'])) {
 
-			if ($selection != '') {
+				if ($prevSelection) {
+					$oldData = json_decode($prevSelection, true);
+
+					KLog::log('Prev selection was: '. var_export($oldData, true), 'custom_uploads');
+
+					if (isset($oldData['path']) && is_file($oldData['path'])) {
+						KLog::log('Deleting old file', 'custom_uploads');
+						unlink($oldData['path']);
+					}
+				}
 
 				$data = json_decode($selection, true);
 
@@ -247,18 +257,18 @@ class ConfigboxQuestion {
 				$data['path'] = CONFIGBOX_DIR_CONFIGURATOR_FILEUPLOADS .DS. $newFilename;
 				$data['url'] = CONFIGBOX_URL_CONFIGURATOR_FILEUPLOADS .DS. $newFilename;
 
-				if (!empty($_FILES['file'])) {
-					KLog::log('Storing uploaded file', 'custom_uploads');
-					move_uploaded_file($_FILES['file']['tmp_name'], $data['path']);
+				if (!is_dir(CONFIGBOX_DIR_CONFIGURATOR_FILEUPLOADS)) {
+					mkdir(CONFIGBOX_DIR_CONFIGURATOR_FILEUPLOADS, 0777, true);
 				}
 
-				KLog::log('New selection selection data will be: '. var_export($data, true), 'custom_uploads');
+				KLog::log('Storing uploaded file', 'custom_uploads');
+				move_uploaded_file($_FILES['file']['tmp_name'], $data['path']);
 
 				$selection = json_encode($data);
 
+				KLog::log('New selection selection data will be: '. var_export($data, true), 'custom_uploads');
 
 			}
-
 
 		}
 
@@ -479,19 +489,26 @@ class ConfigboxQuestion {
 			$mimeTypes = explode(' ',$mimeTypes);
 			$validMimeTypes = array_map('trim',$mimeTypes);
 
-			$file = !empty($_FILES['file']) ? $_FILES['file'] : NULL;
-
-			if ($file == NULL) {
+			$fileInfo = json_decode($value, true);
+			if ($fileInfo['path']) {
+				$path = $fileInfo['path'];
+				$name = $fileInfo['name'];
+			}
+			elseif(isset($_FILES['file']['tmp_name'])) {
+				$path = $_FILES['file']['tmp_name'];
+				$name = $_FILES['file']['name'];
+			}
+			else {
 				return true;
 			}
 
-			$fileExtension = substr(strrchr($file['name'],'.'),1);
+			$fileExtension = substr(strrchr($name,'.'),1);
 			if (!in_array($fileExtension,$validExtensions)) {
 				$response = KText::sprintf('Files with extension %s are not allowed.',$fileExtension);
 				return $response;
 			}
 
-			$fileMimeType = KenedoFileHelper::getMimeType($file['tmp_name']);
+			$fileMimeType = KenedoFileHelper::getMimeType($path);
 			if ($fileMimeType) {
 				if (!in_array($fileMimeType,$validMimeTypes)) {
 					$response = KText::sprintf('Files with MIME type %s are not allowed.',$fileMimeType);
@@ -500,8 +517,8 @@ class ConfigboxQuestion {
 			}
 
 			if ($this->upload_size_mb != 0) {
-				$validFilesizeBytes = $this->upload_size_mb * 1024 * 1024;
-				if ( filesize($file['tmp_name']) > $validFilesizeBytes ) {
+				$validFileSizeBytes = $this->upload_size_mb * 1024 * 1024;
+				if ( filesize($path) > $validFileSizeBytes ) {
 					$response = KText::sprintf('File size is over the maximum of %s MB.', $this->upload_size_mb);
 					return $response;
 				}

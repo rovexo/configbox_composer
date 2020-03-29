@@ -402,4 +402,39 @@ class KenedoPropertyCalculation extends KenedoProperty {
 
 	}
 
+	function copyCalculation($record, $copyIds) {
+
+		$calculationId = $record->{$this->propertyName};
+
+		// If we got no calculation, no copying needed
+		if ($calculationId === null) {
+			return;
+		}
+
+		$calcModel = KenedoModel::getModel('ConfigboxModelAdmincalculations');
+		$newCalculationId = $calcModel->copyAcrossProducts($calculationId, $copyIds);
+
+		$db = KenedoPlatform::getDb();
+
+		if ($this->getPropertyDefinition('storeExternally')) {
+			$tableName = $this->getPropertyDefinition('foreignTableName');
+			$tableKeyCol = $this->getPropertyDefinition('foreignTableKey');
+		}
+		else {
+			$tableName = $this->model->getTableName();
+			$tableKeyCol = $this->model->getTableKey();
+		}
+
+		$columnName = $this->getTableColumnName();
+
+		$query = "
+		UPDATE `".$tableName."`
+		SET `".$columnName."` = ".intval($newCalculationId)."
+		WHERE `".$tableKeyCol."` = ".intval($record->{$this->model->getTableKey()})."
+		";
+		$db->setQuery($query);
+		$db->query();
+
+	}
+
 }

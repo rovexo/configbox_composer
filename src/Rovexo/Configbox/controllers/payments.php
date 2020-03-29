@@ -74,7 +74,7 @@ class ConfigboxControllerPayments extends KenedoController {
 		
 		try {
 			$charge = Stripe_Charge::create(array(
-					"amount" => number_format($orderRecord->payableAmount,2) * 100, // amount in cents, again
+					"amount" => number_format($orderRecord->payableAmount,2, '.', '') * 100, // amount in cents, again
 					"currency" => strtolower($orderRecord->currency->code),
 					"card" => $token,
 					"description" => KText::sprintf('Order ID %s from %s', $orderRecord->id, $shopdata->shopname))
@@ -180,7 +180,7 @@ class ConfigboxControllerPayments extends KenedoController {
 			$paymentResponse = $service->create($payment);
 		
 			$transaction->setPayment($paymentResponse->getId());
-			$transaction->setAmount(round($orderRecord->payableAmount,2) * 100);
+			$transaction->setAmount(number_format($orderRecord->payableAmount,2, '.', '') * 100);
 			$transaction->setCurrency($orderRecord->currency->code);
 			$transaction->setDescription(KText::sprintf('Order ID %s from %s', $orderRecord->id, $shopdata->shopname));
 			$transactionResponse = $service->create($transaction);

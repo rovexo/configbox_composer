@@ -87,7 +87,7 @@ class ConfigboxModelAdminreviews extends KenedoModel {
 			'propNameDisplay'=>'title',
 
 			'modelClass'=>'ConfigboxModelAdminproducts',
-			'modelMethod'=>'getRecords',
+			'modelMethod'=>'getFilterSelectData',
 
 			'parent'=>1,
 			'filterparents'=>0,

@@ -113,7 +113,7 @@ class KenedoPropertyTranslatable extends KenedoProperty {
     public function copy($data, $newId, $oldId) {
 
 		$logPrefix = get_class($this->model).'\\'.$this->propertyName.'. Type "'.$this->getType().'": ';
-		KLog::log($logPrefix.'Looking for translatable texts to copy. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
+		KLog::log($logPrefix.'Looking for translatable texts to copy. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
         $db = KenedoPlatform::getDb();
 
@@ -146,7 +146,7 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 				catch (Exception $e) {
 					$logMsg = 'SQL error occured during copying. Error was "'.$db->getErrorMsg().'".';
 					KLog::log($logMsg, 'error');
-					KLog::log($logMsg, 'custom_my');
+					KLog::log($logMsg, 'custom_copying');
 					throw new Exception($logMsg);
 				}
 			}
@@ -154,7 +154,7 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 			unset($data->$dataFieldKey);
 		}
 
-		KLog::log($logPrefix.'Copied '.$count.' translatable texts (Rest was empty). Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
+		KLog::log($logPrefix.'Copied '.$count.' translatable texts (Rest was empty). Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
         return true;
 

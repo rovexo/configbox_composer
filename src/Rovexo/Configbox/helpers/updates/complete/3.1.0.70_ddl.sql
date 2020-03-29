@@ -704,7 +704,7 @@ CREATE TABLE `sltxh_configbox_config`
     `page_nav_show_buttons`                varchar(1)       NOT NULL DEFAULT '1',
     `structureddata`                       varchar(1)       NOT NULL DEFAULT '1',
     `structureddata_in`                    varchar(16)      NOT NULL DEFAULT 'configurator',
-    `use_ga_ecommerce`                     varchar(1)       NOT NULL DEFAULT '1',
+    `use_ga_ecommerce`                     varchar(1)       NOT NULL DEFAULT '0',
     `ga_property_id`                       varchar(64)               DEFAULT '',
     `use_ga_enhanced_ecommerce`            varchar(1)       NOT NULL DEFAULT '0',
     `ga_behavior_offline_psps`             varchar(32)      NOT NULL DEFAULT 'conversion_when_ordered',

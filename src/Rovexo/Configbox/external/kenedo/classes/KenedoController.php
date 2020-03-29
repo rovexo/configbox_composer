@@ -704,10 +704,10 @@ abstract class KenedoController {
 			}
 		}
 
-		KLog::log('Starting copying data for Controller "' . get_class($this) . '". - ' . KLog::time('ModelCopyMethod'), 'custom_my');
+		KLog::log('Starting copying data for Controller "' . get_class($this) . '". - ' . KLog::time('ModelCopyMethod'), 'custom_copying');
 
 		// Start a transaction, if any record fails to copy, we roll back all DB changes.
-		KLog::log('Controller '.get_class($this). ' starts its transaction.', 'custom_my');
+		KLog::log('Controller '.get_class($this). ' starts its transaction.', 'custom_copying');
 		KenedoPlatform::getDb()->startTransaction();
 
 		try {
@@ -752,7 +752,7 @@ abstract class KenedoController {
 			}
 
 			// success
-			KLog::log('Controller '.get_class($this). ' commits its transaction.', 'custom_my');
+			KLog::log('Controller '.get_class($this). ' commits its transaction.', 'custom_copying');
 			KenedoPlatform::getDb()->commitTransaction();
 
 			$controllerName = KenedoController::getControllerNameFromClass(get_class($this));
@@ -783,8 +783,8 @@ abstract class KenedoController {
 		catch (Exception $e) {
 
 			KLog::log($e->getMessage(), 'error');
-			KLog::log($e->getMessage(), 'custom_my');
-			KLog::log('Controller '.get_class($this). ' rolls back its transaction.', 'custom_my');
+			KLog::log($e->getMessage(), 'custom_copying');
+			KLog::log('Controller '.get_class($this). ' rolls back its transaction.', 'custom_copying');
 
 			KenedoPlatform::getDb()->rollbackTransaction();
 
@@ -796,7 +796,7 @@ abstract class KenedoController {
 			if ($responseType == 'json') {
 				echo json_encode(array(
 					'success' => false,
-					'errors' => $errorMsg,
+					'errors' => [$errorMsg],
 				));
 			} elseif ($responseType == 'list') {
 				KenedoPlatform::p()->sendSystemMessage($errorMsg, 'error');

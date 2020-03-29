@@ -16,6 +16,21 @@ class ConfigboxConditionCalculation extends ConfigboxCondition {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	function getCopiedConditionData($conditionData, $copyIds) {
+
+		$oldCalcId = $conditionData['calcId'];
+		if ($oldCalcId) {
+			$calcModel = KenedoModel::getModel('ConfigboxModelAdmincalculations');
+			$conditionData['calcId'] = $calcModel->copyAcrossProducts($oldCalcId);
+		}
+
+		return $conditionData;
+	}
+
+
+	/**
 	 * Called by ConfigboxRulesHelper::getConditionCode to compare condition with provided selections
 	 *
 	 * @param string[] $conditionData

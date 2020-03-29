@@ -40,7 +40,7 @@ class ConfigboxModelAdminproductdetailpanes extends KenedoModel {
 			),
 
 			'modelClass'=>'ConfigboxModelAdminproducts',
-			'modelMethod'=>'getRecords',
+			'modelMethod'=>'getFilterSelectData',
 
 			'required'=>1,
 			'listing'=>20,

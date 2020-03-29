@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class KenedoModel We all love KenedModel
+ * Class KenedoModel We all love KenedoModel
  */
 class KenedoModel {
 
@@ -52,6 +52,12 @@ class KenedoModel {
 	 * @var string Language to use for getRecords and getRecord (format de-DE)
 	 */
 	public $languageTag = '';
+
+	/**
+	 * Holds data about old and new IDs during the copy process
+	 * @var array
+	 */
+	static public $copyIds = array();
 
 	/**
 	 * @return string Table used for storage
@@ -400,8 +406,8 @@ class KenedoModel {
 
 		$db = KenedoPlatform::getDb();
 
-		KLog::log('Starting copying data for model "' . get_class($this) . '". ID '.$data->{$this->getTableKey()}.' - ' . KLog::time('ModelCopyMethod'), 'custom_my');
-		KLog::log('Model '.get_class($this). ' starts its transaction.', 'custom_my');
+		KLog::log('Starting copying data for model "' . get_class($this) . '". ID '.$data->{$this->getTableKey()}.' - ' . KLog::time('ModelCopyMethod'), 'custom_copying');
+		KLog::log('Model '.get_class($this). ' starts its transaction.', 'custom_copying');
 		$db->startTransaction();
 
 		try {
@@ -413,7 +419,7 @@ class KenedoModel {
 			if (empty($oldId)) {
 				$logMsg = 'Data for model "' . get_class($this) . '" has no primary key value. Data was '.var_export($data, true).'. Aborting';
 				KLog::log($logMsg, 'error');
-				KLog::log($logMsg, 'custom_my');
+				KLog::log($logMsg, 'custom_copying');
 				throw new Exception($logMsg);
 			}
 
@@ -448,13 +454,15 @@ class KenedoModel {
 				throw new Exception($msg);
 			}
 
+			self::$copyIds[$this->getModelName()][$oldId] = $newId;
+
 			// Get the model's properties
 			$properties = $this->getProperties();
 
 			// Loop through for copying property-specific data
 			foreach ($properties as $property) {
 
-				//KLog::log('Copying property ' . get_class($this) . '\\' . $property->propertyName . '. Property type is ' . get_class($property) . ' - ' . KLog::time('ModelCopyMethod'), 'custom_my');
+				//KLog::log('Copying property ' . get_class($this) . '\\' . $property->propertyName . '. Property type is ' . get_class($property) . ' - ' . KLog::time('ModelCopyMethod'), 'custom_copying');
 
 				$success = $property->copy($data, $newId, $oldId);
 
@@ -476,10 +484,10 @@ class KenedoModel {
 
 					// Log everything in error and copy log
 					KLog::log($logMsg, 'error');
-					KLog::log($logMsg, 'custom_my');
+					KLog::log($logMsg, 'custom_copying');
 
 					// Rollback and return false
-					KLog::log('Model '.get_class($this). ' rolls back its transaction.', 'custom_my');
+					KLog::log('Model '.get_class($this). ' rolls back its transaction.', 'custom_copying');
 					$db->rollbackTransaction();
 					return false;
 
@@ -514,13 +522,13 @@ class KenedoModel {
 					$filterName = $filterName[0];
 				}
 
-				KLog::log('Figured out the filter name for child model\'s foreign key prop "'.$fkProperty->propertyName.'". It is "'.$filterName.'" - '.KLog::time('ModelCopyMethod'),'custom_my');
+				KLog::log('Figured out the filter name for child model\'s foreign key prop "'.$fkProperty->propertyName.'". It is "'.$filterName.'" - '.KLog::time('ModelCopyMethod'),'custom_copying');
 
-				KLog::log('Getting child records from '.get_class($childModel).' with parent ID '.$oldId.'" - '.KLog::time('ModelCopyMethod'), 'custom_my');
+				KLog::log('Getting child records from '.get_class($childModel).' with parent ID '.$oldId.'" - '.KLog::time('ModelCopyMethod'), 'custom_copying');
 				// Now we get the child records
 				$childRecords = $childModel->getRecords(array($filterName => $oldId));
 
-				KLog::log('Got '.count($childRecords).' child records. - '.KLog::time('ModelCopyMethod'),'custom_my');
+				KLog::log('Got '.count($childRecords).' child records. - '.KLog::time('ModelCopyMethod'),'custom_copying');
 
 				foreach ($childRecords as $childRecord) {
 
@@ -534,7 +542,7 @@ class KenedoModel {
 					// Set the foreign key value to the new ID of the parent record (MIND WE DO NOT SET THE PRIMARY KEY VALUE OF CHILD RECORD HERE)
 					$childRecordCopy->{$fkPropName} = $newId;
 
-					KLog::log('Starting to copy child record ID '.$oldChildPrimaryId.' of '.get_class($this).' - (New fk ID: '.$newId.', Old fk ID: '.$oldChildFkId.') - '.KLog::time('ModelCopyMethod'),'custom_my');
+					KLog::log('Starting to copy child record ID '.$oldChildPrimaryId.' of '.get_class($this).' - (New fk ID: '.$newId.', Old fk ID: '.$oldChildFkId.') - '.KLog::time('ModelCopyMethod'),'custom_copying');
 
 					// Dare to recurse into the child's copy method
 					$response = $childModel->copy($childRecordCopy);
@@ -558,7 +566,7 @@ class KenedoModel {
 
 						}
 						KLog::log($logMsg, 'error');
-						KLog::log($logMsg, 'custom_my');
+						KLog::log($logMsg, 'custom_copying');
 
 						// Add reported errors from the child model in our model
 						if (count($errors)) {
@@ -568,21 +576,21 @@ class KenedoModel {
 							$this->setError(KText::_('Copying failed, model "'.$childModel->getModelName().'" reported an unspecified error'));
 						}
 
-						KLog::log('Model '.get_class($this). ' rolls back its transaction.', 'custom_my');
+						KLog::log('Model '.get_class($this). ' rolls back its transaction.', 'custom_copying');
 						$db->rollbackTransaction();
 						return false;
 
 					}
 
-					KLog::log('Copying child model record was successful. - '.KLog::time('ModelCopyMethod'),'custom_my');
+					KLog::log('Copying child model record was successful. - '.KLog::time('ModelCopyMethod'),'custom_copying');
 
 				}
 
-				KLog::log('Model '.get_class($this). ' finished copying all child records - '.KLog::time('ModelCopyMethod'),'custom_my');
+				KLog::log('Model '.get_class($this). ' finished copying all child records - '.KLog::time('ModelCopyMethod'),'custom_copying');
 
 			}
 
-			KLog::log('Model '.get_class($this). ' commits its transaction.', 'custom_my');
+			KLog::log('Model '.get_class($this). ' commits its transaction.', 'custom_copying');
 
 			KenedoObserver::triggerEvent('onAfterCopyRecord', array($this->getModelName(), $newData));
 
@@ -593,11 +601,120 @@ class KenedoModel {
 		}
 		catch (Exception $e) {
 			KLog::log($e->getMessage(), 'error');
-			KLog::log($e->getMessage(), 'custom_my');
-			KLog::log('Model '.get_class($this). ' rolls back its transaction.', 'custom_my');
+			KLog::log($e->getMessage(), 'custom_copying');
+			KLog::log('Model '.get_class($this). ' rolls back its transaction.', 'custom_copying');
 			$db->rollbackTransaction();
 			$this->setError(KText::_('A system error occured during copying. Please notify your service provider.'));
 			return false;
+		}
+
+	}
+
+
+	protected function copyRules($recordId, $copyIds) {
+
+		// Get the model's properties
+		$properties = $this->getProperties();
+
+		foreach ($properties as $property) {
+			if (is_a($property, 'KenedoPropertyRule')) {
+				$record = $this->getRecord($recordId);
+				$property->copyRule($record, $copyIds);
+			}
+			elseif(is_a($property, 'KenedoPropertyChildentries')) {
+				$record = $this->getRecord($recordId);
+
+				$view = KenedoView::getView($property->getPropertyDefinition('viewClass'));
+				$childEntriesModel = $view->getDefaultModel();
+				$viewFilters = $property->getPropertyDefinition('viewFilters');
+
+				// Prepare the filter array for loading the child records
+				$filters = array();
+				foreach ($viewFilters as $viewFilter) {
+					$filters[$viewFilter['filterName']] = $record->{$viewFilter['filterValueKey']};
+				}
+
+				// This should give you all the child records to copy
+				$childEntriesRecords = $childEntriesModel->getRecords($filters);
+				foreach ($childEntriesRecords as $childEntriesRecord) {
+					$childEntriesModel->copyRules($childEntriesRecord->{$childEntriesModel->getTableKey()}, $copyIds);
+				}
+
+			}
+		}
+
+		$childModelName = $this->getChildModel();
+		$foreignKeyPropName = $this->getChildModelForeignKey();
+
+		if ($childModelName) {
+			$childModel = KenedoModel::getModel($childModelName);
+
+			$childProperties = $childModel->getProperties();
+			$fkProperty = $childProperties[$foreignKeyPropName];
+			$filterName = $fkProperty->getFilterName();
+			if (is_array($filterName)) {
+				$filterName = $filterName[0];
+			}
+
+			$childRecords = $childModel->getRecords([$filterName=>$recordId]);
+			foreach ($childRecords as $childRecord) {
+				$childModel->copyRules($childRecord->{$childModel->getTableKey()}, $copyIds);
+			}
+
+		}
+
+	}
+
+	function copyCalculations($recordId, $copyIds) {
+
+		// Get the model's properties
+		$properties = $this->getProperties();
+
+		foreach ($properties as $property) {
+			if (is_a($property, 'KenedoPropertyCalculation')) {
+				$record = $this->getRecord($recordId);
+				$property->copyCalculation($record, $copyIds);
+			}
+			elseif(is_a($property, 'KenedoPropertyChildentries')) {
+				$record = $this->getRecord($recordId);
+
+				$view = KenedoView::getView($property->getPropertyDefinition('viewClass'));
+				$childEntriesModel = $view->getDefaultModel();
+				$viewFilters = $property->getPropertyDefinition('viewFilters');
+
+				// Prepare the filter array for loading the child records
+				$filters = array();
+				foreach ($viewFilters as $viewFilter) {
+					$filters[$viewFilter['filterName']] = $record->{$viewFilter['filterValueKey']};
+				}
+
+				// This should give you all the child records to copy
+				$childEntriesRecords = $childEntriesModel->getRecords($filters);
+				foreach ($childEntriesRecords as $childEntriesRecord) {
+					$childEntriesModel->copyCalculations($childEntriesRecord->{$childEntriesModel->getTableKey()}, $copyIds);
+				}
+
+			}
+		}
+
+		$childModelName = $this->getChildModel();
+		$foreignKeyPropName = $this->getChildModelForeignKey();
+
+		if ($childModelName) {
+			$childModel = KenedoModel::getModel($childModelName);
+
+			$childProperties = $childModel->getProperties();
+			$fkProperty = $childProperties[$foreignKeyPropName];
+			$filterName = $fkProperty->getFilterName();
+			if (is_array($filterName)) {
+				$filterName = $filterName[0];
+			}
+
+			$childRecords = $childModel->getRecords([$filterName=>$recordId]);
+			foreach ($childRecords as $childRecord) {
+				$childModel->copyCalculations($childRecord->{$childModel->getTableKey()}, $copyIds);
+			}
+
 		}
 
 	}
@@ -841,6 +958,43 @@ class KenedoModel {
 					$data->{$property->propertyName} = NULL;
 				}
 
+				try {
+					if ($data->{$property->propertyName} && $property->getType() == 'join') {
+						/**
+						 * @var KenedoPropertyJoin $property
+						 */
+						$parentModelClass = $property->getPropertyDefinition('modelClass');
+						$parentModel = KenedoModel::getModel($parentModelClass);
+						$parentProps = $parentModel->getProperties();
+						$parentIdProp = $parentProps[$parentModel->getTableKey()];
+
+						$selects = $property->getSelectsForGetRecord();
+						array_shift($selects);
+						$joins = $property->getJoinsForGetRecord();
+						array_shift($joins);
+
+						$query = "
+						SELECT ".implode(",\n", $selects)."
+						FROM ".$parentModel->getTableName()." AS ".$parentIdProp->getTableAlias()."
+						".implode("\n", $joins)."
+						WHERE ".$parentIdProp->getTableAlias().'.'.$parentIdProp->getSelectAlias()." = ".$data->{$property->propertyName}."
+						";
+						$db = KenedoPlatform::getDb();
+						$db->setQuery($query);
+						$parentData = $db->loadObject();
+
+						foreach ($parentData as $key=>$value) {
+							$data->{$key} = $value;
+						}
+
+						unset($parentModel, $parentIdProp);
+					}
+				}
+				catch (Exception $e) {
+					KLog::log('Experimental adding of parent data to initialized data failed. With error "'.$e->getMessage().'"', 'warning');
+					KLog::log('stack trace was '.$e->getTraceAsString(), 'warning');
+				}
+
 			}
 		}
 
@@ -1071,7 +1225,7 @@ class KenedoModel {
 
 			// Do GROUP BYs
 			if (count($groupByCols)) {
-				$query .= "\n\n GROUP BY ".implode(', ', $groupByCols);
+				$query .= "\n\n GROUP BY ".implode(', ', array_unique($groupByCols));
 			}
 
 			// And now ORDER BYs

@@ -287,4 +287,87 @@ class ConfigboxModelAdmincalcmatrices extends KenedoModel {
 		return $dropdownItems;
 
 	}
+
+	function copyAcrossProducts($sourceCalcId, $copyCalcId, $copyIds) {
+		$db = KenedoPlatform::getDb();
+		$query = "SELECT * FROM #__configbox_calculation_matrices WHERE `id` = ".$sourceCalcId;
+		$db->setQuery($query);
+		$matrixData = $db->loadObject();
+
+		$matrixData->id = $copyCalcId;
+
+		$calcModel = KenedoModel::getModel('ConfigboxModelAdmincalculations');
+
+		if ($matrixData->column_element_id != null) {
+			$matrixData->column_element_id = $copyIds['adminelements'][$matrixData->column_element_id];
+		}
+
+		if ($matrixData->row_element_id != null) {
+			$matrixData->row_element_id = $copyIds['adminelements'][$matrixData->row_element_id];
+		}
+
+		if ($matrixData->multielementid != null) {
+			$matrixData->multielementid = $copyIds['adminelements'][$matrixData->multielementid];
+		}
+
+		if ($matrixData->column_calc_id != null) {
+			$matrixData->column_calc_id = $calcModel->copyAcrossProducts($matrixData->column_calc_id, $copyIds);
+		}
+
+		if ($matrixData->row_calc_id != null) {
+			$matrixData->row_calc_id = $calcModel->copyAcrossProducts($matrixData->row_calc_id, $copyIds);
+		}
+
+		if ($matrixData->calcmodel_id_multi != null) {
+			$matrixData->calcmodel_id_multi = $calcModel->copyAcrossProducts($matrixData->calcmodel_id_multi, $copyIds);
+		}
+
+		$db->insertObject($this->getTableName(), $matrixData, $this->getTableKey());
+
+		$query = "SELECT * FROM `#__configbox_calculation_matrices_data` WHERE `id` = ".$sourceCalcId;
+		$db->setQuery($query);
+		$matrixValueRows = $db->loadAssocList();
+
+		foreach ($matrixValueRows as &$matrixValueRow) {
+
+			$matrixValueRow['id'] = $copyCalcId;
+
+			if ($matrixValueRow['y'] != 0) {
+				if ($matrixData->row_type == 'question') {
+					if ($this->questionHasAnswers($matrixData->row_element_id)) {
+						$matrixValueRow['y'] = $copyIds['adminoptionassignments'][$matrixValueRow['y']];
+					}
+				}
+			}
+
+			if ($matrixValueRow['x'] != 0) {
+				if ($matrixData->column_type == 'question') {
+					if ($this->questionHasAnswers($matrixData->column_element_id)) {
+						$matrixValueRow['x'] = $copyIds['adminoptionassignments'][$matrixValueRow['x']];
+					}
+				}
+			}
+
+		}
+
+		foreach ($matrixValueRows as $row) {
+			$object = (object)$row;
+			$db->insertObject('#__configbox_calculation_matrices_data', $object, 'id');
+		}
+
+	}
+
+	protected static $memoHasAnswers = array();
+
+	protected function questionHasAnswers($questionId) {
+		if (!isset(self::$memoHasAnswers[$questionId])) {
+
+			$db = KenedoPlatform::getDb();
+			$query = "SELECT COUNT(*) FROM `#__configbox_xref_element_option` WHERE `element_id` = ".intval($questionId);
+			$db->setQuery($query);
+			self::$memoHasAnswers[$questionId] = $db->loadResult() != 0;
+		}
+
+		return self::$memoHasAnswers[$questionId];
+	}
 }

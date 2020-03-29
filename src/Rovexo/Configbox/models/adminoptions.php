@@ -377,6 +377,25 @@ class ConfigboxModelAdminoptions extends KenedoModel {
 
 	}
 
+	/**
+	 * @return object[]
+	 */
+	function getFilterSelectData() {
+		$languageTag = KText::getLanguageTag();
+		$db = KenedoPlatform::getDb();
+		$query = "
+		SELECT p.id, t.text AS `title`
+		FROM `#__configbox_options` AS `p`
+		LEFT JOIN `#__configbox_strings` AS t ON 
+		    t.key = p.id AND 
+		    t.type = '5' AND 
+		    t.language_tag = '".$db->getEscaped($languageTag)."'
+		";
+		$db->setQuery($query);
+		$records = $db->loadObjectList();
+		return $records;
+	}
+
 	function delete($id) {
 
 		$response = parent::delete($id);

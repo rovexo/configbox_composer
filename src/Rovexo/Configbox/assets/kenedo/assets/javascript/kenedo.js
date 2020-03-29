@@ -491,7 +491,16 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 					}
 
 					if (taskInfo.form.closest('.modal').length > 0) {
+
+						// if we're in a modal, assume form was opened via an intra listing, refresh it
+						var list = taskInfo.form.closest('.modal').data('parent-intra-listing');
+						if (list) {
+							kenedo.refreshList(list);
+						}
+
+						// Hide and clear the modal
 						taskInfo.form.closest('.modal').modal('hide').find('.modal-content').html('');
+
 					}
 					else {
 
@@ -770,10 +779,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			modal.data('parent-intra-listing', list);
 
 			cbrequire(['cbj', 'cbj.bootstrap'], function(cbj) {
-
-				modal.one('hide.bs.modal', function() {
-					kenedo.refreshList(list);
-				});
 
 				var data = {
 					id: id

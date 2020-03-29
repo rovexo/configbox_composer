@@ -19,6 +19,13 @@ class ConfigboxCalcTermFunction extends ConfigboxCalcTerm {
 		return false;
 	}
 
+	function getCopiedTermData($termData, $copyIds) {
+
+		$termData['parameters'] = ConfigboxCalculation::getTermsCopy($termData['parameters'], $copyIds);
+
+		return $termData;
+	}
+
 	/**
 	 * Called by ConfigboxRulesHelper::getTermsCode to get the term result
 	 *

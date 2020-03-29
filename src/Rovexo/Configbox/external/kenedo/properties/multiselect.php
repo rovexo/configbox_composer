@@ -212,7 +212,7 @@ class KenedoPropertyMultiselect extends KenedoProperty {
     function copy($data, $newId, $oldId) {
 
 		$logPrefix = get_class($this->model).'\\'.$this->propertyName.'. Type "'.$this->getType().'": ';
-		KLog::log($logPrefix.'Searching for xref records. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
+		KLog::log($logPrefix.'Searching for xref records. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
         $fieldValues = $data->{$this->propertyName};
 
@@ -228,7 +228,7 @@ class KenedoPropertyMultiselect extends KenedoProperty {
         if(empty($data->$keyOwn)){
         	$logMsg = $logPrefix.'Settings for multiselect appear invalid. Cannot find $keyOwn ("'.$keyOwn.'") in record data (or is empty). Data was '.var_export($data, true);
 			KLog::log($logMsg, 'error');
-			KLog::log($logMsg, 'custom_my');
+			KLog::log($logMsg, 'custom_copying');
 			throw new Exception($logMsg);
         }
 
@@ -245,7 +245,7 @@ class KenedoPropertyMultiselect extends KenedoProperty {
             if(empty($fieldValue)) {
 				$logMsg = $logPrefix.'One of the xref values appear invalid. xref value was '.var_export($fieldValue, true).'. All values were '.var_export($fieldValues, true);
 				KLog::log($logMsg, 'error');
-				KLog::log($logMsg, 'custom_my');
+				KLog::log($logMsg, 'custom_copying');
 				throw new Exception($logMsg);
             }
 
@@ -270,7 +270,7 @@ class KenedoPropertyMultiselect extends KenedoProperty {
 
         }
 
-		KLog::log($logPrefix.'Found '.count($newXrefRecords).' xref records. Starting to copy. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
+		KLog::log($logPrefix.'Found '.count($newXrefRecords).' xref records. Starting to copy. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
 		// Add the new set of xref records
         foreach ($newXrefRecords as $newXrefRecord) {
@@ -278,12 +278,12 @@ class KenedoPropertyMultiselect extends KenedoProperty {
             if ($saveResult === false) {
             	$logMsg = $logPrefix.'Copying xref record failed. SQL error was "'.$db->getErrorMsg().'".';
 				KLog::log($logMsg, 'error');
-				KLog::log($logMsg, 'custom_my');
+				KLog::log($logMsg, 'custom_copying');
 				throw new Exception($logMsg);
 			}
         }
 
-		KLog::log($logPrefix.'Successfully copied all '.count($newXrefRecords).' xref records. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
+		KLog::log($logPrefix.'Successfully copied all '.count($newXrefRecords).' xref records. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
         return true;
     }

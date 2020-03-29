@@ -11,6 +11,19 @@ class ConfigboxCalcTermElementAttribute extends ConfigboxCalcTerm {
 		return false;
 	}
 
+	function getCopiedTermData($termData, $copyIds) {
+
+		if ($termData['elementId'] == 'regarding') {
+			return $termData;
+		}
+
+		$oldQuestionId = $termData['elementId'];
+		if ($oldQuestionId) {
+			$termData['elementId'] = $copyIds['adminelements'][$oldQuestionId];
+		}
+		return $termData;
+	}
+
 	/**
 	 * Called by ConfigboxRulesHelper::getTermCode to get the term result
 	 *

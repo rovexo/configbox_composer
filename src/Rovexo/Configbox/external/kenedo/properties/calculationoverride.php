@@ -18,20 +18,13 @@ class KenedoPropertyCalculationOverride extends KenedoProperty {
 
         if ($this->applies($data) == false) {
 			$data->{$this->propertyName} = json_encode(array());
+			return;
         }
 
 		$json = KRequest::getVar($this->propertyName, '[]', 'METHOD');
 		$json = stripslashes($json);
 
 		$overridesFromPost = json_decode($json, true);
-
-		if (!is_array($overridesFromPost) && !is_object($overridesFromPost)) {
-			$msg = 'Did not get valid calculation override data from POST data. Expected array or object from $_REQUEST var '.$this->propertyName.'. Assuming empty array as input from $_REQUEST.';
-			$msg .= ' Entire data from $_REQUEST was '.var_export($_REQUEST, true);
-			KLog::log($msg, 'error');
-			$data->{$this->propertyName} = json_encode(array());
-			return;
-		}
 
 		// Loop through the array from the POSTED JSON and build a fresh array structure as it's designed to be.
 		$overrides = array();

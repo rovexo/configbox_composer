@@ -52,7 +52,7 @@ class ConfigboxModelAdmincalculations extends KenedoModel {
 			'tooltip'=>KText::_('PROP_TOOLTIP_CALCULATION_PRODUCT_ID'),
 
 			'modelClass'=>'ConfigboxModelAdminproducts',
-			'modelMethod'=>'getRecords',
+			'modelMethod'=>'getFilterSelectData',
 
 			'lockedAfterStore'=>true,
 			'parent'=>1,
@@ -186,6 +186,48 @@ class ConfigboxModelAdmincalculations extends KenedoModel {
 
 		return $model;
 
+	}
+
+	/**
+	 * @var int[] Holds IDs of already copied calculations (key is old id, value is new id)
+	 */
+	static $alreadyCopiedCalculations = array();
+
+	/**
+	 * @param int $id Calculation ID
+	 * @param array $copyIds Infos about old and new IDs
+	 * @return int ID of copied calculation
+	 */
+	function copyAcrossProducts($id, $copyIds) {
+
+		if (isset(self::$alreadyCopiedCalculations[$id])) {
+			return self::$alreadyCopiedCalculations[$id];
+		}
+
+		$calculation = $this->getRecord($id);
+
+		if (!$calculation) {
+			KLog::log('Requested a calculation copy of ID '.$id.', but calculation does not exist', 'error');
+			throw new Exception('Requested a calculation copy of ID '.$id.', but calculation does not exist');
+		}
+
+		$db = KenedoPlatform::getDb();
+
+		$data = new stdClass();
+		$data->id = NULL;
+		$data->name = $calculation->name;
+		$data->type = $calculation->type;
+		$data->product_id = $copyIds['adminproducts'][$calculation->product_id];
+
+		$db->insertObject($this->getTableName(), $data, $this->getTableKey());
+		$calculationCopyId = $data->id;
+		self::$alreadyCopiedCalculations[$id] = $calculationCopyId;
+
+
+		$model = $this->getModelForCalcType($calculation->type);
+		$model->copyAcrossProducts($id, $calculationCopyId, $copyIds);
+
+		return $calculationCopyId;
 	}
 
 	/**

@@ -301,9 +301,9 @@ class KenedoProperty {
 			$query = "
 			INSERT INTO `".$foreignTableName."` 
 			SET 
-				`".$this->propertyName."`   = ".$value.",
+				`".$this->getTableColumnName()."`   = ".$value.",
 				`".$foreignTableKey."`      = '".$db->getEscaped($baseTableKeyValue)."' 
-			ON DUPLICATE KEY UPDATE `".$this->propertyName."`   = ".$value;
+			ON DUPLICATE KEY UPDATE `".$this->getTableColumnName()."` = ".$value;
 			$db->setQuery($query);
 			$success = $db->query();
 
@@ -337,7 +337,7 @@ class KenedoProperty {
 
         	$logPrefix = get_class($this->model).'\\'.$this->propertyName.'. Type "'.$this->getType().'": ';
 
-        	KLog::log($logPrefix.'Copying data from external table. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_my');
+        	KLog::log($logPrefix.'Copying data from external table. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
             $db = KenedoPlatform::getDb();
 
@@ -366,7 +366,7 @@ class KenedoProperty {
             	$msg = 'Property '.get_class($this).'\\'.$this->propertyName.' encountered an SQL error during insert in external table.';
             	KLog::log($msg, 'db_error');
 				KLog::log($msg, 'error');
-				KLog::log($msg, 'custom_my');
+				KLog::log($msg, 'custom_copying');
             	$this->setError('A system error occured during copying property "'.$this->getPropertyDefinition('label'));
             	return false;
             }

@@ -199,6 +199,10 @@ abstract class ConfigboxCalcTerm {
 		return false;
 	}
 
+	function getCopiedTermData($termData, $copyIds) {
+		return $termData;
+	}
+
 	/**
 	 * Should return true if the given element is contained in the term, false otherwise. Used for finding out
 	 * if the element can be deleted.

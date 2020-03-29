@@ -15,6 +15,17 @@ class ConfigboxCalcTermCalculation extends ConfigboxCalcTerm {
 		return ($calculationId == $termData['value']);
 	}
 
+	function getCopiedTermData($termData, $copyIds) {
+
+		$oldCalcId = $termData['value'];
+		if ($oldCalcId) {
+			$calcModel = KenedoModel::getModel('ConfigboxModelAdmincalculations');
+			$termData['value'] = $calcModel->copyAcrossProducts($oldCalcId);
+		}
+
+		return $termData;
+	}
+
 	/**
 	 * Called by ConfigboxRulesHelper::getTermCode to get the term result
 	 *

@@ -32,7 +32,7 @@ class ConfigboxModelAdminproductlistingassignments extends KenedoModel {
 			'propNameKey'=>'id',
 			'propNameDisplay'=>'title',
 			'modelClass'=>'ConfigboxModelAdminproducts',
-			'modelMethod'=>'getRecords',
+			'modelMethod'=>'getFilterSelectData',
 
 			'required'=>1,
 			'listing'=>50,
