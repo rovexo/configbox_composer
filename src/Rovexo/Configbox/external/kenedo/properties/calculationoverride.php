@@ -31,7 +31,7 @@ class KenedoPropertyCalculationOverride extends KenedoProperty {
 		foreach ($overridesFromPost as &$override) {
 			$overrides[] = array(
 				'group_id' => intval($override['group_id']),
-				'calculation_id' => intval($override['calculation_id']),
+				'calculation_id' => $override['calculation_id'] ? intval($override['calculation_id']) : NULL,
 			);
 		}
 
@@ -81,7 +81,7 @@ class KenedoPropertyCalculationOverride extends KenedoProperty {
 			}
 
 			// This weeds out overrides using calculations that do not exist anymore.
-			if (empty($calcs[$override['calculation_id']])) {
+			if ($override['calculation_id'] && empty($calcs[$override['calculation_id']])) {
 				continue;
 			}
 
@@ -160,6 +160,55 @@ class KenedoPropertyCalculationOverride extends KenedoProperty {
 
 		return $options;
 
+
+	}
+
+	function copyOverrides($record, $copyIds) {
+
+		$overrides = $record->{$this->propertyName};
+
+		// If we got no override, no copying needed
+		if ($overrides == '' || $overrides === '[]') {
+			return;
+		}
+
+		$overrides = json_decode($record->{$this->propertyName}, true);
+
+		$calcModel = KenedoModel::getModel('ConfigboxModelAdmincalculations');
+
+		foreach ($overrides as &$override) {
+			if ($override['calculation_id'] === NULL || $override['calculation_id'] === 0) {
+				// Normalize any zeros to nulls
+				$override['calculation_id'] = NULL;
+				continue;
+			}
+
+			$override['calculation_id'] = $calcModel->copyAcrossProducts($override['calculation_id'], $copyIds);
+
+		}
+
+		$overrides = json_encode($overrides);
+
+		$db = KenedoPlatform::getDb();
+
+		if ($this->getPropertyDefinition('storeExternally')) {
+			$tableName = $this->getPropertyDefinition('foreignTableName');
+			$tableKeyCol = $this->getPropertyDefinition('foreignTableKey');
+		}
+		else {
+			$tableName = $this->model->getTableName();
+			$tableKeyCol = $this->model->getTableKey();
+		}
+
+		$columnName = $this->getTableColumnName();
+
+		$query = "
+		UPDATE `".$tableName."`
+		SET `".$columnName."` = '".$db->getEscaped($overrides)."'
+		WHERE `".$tableKeyCol."` = ".intval($record->{$this->model->getTableKey()})."
+		";
+		$db->setQuery($query);
+		$db->query();
 
 	}
 

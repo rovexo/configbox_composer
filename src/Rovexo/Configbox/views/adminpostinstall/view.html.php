@@ -90,6 +90,19 @@ class ConfigboxViewAdminpostinstall extends KenedoView {
 
 		$this->currentStep = KRequest::getInt('step', 1);
 
+		$this->selectedLanguageTags = KenedoLanguageHelper::getActiveLanguageTags();
+		$this->languages = KenedoPlatform::p()->getLanguages();
+
+		// Hotfix to add a possibly failed initial adding of active language
+		if (count($this->selectedLanguageTags) == 0) {
+			$languageTag = KenedoPlatform::p()->getLanguageTag();
+			$db = KenedoPlatform::getDb();
+			$query = "INSERT INTO #__configbox_active_languages VALUES ('".$db->getEscaped($languageTag)."')";
+			$db->setQuery($query);
+			$db->query();
+			$this->selectedLanguageTags = KenedoLanguageHelper::getActiveLanguageTags();
+		}
+
 		$this->licenseKey = CbSettings::getInstance()->get('product_key');
 
 		$this->platformName = KenedoPlatform::getName();
@@ -97,9 +110,7 @@ class ConfigboxViewAdminpostinstall extends KenedoView {
 		$this->urlDashboard = KLink::getRoute('index.php?option=com_configbox&controller=admindashboard', false);
 
 		$this->shopData = KenedoModel::getModel('ConfigboxModelAdminshopdata')->getRecord(1);
-		$this->languages = KenedoPlatform::p()->getLanguages();
 
-		$this->selectedLanguageTags = KenedoLanguageHelper::getActiveLanguageTags();
 		$this->countries = ConfigboxCountryHelper::getCountries();
 
 		$this->countryOptions = array(''=>'');

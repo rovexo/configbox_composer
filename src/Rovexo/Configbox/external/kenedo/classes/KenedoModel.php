@@ -610,8 +610,7 @@ class KenedoModel {
 
 	}
 
-
-	protected function copyRules($recordId, $copyIds) {
+	function copyRulesAndCalculations($recordId, $copyIds) {
 
 		// Get the model's properties
 		$properties = $this->getProperties();
@@ -621,60 +620,14 @@ class KenedoModel {
 				$record = $this->getRecord($recordId);
 				$property->copyRule($record, $copyIds);
 			}
-			elseif(is_a($property, 'KenedoPropertyChildentries')) {
-				$record = $this->getRecord($recordId);
-
-				$view = KenedoView::getView($property->getPropertyDefinition('viewClass'));
-				$childEntriesModel = $view->getDefaultModel();
-				$viewFilters = $property->getPropertyDefinition('viewFilters');
-
-				// Prepare the filter array for loading the child records
-				$filters = array();
-				foreach ($viewFilters as $viewFilter) {
-					$filters[$viewFilter['filterName']] = $record->{$viewFilter['filterValueKey']};
-				}
-
-				// This should give you all the child records to copy
-				$childEntriesRecords = $childEntriesModel->getRecords($filters);
-				foreach ($childEntriesRecords as $childEntriesRecord) {
-					$childEntriesModel->copyRules($childEntriesRecord->{$childEntriesModel->getTableKey()}, $copyIds);
-				}
-
-			}
-		}
-
-		$childModelName = $this->getChildModel();
-		$foreignKeyPropName = $this->getChildModelForeignKey();
-
-		if ($childModelName) {
-			$childModel = KenedoModel::getModel($childModelName);
-
-			$childProperties = $childModel->getProperties();
-			$fkProperty = $childProperties[$foreignKeyPropName];
-			$filterName = $fkProperty->getFilterName();
-			if (is_array($filterName)) {
-				$filterName = $filterName[0];
-			}
-
-			$childRecords = $childModel->getRecords([$filterName=>$recordId]);
-			foreach ($childRecords as $childRecord) {
-				$childModel->copyRules($childRecord->{$childModel->getTableKey()}, $copyIds);
-			}
-
-		}
-
-	}
-
-	function copyCalculations($recordId, $copyIds) {
-
-		// Get the model's properties
-		$properties = $this->getProperties();
-
-		foreach ($properties as $property) {
-			if (is_a($property, 'KenedoPropertyCalculation')) {
+			elseif (is_a($property, 'KenedoPropertyCalculation')) {
 				$record = $this->getRecord($recordId);
 				$property->copyCalculation($record, $copyIds);
 			}
+			elseif (is_a($property, 'KenedoPropertyCalculationOverride')) {
+				$record = $this->getRecord($recordId);
+				$property->copyOverrides($record, $copyIds);
+			}
 			elseif(is_a($property, 'KenedoPropertyChildentries')) {
 				$record = $this->getRecord($recordId);
 
@@ -691,7 +644,7 @@ class KenedoModel {
 				// This should give you all the child records to copy
 				$childEntriesRecords = $childEntriesModel->getRecords($filters);
 				foreach ($childEntriesRecords as $childEntriesRecord) {
-					$childEntriesModel->copyCalculations($childEntriesRecord->{$childEntriesModel->getTableKey()}, $copyIds);
+					$childEntriesModel->copyRulesAndCalculations($childEntriesRecord->{$childEntriesModel->getTableKey()}, $copyIds);
 				}
 
 			}
@@ -712,7 +665,7 @@ class KenedoModel {
 
 			$childRecords = $childModel->getRecords([$filterName=>$recordId]);
 			foreach ($childRecords as $childRecord) {
-				$childModel->copyCalculations($childRecord->{$childModel->getTableKey()}, $copyIds);
+				$childModel->copyRulesAndCalculations($childRecord->{$childModel->getTableKey()}, $copyIds);
 			}
 
 		}
@@ -1016,7 +969,7 @@ class KenedoModel {
 
 		// Throw and exception if a bad language was selected
 		if (!in_array($languageTag, KenedoLanguageHelper::getActiveLanguageTags())) {
-			$logMsg = 'Requested records with language "'.$languageTag.'", but it is not an active language. Stack trace: '.var_export(debug_backtrace(false), true);
+			$logMsg = 'Requested records with language "'.$languageTag.'", but it is not an active language.';
 			KLog::log($logMsg, 'error');
 			throw new Exception('Requested records with language "'.$languageTag.'", but it is not an active language.', 500);
 		}
@@ -1081,7 +1034,7 @@ class KenedoModel {
 
 		// Throw and exception if a bad language was selected
 		if (!in_array($languageTag, KenedoLanguageHelper::getActiveLanguageTags())) {
-			$logMsg = 'Requested records with language "'.$languageTag.'", but it is not an active language. Stack trace: '.var_export(debug_backtrace(false), true);
+			$logMsg = 'Requested records with language "'.$languageTag.'", but it is not an active language.';
 			KLog::log($logMsg, 'error');
 			throw new Exception('Requested records with language "'.$languageTag.'", but it is not an active language', 500);
 		}

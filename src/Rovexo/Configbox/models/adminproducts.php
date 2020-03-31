@@ -1233,18 +1233,16 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 	}
 
 	/**
-	 * On product copies, rules get copied by replacing IDs
+	 * On product copies, rules, calculation and calc overrides get copied by replacing IDs
 	 * @param object $data
 	 * @return bool|int
 	 */
 	function copy($data) {
 		$id = parent::copy($data);
 		$copyIds = self::$copyIds;
-		$this->copyRules($id, $copyIds);
-		$this->copyCalculations($id, $copyIds);
+		$this->copyRulesAndCalculations($id, $copyIds);
 		return $id;
 	}
-
 
 	/**
 	 * Helper method for prepareForStorage().
