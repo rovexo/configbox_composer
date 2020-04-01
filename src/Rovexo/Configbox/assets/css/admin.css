@@ -1928,6 +1928,10 @@ body>#footer {
 	display:none;
 }
 
+.cb-content .rule-wrapper.has-no-rule .trigger-copy-rule {
+	display:none;
+}
+
 .cb-content .rule-wrapper.has-no-rule .pseudo-rule-no-conds {
 	display:inline-block;
 }
@@ -1988,14 +1992,6 @@ body>#footer {
 	padding-left:10px;
 	padding-right:10px;
 	margin-top:-106px;
-}
-
-.cb-content .view-admincalculation.in-modal .task-copy {
-	display:none;
-}
-
-.cb-content .view-admincalculation.in-modal #property-name-product_id {
-	display:none;
 }
 
 .cb-content .view-admincalculation #property-name-matrix .property-label {

@@ -4,10 +4,6 @@
 	font-size:13px;
 }
 
-.view-adminruleeditor .kenedo-view.in-modal {
-	padding:0;
-}
-
 .view-adminruleeditor .note-pick-question,
 .view-adminruleeditor .note-drag-conditions {
 	font-weight:normal;
@@ -19,15 +15,18 @@
 
 .view-adminruleeditor .editor-heading {
 	margin-top:0;
-	padding-top:8px;
 }
 
 .view-adminruleeditor .editor-heading select {
 	display:inline-block;
 	width:450px!important;
+	border:1px solid #ccc;
+	box-shadow: none;
+	height: 34px;
+	padding: 4px 10px;
+	font-size:14px;
 }
 
-.view-adminruleeditor .editor-heading,
 .view-adminruleeditor .heading-conditions {
 	font-size:16px;
 	margin-left:11px;

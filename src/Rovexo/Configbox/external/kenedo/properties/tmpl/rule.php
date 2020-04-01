@@ -52,8 +52,10 @@ $editUrl = KLink::getRoute('index.php?option=com_configbox&controller=adminrulee
 		<span class="pseudo-rule-no-conds"><?php echo hsc($this->getPropertyDefinition('textWhenNoRule', ''));?></span>
 	</span>
 
-	<a class="backend-button-small trigger-edit-rule"><?php echo KText::_('Change')?></a>
-	<a class="backend-button-small trigger-delete-rule"><?php echo KText::_('Delete');?></a>
+	<a class="backend-button-small trigger-edit-rule"><?php echo KText::_('BTN_RULE_CHANGE')?></a>
+	<a class="backend-button-small trigger-delete-rule"><?php echo KText::_('BTN_RULE_DELETE');?></a>
+	<a class="backend-button-small trigger-copy-rule"><?php echo KText::_('BTN_RULE_COPY');?></a>
+	<a class="backend-button-small trigger-paste-rule"><?php echo KText::_('BTN_RULE_PASTE');?></a>
 
 	<div class="modal rule-editor-modal" role="dialog">
 		<div class="modal-dialog">

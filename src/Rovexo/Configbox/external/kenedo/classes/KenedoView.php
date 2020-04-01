@@ -394,21 +394,18 @@ class KenedoView {
 		return NULL;
 	}
 
+	/**
+	 * @deprecated Remove calls, method is no longer in use
+	 * @return null
+	 */
 	function isInModal() {
-		return (KRequest::getInt('in_modal') == 1);
+		return NULL;
 	}
 
 	function addViewCssClasses() {
-
 	    $this->viewCssClasses[] = 'kenedo-view';
-
-		if ($this->isInModal()) {
-            $this->viewCssClasses[] = 'in-modal';
-        }
-
 		$this->viewCssClasses[] = 'platform-'.KenedoPlatform::getName();
 		$this->viewCssClasses[] = KenedoPlatform::p()->isAdminArea() ? 'in-backend':'in-frontend';
-
 	}
 
 	function renderViewCssClasses() {

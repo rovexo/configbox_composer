@@ -84,8 +84,7 @@ $dropDownOptions = $this->getCalculationsDropdownOptions($productId);
 						   data-controller="admincalculations"
 						   data-task="edit"
 						   data-name-form-control="<?php echo hsc($id);?>"
-						   data-request-data="<?php echo hsc(json_encode(['id'=>0, 'prefill_product_id'=>intval($productId), 'form_custom_4'=>$id ]));?>"
-						   href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&in_modal=1&tmpl=component&task=edit&id=0&prefill_product_id='.intval($productId).'&form_custom_4='.$this->propertyName);?>">
+						   data-request-data="<?php echo hsc(json_encode(['id'=>0, 'prefill_product_id'=>intval($productId)]));?>">
 						<?php echo KText::_('New');?>
 						</a>
 
@@ -97,8 +96,7 @@ $dropDownOptions = $this->getCalculationsDropdownOptions($productId);
 							<a class="trigger-open-join-link-modal btn btn-default"
 							   data-controller="admincalculations"
 							   data-task="edit"
-							   data-request-data="<?php echo hsc(json_encode(['id'=>intval($calc->id), 'prefill_product_id'=>intval($productId), 'form_custom_4'=>$id ]));?>"
-							   href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&in_modal=1&tmpl=component&task=edit&id=0&prefill_product_id='.intval($productId).'&form_custom_4='.$this->propertyName);?>">
+							   data-request-data="<?php echo hsc(json_encode(['id'=>intval($calc->id), 'prefill_product_id'=>intval($productId)]));?>">
 							<?php echo KText::_('Open');?>
 							</a>
 						</span>
@@ -171,8 +169,7 @@ $dropDownOptions = $this->getCalculationsDropdownOptions($productId);
 					   data-controller="admincalculations"
 					   data-task="edit"
 					   data-name-form-control="PLACEHOLDER_CALC_SELECT"
-					   data-request-data="<?php echo hsc(json_encode(['id'=>0, 'prefill_product_id'=>intval($productId), 'form_custom_4'=>'PLACEHOLDER_CALC_SELECT']));?>"
-					   href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&in_modal=1&tmpl=component&task=edit&id=0&prefill_product_id='.intval($productId).'&form_custom_4=PLACEHOLDER_CALC_SELECT');?>">
+					   data-request-data="<?php echo hsc(json_encode(['id'=>0, 'prefill_product_id'=>intval($productId)]));?>">
 						<?php echo KText::_('New');?>
 					</a>
 
@@ -185,8 +182,7 @@ $dropDownOptions = $this->getCalculationsDropdownOptions($productId);
 						   data-controller="admincalculations"
 						   data-task="edit"
 						   data-name-form-control="PLACEHOLDER_CALC_SELECT"
-						   data-request-data="<?php echo hsc(json_encode(['id'=>intval($calc->id), 'prefill_product_id'=>intval($productId), 'form_custom_4'=>'PLACEHOLDER_CALC_SELECT' ]));?>"
-						   href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=admincalculations&in_modal=1&tmpl=component&task=edit&id=0&prefill_product_id='.intval($productId).'&form_custom_4=PLACEHOLDER_CALC_SELECT');?>">
+						   data-request-data="<?php echo hsc(json_encode(['id'=>intval($calc->id), 'prefill_product_id'=>intval($productId)]));?>">
 							<?php echo KText::_('Open');?>
 							</a>
 

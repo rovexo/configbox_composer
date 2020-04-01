@@ -196,4 +196,14 @@ body.single-cb_internal .entry-header {
 
 .cb-content a.btn {
 	text-decoration:none!important;
+	text-transform: none;
+	letter-spacing: normal;
+}
+
+.view-adminoptionassignment .in-frontend .task-store {
+	display:none!important;
+}
+
+.intra-listing-modal .view-adminoptionassignment .in-frontend .task-store {
+	display:inline-block!important;
 }

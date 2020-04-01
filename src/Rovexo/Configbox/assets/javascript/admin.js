@@ -27,6 +27,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.bootstrap'], functio
 			privateMethods.initHtmlEditors(view);
 			privateMethods.initDatePickers(view);
 			privateMethods.initSortables(view);
+			privateMethods.initRulePasteButtonVisibility(view);
 
 			privateMethods.runLegacyReadyFunctions(view);
 			kenedo.initAdminPageEach(view);
@@ -249,6 +250,34 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.bootstrap'], functio
 				}
 			});
 
+		},
+
+		initRulePasteButtonVisibility: function(view) {
+			if (this.hasClipboardRule()) {
+				view.find('.rule-wrapper .trigger-paste-rule').show();
+			}
+			else {
+				view.find('.rule-wrapper .trigger-paste-rule').hide();
+			}
+		},
+
+		hasClipboardRule: function() {
+			return this.getClipboardRule() != undefined;
+		},
+		
+		setClipboardRule: function(ruleData) {
+			window.sessionStorage.setItem('clipboardRule', JSON.stringify(ruleData));
+		},
+
+		getClipboardRule: function() {
+			var json = window.sessionStorage.getItem('clipboardRule');
+
+			if (json !== undefined) {
+				return JSON.parse(json);
+			}
+			else {
+				return undefined;
+			}
 		},
 
 		initChosenDropdowns: function(wrapper) {
@@ -605,6 +634,43 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.bootstrap'], functio
 			cbj(document).on('click', '.trigger-delete-rule', function() {
 				cbj(this).closest('.kenedo-property').find('.data-field').val('').trigger('change');
 				cbj(this).closest('.kenedo-property').find('.rule-wrapper').removeClass('has-rule').addClass('has-no-rule');
+			});
+
+			cbj(document).on('click', '.trigger-copy-rule', function() {
+				var wrapper = cbj(this).closest('.rule-wrapper');
+
+				var clipboardData = {
+					productId: wrapper.find('.data-field').data('product-id'),
+					ruleJson: wrapper.find('.data-field').val(),
+					ruleHtml: wrapper.find('.rule-html').html()
+				};
+
+				privateMethods.setClipboardRule(clipboardData);
+				cbj('.trigger-paste-rule').show();
+
+			});
+
+			cbj(document).on('click', '.trigger-paste-rule', function() {
+
+				if (privateMethods.hasClipboardRule() === false) {
+					return;
+				}
+
+				var clipboardData = privateMethods.getClipboardRule();
+
+				var wrapper = cbj(this).closest('.rule-wrapper');
+
+				var productId = wrapper.find('.data-field').data('product-id');
+
+				if (parseInt(clipboardData.productId) !== parseInt(productId)) {
+					window.alert('Rule in clipboard is for another product');
+					return;
+				}
+
+				wrapper.find('.data-field').val(clipboardData.ruleJson);
+				wrapper.find('.rule-html').html(clipboardData.ruleHtml);
+				wrapper.removeClass('has-no-rule').addClass('has-rule');
+
 			});
 
 			cbj(document).on('click', '.trigger-edit-rule', function() {

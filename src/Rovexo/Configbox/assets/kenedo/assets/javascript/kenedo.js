@@ -481,6 +481,8 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 			taskInfo.btn.removeClass('disabled');
 
+			var list;
+
 			switch (taskInfo.task) {
 
 				case 'store':
@@ -493,7 +495,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 					if (taskInfo.form.closest('.modal').length > 0) {
 
 						// if we're in a modal, assume form was opened via an intra listing, refresh it
-						var list = taskInfo.form.closest('.modal').data('parent-intra-listing');
+						list = taskInfo.form.closest('.modal').data('parent-intra-listing');
 						if (list) {
 							kenedo.refreshList(list);
 						}
@@ -524,6 +526,12 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 						kenedo.setFormParameter(taskInfo.form, 'id', '');
 					}
 
+					// if we're in a modal, assume form was opened via an intra listing, refresh it
+					list = taskInfo.form.closest('.modal').data('parent-intra-listing');
+					if (list) {
+						kenedo.refreshList(list);
+					}
+
 					break;
 					
 				case 'apply':
@@ -537,10 +545,17 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 						kenedo.setFormParameter(taskInfo.form, 'id', data.data.id);
 					}
 
+					var parent = taskInfo.form.closest('.kenedo-view').parent();
 					kenedo.refreshForm(taskInfo.form, function() {
-						taskInfo.form = cbj('.kenedo-details-form:first');
+						taskInfo.form = parent.find('.kenedo-details-form:first');
 						kenedo.showResponseMessages(taskInfo.form, data.errors || [], data.messages || []);
 					});
+
+					// if we're in a modal, assume form was opened via an intra listing, refresh it
+					list = taskInfo.form.closest('.modal').data('parent-intra-listing');
+					if (list) {
+						kenedo.refreshList(list);
+					}
 
 					break;
 

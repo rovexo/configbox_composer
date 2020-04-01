@@ -944,7 +944,7 @@ CREATE TABLE `sltxh_configbox_elements`
     CONSTRAINT `sltxh_configbox_elements_ibfk_9` FOREIGN KEY (`calcmodel_id_min_val`) REFERENCES `sltxh_configbox_calculations` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
-  ROW_FORMAT = COMPACT;
+  ROW_FORMAT = DYNAMIC;
 
 CREATE TABLE `sltxh_configbox_examples`
 (
@@ -1097,7 +1097,7 @@ CREATE TABLE `sltxh_configbox_options`
     KEY `sku` (`sku`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
-  ROW_FORMAT = COMPACT;
+  ROW_FORMAT = DYNAMIC;
 
 CREATE TABLE `sltxh_configbox_pages`
 (
@@ -1220,7 +1220,7 @@ CREATE TABLE `sltxh_configbox_products`
     CONSTRAINT `sltxh_configbox_products_ibfk_2` FOREIGN KEY (`taxclass_recurring_id`) REFERENCES `sltxh_configbox_tax_classes` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
-  ROW_FORMAT = COMPACT;
+  ROW_FORMAT = DYNAMIC;
 
 CREATE TABLE `sltxh_configbox_reviews`
 (
@@ -1569,7 +1569,7 @@ CREATE TABLE `sltxh_configbox_xref_element_option`
     CONSTRAINT `sltxh_configbox_xref_element_option_ibfk_9` FOREIGN KEY (`calcmodel_weight`) REFERENCES `sltxh_configbox_calculations` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8
-  ROW_FORMAT = COMPACT;
+  ROW_FORMAT = DYNAMIC ;
 
 CREATE TABLE `sltxh_configbox_xref_group_payment_method`
 (

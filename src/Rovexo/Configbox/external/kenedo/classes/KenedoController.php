@@ -617,7 +617,13 @@ abstract class KenedoController {
 		$model->forgetRecords();
 
 		if (KRequest::getInt('quickedit', 0) == 1) {
-			$msg = KText::_('Records deleted.');
+			if ($success) {
+				$msg = KText::_('Records deleted.');
+			}
+			else {
+				$msg = implode(',', $model->getErrors());
+			}
+
 			KenedoPlatform::p()->sendSystemMessage($msg, 'notice');
 			$this->setRedirect($_SERVER['HTTP_REFERER']);
 			return;
@@ -937,7 +943,7 @@ abstract class KenedoController {
 		}
 		else {
 			$controllerName = KenedoController::getControllerNameFromClass(get_class($this));
-			$url = KLink::getRoute('index.php?option='.$this->component.'&controller='.$controllerName.'&in_modal='.KRequest::getInt('in_modal',0), false);
+			$url = KLink::getRoute('index.php?option='.$this->component.'&controller='.$controllerName, false);
 		}
 
 		$this->setRedirect($url);
