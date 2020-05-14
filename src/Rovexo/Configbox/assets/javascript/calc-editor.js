@@ -173,7 +173,7 @@ define(['cbj', 'kenedo', 'configbox/server'], function(cbj, kenedo, server) {
 		adjustTextFieldWidth: function() {
 
 			// Get the entered text (or the placeholder text if empty)
-			var text = (cbj(this).val() !== '') ? cbj(this).val() : cbj(this).attr('placeholder');
+			var text = (cbj(this).val() === '') ? cbj(this).attr('placeholder') : cbj(this).val();
 
 			// Insert the text into the test span
 			cbj('#width-tester').text(text);
@@ -344,14 +344,17 @@ define(['cbj', 'kenedo', 'configbox/server'], function(cbj, kenedo, server) {
 			cbj('.view-admincalcformula #element-filter').keyup(function(){
 
 				var filterText = cbj(this).val();
-				filterText = cbj.trim( filterText ).toLowerCase();
+				filterText = filterText.trim();
+				filterText = filterText.toLowerCase();
 
 				if (filterText === '') {
 					cbj('#element-picker li').removeClass('hidden-by-element-filter');
 				}
 
 				cbj('#element-picker li.shown').each(function(){
-					var elementText = cbj.trim(cbj(this).text()).toLowerCase();
+					var elementText = cbj(this).text();
+					elementText = elementText.trim();
+					elementText = elementText.toLowerCase();
 					if (elementText.indexOf(filterText) === -1) {
 						cbj(this).addClass('hidden-by-element-filter');
 					}

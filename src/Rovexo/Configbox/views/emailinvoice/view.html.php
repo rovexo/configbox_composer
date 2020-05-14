@@ -32,7 +32,6 @@ class ConfigboxViewEmailinvoice extends KenedoView {
 	function prepareTemplateVars() {
 		$this->shopData = ConfigboxStoreHelper::getStoreRecord();
 		$this->customer = ConfigboxUserHelper::getUser();
-		$this->renderView();
 	}
 	
 }

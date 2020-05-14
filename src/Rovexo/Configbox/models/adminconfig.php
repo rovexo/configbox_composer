@@ -1364,20 +1364,12 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 	}
 
 	/**
-	 * The method adds the button to show the Joomla permission page
 	 *
 	 * @return array $tasks Array holding task buttons
 	 */
 	function getDetailsTasks() {
-
 		$tasks = array();
-
-		if (KenedoPlatform::getName() == 'joomla') {
-			$tasks[] = array('title'=>KText::_('Permissions'), 	'task'=>'', 'link'=>'index.php?option=com_config&view=component&component=com_configbox&path=&tmpl=component');
-		}
-		
 		$tasks[] = array('title'=>KText::_('Save'), 	'task'=>'apply');
-		
 		return $tasks;
 	}
 	

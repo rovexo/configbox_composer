@@ -15,7 +15,7 @@ $hash_data = array(
 		'', // sender_account_number
 		'', // sender_bank_code
 		hsc($this->orderRecord->orderAddress->billingcountry_2_code), // sender_country_id
-		round($this->orderRecord->payableAmount,2), // amount
+		number_format($this->orderRecord->payableAmount, 2, '.', ''), // amount
 		$this->orderRecord->currency->code, // currency_id, Pflichtparameter bei Hash-Berechnung
 		KText::sprintf('Order ID %s from %s',$this->orderRecord->id,$this->shopData->shopname),// reason_1
 		'', // reason_2
@@ -35,7 +35,7 @@ $hash_data = hash('sha256', implode('|', $hash_data));
 		<input type="hidden" name="user_id" value="<?php echo $user_id; ?>" />
 		<input type="hidden" name="project_id" value="<?php echo $project_id; ?>" />
 		<input type="hidden" name="sender_country_id" value="<?php echo hsc($this->orderRecord->orderAddress->billingcountry_2_code); ?>" />
-		<input type="hidden" name="amount" value="<?php echo round($this->orderRecord->payableAmount,2); ?>" />
+		<input type="hidden" name="amount" value="<?php echo number_format($this->orderRecord->payableAmount,2, '.', ''); ?>" />
 		<input type="hidden" name="currency_id" value="<?php echo hsc($this->orderRecord->currency->code); ?>" />
 		<input type="hidden" name="language_id" value="<?php echo strtoupper(KText::getCountryCode());?>" />
 		<input type="hidden" name="reason_1" value="<?php echo KText::sprintf('Order ID %s from %s',$this->orderRecord->id,$this->shopData->shopname);?>" />

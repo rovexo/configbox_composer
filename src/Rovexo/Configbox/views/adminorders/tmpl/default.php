@@ -134,7 +134,7 @@ defined('CB_VALID_ENTRY') or die();
 			</td>
 			
 			<td>
-				<a class="listing-link" href="<?php echo KLink::getRoute( 'index.php?option=com_configbox&controller=adminorders&task=edit&id='. $order->id ); ?>"><?php echo KText::_('Open'); ?></a>
+				<a class="listing-link" href="<?php echo KLink::getRoute( 'index.php?option=com_configbox&controller=adminorders&task=edit&id='. $order->id ); ?>"><?php echo KText::_('ADMIN_ORDERS_LINK_DISPLAY_ORDER'); ?></a>
 			</td>
 			
 			<td class="field-customer">

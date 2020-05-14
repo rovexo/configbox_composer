@@ -21,7 +21,7 @@ class ConfigboxProductImageHelper {
 	 * @param int $cartPositionId
 	 * @return object[]
 	 */
-	protected static function getVisualizationData($cartPositionId) {
+	public static function getVisualizationData($cartPositionId) {
 
 		// Get the selections
 		$selections = ConfigboxConfiguration::getInstance($cartPositionId)->getSelections();

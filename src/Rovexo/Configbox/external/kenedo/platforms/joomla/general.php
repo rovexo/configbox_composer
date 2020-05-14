@@ -511,6 +511,9 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 				KLog::log('Sending email failed. Error message from JMailer is "'.$response->getMessage().'". Function arguments were '.var_export(func_get_args(), true), 'error');
 				return false;
 			}
+			else {
+				return true;
+			}
 
 		}
 

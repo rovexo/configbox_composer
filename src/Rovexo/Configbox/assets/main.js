@@ -56,7 +56,7 @@
 			// All the plugins got wrapped in a define requiring cbj, jqueryUI's define call was changed to require cbj
 			'cbj.ui': 						'kenedo/external/jquery.ui-1.12.1/jquery-ui',
 			'cbj.bootstrap': 				'kenedo/external/bootstrap-3.3.7/js/bootstrap',
-			'cbj.chosen': 					'kenedo/external/jquery.chosen-1.6.2/chosen.jquery',
+			'cbj.chosen': 					'kenedo/external/jquery.chosen-1.8.7/chosen.jquery',
 			'cbj.colorbox': 				'kenedo/external/jquery.colorbox-1.6.4/jquery.colorbox',
 			'cbj.dragtable':				'kenedo/external/jquery.dragtable-3.0.0/jquery.dragtable',
             'cbj.spectrum':				    'kenedo/external/jquery.spectrum-1.8.0/spectrum',

@@ -32,7 +32,7 @@ class ConfigboxQuickeditHelper {
 			<a title="<?php echo KText::_('Delete Question');?>" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminelements&task=delete&quickedit=1&ids=' . $question->id);?>">
 				<i class="fa fa-trash-o" aria-hidden="true"></i>
 			</a>			
-			<a class="trigger-open-modal" data-modal-width="1040" data-modal-height="700" title="<?php echo KText::_('Edit Question');?>" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminelements&task=edit&id=' . $question->id);?>">
+			<a title="<?php echo KText::_('Edit Question');?>" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminelements&task=edit&id=' . $question->id);?>">
 				<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
 			</a>
 		</div>
@@ -85,18 +85,18 @@ class ConfigboxQuickeditHelper {
 					</a>
 				</div>
 				<div class="toolbarbutton">
-					<a class="trigger-open-modal" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminelements&prefill_page_id='.$page->id.'&task=edit&id=0');?>">
+					<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminelements&prefill_page_id='.$page->id.'&task=edit&id=0');?>">
 						<i class="fa fa-plus-square" aria-hidden="true"></i><?php echo KText::_('Add Question');?>
 					</a>
 					
 				</div>
 				<div class="toolbarbutton">
-					<a class="trigger-open-modal" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminpages&task=edit&id=0&prefill_product_id='.(int)$page->product_id);?>">
+					<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminpages&task=edit&id=0&prefill_product_id='.(int)$page->product_id);?>">
 						<i class="fa fa-plus-square" aria-hidden="true"></i><?php echo KText::_('Add Page');?>
 					</a>
 				</div>
 				<div class="toolbarbutton">
-					<a class="trigger-open-modal" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminpages&task=edit&id='.$page->id);?>">
+					<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminpages&task=edit&id='.$page->id);?>">
 						<i class="fa fa-pencil-square-o" aria-hidden="true"></i><?php echo KText::_('Edit Page');?>
 					</a>
 				</div>
@@ -107,7 +107,7 @@ class ConfigboxQuickeditHelper {
 				</div>
 				<?php if ($product) { ?>
 					<div class="toolbarbutton">
-						<a class="trigger-open-modal" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=edit&id='.$product->id);?>">
+						<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=edit&id='.$product->id);?>">
 							<i class="fa fa-pencil-square-o" aria-hidden="true"></i><?php echo KText::_('Edit Product');?>
 						</a>
 					</div>
@@ -132,13 +132,13 @@ class ConfigboxQuickeditHelper {
 		<div class="quick-edit-buttons quick-edit-buttons-product-page">
 			
 			<div class="toolbarbutton">
-				<a class="trigger-open-modal" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminpages&prefill_prod_id='.$product->id.'&task=edit&id=0');?>">
+				<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminpages&prefill_prod_id='.$product->id.'&task=edit&id=0');?>">
 					<i class="fa fa-plus-square" aria-hidden="true"></i><?php echo KText::_('Add Page');?>
 			 	</a>
 			</div>
 			
 			<div class="toolbarbutton">
-				<a class="trigger-open-modal" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=edit&id='.$product->id);?>">
+				<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=edit&id='.$product->id);?>">
 					<i class="fa fa-pencil-square-o" aria-hidden="true"></i><?php echo KText::_('Edit Product');?>
 				</a>
 			</div>
@@ -160,13 +160,13 @@ class ConfigboxQuickeditHelper {
 		?>
 
 		<div class="quick-edit-buttons quick-edit-buttons-product-listing-page">
-			<a class="trigger-open-modal" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=edit&id=0');?>">
+			<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=edit&id=0');?>">
 				<i class="fa fa-plus-square" aria-hidden="true"></i><?php echo KText::_('Add Product');?>
 			</a>
-			<a class="trigger-open-modal" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminlistings&task=edit&id=0');?>">
+			<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminlistings&task=edit&id=0');?>">
 				<i class="fa fa-plus-square" aria-hidden="true"></i><?php echo KText::_('Add Listing');?>
 			</a>
-			<a class="trigger-open-modal" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminlistings&id='.$listing->id.'&task=edit');?>">
+			<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminlistings&id='.$listing->id.'&task=edit');?>">
 				<i class="fa fa-pencil-square-o" aria-hidden="true"></i><?php echo KText::_('Edit Listing');?>
 			</a>
 		</div>
@@ -190,11 +190,11 @@ class ConfigboxQuickeditHelper {
 				<i class="fa fa-trash-o" aria-hidden="true"></i><?php echo KText::_('Delete Product');?>
 			</a>
 			
-			<a class="trigger-open-modal" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=edit&id='.$product->id);?>">
+			<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=edit&id='.$product->id);?>">
 				<i class="fa fa-pencil-square-o" aria-hidden="true"></i><?php echo KText::_('Edit Product');?>
 			</a>
 			<?php if (!$product->isConfigurable) { ?>
-				<a class="trigger-open-modal" data-modal-width="1000" data-modal-height="700" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminpages&task=edit&id=0&prefill_product_id='.$product->id);?>">
+				<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminpages&task=edit&id=0&prefill_product_id='.$product->id);?>">
 					<i class="fa fa-plus-square" aria-hidden="true"></i><?php echo KText::_('Add Page');?>
 				</a>
 			<?php } ?>

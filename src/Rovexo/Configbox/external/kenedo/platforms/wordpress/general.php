@@ -42,6 +42,10 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 	public function initialize() {
 
+		global $wp_rewrite;
+		$wp_rewrite->set_permalink_structure('/%postname%/');
+		$wp_rewrite->flush_rules();
+
 		/*
 		 * Mind that the getRoute method also manipulates URLs a little
 		 */

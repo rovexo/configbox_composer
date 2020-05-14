@@ -34,6 +34,21 @@ div#element-box div.m {
 	margin-top:25px;
 }
 
+body.admin.com_configbox {
+	background:#f6f6f7;
+}
+
+.view-admin {
+	font-size:13px;
+	line-height:1.2em;
+	font-family:Arial, Helvetica, sans-serif;
+}
+
+.mce-btn button:hover {
+	border:none;
+	background:inherit;
+}
+
 /* Joomla admin CSS changes - END */
 
 /* Magento 1 admin CSS changes - START */
@@ -44,6 +59,16 @@ div#element-box div.m {
 
 .configbox-admin-index#html-body .view-admin {
 	margin-top:0;
+}
+
+.cb-content .required {
+	color:inherit!important;
+	font-weight:inherit!important;
+}
+
+.cb-content .order-property,
+.cb-content .listing-link {
+	text-decoration:none;
 }
 
 /* Magento admin CSS changes - END */
@@ -93,6 +118,112 @@ div#element-box div.m {
 
 
 /* Wordpress admin CSS changes - END */
+
+
+
+
+/* POPUPS - START */
+
+.kenedo-popup-trigger {
+	display:inline;
+	position:relative;
+	white-space: normal;
+}
+
+.kenedo-popup-trigger-content {
+	display:inline;
+	cursor:pointer;
+}
+
+.kenedo-popup {
+	display:none;
+	position:absolute;
+	z-index:30000;
+	min-width:100px;
+}
+
+.kenedo-popup-internal-positioner {
+	position:relative;
+}
+
+.kenedo-popup-content {
+	display:block;
+	width:100%;
+	text-align:left;
+}
+
+.kenedo-popup-content-inner {
+	padding:15px 10px 15px;
+	background:inherit;
+	position:relative;
+}
+
+.kenedo-popup-content-inner>*:first-child {
+	margin-top:0;
+}
+
+.kenedo-popup-content-inner>*:last-child {
+	margin-bottom:0;
+}
+
+.kenedo-popup.position-top .kenedo-popup-content {
+	bottom:17px;
+}
+
+.kenedo-popup.position-bottom .kenedo-popup-content {
+	top:17px;
+}
+
+.kenedo-popup-arrow {
+	display:block;
+	z-index:2001;
+	background-repeat:no-repeat;
+	height:17px;
+	width:100%;
+}
+
+.kenedo-popup.position-top .kenedo-popup-arrow {
+	bottom:0px;
+}
+
+.kenedo-popup.position-bottom .kenedo-popup-arrow {
+	top:0px;
+}
+
+.kenedo-popup-content {
+	background:#fff;
+	box-shadow: 0px 0px 57px rgba(0,0,0,0.25);
+	border-radius:5px;
+}
+
+.kenedo-popup .kenedo-popup-content:after {
+	content: " ";
+	display:block;
+	width: 26px;
+	height: 26px;
+	margin:-26px auto 0px;
+	bottom:-13px;
+	transform: rotate(45deg);
+	background:inherit;
+	position: relative;
+}
+
+.kenedo-popup.position-bottom .kenedo-popup-content:after {
+	display:none;
+}
+
+.kenedo-popup.position-bottom .kenedo-popup-content:before {
+	content: " ";
+	display:block;
+	width: 26px;
+	height: 26px;
+	margin:0 auto -26px;
+	top:-13px;
+	transform: rotate(45deg);
+	background:inherit;
+	position: relative;
+}
+/* POPUPS - END */
 
 /* GENERAL STYLING - START */
 

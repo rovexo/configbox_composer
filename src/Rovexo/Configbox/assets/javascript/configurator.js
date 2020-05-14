@@ -742,7 +742,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		cbj(document).trigger('serverRequestSent');
 
 		// Update the visualization immediately for better responsiveness
-		configurator.blockVisualization.updateVisualization(questionId, parseInt(selection));
+		configurator.blockVisualization.updateVisualization(null, questionId, parseInt(selection));
 
 		cbrequire(['configbox/server'], function(server) {
 

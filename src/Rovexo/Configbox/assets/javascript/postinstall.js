@@ -54,7 +54,7 @@ define(['cbj', 'configbox/server','cbj.chosen'], function(cbj, server) {
 
 				var dataOk = true;
 				cbj.each(data, function(id, item) {
-					if (cbj.trim(item) === '') {
+					if (item.trim() === '') {
 						dataOk = false;
 						step.find('#' + id).closest('.form-group').addClass('has-error');
 					}
@@ -118,7 +118,7 @@ define(['cbj', 'configbox/server','cbj.chosen'], function(cbj, server) {
 
 				var dataOk = true;
 				cbj.each(data, function(id, item) {
-					if (cbj.trim(item) === '') {
+					if (item.trim() === '') {
 						dataOk = false;
 						step.find('#' + id).closest('.form-group').addClass('has-error');
 					}

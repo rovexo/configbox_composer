@@ -309,17 +309,22 @@ define(['cbj', 'kenedo', 'configbox/server'], function(cbj, kenedo, server) {
 			});
 
 			// Key up for the text filter
-			cbj('#question-filter').keyup(function(){
+			cbj('#question-filter').keyup(function() {
 
 				var filterText = cbj(this).val();
-				filterText = cbj.trim( filterText ).toLowerCase();
+				filterText = filterText.trim();
+				filterText = filterText.toLowerCase();
 
 				if (filterText === '') {
 					cbj('.question-picker li').removeClass('hidden-by-question-filter');
 				}
 
-				cbj('.question-picker li.shown').each(function(){
-					var text = cbj.trim(cbj(this).text()).toLowerCase();
+				cbj('.question-picker li.shown').each(function() {
+
+					var text = cbj(this).text();
+					text = text.trim();
+					text = text.toLowerCase();
+
 					if ( text.indexOf(filterText) === -1) {
 						cbj(this).addClass('hidden-by-question-filter');
 					}
@@ -602,7 +607,7 @@ define(['cbj', 'kenedo', 'configbox/server'], function(cbj, kenedo, server) {
 		adjustTextFieldWidth: function() {
 
 			// Get the entered text (or the placeholder text if empty)
-			var text = (cbj(this).val() !== '') ? cbj(this).val() : cbj(this).attr('placeholder');
+			var text = (cbj(this).val() === '') ? cbj(this).attr('placeholder') : cbj(this).val();
 
 			// Insert the text into the test span
 			cbj('#width-tester').text(text);

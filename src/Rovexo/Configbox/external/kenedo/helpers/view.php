@@ -166,7 +166,7 @@ class KenedoViewHelper {
 					?>
 					<?php if (!empty($task['link'])) { ?>
 						<li class="link">
-							<a href="<?php echo $task['link'];?>" class="<?php echo hsc($cssClasses);?> trigger-open-modal"><?php echo hsc($task['title']);?></a>
+							<a href="<?php echo $task['link'];?>" class="<?php echo hsc($cssClasses);?>"><?php echo hsc($task['title']);?></a>
 						</li>
 					<?php } else { ?>
 						<li class="task task-<?php echo hsc($task['task']);?><?php echo (!empty($task['non-ajax'])) ? ' non-ajax':'';?>">

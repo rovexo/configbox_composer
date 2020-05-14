@@ -680,6 +680,7 @@ class KenedoView {
 
 		if (KenedoPlatform::p()->isAdminArea() == true || strpos($this->view, 'admin') === 0) {
 			$urls[] = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/jquery.ui-1.12.1/jquery-ui-prefixed.css';
+			$urls[] = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/jquery.chosen-1.8.7/chosen.css';
 			$urls[] = KenedoPlatform::p()->getUrlAssets().'/css/admin.css';
 		}
 

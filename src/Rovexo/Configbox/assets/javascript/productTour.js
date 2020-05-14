@@ -16,13 +16,11 @@ define(['cbj', 'configbox/server', 'cbj.bootstrap'], function(cbj, server) {
 
 			var stops = cbj('.view-adminproducttour .tour-stop');
 
-			window.cbj = cbj;
-
 			cbj.each(stops, function() {
 				var stop = cbj(this);
 				var selector = stop.data('selector');
 				var title = stop.data('title') ? stop.data('title') : '';
-				var html = cbj.trim(stop.html());
+				var html = stop.html().trim();
 				var step = stop.data('step');
 
 				var popover = cbj('.view-adminproducttour .popover-blueprint .popover').clone();

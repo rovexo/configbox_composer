@@ -84,6 +84,7 @@ class ConfigboxViewCustomerform extends KenedoView {
 
 	function getStyleSheetUrls() {
 		$urls = parent::getStyleSheetUrls();
+		$urls[] = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/jquery.chosen-1.8.7/chosen.css';
 		$urls[] = KenedoPlatform::p()->getUrlAssets().'/css/customerform.css';
 		return $urls;
 	}
