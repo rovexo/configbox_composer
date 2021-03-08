@@ -162,7 +162,7 @@ defined('CB_VALID_ENTRY') or die();
 					<div class="form-field">
 						<label>
 							<?php echo KText::_('Set up an Account');?>
-							<span class="fa fa-info-circle cb-popover" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="popover" data-trigger="hover" data-placement="auto top" data-content="<?php echo KText::_('TOOLTIP_TEXT_CUSTOMER_FORM_REGISTER');?>"></span>
+							<span class="fa fa-info-circle cb-popover" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="popover" data-trigger="hover" data-placement="top" data-content="<?php echo KText::_('TOOLTIP_TEXT_CUSTOMER_FORM_REGISTER');?>"></span>
 						</label>
 						<input type="radio" checked="checked" id="register-yes" name="register" value="1" />
 						<label class="radio-button-label" for="register-yes"><?php echo KText::_('CBYES');?></label>

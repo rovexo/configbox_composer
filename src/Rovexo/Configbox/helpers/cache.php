@@ -868,7 +868,10 @@ class ConfigboxCacheHelper {
 				'adminproductdetailpanes.product_id' => $productId,
 			);
 
-			$ordering = array('propertyName'=>'adminproductdetailpanes', 'direction'=>'ASC');
+			$ordering = array(
+				'propertyName'=>'adminproductdetailpanes.ordering',
+				'direction'=>'ASC',
+			);
 
 			$records = $model->getRecords($filters, array(), $ordering);
 

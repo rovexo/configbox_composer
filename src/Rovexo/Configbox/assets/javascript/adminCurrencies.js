@@ -102,7 +102,7 @@ define(['cbj', 'configbox/server', 'kenedo'], function(cbj, server, kenedo) {
 
 					var viewWrapper = taskInfo.list.closest('.kenedo-view').closest('div');
 					kenedo.refreshList(taskInfo.list, function() {
-						kenedo.showResponseMessages(viewWrapper.find('.kenedo-listing-form:first'), data.errors || [], data.messages || []);
+						kenedo.showResponseMessages(viewWrapper.find('.kenedo-listing-form').first(), data.errors || [], data.messages || []);
 					});
 					break;
 

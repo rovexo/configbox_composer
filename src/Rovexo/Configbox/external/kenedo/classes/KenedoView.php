@@ -316,6 +316,10 @@ class KenedoView {
 		// Add pagination HTML
 		$totalCount = $model->getRecords($this->filters, array(), array(), NULL, true);
 
+		if ($totalCount < 5) {
+			$this->paginationInfo['limit'] = 0;
+		}
+
 		$this->pagination = KenedoViewHelper::getListingPagination($totalCount, $this->paginationInfo);
 
 
@@ -674,8 +678,8 @@ class KenedoView {
 	function getStyleSheetUrls() {
 
 		$urls = array(
-			KenedoPlatform::p()->getUrlAssets().'/kenedo/external/bootstrap-3.3.7/css/bootstrap-prefixed.css',
-			KenedoPlatform::p()->getUrlAssets().'/kenedo/assets/css/kenedo.css',
+			KenedoPlatform::p()->getUrlAssets().'/kenedo/external/bootstrap-4.4.1/css/bootstrap-prefixed.css',
+			'https://use.fontawesome.com/releases/v5.13.0/css/all.css',
 		);
 
 		if (KenedoPlatform::p()->isAdminArea() == true || strpos($this->view, 'admin') === 0) {

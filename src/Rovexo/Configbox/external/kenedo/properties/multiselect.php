@@ -67,7 +67,7 @@ class KenedoPropertyMultiselect extends KenedoProperty {
 	 * in appendDataForGetRecord for making a PHP array of the prop value
 	 * @var string
 	 */
-	protected $groupConcatenationSeparator = 'IeA0oA';
+	protected $groupConcatenationSeparator = '-*-';
 
 	/**
 	 * This method takes in the selected records from the request (the prop's store method will remove it again after

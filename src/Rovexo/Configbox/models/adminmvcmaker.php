@@ -16,7 +16,7 @@ class ConfigboxModelAdminmvcmaker extends KenedoModel {
 		$controllerFilename = strtolower(strtolower($namePlural));
 
 		$ctrlTmplPath = KenedoPlatform::p()->getComponentDir('com_configbox') . '/helpers/mvc_creator/controller.txt';
-		$ctrlPath =  KenedoPlatform::p()->getComponentDir($componentName) . "/data/customization/controllers/$controllerFilename.php";
+		$ctrlPath = KenedoPlatform::p()->getDirCustomization()."/controllers/$controllerFilename.php";
 
 		$ctrlFile = fopen($ctrlPath, 'w');
 
@@ -36,7 +36,7 @@ class ConfigboxModelAdminmvcmaker extends KenedoModel {
 	 * @param string $componentName for example com_configbox
 	 * @param string $namePlural lowercase name for the controller, model and list view
 	 * @param string $tableName database table name
- 	 */
+	 */
 	function createModelFile($componentName, $namePlural, $tableName) {
 
 		$componentTitle = ucfirst(strtolower(substr($componentName, 4)));
@@ -45,9 +45,9 @@ class ConfigboxModelAdminmvcmaker extends KenedoModel {
 		$tableName = strtolower($tableName);
 
 		$modelTmplPath = KenedoPlatform::p()->getComponentDir('com_configbox') . '/helpers/mvc_creator/model.txt';
-     	$modelPath = KenedoPlatform::p()->getComponentDir($componentName) . "/data/customization/models/$modelFilename.php";
+		$modelPath = KenedoPlatform::p()->getDirCustomization() . "/models/$modelFilename.php";
 
-     	$modelFile = fopen($modelPath, 'w');
+		$modelFile = fopen($modelPath, 'w');
 
 		fwrite($modelFile, str_replace(
 			array('{componentTitle}', '{namePlural}', '{tableName}'),
@@ -85,7 +85,7 @@ class ConfigboxModelAdminmvcmaker extends KenedoModel {
 
 		$viewMetadataPath = KenedoPlatform::p()->getComponentDir('com_configbox') . '/helpers/mvc_creator/view_metadata.txt';
 
-		$viewTmplDir = KenedoPlatform::p()->getComponentDir($componentName) . "/data/customization/views/$viewFilename";
+		$viewTmplDir = KenedoPlatform::p()->getDirCustomization() . "/views/$viewFilename";
 
 		mkdir($viewTmplDir);
 

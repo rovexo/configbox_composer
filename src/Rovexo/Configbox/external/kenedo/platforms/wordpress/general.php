@@ -123,7 +123,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		return 'in_platform_output';
 
 	}
-	
+
 	public function getDbConnectionData() {
 
 		$connection = new stdClass();
@@ -132,17 +132,17 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		$connection->password 	= DB_PASSWORD;
 		$connection->database 	= DB_NAME;
 		$connection->prefix 	= $GLOBALS['table_prefix'];
-				
+
 		return $connection;
-	
+
 	}
-	
+
 	public function &getDb() {
 		if (!$this->db) {
 			require_once(dirname(__FILE__).DS.'database.php');
 			$this->db = new KenedoDatabaseWordpress();
 		}
-		
+
 		return $this->db;
 	}
 
@@ -180,26 +180,31 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 	}
 
-	//TODO: Test
+	/**
+	 * @param string $username CB username (mind this may not be the platform username)
+	 * @param string $passwordClear
+	 *
+	 * @return bool
+	 */
 	public function authenticate($username, $passwordClear) {
-		$response = wp_authenticate($username, $passwordClear);
+		$platformUserId = $this->getUserIdByUsername($username);
+		$user = get_user_by('id', $platformUserId);
+		$response = wp_authenticate($user->user_login, $passwordClear);
 		return (is_wp_error($response) == false);
 	}
 
-	//TODO: Test
+	/**
+	 * @param string $username CB username (mind this may not be the platform username)
+	 * @return bool
+	 * @throws Exception
+	 */
 	public function login($username) {
 
 		$platformUserId = $this->getUserIdByUsername($username);
 
-		$credentials = array(
-			'remember'=>1,
-			'username'=>$username,
-			'password'=>'dummy',
-		);
-
-		$secure_cookie = apply_filters( 'secure_signon_cookie', is_ssl(), $credentials );
-
-		wp_set_auth_cookie($platformUserId, $credentials['remember'], $secure_cookie);
+		wp_set_auth_cookie( $platformUserId);
+		$user = get_user_by('id', $platformUserId);
+		do_action( 'wp_login', $username, $user );
 
 		$userId = ConfigboxUserHelper::getUserIdByPlatformUserId($platformUserId);
 
@@ -255,11 +260,11 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		$tag = get_locale();
 		return str_replace('_', '-', $tag);
 	}
-	
+
 	public function getLanguageUrlCode($languageTag = NULL) {
 		return $this->getLanguageTag();
 	}
-	
+
 	//TODO: Check if good enough
 	public function getDocumentType() {
 		return KRequest::getKeyword('format','html');
@@ -375,23 +380,23 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	public function isAdminArea() {
 		return is_admin();
 	}
-	
+
 	public function isSiteArea() {
 		return (is_admin() == false);
 	}
-	
+
 	public function autoload($className, $classPath) {
 		include_once($classPath);
 	}
-	
-	public function processContentModifiers($text) {	
+
+	public function processContentModifiers($text) {
 		return $text;
 	}
-	
+
 	public function triggerEvent($eventName, $data) {
 		return array(true);
 	}
-	
+
 	public function raiseError($errorCode, $errorMessage) {
 		throw new Exception($errorMessage, intval($errorCode));
 	}
@@ -433,7 +438,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	public function setGeneratorTag($string) {
 		$this->setMetaTag('generator', $string);
 	}
-	
+
 	public function getUrlBase() {
 		return get_site_url();
 	}
@@ -441,7 +446,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	public function getUrlBaseAssets() {
 		return get_site_url();
 	}
-	
+
 	public function getDocumentBase() {
 		return $this->getUrlBase();
 	}
@@ -469,7 +474,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	public function setMetaTag($tag,$content) {
 
 	}
-	
+
 	public function isLoggedIn() {
 		return is_user_logged_in();
 	}
@@ -479,48 +484,61 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		return $user->ID;
 	}
 
-	//TODO: Test
+	/**
+	 * @param int|null $userId Platform user ID (empty to use current user's)
+	 * @return string|null
+	 */
 	public function getUserName($userId = NULL) {
+
 		if ($userId === NULL) {
-			$user = get_user_by('id', $userId);
+			$user = wp_get_current_user();
 		}
 		else {
-			$user = wp_get_current_user();
+			$user = get_user_by('id', $userId);
 		}
 
 		return $user->user_login;
 
 	}
 
-	//TODO: Test
+	/**
+	 * @param int|null $userId Platform user ID (empty to use current user's)
+	 * @return string|null
+	 */
 	public function getUserFullName($userId = NULL) {
 
 		if ($userId === NULL) {
-			$user = get_user_by('id', $userId);
+			$user = wp_get_current_user();
 		}
 		else {
-			$user = wp_get_current_user();
+			$user = get_user_by('id', $userId);
 		}
 
 		return $user->display_name;
 
 	}
 
-	//TODO: Test
+	/**
+	 * @param int|null $userId Platform user ID (empty to use current user's)
+	 * @return string|null
+	 */
 	public function getUserPasswordEncoded($userId = NULL) {
 
 		if ($userId === NULL) {
-			$user = get_user_by('id', $userId);
+			$user = wp_get_current_user();
 		}
 		else {
-			$user = wp_get_current_user();
+			$user = get_user_by('id', $userId);
 		}
 
 		return $user->user_pass;
 
 	}
 
-	//TODO: Test
+	/**
+	 * @param string $username Platform username
+	 * @return string|null
+	 */
 	public function getUserIdByUsername($username) {
 		$wpUser = get_user_by('login', $username);
 		if (!$wpUser) {
@@ -544,9 +562,14 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 	}
 
-	//TODO: Test
+	/**
+	 * @param object $data User information in specific structure
+	 * @param int[] $groupIds Group IDs to set for the user
+	 * @return false|stdClass
+	 */
 	public function registerUser($data, $groupIds = array()) {
 
+		//TODO: Set WP user first and last name if possible
 		$user['email'] = $data->email;
 		$user['name'] = $data->name;
 		$user['username'] = $data->username;
@@ -561,33 +584,35 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 			return false;
 		}
 
+		$wpUser = get_user_by('id', $id);
+
 		$userObject->id 		= $id;
 		$userObject->name 		= $data->name;
 		$userObject->username 	= $data->username;
-		$userObject->password 	= $data->password;
+		$userObject->password 	= $wpUser->user_pass;
 
 		return $userObject;
-		
+
 	}
-	
+
 	protected function unsetErrors() {
 		$this->errors = array();
 	}
-	
+
 	protected function setError($error) {
 		$this->errors[] = $error;
 	}
-	
+
 	protected function setErrors($errors) {
 		if (is_array($errors) && count($errors)) {
 			$this->errors = array_merge((array)$this->errors,$errors);
 		}
 	}
-	
+
 	public function getErrors() {
 		return $this->errors;
 	}
-	
+
 	public function getError() {
 		if (is_array($this->errors) && count($this->errors)) {
 			return end($this->errors);
@@ -611,7 +636,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	public function passwordsMatch($passwordClear, $passwordEncrypted) {
 		return wp_check_password( $passwordClear, $passwordEncrypted);
 	}
-	
+
 	public function passwordMeetsStandards($password) {
 		if (mb_strlen($password) < 8) {
 			return false;
@@ -619,10 +644,10 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		if ( preg_match("/[0-9]/", $password) == 0 || preg_match("/[a-zA-Z]/", $password) == 0) {
 			return false;
 		}
-	
+
 		return true;
 	}
-	
+
 	public function getPasswordStandardsText() {
 		return KText::_('Your password should contain at least 8 characters and should contain numbers and letters.');
 	}
@@ -635,7 +660,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		$params = new KStorage();
 		return $params;
 	}
-	
+
 	public function renderOutput(&$output) {
 
 		$outputMode = $this->getOutputMode();
@@ -665,11 +690,11 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
         }
 
 	}
-	
+
 	public function startSession() {
 		return true;
 	}
-	
+
 	//TODO: Test
 	public function getPasswordResetLink() {
 		return wp_lostpassword_url();
@@ -679,7 +704,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	public function getPlatformLoginLink() {
 		return wp_login_url();
 	}
-	
+
 	public function getRoute($url, $encode = true, $secure = NULL) {
 
 		if (function_exists('getRouteOverride')) {
@@ -877,11 +902,11 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		return $postId;
 
 	}
-	
+
 	public function getActiveMenuItemId() {
 		return 0;
 	}
-	
+
 	//TODO: Test
 	public function getLanguages() {
 
@@ -893,15 +918,15 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		return array($language);
 
 	}
-	
+
 	public function platformUserEditFormIsReachable() {
 		return false;
 	}
-	
+
 	public function userCanEditPlatformUsers() {
 		return false;
 	}
-	
+
 	public function getPlatformUserEditUrl($platformUserId) {
 		return '';
 	}
@@ -970,7 +995,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		$path = '';
 		return $path;
 	}
-	
+
 	public function getDirCache() {
 		$uploadDir = $this->getWpUploadDirInfo();
 		$path = $uploadDir['basedir'].'/cb-cache';

@@ -1,5 +1,3 @@
-@charset "UTF-8";
-
 .view-checkout .trigger-save-order-address,
 .view-checkout .trigger-place-order,
 .view-checkout .trigger-capture-payment {
@@ -64,7 +62,7 @@
 
 .view-checkout .agreement-terms input[type=checkbox] {
 	position:relative;
-	top:-3px;
+	top:-1px;
 }
 
 .view-checkout .order-overview .item-price {

@@ -44,7 +44,7 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 
 							window.setTimeout(
 								function() {
-									question.find('.form-control-static').text( cbj('#output-helper-'+questionId).val() );
+									question.find('.pseudo-text-field').text( cbj('#output-helper-'+questionId).val() );
 								}, 200);
 
 							configurator.sendSelectionToServer(questionId, date);
@@ -306,6 +306,11 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 	var questionColorpicker = {
 
 		init: function() {
+
+			cbrequire(['kenedo', 'configbox/server'], function(kenedo, server) {
+				let url = server.config.urlSystemAssets + '/kenedo/external/jquery.spectrum-1.8.0/spectrum.css';
+				kenedo.addStylesheet(url);
+			});
 
 			cbrequire(['cbj.spectrum'], function() {
 

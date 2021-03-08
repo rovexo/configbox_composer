@@ -12,7 +12,6 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.bootstrap'], functio
 
 		initBackendOnce: function() {
 			privateMethods.registerLegacyReadyFunctions();
-			privateMethods.initOffCanvasToggle();
 			privateMethods.initRulePropertyFunctionality();
 			privateMethods.initGroupPriceFunctionality();
 			privateMethods.initCalculationOverrideFunctionality();
@@ -36,18 +35,6 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.bootstrap'], functio
 	};
 
 	var privateMethods = {
-
-		/**
-		 * Off-canvas menu toggling (CB backend menu on tablets and below)
-		 */
-		initOffCanvasToggle: function() {
-
-			cbj(document).on('click', '.trigger-toggle-offcanvas', function() {
-				cbj('.row-offcanvas').toggleClass('active');
-				cbj(this).toggleClass('fa-bars').toggleClass('fa-window-close');
-			});
-
-		},
 
 		initHtmlEditors : function(view) {
 
@@ -74,7 +61,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.bootstrap'], functio
 									"searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime nonbreaking",
 									"save table directionality emoticons template paste"
 								],
-								toolbar		: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+								toolbar		: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons",
 								template_external_list_url 	: "js/template_list.js",
 								external_link_list_url 		: "js/link_list.js",
 								external_image_list_url 	: "js/image_list.js",
@@ -151,6 +138,10 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.bootstrap'], functio
 				var altField = cbj(this).closest('.kenedo-property').find('.form-control');
 				var value = altField.val();
 
+				if (value === '' || value === '0000-00-00' || value === '0000-00-00 00:00:00') {
+					value = null;
+				}
+
 				var params = {
 					dateFormat: 'yy-mm-dd',
 					altFormat: 'yy-mm-dd',
@@ -158,10 +149,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.bootstrap'], functio
 				};
 
 				cbj(this).datepicker(params);
-
-				if (value && value !== '0000-00-00') {
-					cbj(this).datepicker('setDate', value);
-				}
+				cbj(this).datepicker('setDate', value);
 
 			});
 
@@ -185,72 +173,75 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.bootstrap'], functio
 
 				start: function() {
 
-					// Init the current ordering arrays
-					var currentOrdering = [];
-					var currentItemIds = [];
+					var list = cbj(this).closest('.kenedo-listing-form');
+					var paginationLimit = kenedo.getListParameter(list, 'limit');
 
-					var sortableArray = cbj(this).sortable('toArray');
-					// sortableArray.pop();
-
-					// Loop through the current sortable ordering and set current values
-					for (var i in sortableArray) {
-						if (sortableArray.hasOwnProperty(i) === true) {
-							currentOrdering.push(cbj('#'+sortableArray[i] + ' .ordering-text-field').val());
-							currentItemIds.push(sortableArray[i].replace('item-id-',''));
+					if (paginationLimit != 0) {
+						var feedback = cbj(this).find('.sort-handle:first').data('unset-pagination-text');
+						if (feedback) {
+							alert(feedback);
 						}
+						else {
+							alert('Please set items per page to all first');
+						}
+
 					}
-
-					// Store them in the its data object
-					cbj(this).data('currentOrdering',currentOrdering);
-					cbj(this).data('currentItemIds',currentItemIds);
-
 				},
 
 				update: function() {
 
-					// Show the save symbol
-					cbj(this).closest('.kenedo-listing-form').find('.trigger-store-record-ordering').show();
+					var list = cbj(this).closest('.kenedo-listing-form');
+					var direction = kenedo.getListParameter(list, 'listing_order_dir');
 
-					// Init the arrays for new ordering values
-					var updatedOrdering = [];
-					var updatedItemIds = [];
+					// This will contain record ids and position numbers and gets sent as JSON to the server
+					var sortingData = {};
 
-					// Get current ordering from sortable's data
-					var currentOrdering = cbj(this).data('currentOrdering');
-
-					// Loop through the updated ordering and set the update arrays
-					var ordering = cbj(this).sortable('toArray');
-
-					var i;
-
-					// Put together the new ordering
-					for (i in ordering) {
-						if (ordering.hasOwnProperty(i) === true) {
-							updatedItemIds.push( ordering[i].replace('item-id-','') );
-							updatedOrdering.push( currentOrdering[i] );
-						}
+					// This will be used to set position numbers (gets in- or decremented)
+					var positionNumber;
+					if (direction.toLowerCase() === 'asc') {
+						positionNumber = 10;
+					}
+					else {
+						positionNumber = list.find('.item-row').length * 10;
 					}
 
-					var j;
-					// Update the ordering text fields
-					for (j in updatedOrdering) {
-						if (updatedOrdering.hasOwnProperty(j) === true) {
-							cbj(this).find('#item-id-'+updatedItemIds[j] + ' .ordering-text-field').val(currentOrdering[j]);
+					list.find('.item-row').each(function() {
+
+						var recordId = cbj(this).data('item-id');
+
+						sortingData[recordId] = positionNumber;
+
+						if (direction.toLowerCase() === 'asc') {
+							positionNumber = positionNumber + 10;
 						}
+						else {
+							positionNumber = positionNumber - 10;
+						}
+
+					});
+
+					var controller = kenedo.getListParameter(list, 'controller');
+					var updates = JSON.stringify(sortingData);
+
+					// Storing position will be delayed with timeouts so that frantic sorters can't flood the server
+					if (privateMethods.sortingTimeout) {
+						window.clearTimeout(privateMethods.sortingTimeout);
 					}
 
-					// Renew the current arrays for next sort
-					currentOrdering = updatedOrdering;
-					var currentItemIds = updatedItemIds;
-
-					// Store them in its data object
-					cbj(this).data('currentOrdering',currentOrdering);
-					cbj(this).data('currentItemIds',currentItemIds);
+					privateMethods.sortingTimeout = window.setTimeout(
+						function() {
+							server.makeRequest(controller, 'storeOrdering', {updates: updates});
+						},
+						500
+					);
 
 				}
+
 			});
 
 		},
+
+		sortingTimeout: null,
 
 		initRulePasteButtonVisibility: function(view) {
 			if (this.hasClipboardRule()) {
@@ -262,7 +253,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.bootstrap'], functio
 		},
 
 		hasClipboardRule: function() {
-			return this.getClipboardRule() != undefined;
+			return this.getClipboardRule() !== null;
 		},
 		
 		setClipboardRule: function(ruleData) {
@@ -272,12 +263,13 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.bootstrap'], functio
 		getClipboardRule: function() {
 			var json = window.sessionStorage.getItem('clipboardRule');
 
-			if (json !== undefined) {
-				return JSON.parse(json);
+			if (json === null) {
+				return null;
 			}
 			else {
-				return undefined;
+				return JSON.parse(json);
 			}
+
 		},
 
 		initChosenDropdowns: function(wrapper) {

@@ -20,10 +20,10 @@ defined('CB_VALID_ENTRY') or die();
 
 			<div class="input-group">
 
-				<div class="form-control-static pseudo-text-field color-picker-output" style="background-color: <?php echo hsc($this->selection);?>"></div>
+				<div class="form-control pseudo-text-field color-picker-output" style="background-color: <?php echo hsc($this->selection);?>"></div>
 
-				<span class="input-group-addon trigger-show-colorpicker">
-					<span class="fa fa-eyedropper" title="<?php echo KText::_('Change Color');?>"></span>
+				<span class="input-group-append trigger-show-colorpicker">
+					<span class="input-group-text fa fa-eye-dropper" title="<?php echo KText::_('Change Color');?>"></span>
 				</span>
 
 			</div>

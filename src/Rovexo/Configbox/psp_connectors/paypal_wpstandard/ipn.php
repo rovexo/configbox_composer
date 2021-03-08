@@ -139,9 +139,8 @@ class IpnPaypal_wpstandard {
 	}
 	
 	function getOrderId() {
-		
-		$orderId = KRequest::getInt('invoice',NULL,'POST');
-		
+		$invoiceId = KRequest::getString('invoice',NULL,'POST');
+		$orderId = str_replace('CB-', '', $invoiceId);
 		return $orderId;
 	}
 	

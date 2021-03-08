@@ -20,10 +20,10 @@ defined('CB_VALID_ENTRY') or die();
 
 			<div class="input-group">
 
-				<div class="form-control-static pseudo-text-field trigger-show-calendar"><?php echo hsc($this->outputValue);?></div>
+				<div class="form-control pseudo-text-field trigger-show-calendar"><?php echo hsc($this->outputValue);?></div>
 
-				<span class="input-group-addon trigger-show-calendar">
-					<span class="glyphicon glyphicon-calendar" title="<?php echo KText::_('Change Date');?>"></span>
+				<span class="input-group-append trigger-show-calendar">
+					<span class="input-group-text fa fa-calendar" title="<?php echo KText::_('Change Date');?>"></span>
 				</span>
 
 			</div>

@@ -12,8 +12,7 @@ class KenedoPropertyOrdering extends KenedoProperty {
 	function getCellContentInListingTable($record) {
 		ob_start();
 		?>
-		<span class="sort-handle fa fa-bars"></span>
-		<input type="text" class="ordering-text-field" name="ordering-item[<?php echo hsc($record->{$this->model->getTableKey()});?>]" value="<?php echo intval($record->{$this->propertyName});?>" autocomplete="off" />
+		<span class="sort-handle fa fa-bars" data-unset-pagination-text="<?php echo KText::_('ADMIN_FEEDBACK_UNSET_PAGINATION_BEFORE_SORTING');?>"></span>
 		<?php
 		return ob_get_clean();
 	}

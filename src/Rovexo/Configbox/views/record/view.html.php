@@ -65,6 +65,7 @@ class ConfigboxViewRecord extends KenedoView {
 			$this->hideSkus = true;
 		}
 
+		$this->hideSkus = (CbSettings::getInstance()->get('sku_in_order_record') == '0');
 		$inAdmin = (!empty($this->showIn) && $this->showIn == 'shopmanager');
 
 		foreach($this->orderRecord->positions as $position) {

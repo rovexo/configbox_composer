@@ -109,6 +109,11 @@ class ConfigboxControllerCheckout extends KenedoController {
 		// Make a normalized customer data object from HTTP request data
 		$data = $model->getDataFromRequest();
 
+		// Set user ID and platform user ID to current user's to avoid unauthorized user data changes
+		$currentUser = ConfigboxUserHelper::getUser();
+		$data->id = $currentUser->id;
+		$data->platform_user_id = $currentUser->platform_user_id;
+
 		// Prepare the data (auto-fill data like empty URL segment fields and similar)
 		$model->prepareForStorage($data);
 

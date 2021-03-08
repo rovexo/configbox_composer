@@ -12,7 +12,7 @@ defined('CB_VALID_ENTRY') or die();
 	</div>
 
 	<div class="wrapper-comment-field row">
-		<div class="col-sm-6">
+		<div class="col-md-6">
 			<div class="form-group">
 				<textarea id="comment" class="form-control" name="comment" placeholder="<?php echo KText::_('Comment');?>" cols="20" rows="5"></textarea>
 			</div>
@@ -20,7 +20,7 @@ defined('CB_VALID_ENTRY') or die();
 	</div>
 
 	<div class="wrapper-buttons row">
-		<div class="col-sm-6">
+		<div class="col-md-6">
 			<a class="btn btn-default button-back" href="<?php echo $this->urlCart;?>"><?php echo KText::_('Back to cart');?></a>
 			<a class="btn btn-primary button-get-quote trigger-request-quotation"><?php echo KText::_('Get Quote');?></a>
 		</div>

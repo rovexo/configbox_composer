@@ -55,7 +55,7 @@ defined('CB_VALID_ENTRY') or die();
 			<?php if ($this->orderRecord->invoice_released) { ?>
 				<div>
 					<?php echo KText::sprintf('Invoice %s is released.', $this->invoiceData->invoice_number_prefix.$this->invoiceData->invoice_number_serial);?>
-					<?php echo '<a href="'.KLink::getRoute('index.php?option=com_configbox&controller=invoice&task=display&order_id='.$this->orderRecord->id).'">'.KText::_('Download').'</a>';?>
+					<?php echo '<a href="'.KLink::getRoute('index.php?option=com_configbox&controller=invoice&output_mode=view_only&task=display&order_id='.$this->orderRecord->id).'">'.KText::_('Download').'</a>';?>
 				</div>
 			<?php } elseif($this->invoiceGenerationMode == 0) { ?>
 				<div><?php echo KText::_('Invoice is not yet released.');?></div>

@@ -478,22 +478,21 @@ define(['cbj', 'cbj.chosen', 'cbj.bootstrap'], function(cbj) {
 				if (!cbj(item).attr('name')) {
 					return;
 				}
-				if (cbj(item).is('input[type=radio]') && cbj(item).prop('checked') === false) {
-					return;
+				else if (cbj(item).is('input[type=radio]') && cbj(item).prop('checked') === true) {
+					customerData[cbj(item).attr('name')] = cbj(item).val();
 				}
-				if (cbj(item).is('input[type=checkbox]') && cbj(item).prop('checked') === false) {
-					return;
+				else if (cbj(item).is('input[type=checkbox]')) {
+					customerData[cbj(item).attr('name')] = (cbj(item).prop('checked') === true) ? '1' : '0';
 				}
-				if (cbj(item).is('input[type=checkbox]') && cbj(item).prop('checked') === true) {
-					customerData[cbj(item).attr('name')] = '0';
+				else {
+					customerData[cbj(item).attr('name')] = cbj(item).val();
 				}
-
-				customerData[cbj(item).attr('name')] = cbj(item).val();
+				return;
 
 			});
 
 			// If delivery is same, replace any delivery values with their billing counterparts
-			if (customerData.samedelivery) {
+			if (customerData.samedelivery === '1') {
 				cbj.each(customerData, function(fieldName, value) {
 					if (fieldName.indexOf('billing') === 0) {
 						var pendant = fieldName.substr(7);
@@ -523,7 +522,7 @@ define(['cbj', 'cbj.chosen', 'cbj.bootstrap'], function(cbj) {
 			for (var i in issues) {
 				if (issues.hasOwnProperty(i)) {
 					cbj('.customer-field-'+issues[i].fieldName).removeClass('valid').addClass('invalid');
-					cbj('.customer-field-'+issues[i].fieldName).find('.validation-tooltip').data('message', issues[i].message);
+					cbj('.customer-field-'+issues[i].fieldName).find('.validation-tooltip').data('content', issues[i].message);
 				}
 			}
 
@@ -538,37 +537,26 @@ define(['cbj', 'cbj.chosen', 'cbj.bootstrap'], function(cbj) {
 		removeValidationIssues : function() {
 			// Remove any css flags for invalid fields
 			cbj('.view-customerform .customer-field:visible').removeClass('invalid').removeClass('valid');
-			cbj('.view-customerform .validation-tooltip').data('message', '');
+			cbj('.view-customerform .validation-tooltip').data('content', '');
 			module.initValidationTooltips();
 		},
 
 		/**
-		 * Initializes jQueryUI tooltips on the customer data form
+		 * Initializes tooltips on the customer data form
 		 */
 		initValidationTooltips : function() {
 
-			cbrequire(['cbj.ui'], function() {
+			cbj('.validation-tooltip').each(function() {
+				// ..and init the popovers (doing some settings unless instructed otherwise in data attributes)
+				var settings = {
+					// content:	cbj(this).data('message'),
+					placement: (typeof (cbj(this).data('placement')) !== 'undefined') ? cbj(this).data('placement') : 'top',
+					trigger: (typeof (cbj(this).data('trigger')) !== 'undefined') ? cbj(this).data('trigger') : 'hover',
+					delay: (typeof (cbj(this).data('delay')) !== 'undefined') ? cbj(this).data('delay') : 200,
+					html: (typeof (cbj(this).data('html')) !== 'undefined') ? cbj(this).data('html') : true
+				};
 
-				// Set up the tooltips
-				cbj(document).tooltip({
-					items: ".validation-tooltip",
-					content : function(){
-						return cbj(this).data('message');
-					},
-					position : {
-						my: "center bottom-20",
-						at: "center top",
-						using: function( position, feedback ) {
-							cbj( this ).css( position );
-							cbj( "<div>" )
-								.addClass( "arrow" )
-								.addClass( feedback.vertical )
-								.addClass( feedback.horizontal )
-								.appendTo( this );
-						}
-					}
-				});
-
+				cbj(this).popover(settings);
 			});
 
 		}

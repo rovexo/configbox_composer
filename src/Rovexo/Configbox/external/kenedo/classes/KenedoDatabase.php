@@ -73,7 +73,7 @@ class KenedoDatabase {
 			return false;
 		}
 
-		$query = "SET SESSION sql_mode = '';";
+		$query = "SET SESSION sql_mode = '', group_concat_max_len = 20000;";
 		$this->setQuery($query);
 		$this->query();
 

@@ -595,17 +595,16 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
         $scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
         $languages = [];
 
-        $foundTags = [];
-
         $stores = $storeManager->getStores();
+        $collectedTags = [];
         foreach($stores as $store) {
             $localeCode = $scopeConfig->getValue('general/locale/code', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getStoreId());
             $tag = str_replace('_', '-', $localeCode);
 
-            if (in_array($tag, $foundTags)) {
+            if (in_array($tag, $collectedTags)) {
             	continue;
             }
-            $foundTags[] = $tag;
+			$collectedTags[] = $tag;
 
             $language = \Locale::getPrimaryLanguage($tag);
             $country = \Locale::getRegion($tag);

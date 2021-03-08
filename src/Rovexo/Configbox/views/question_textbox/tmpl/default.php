@@ -23,7 +23,7 @@ defined('CB_VALID_ENTRY') or die();
 				<?php } ?>
 
 				<?php if (!empty($this->question->description) && $this->question->desc_display_method == 2) { ?>
-					<span class="fa fa-info-circle cb-popover question-popover" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="popover" data-placement="auto left" data-content="<?php echo hsc($this->question->description);?>"></span>
+					<span class="fa fa-info-circle cb-popover question-popover" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="popover" data-placement="left" data-content="<?php echo hsc($this->question->description);?>"></span>
 				<?php } ?>
 
 				<?php if (!empty($this->question->description) && $this->question->desc_display_method == 3) { ?>
@@ -38,7 +38,7 @@ defined('CB_VALID_ENTRY') or die();
 				<input value="<?php echo hsc($this->selection);?>" type="text" id="input-<?php echo hsc($this->questionCssId);?>" class="form-control" aria-label="<?php echo hsc($this->question->title);?>" <?php echo ($this->question->disableControl) ? 'disabled="disabled"' : '';?> />
 
 				<?php if ($this->question->unit) { ?>
-					<span class="input-group-addon"><?php echo hsc($this->question->unit);?></span>
+					<span class="input-group-append"><span class="input-group-text"><?php echo hsc($this->question->unit);?></span></span>
 				<?php } ?>
 
 			<?php if ($this->question->unit) { ?></div><?php } ?>

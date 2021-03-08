@@ -8,7 +8,7 @@ defined('CB_VALID_ENTRY') or die();
 <div <?php echo $this->getViewAttributes();?>>
 	<div class="row">
 
-		<div class="question-picker col-xs-4 col-lg-3">
+		<div class="question-picker col-4 col-lg-3">
 
 			<div class="note-pick-question"><?php echo KText::_('Pick a question to see related conditions');?></div>
 
@@ -32,7 +32,7 @@ defined('CB_VALID_ENTRY') or die();
 
 		</div>
 
-		<div id="question-attributes" class="col-xs-8 col-lg-9">
+		<div id="question-attributes" class="col-8 col-lg-9">
 
 			<div class="note-drag-conditions"><?php echo KText::_('RULE_EDITOR_HELP_CONDITIONS');?></div>
 
@@ -46,7 +46,7 @@ defined('CB_VALID_ENTRY') or die();
 					<div class="answer-group" id="answer-group-<?php echo intval($questionId);?>">
 						<div class="row">
 
-							<div class="predefined-answers col-sm-6">
+							<div class="predefined-answers col-md-6">
 								<?php if (isset($this->questionAnswers[$questionId])) { ?>
 
 									<h3 class="conditions-group-heading"><?php echo KText::_('Related to answers');?></h3>
@@ -133,7 +133,7 @@ defined('CB_VALID_ENTRY') or die();
 								</ul>
 							</div>
 
-							<div class="other-conditions col-sm-6">
+							<div class="other-conditions col-md-6">
 								<h3 class="conditions-group-heading"><?php echo KText::_('Related to the custom fields of the answer');?></h3>
 								<ul class="conditions-list answer-list">
 									<?php

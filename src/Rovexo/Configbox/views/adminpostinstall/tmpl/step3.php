@@ -10,7 +10,9 @@ defined('CB_VALID_ENTRY') or die();
 		<label for="taxRate"><?php echo KText::_('Default VAT rate');?></label>
 		<div class="input-group">
 			<input class="form-control" type="text" id="taxRate" aria-describedby="help-taxRate" value="<?php echo hsc(KText::getLocalizedNumber($this->defaultTaxRate));?>">
-			<div class="input-group-addon">%</div>
+			<div class="input-group-append">
+				<span class="input-group-append">%</span>
+			</div>
 		</div>
 		<div class="help-block validation-placeholder"></div>
 		<span id="help-taxRate" class="help-block"><?php echo KText::_('TOOLTIP_DEFAULT_VAT_RATE_HELP');?></span>

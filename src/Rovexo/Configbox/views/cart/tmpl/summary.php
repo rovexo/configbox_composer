@@ -118,7 +118,7 @@ defined('CB_VALID_ENTRY') or die();
 
 					<span class="delivery-time"><?php echo ($this->cart->delivery->deliverytime) ? KText::sprintf('Delivery time %s days',$this->cart->delivery->deliverytime) : '';?></span>
 
-					<span class="delivery-tooltip"><a class="fa fa-info-circle" data-toggle="popover" data-placement="auto top" data-content="<?php echo hsc( KText::_('This is method is automatically chosen. At checkout you can choose alternatives.'));?>"></a></span>
+					<span class="delivery-tooltip"><a class="fa fa-info-circle" data-toggle="popover" data-placement="top" data-content="<?php echo hsc( KText::_('This is method is automatically chosen. At checkout you can choose alternatives.'));?>"></a></span>
 
 				</td>
 
@@ -144,7 +144,7 @@ defined('CB_VALID_ENTRY') or die();
 
 					<span class="payment-title"><?php echo hsc($this->cart->payment->title);?></span>
 
-					<span class="payment-tooltip"><a class="fa fa-info-circle" data-toggle="popover" data-placement="auto top" data-content="<?php echo hsc( KText::_('This is method is automatically chosen. At checkout you can choose alternatives.'));?>"></a></span>
+					<span class="payment-tooltip"><a class="fa fa-info-circle" data-toggle="popover" data-placement="top" data-content="<?php echo hsc( KText::_('This is method is automatically chosen. At checkout you can choose alternatives.'));?>"></a></span>
 
 				</td>
 
@@ -163,7 +163,7 @@ defined('CB_VALID_ENTRY') or die();
 					<td class="item-quantity"></td>
 					<td class="item-name">
 						<span class="tax-rate-name"><?php echo KText::sprintf((($this->cart->groupData->b2b_mode) ? 'Plus':'Incl.').' %s tax', cbtaxrate($taxRate));?></span>
-						<span class="tax-rate-tooltip"><a class="fa fa-info-circle" data-toggle="popover" data-placement="auto top" data-content="<?php echo hsc( KText::_('The tax rate may change when you enter your billing and delivery address.'));?>"></a></span>
+						<span class="tax-rate-tooltip"><a class="fa fa-info-circle" data-toggle="popover" data-placement="top" data-content="<?php echo hsc( KText::_('The tax rate may change when you enter your billing and delivery address.'));?>"></a></span>
 					</td>
 
 					<?php if ($this->displayPricing) { ?>

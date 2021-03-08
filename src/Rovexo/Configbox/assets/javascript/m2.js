@@ -29,6 +29,9 @@ define(['cbj', 'configbox/configurator', 'configbox/server'], function(cbj, conf
 
 		onConfiguratorLoaded: function() {
 			cbj(document).on('cbPricingChange', privateMethods.updateMagento2Total);
+			// Trying to make this event the standard for customizations to listen to when it comes to reacting
+			// config on page loads
+			cbj(document).trigger('cbConfiguratorInjected');
 			privateMethods.initMagento2Validation();
 			privateMethods.loadVisualization();
 		},

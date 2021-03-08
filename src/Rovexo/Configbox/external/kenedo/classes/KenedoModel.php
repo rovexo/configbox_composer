@@ -999,6 +999,10 @@ class KenedoModel {
 			$db->setQuery($query);
 			$record = $db->loadObject();
 
+			if (!$record || $record->{$this->getTableKey()} === null) {
+				$record = null;
+			}
+
 			if ($record) {
 				foreach ($props as $prop) {
 					$prop->appendDataForGetRecord($record);

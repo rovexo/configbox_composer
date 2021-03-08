@@ -20,15 +20,15 @@ defined('CB_VALID_ENTRY') or die();
 			<div class="input-group">
 
 				<div
-					class="form-control-static pseudo-text-field ral-color-picker-output <?php if(in_array($this->selectedColorId, $this->ralColorsDark)) echo 'is-dark '; ?>"
+					class="form-control pseudo-text-field ral-color-picker-output <?php if(in_array($this->selectedColorId, $this->ralColorsDark)) echo 'is-dark '; ?>"
 					style="background-color: <?php echo isset($this->ralColors[$this->selectedColorId]) ? $this->ralColors[$this->selectedColorId]['hex'] : '#ffffff';?>"><?php
 						if(isset($this->ralColors[$this->selectedColorId])){
 							echo KText::_('RAL').' '.$this->selectedColorId . ' ' . KText::_('RAL_'.$this->selectedColorId) ;
 						}
 					?></div>
 
-				<span class="input-group-addon trigger-show-ralcolorpicker">
-					<span class="fa fa-eyedropper" title="<?php echo KText::_('Change RAL color');?>"></span>
+				<span class="input-group-append trigger-show-ralcolorpicker">
+					<span class="input-group-text fas fa-eye-dropper" title="<?php echo KText::_('Change RAL color');?>"></span>
 				</span>
 
 			</div>

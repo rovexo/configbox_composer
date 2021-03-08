@@ -352,7 +352,7 @@ define(['cbj', 'configbox/server','cbj.chosen'], function(cbj, server) {
 				var html = cbj('.blueprint-currency').html();
 
 				cbj('.currencies').append(html);
-				cbj('.currencies .row:last-child .currency-name').focus();
+				cbj('.currencies .row').last().find('.currency-name').focus();
 
 			});
 

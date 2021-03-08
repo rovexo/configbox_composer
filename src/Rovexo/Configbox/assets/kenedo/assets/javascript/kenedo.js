@@ -56,7 +56,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			cbj(document).on('change', '.kenedo-listing-form .kenedo-limit-select', kenedo.onChangeListLimit);
 			cbj(document).on('change', '.kenedo-listing-form .listing-filter', kenedo.onChangeListFilters);
 			cbj(document).on('click',  '.kenedo-listing-form .trigger-toggle-record-activation', kenedo.onToggleRecordActivation);
-			cbj(document).on('click', '.kenedo-listing-form .trigger-store-record-ordering', kenedo.onStoreOrdering);
 			cbj(document).on('click', '.kenedo-listing-form .kenedo-check-all-items', kenedo.toggleCheckboxes);
 			cbj(document).on('click', '.kenedo-listing-form .listing-link', kenedo.openListingLink);
 
@@ -102,12 +101,12 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 			// Language switcher for translatables
 			cbj(document).on('click', '.property-type-translatable .language-switcher', function(){
-
+				var wrapper = cbj(this).closest('.kenedo-property');
 				cbj(this).siblings().removeClass('active');
 				cbj(this).addClass('active');
 
 				var selector = cbj(this).attr('for');
-				cbj('#translation-' + selector).show().siblings().hide();
+				wrapper.find('#translation-' + selector).show().siblings().hide();
 
 			});
 
@@ -172,17 +171,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				cbj(this).closest('.property-body').find('.file-upload-field').replaceWith(inputField);
 
 			});
-
-
-
-			/* SORTABLE SETUP - START */
-
-			// Show the save button for ordering after a change in ordering
-			cbj(document).on('keyup', '.ordering-text-field', function() {
-				cbj(this).closest('.kenedo-listing').find('.trigger-store-record-ordering').show();
-			});
-
-			/* SORTABLE SETUP - END */
 
 			/* EVENT HANDLERS FOR KENEDO POPUPS - START */
 
@@ -255,7 +243,12 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			kenedo.refreshList(list);
 		},
 
-
+		/**
+		 *
+		 * @param {jQuery} list
+		 * @param {String} key
+		 * @param {mixed} value
+		 */
 		setListParameter: function(list, key, value) {
 			list.find('.listing-data[data-key=' + key + ']').data('value', value);
 		},
@@ -277,6 +270,11 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			}
 		},
 
+		/**
+		 *
+		 * @param {jQuery} list
+		 * @returns {*}
+		 */
 		getListParameters: function(list) {
 			var parameters = {};
 			list.find('.listing-data').each(function() {
@@ -353,6 +351,13 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				'id': kenedo.getFormParameter(form, 'id'),
 				'return': kenedo.getFormParameter(form, 'return')
 			};
+
+			cbrequire(['tinyMCE'], function(tinyMCE) {
+				if (tinyMCE.majorVersion > 3) {
+					tinyMCE.remove();
+				}
+			});
+
 			server.replaceHtml(form.closest('.kenedo-view'), controller, task, data)
 				.done(callback);
 		},
@@ -508,7 +513,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 						var url = kenedo.base64UrlDecode(kenedo.getFormParameter(taskInfo.form, 'return'));
 						var callback = function() {
-							var form = cbj('.kenedo-listing-form:first');
+							var form = cbj('.kenedo-listing-form').first();
 							kenedo.showResponseMessages(form, data.errors || [], data.messages || []);
 						};
 
@@ -547,7 +552,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 					var parent = taskInfo.form.closest('.kenedo-view').parent();
 					kenedo.refreshForm(taskInfo.form, function() {
-						taskInfo.form = parent.find('.kenedo-details-form:first');
+						taskInfo.form = parent.find('.kenedo-details-form').first();
 						kenedo.showResponseMessages(taskInfo.form, data.errors || [], data.messages || []);
 					});
 
@@ -570,7 +575,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 		showResponseMessages: function(form, errors, notices) {
 
-			var wrapper = form.find('.kenedo-messages:first');
+			var wrapper = form.find('.kenedo-messages').first();
 
 			wrapper.find('.kenedo-messages-error').html('<ul></ul>');
 			wrapper.find('.kenedo-messages-notice').html('<ul></ul>');
@@ -675,9 +680,8 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			// First fade out the current target area
 			cbj(selector).animate( {'opacity':'.0'}, 200, function() {
 
-				// Then load the new content into the target area (look careful - we're injecting only the first
-				// .kenedo-view element we find in the response.
-				cbj(selector).load(url + ' .kenedo-view:first', function(responseText, textStatus, jqXHR){
+				// Then load the new content into the target area
+				cbj(selector).load(url, function(responseText, textStatus, jqXHR){
 
 					if (jqXHR.status !== 200) {
 
@@ -1175,7 +1179,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 				case 'copy':
 				case 'remove':
 					kenedo.refreshList(taskInfo.list, function() {
-						taskInfo.list = cbj('.kenedo-listing-form:first');
+						taskInfo.list = cbj('.kenedo-listing-form').first();
 						kenedo.showResponseMessages(taskInfo.list, data.errors || [], data.messages || []);
 					});
 			}
@@ -1225,37 +1229,6 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		toggleCheckboxes: function() {
 			var checked = cbj(".kenedo-listing .kenedo-check-all-items").prop('checked');
 			cbj(this).closest('.kenedo-listing').find('.kenedo-item-checkbox').prop('checked',checked);
-		},
-
-		onStoreOrdering: function() {
-
-			if (cbj(this).hasClass('clicked')) {
-				return;
-			}
-
-			cbj(this).addClass('clicked');
-
-			var list = cbj(this).closest('.kenedo-listing-form');
-
-			cbj(this).find('.fa').removeClass('fa-floppy-o').addClass('fa-spinner').addClass('fa-spin');
-
-			var updates = {};
-			list.find('.item-row').each(function() {
-				var recordId = cbj(this).data('item-id');
-				updates[recordId] = parseInt(cbj(this).find('.ordering-text-field').val());
-			});
-			
-			var controller = kenedo.getListParameter(list, 'controller');
-
-			var data = {
-				updates: JSON.stringify(updates)
-			};
-
-			server.makeRequest(controller, 'storeOrdering', data)
-				.done(function() {
-					kenedo.refreshList(list);
-				});
-
 		}
 
 	};

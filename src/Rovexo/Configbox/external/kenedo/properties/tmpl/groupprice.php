@@ -36,7 +36,9 @@ $label = $this->getOverrideLabel();
 				<input class="form-control chosen-price" type="text" value="<?php echo hsc($override['price']);?>">
 
 				<?php if ($this->getPropertyDefinition('unit')) { ?>
-					<div class="input-group-addon"><?php echo hsc($this->getPropertyDefinition('unit'));?></div>
+					<div class="input-group-append">
+						<span class="input-group-text"><?php echo hsc($this->getPropertyDefinition('unit'));?></span>
+					</div>
 				<?php } ?>
 
 			</div>
@@ -71,7 +73,9 @@ $label = $this->getOverrideLabel();
 			<input class="form-control chosen-price" type="text" value="">
 
 			<?php if ($this->getPropertyDefinition('unit')) { ?>
-				<div class="input-group-addon"><?php echo hsc($this->getPropertyDefinition('unit'));?></div>
+				<div class="input-group-append">
+					<span class="input-group-text"><?php echo hsc($this->getPropertyDefinition('unit'));?></span>
+				</div>
 			<?php } ?>
 
 		</div>

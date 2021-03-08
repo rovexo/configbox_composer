@@ -586,6 +586,7 @@ abstract class KenedoController {
 		foreach ($ids as &$id) {
 			$id = intval($id);
 		}
+		unset($id);
 
 		// Bounce if no record ID came in
 		if(empty($ids)) {
@@ -685,6 +686,7 @@ abstract class KenedoController {
 		foreach ($ids as &$id) {
 			$id = intval($id);
 		}
+		unset($id);
 
 		// Set the mime type for the response for JSON response
 		if($responseType == 'json') {
@@ -873,12 +875,24 @@ abstract class KenedoController {
 
 		$model = $this->getDefaultModel();
 
+		// set ids or just one id
+		$id = KRequest::getInt('id');
 		$ids = KRequest::getString('ids');
-		$ids = explode(',', $ids);
-		// Sanitize ids
+
+		// The system takes in 'id' or 'ids'. In either case, we make an array $ids for looping later
+		if(!empty($ids)) {
+			$ids = explode(',', $ids);
+		}
+		elseif($id){
+			$ids = [$id];
+		}
+		else $ids = [];
+
+		// Cast all IDs to int for sanitation
 		foreach ($ids as &$id) {
 			$id = intval($id);
 		}
+		unset($id);
 
 		$model->publish($ids, $publish);
 

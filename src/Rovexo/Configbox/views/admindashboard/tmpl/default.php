@@ -12,7 +12,7 @@ defined('CB_VALID_ENTRY') or die();
 	<div class="row">
 
 
-		<div class="col-sm-6">
+		<div class="col-md-6">
 
 			<?php if (count($this->criticalIssues)) { ?>
 
@@ -139,7 +139,7 @@ defined('CB_VALID_ENTRY') or die();
 
 		</div>
 
-		<div class="col-sm-6">
+		<div class="col-md-6">
 			<div class="news">
 				<h2><?php echo KText::_('News');?></h2>
 				<div class="news-target"><i class="fa fa-spinner fa-spin" style="margin-right:5px"></i><?php echo KText::_('Loading');?></div>

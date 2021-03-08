@@ -494,17 +494,6 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 			$warnings[] = $warning;
 		}
 
-		$memoryLimit = $this->getInBytes(ini_get('memory_limit'));
-
-		if ($memoryLimit > 0 && $memoryLimit < 134217728) {
-			$warning = new stdClass();
-			$warning->title = KText::_('PHP memory limit too low.');
-			$warning->problem = KText::sprintf('Your PHP memory limit is set to %s MB, which can be too low for some processes like PDF generation.', $this->getInMb($memoryLimit));
-			$warning->solution = KText::_('Set memory_limit in your server php.ini or .htaccess file to at least 128MB.');
-			$warning->access = KText::_('Developer with access to php.ini or .htaccess, server administrator or hosting provider.');
-			$warnings[] = $warning;
-		}
-
 		if (ini_get('display_errors')) {
 			$warning = new stdClass();
 			$warning->title = KText::_('PHP setting display_errors is activated.');
@@ -559,6 +548,9 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 
 	function memoryLimitIsSufficient() {
         $bytes = $this->getMemoryLimitInBytes();
+        if ($bytes <= 0) {
+            return true;
+        }
         $minBytes = 256 * 1024 * 1024;
         return ($bytes >= $minBytes);
     }

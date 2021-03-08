@@ -159,7 +159,7 @@ class ConfigboxViewCustomerform extends KenedoView {
 
 		$this->languageDropDownHtml = KenedoHtml::getSelectField('language_tag', $options, $this->customerData->language_tag, KText::getLanguageCode(), false, 'chosen-dropdown');
 
-		$this->userIsAdmin = KenedoPlatform::p()->isAuthorized('com_configbox.core.manage');
+		$this->userIsAdmin = KenedoPlatform::p()->isAdminArea() && KenedoPlatform::p()->isAuthorized('com_configbox.core.manage');
 
 		$groupModel = KenedoModel::getModel('ConfigboxModelAdmincustomergroups');
 		$groups = $groupModel->getRecords();

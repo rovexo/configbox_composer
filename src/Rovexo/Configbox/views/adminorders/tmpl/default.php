@@ -21,7 +21,9 @@ defined('CB_VALID_ENTRY') or die();
 				                                              name="filter_nameorder"
 				                                              id="filter_nameorder" />
 
-					<a class="kenedo-search btn btn-default input-group-addon"><?php echo KText::_('Search');?></a>
+					<a class="kenedo-search input-group-append">
+						<span class="input-group-text"><?php echo KText::_('Search');?></span>
+					</a>
 				</div>
 
 				<div class="kenedo-filter input-group"><input class="listing-filter form-control datepicker"
@@ -31,7 +33,9 @@ defined('CB_VALID_ENTRY') or die();
 				                                              name="filter_startdate"
 				                                              id="filter_startdate" />
 
-					<a class="kenedo-search btn btn-default input-group-addon"><?php echo KText::_('Search');?></a>
+					<a class="kenedo-search input-group-append">
+						<span class="input-group-text"><?php echo KText::_('Search');?></span>
+					</a>
 				</div>
 
 				<div class="kenedo-filter input-group"><input class="listing-filter form-control datepicker"
@@ -41,7 +45,9 @@ defined('CB_VALID_ENTRY') or die();
 				                                              name="filter_enddate"
 				                                              id="filter_enddate" />
 
-					<a class="kenedo-search btn btn-default input-group-addon"><?php echo KText::_('Search');?></a>
+					<a class="kenedo-search input-group-append">
+						<span class="input-group-text"><?php echo KText::_('Search');?></span>
+					</a>
 				</div>
 
 				<div class="kenedo-filter input-group">

@@ -8,7 +8,7 @@ defined('CB_VALID_ENTRY') or die();
 	<div class="question-heading">
 
 		<?php if (!empty($this->question->description) && $this->question->desc_display_method == 2) { ?>
-			<span class="pull-right fa fa-info-circle cb-popover question-popover" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="popover" data-placement="auto left" data-content="<?php echo hsc($this->question->description);?>"></span>
+			<span class="pull-right fa fa-info-circle cb-popover question-popover" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="popover" data-placement="left" data-content="<?php echo hsc($this->question->description);?>"></span>
 		<?php } ?>
 
 		<?php if (!empty($this->question->description) && $this->question->desc_display_method == 3) { ?>

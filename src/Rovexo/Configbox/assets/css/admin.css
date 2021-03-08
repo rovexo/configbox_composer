@@ -1,5 +1,3 @@
-@charset "UTF-8";
-
 .uk-container .container,
 .container .container {
 	width:auto;
@@ -7,6 +5,10 @@
 
 .cb-content.container {
 	text-align:left;
+}
+
+.cb-content .btn {
+	font-size:14px;
 }
 
 /* Joomla admin CSS changes - START */
@@ -49,6 +51,11 @@ body.admin.com_configbox {
 	background:inherit;
 }
 
+/* The grey bottom bar in joomla stacks higher than chosen dropdowns, amending it */
+body.admin.com_configbox>#status {
+	z-index:1000;
+}
+
 /* Joomla admin CSS changes - END */
 
 /* Magento 1 admin CSS changes - START */
@@ -83,9 +90,9 @@ body.admin.com_configbox {
 	display:none;
 }
 
-.configbox-admin-index #anchor-content {
+.configbox-admin-index #anchor-content.page-content {
 	position:relative;
-	top:-40px;
+	top:-70px;
 }
 
 .configbox-admin-index .view-admin {
@@ -112,10 +119,9 @@ body.admin.com_configbox {
 	display:none!important;
 }
 
-.cb-content .modal {
-	z-index:11050;
+body.modal-open #adminmenuwrap {
+	z-index:1000;
 }
-
 
 /* Wordpress admin CSS changes - END */
 
@@ -371,11 +377,8 @@ body.admin.com_configbox {
 	word-wrap:break-word;
 }
 
+.cb-content textarea,
 .cb-content input[type="text"] {
-	height: 34px;
-}
-
-.cb-content textarea, .cb-content input[type="text"] {
 	display: block;
 	width: 100%;
 	padding: 6px 12px;
@@ -384,9 +387,13 @@ body.admin.com_configbox {
 	color: #555555;
 	background: #ffffff none;
 	border: 1px solid #cccccc;
-	border-radius: 4px;
+	border-radius: 0;
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+.cb-content .input-group-text {
+	font-size:14px;
 }
 
 .cb-content .backend-button-small {
@@ -591,12 +598,8 @@ body.admin.com_configbox {
 }
 
 .cb-content .kenedo-listing .field-ordering {
-	text-align:left;
-}
-
-.cb-content .kenedo-listing.sortable-listing .field-ordering {
+	width:1px;
 	white-space: nowrap;
-	width:50px;
 }
 
 .cb-content .kenedo-listing.unsortable-listing .field-ordering {
@@ -634,11 +637,6 @@ body.admin.com_configbox {
 
 .cb-content .kenedo-listing tr:hover td {
 	background:#efefff;
-}
-
-.cb-content .kenedo-listing .trigger-store-record-ordering {
-	display:none;
-	text-decoration:none;
 }
 
 .cb-content .kenedo-pagination {
@@ -757,27 +755,8 @@ body.admin.com_configbox {
 	white-space: nowrap;
 }
 
-.kenedo-listing input.ordering-text-field {
-	width: 41px;
-	text-align: right;
-	padding: 1px 5px;
-	height: 21px;
-	font-size: 14px;
-	margin: 0;
-	border-radius: 0;
-	line-height: 21px;
-	box-shadow: none;
-	display:inline-block;
-}
-
-.kenedo-listing .trigger-order-list.active.direction-asc:after {
-	font-family:FontAwesome;
-	content: "\f160";
-}
-
-.kenedo-listing .trigger-order-list.active.direction-desc:after {
-	font-family:FontAwesome;
-	content: "\f161";
+.kenedo-listing .trigger-order-list.inactive .fa {
+	display:none;
 }
 
 .cb-content .kenedo-properties {
@@ -812,7 +791,8 @@ body.admin.com_configbox {
 }
 
 .cb-content .property-group-legend:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:'\f0c8';
 	color:#025A8D;
 	padding-right:6px;
@@ -835,14 +815,16 @@ body.admin.com_configbox {
 }
 
 .cb-content .property-group-opened.property-group-using-toggles>.property-group-legend:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:'\f146';
 	color:#025A8D;
 	padding-right:7px;
 }
 
 .cb-content .property-group-closed.property-group-using-toggles>.property-group-legend:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:'\f0fe';
 	color:#025A8D;
 	padding-right:7px;
@@ -877,7 +859,7 @@ body.admin.com_configbox {
 
 
 .cb-content .kenedo-property {
-	width:calc(50% - 13px);
+	width:calc(50% - 15px);
 }
 
 @media (max-width:768px) {
@@ -1058,14 +1040,17 @@ width ourselves
 	padding-right:5px!important;
 }
 
-.cb-content .property-type-file .file-upload-field,
-.cb-content .property-type-file .file-upload-cancel {
-	display:block;
-	width:98%;
+.cb-content .property-type-file .file-upload-field {
+	display: block;
+	width: 100%;
+	height: 16px;
+	line-height: 14px;
 }
 
 .cb-content .property-type-file .file-upload-cancel {
-	margin:5px 0px;
+	display:block;
+	width:100%;
+	margin:5px 4px;
 }
 
 .cb-content .property-type-file .highlighted {
@@ -1181,28 +1166,27 @@ width ourselves
 }
 
 .cb-content .property-type-multiselect .checkbox-field .checkbox-label:before {
-	font-family:FontAwesome;
-	content:'\f096';
+	font-family: "Font Awesome 5 Free";
+	font-weight: normal;
+	content:'\f0c8';
 	margin-right:5px;
 	width:13px;
 	display:inline-block;
 }
 
 .cb-content .property-type-multiselect .checkbox-field input:checked+label:before {
-	content:'\f046';
+	content:'\f14a';
 }
-
-
 
 .cb-content .property-type-published .radio-button-label:before,
 .cb-content .property-type-boolean .radio-button-label:before {
-	font-family:FontAwesome;
-	content:'\f096';
+	font-family: "Font Awesome 5 Free";
+	font-weight: normal;
+	content:'\f0c8';
 	margin-right:5px;
 	width:15px;
 	display:inline-block;
 	position:relative;
-	left:-1px;
 }
 
 .cb-content .property-type-published .property-body input,
@@ -1212,8 +1196,7 @@ width ourselves
 
 .cb-content .property-type-published .property-body input:checked+label:before,
 .cb-content .property-type-boolean .property-body input:checked+label:before {
-	content:'\f046';
-	left:0px;
+	content:'\f14a';
 }
 
 .cb-content .clear-left {
@@ -1301,7 +1284,8 @@ body>#footer {
 }
 
 .cb-content .kenedo-messages .kenedo-messages-error li:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:"\f06a";
 	color:#ce4844;
 	font-size:20px;
@@ -1360,7 +1344,8 @@ body>#footer {
 }
 
 .cb-content .kenedo-messages .kenedo-messages-notice li:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:"\f05a";
 	color:green;
 	font-size:20px;
@@ -1371,11 +1356,11 @@ body>#footer {
 
 .cb-content .translation .kenedo-popup-trigger-content:after,
 .cb-content .property-label .kenedo-popup-trigger-content:after {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content: "\f059";
 	padding-left:5px;
 	color:#333;
-	font-weight:normal;
 }
 
 .cb-content .kenedo-property.required .property-label {
@@ -1686,15 +1671,6 @@ body>#footer {
 	line-height:16px;
 }
 
-.view-admin .offcanvas-toggle {
-	font-size:20px;
-}
-
-.view-admin .offcanvas-toggle:hover {
-	text-decoration: none;
-}
-
-
 .view-admindashboard .software-update p {
 	margin:0px;
 }
@@ -1791,19 +1767,19 @@ body>#footer {
 
 .view-admindashboard .toggle-handle span:before {
 	content: "\f0da";
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	display:inline-block;
 	width:1em;
-	font-weight:normal;
 	text-align:center;
 }
 
 .view-admindashboard .toggle-handle.opened span:before {
 	content: "\f0d7";
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	display:inline-block;
 	width:1em;
-	font-weight:normal;
 	text-align:center;
 }
 
@@ -1922,7 +1898,8 @@ body>#footer {
 }
 
 .cb-content .view-adminconfig .intra-listing .kenedo-page-title:before {
-	font-family: FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content: '\f0c8';
 	color: #025A8D;
 	padding-right: 6px;
@@ -2526,7 +2503,8 @@ body>#footer {
 }
 
 .view-adminmainmenu .trigger-toggle-sub-items:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:'\f0fe';
 	padding-right:5px;
 }
@@ -2562,7 +2540,8 @@ body>#footer {
 }
 
 .view-adminmainmenu .menu-link:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:'\f0c8';
 	color:#025A8D;
 	padding-right:5px;
@@ -2589,7 +2568,7 @@ body>#footer {
 }
 
 .view-adminproducttree .sub-list {
-	padding-left:20px;
+	padding-left:17px;
 }
 
 .view-adminproducttree .edit-link:before {
@@ -2628,10 +2607,15 @@ body>#footer {
 	top:-25px;
 	text-decoration:none;
 	font-size:17px;
+	color:#333;
 }
 
 .view-adminproducttree .toggle-tree-edit:hover {
 	text-decoration:none;
+}
+
+.view-adminproducttree .toggle-tree-edit.active {
+	color:#025A8D;
 }
 
 .view-adminproducttree .trigger-remove {
@@ -2649,7 +2633,8 @@ body>#footer {
 }
 
 .view-adminproducttree .trigger-remove:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:"\f057";
 }
 
@@ -2658,7 +2643,8 @@ body>#footer {
 }
 
 .view-adminproducttree .trigger-remove.processing:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:"\f110";
 }
 
@@ -2683,7 +2669,8 @@ body>#footer {
 }
 
 .view-adminproducttree .trigger-copy:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:"\f0c5";
 	font-size:12px;
 }
@@ -2693,18 +2680,9 @@ body>#footer {
 }
 
 .view-adminproducttree .trigger-copy.processing:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:"\f110";
-}
-
-.view-adminproducttree .toggle-tree-edit:before {
-	font-family:FontAwesome;
-	content:'\f013';
-	color:#333;
-}
-
-.view-adminproducttree .toggle-tree-edit.active:before {
-	color:#025A8D;
 }
 
 .view-adminproducttree .edit-link {
@@ -2770,18 +2748,20 @@ body>#footer {
 }
 
 .view-adminproducttree .sub-list-trigger.has-sub-list:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:'\f055';
 	display:inline-block;
 	width:13px;
 	color:#333;
 	line-height:1.1em;
-	font-size:15px;
+	font-size:14px;
 	vertical-align:top;
 }
 
 .view-adminproducttree .sub-list-trigger.no-sub-list:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:'\f055';
 	display:inline-block;
 	width:13px;
@@ -2795,7 +2775,8 @@ body>#footer {
 }
 
 .view-adminproducttree .add-link:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:'\f067';
 	display:inline-block;
 	width:17px;
@@ -2803,7 +2784,8 @@ body>#footer {
 }
 
 .view-adminproducttree .sub-list-trigger.trigger-opened:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:'\f056';
 }
 
@@ -2812,7 +2794,8 @@ body>#footer {
 }
 
 .view-adminproducttree .answer-list .edit-link:before {
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content:'\f111';
 	display:inline-block;
 	width:19px;
@@ -2836,7 +2819,8 @@ body>#footer {
 
 .view-adminproducttree .trigger-copy:before {
 	content:"\f0c5";
-	font-family:FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 }
 
 .view-adminmainmenu .product-tree-wrapper.shows-edit-buttons .trigger-remove {

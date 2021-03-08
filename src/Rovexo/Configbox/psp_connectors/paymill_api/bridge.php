@@ -30,24 +30,24 @@ else {
 				</div>
 
 				<div class="row">
-					<div class="col-xs-6">
+					<div class="col-6">
 						<div class="form-item form-item-card-cvc">
 							<label class="label-card-cvc" for="cc-card-cvc"><?php echo KText::_('CVC');?></label>
 							<input class="form-control input-card-cvc" id="cc-card-cvc" type="text" value="<?php echo ($testMode) ? '111':'';?>" />
 						</div>
 					</div>
-					<div class="col-xs-6">
+					<div class="col-6">
 						<label class="label-expiry" for="cc-card-expiry-month"><?php echo KText::_('Valid until');?></label>
 
 						<div class="row">
-							<div class="col-xs-6">
+							<div class="col-6">
 								<select class="input-card-expiry-month form-control" id="cc-card-expiry-month">
 									<?php for ($i = 1; $i <= 12; $i++) { ?>
 										<option value="<?php echo sprintf("%02s", $i);?>"><?php echo sprintf("%02s", $i);?></option>
 									<?php } ?>
 								</select>
 							</div>
-							<div class="col-xs-6">
+							<div class="col-6">
 								<select class="input-card-expiry-year form-control">
 									<?php $selected = date("Y") + 1;?>
 									<?php for ($i = date("Y"); $i <= (date("Y") + 15); $i++) { ?>

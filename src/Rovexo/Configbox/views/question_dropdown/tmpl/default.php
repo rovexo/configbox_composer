@@ -68,7 +68,7 @@ defined('CB_VALID_ENTRY') or die();
 						<?php if ($answer->description) { ?>
 
 							<?php if ($answer->desc_display_method == 'tooltip') { ?>
-								<span class="fa fa-info-circle cb-popover answer-popover" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="popover" data-placement="auto top" data-content="<?php echo hsc($answer->description);?>"></span>
+								<span class="fa fa-info-circle cb-popover answer-popover" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="popover" data-container="body" data-placement="top" data-content="<?php echo hsc($answer->description);?>"></span>
 							<?php } ?>
 
 							<?php if ($answer->desc_display_method == 'modal') { ?>

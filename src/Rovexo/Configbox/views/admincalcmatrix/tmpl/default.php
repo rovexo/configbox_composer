@@ -83,7 +83,7 @@ $pickerContent = ob_get_clean();
 					<thead>
 						<tr class="column-parameters">
 							<th width="20px" class="dragtable-drag-boundary">
-								<a class="toggle-matrix-tools" title="<?php echo KText::_('Show edit icons');?>"></a>
+								<a class="toggle-matrix-tools fa fa-cog" title="<?php echo KText::_('Show edit icons');?>"></a>
 							</th>
 							<?php
 							foreach ($this->matrixValues as $y => $xValues) {
@@ -91,7 +91,7 @@ $pickerContent = ob_get_clean();
 								foreach ($xValues as $x=>$value) {
 									?>
 									<th width="20px" class="column-parameter">
-										<i class="dragtable-drag-handle column-sort-handle fa fa-reorder"></i>
+										<i class="dragtable-drag-handle column-sort-handle fa fa-bars"></i>
 										<?php if ($this->columnType == 'question' && $this->columnUsesAnswers) {?>
 											<?php echo KenedoHtml::getSelectField('option-picker', $this->columnAnswers, $x, NULL, false, 'no-chosen');?>
 										<?php } elseif($this->columnType == 'none') { ?>
@@ -99,7 +99,7 @@ $pickerContent = ob_get_clean();
 										<?php } else { ?>
 											<input class="input-value" type="text" value="<?php echo floatval($x);?>" />
 										<?php } ?>
-										<span class="trigger-remove"></span>
+										<span class="trigger-remove fa fa-times"></span>
 									</th>
 									<?php
 								}
@@ -111,7 +111,7 @@ $pickerContent = ob_get_clean();
 					<?php foreach ($this->matrixValues as $y=>$xValues) { ?>
 						<tr>
 							<th width="20px"  class="row-parameter">
-								<i class="row-sort-handle fa fa-reorder"></i>
+								<i class="row-sort-handle fa fa-bars"></i>
 								<?php if ($this->rowType == 'question' && $this->rowUsesAnswers) {?>
 									<?php echo KenedoHtml::getSelectField('option-picker', $this->rowAnswers, $y, NULL, false, 'no-chosen');?>
 								<?php } elseif($this->rowType == 'none') { ?>
@@ -119,7 +119,7 @@ $pickerContent = ob_get_clean();
 								<?php } else { ?>
 									<input class="input-value" type="text" value="<?php echo floatval($y);?>" />
 								<?php } ?>
-								<span class="trigger-remove"></span>
+								<span class="trigger-remove fa fa-times"></span>
 							</th>
 							<?php foreach ($xValues as $x=>$value) { ?>
 
@@ -136,14 +136,14 @@ $pickerContent = ob_get_clean();
 			</td>
 
 			<td class="cell-trigger-add-column">
-				<a class="trigger-add-column" style="display:<?php echo ($this->isNew == true || $this->columnType != 'none') ? 'block':'none';?>" title="<?php echo KText::_('Add a column');?>"></a>
+				<a class="trigger-add-column fa fa-plus-circle" style="display:<?php echo ($this->isNew == true || $this->columnType != 'none') ? 'block':'none';?>" title="<?php echo KText::_('Add a column');?>"></a>
 			</td>
 		</tr>
 
 		<tr>
 			<td>&nbsp;</td>
 			<td class="cell-trigger-add-row">
-				<a class="trigger-add-row" style="display:<?php echo ($this->isNew == true || $this->rowType != 'none') ? 'block':'none';?>" title="<?php echo KText::_('Add a row');?>"></a>
+				<a class="trigger-add-row fa fa-plus-circle" style="display:<?php echo ($this->isNew == true || $this->rowType != 'none') ? 'block':'none';?>" title="<?php echo KText::_('Add a row');?>"></a>
 			</td>
 		</tr>
 

@@ -14,8 +14,8 @@ defined('CB_VALID_ENTRY') or die();
 	       id="<?php echo hsc($this->propertyName);?>"
 	       value="<?php echo hsc($this->data->{$this->propertyName});?>" />
 
-	<span class="input-group-addon">
-		<span class="glyphicon glyphicon-calendar" title="<?php echo KText::_('Change Date');?>"></span>
+	<span class="input-group-append">
+		<span class="input-group-text fa fa-calendar" title="<?php echo KText::_('Change Date');?>"></span>
 	</span>
 
 </div>

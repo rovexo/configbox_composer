@@ -134,6 +134,7 @@ class ConfigboxViewCheckout extends KenedoView {
 
 	function getStyleSheetUrls() {
 		$urls = parent::getStyleSheetUrls();
+		$urls[] = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/jquery.ui-1.12.1/jquery-ui.css';
 		$urls[] = KenedoPlatform::p()->getUrlAssets().'/css/checkout.css';
 		return $urls;
 	}

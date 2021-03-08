@@ -12,7 +12,7 @@ defined('CB_VALID_ENTRY') or die();
 	<input type="text" id="product-tree-title" class="form-control" placeholder="Product Title" />
 </div>
 
-<a class="toggle-tree-edit"></a>
+<a class="fa fa-cog toggle-tree-edit"></a>
 <ul class="product-list" data-update-url="<?php echo $this->treeUpdateUrl;?>">
 	<?php foreach($this->tree as $product) { ?>
 		<li class="product-item<?php echo ($product['published']) ? '':' inactive';?><?php echo ($product['active']) ? ' active':'';?>" id="product-<?php echo intval($product['id']);?>">

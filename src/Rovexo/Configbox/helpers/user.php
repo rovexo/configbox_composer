@@ -1056,7 +1056,15 @@ class ConfigboxUserHelper {
 		}
 
 		$username = KenedoPlatform::p()->getUserName($user->platform_user_id);
-		return KenedoPlatform::p()->login($username);
+		$success = KenedoPlatform::p()->login($username);
+
+		if ($success) {
+			self::setUserId($userId);
+			return true;
+		}
+		else {
+			return false;
+		}
 
 	}
 
@@ -1223,11 +1231,20 @@ class ConfigboxUserHelper {
 
 		$db = KenedoPlatform::getDb();
 
+		$query = "SELECT `order_id` FROM `#__cbcheckout_order_users` WHERE `id` = ".intval($newUserId);
+		$db->setQuery($query);
+		$currentOrderIds = $db->loadResultList();
+
 		$query = "UPDATE `#__cbcheckout_order_users` SET `id` = ".(int)$newUserId." WHERE `id` = ".(int)$oldUserId;
+
+		if (count($currentOrderIds)) {
+			$query .= ' AND `order_id` NOT IN ('.implode(', ', $currentOrderIds).')';
+		}
+
+		$query = "UPDATE `#__cbcheckout_order_records` SET `user_id` = ".(int)$newUserId." WHERE `user_id` = ".(int)$oldUserId;
 		$db->setQuery($query);
 		$db->query();
 
-		$query = "UPDATE `#__cbcheckout_order_records` SET `user_id` = ".(int)$newUserId." WHERE `user_id` = ".(int)$oldUserId;
 		$db->setQuery($query);
 		$db->query();
 

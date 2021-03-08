@@ -149,9 +149,9 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 			}
 
 			// Prepare the HTML that goes in each input cell
-			var inputHtml = '<i class="dragtable-drag-handle row-sort-handle fa fa-reorder"></i>';
+			var inputHtml = '<i class="dragtable-drag-handle row-sort-handle fa fa-bars"></i>';
 			inputHtml += '<input class="input-value" type="text" value="" />';
-			inputHtml += '<span class="trigger-remove"></span>';
+			inputHtml += '<span class="trigger-remove fa fa-times"></span>';
 
 			// Prepare a selector to get all row or column parameter cells
 			var inputTargetSelector = (axis === 'row') ? '.row-parameter' : '.column-parameter';
@@ -207,11 +207,11 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 					// Add drag table handle, hide all the axis labels, later the right label get's unhidden
 					if (axis === 'column') {
 						cbj('.cell-column-parameter').find('.axis-label').hide();
-						inputHtml += '<i class="dragtable-drag-handle column-sort-handle fa fa-reorder"></i>';
+						inputHtml += '<i class="dragtable-drag-handle column-sort-handle fa fa-bars"></i>';
 					}
 					else {
 						cbj('.cell-row-parameter').find('.axis-label').hide();
-						inputHtml += '<i class="dragtable-drag-handle row-sort-handle fa fa-reorder"></i>';
+						inputHtml += '<i class="dragtable-drag-handle row-sort-handle fa fa-bars"></i>';
 					}
 
 					// See how many dropdown answers we get (1 means no answers, there'll be just the 'no selection' item
@@ -263,7 +263,7 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 					}
 
 					// In any case, add the removal trigger HTML
-					inputHtml += '<span class="trigger-remove"></span>';
+					inputHtml += '<span class="trigger-remove fa fa-times"></span>';
 
 					// Increment var to make pre-selections for each dropdown axis parameter
 					var nthOption = 1;
@@ -305,10 +305,10 @@ define(['cbj', 'kenedo', 'configbox/server', 'cbj.ui', 'cbj.dragtable'], functio
 		},
 
 		addColumn: function() {
-			cbj('.calc-matrix thead tr:first-child').find('th:last').clone().appendTo( cbj('.calc-matrix thead tr:first-child') ).find('input').val('');
+			cbj('.calc-matrix thead tr:first-child').first().find('th').last().clone().appendTo( cbj('.calc-matrix thead tr').first() ).find('input').val('');
 
 			cbj('.calc-matrix tbody tr').each(function(){
-				cbj(this).find('td:last').clone().appendTo(cbj(this)).find('input').val('');
+				cbj(this).find('td').last().clone().appendTo(cbj(this)).find('input').val('');
 			});
 		},
 

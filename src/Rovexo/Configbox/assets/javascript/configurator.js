@@ -512,6 +512,15 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 				cbj('.cb-popover').each(function() {
 
+					// Normalize placement (BS 4 no longer accepts multiple placement strings)
+					var placement = cbj(this).data('placement');
+					if (placement.indexOf(' ') !== -1) {
+						var parts = placement.split(' ');
+						placement = parts[parts.length - 1];
+						cbj(this).attr('data-placement', placement);
+						cbj(this).data('placement', placement);
+					}
+
 					// ..and init the popovers (doing some settings unless instructed otherwise in data attributes)
 					var settings = {
 						trigger 	: (typeof (cbj(this).data('trigger')) !== 'undefined') ? cbj(this).data('trigger') : 'hover',
@@ -520,6 +529,16 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 					};
 
 					cbj(this).popover(settings);
+
+					// Setting a data attribute 'width' with an integer overrides the popup width and max width
+					if (typeof(cbj(this).data('width')) !== 'undefined' && cbj(this).data('width') != 'default') {
+						var width = cbj(this).data('width');
+						cbj(this).on("show.bs.popover", function(event) {
+							cbj(this).data("bs.popover").tip().css({maxWidth: width, width: width});
+						});
+
+					}
+
 
 				});
 
@@ -653,11 +672,11 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 		});
 
-		cbj(document).ajaxStart(function(){
+		cbj(document).on('ajaxStart', function() {
 			requestInProgress = true;
 		});
 
-		cbj(document).ajaxStop(function(){
+		cbj(document).on('ajaxStop', function() {
 
 			requestInProgress = false;
 
@@ -706,12 +725,12 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		var preloadTimeout = window.setTimeout(preloadVisualization, preloadVisualizationDelay);
 
 		// Pause preloading when a xhr starts..
-		cbj(document).ajaxStart(function(){
+		cbj(document).on('ajaxStart', function() {
 			window.clearTimeout(preloadTimeout);
 		});
 
 		// ..and resume when it stops
-		cbj(document).ajaxStop(function(){
+		cbj(document).on('ajaxStop', function() {
 			preloadTimeout = window.setTimeout(preloadVisualization, preloadVisualizationDelay);
 		});
 

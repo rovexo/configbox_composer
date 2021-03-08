@@ -905,6 +905,8 @@ class ConfigboxModelAdmincustomers extends KenedoModel {
 			return false;
 		}
 
+		ConfigboxUserHelper::resetUserCache($customerId);
+
 		// Send the registration email
 		$sendSuccess = ConfigboxUserHelper::sendRegistrationEmail($customer, $registrationData->passwordClear);
 

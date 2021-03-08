@@ -17,6 +17,16 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 			define('_JEXEC',1);
 		}
 
+		// Joomla 4 no longer writes SEF-URL-derived parameters to REQUEST, so we add it here
+		$joomlaVersion = $this->getVersionShort();
+		if (strpos($joomlaVersion, '4') === 0) {
+			$input = $this->getJApplication()->getInput();
+			$all = $input->getArray();
+			foreach ($all as $key=>$value) {
+				KRequest::setVar($key, $value);
+			}
+		}
+
 		// Set the document base in frontend (since many templates neglect to do so)
 		if ($this->isAdminArea() == false) {
 			// Set the base URL

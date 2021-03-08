@@ -18,7 +18,7 @@ defined('CB_VALID_ENTRY') or die();
 						<div class="modal-body">
 
 							<div class="row">
-									<div class="col-sm-6">
+									<div class="col-md-6">
 
 										<h3 class="cart-position-product-title">
 											<?php echo intval($position->quantity);?> x <?php echo hsc($position->productTitle);?>
@@ -125,7 +125,7 @@ defined('CB_VALID_ENTRY') or die();
 									<?php } ?>
 								</div>
 
-								<div class="col-sm-6">
+								<div class="col-md-6">
 
 									<div class="cart-position-product-image">
 										<?php echo $this->positionImages[$positionId]; ?>
@@ -133,7 +133,7 @@ defined('CB_VALID_ENTRY') or die();
 
 								</div>
 
-								<div class="col-xs-12">
+								<div class="col-12">
 									<?php
 									// These are the buttons and drop-downs for editing, removing etc.
 									$this->position = $position;

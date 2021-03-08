@@ -55,7 +55,7 @@
 			'cbj': 							'kenedo/external/jquery-3.4.1/jquery',
 			// All the plugins got wrapped in a define requiring cbj, jqueryUI's define call was changed to require cbj
 			'cbj.ui': 						'kenedo/external/jquery.ui-1.12.1/jquery-ui',
-			'cbj.bootstrap': 				'kenedo/external/bootstrap-3.3.7/js/bootstrap',
+			'cbj.bootstrap': 				'kenedo/external/bootstrap-4.4.1/js/bootstrap.bundle',
 			'cbj.chosen': 					'kenedo/external/jquery.chosen-1.8.7/chosen.jquery',
 			'cbj.colorbox': 				'kenedo/external/jquery.colorbox-1.6.4/jquery.colorbox',
 			'cbj.dragtable':				'kenedo/external/jquery.dragtable-3.0.0/jquery.dragtable',
@@ -178,7 +178,7 @@
 
 						existingStylesheets.push(url);
 
-						cbj('head').find('link[rel="stylesheet"]:last').after('<link rel="stylesheet" type="text/css" href="' + url + '">');
+						cbj('head').find('link[rel="stylesheet"]').last().after('<link rel="stylesheet" type="text/css" href="' + url + '">');
 
 					});
 

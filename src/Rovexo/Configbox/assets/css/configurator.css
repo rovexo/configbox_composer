@@ -1,5 +1,3 @@
-@charset "UTF-8";
-
 /* PRODUCT DETAIL PANES - START */
 
 .cb-content .tab-content .tab-pane {
@@ -111,7 +109,8 @@
 }
 
 .cb-content .block-pricing .configurator-page-title:before {
-	font-family: FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content: "\f0da";
 	width: 10px;
 	margin-right: 5px;
@@ -138,6 +137,10 @@
 
 .view-configuratorpage .block-navigation {
 	margin: 20px 0;
+}
+
+.view-configuratorpage .block-navigation .nav-link {
+	text-decoration: none!important;
 }
 
 /* TAB NAVIGATION - END */
@@ -197,10 +200,13 @@
 	margin-top: 0;
 }
 
-@media (min-width: 992px) {
-	.view-configuratorpage .col-md-6.top-part,
+@media (min-width: 768px) {
+	.view-configuratorpage .col-md-6.top-part {
+		order:2;
+	}
+
 	.view-configuratorpage .col-md-6.bottom-part {
-		float: right;
+		order:1;
 	}
 }
 
@@ -208,24 +214,28 @@
 	text-align: right;
 }
 
-.view-configuratorpage .configurator-page-question {
-	margin: 20px -15px;
+.view-configuratorpage .configurator-page-questions {
+	display: flex;
+	flex-wrap: wrap;
+	margin-left:-15px;
+	margin-right:-15px;
 }
 
-.view-configuratorpage .configurator-page-question .question:not([class*='col-']) {
-	margin-left: 15px;
-	margin-right: 15px;
+.view-configuratorpage .question {
+	margin:20px 0;
+	padding-left:15px;
+	padding-right:15px;
+	flex: 0 0 100%;
+}
+
+.view-configuratorpage .configurator-page-questions .question:not([class*='col-']) {
+
 	clear: both;
 }
 
 .cb-content .question,
 .cb-content .answer {
 	position: relative;
-}
-
-.cb-content .question {
-	margin-top: 20px;
-	margin-bottom: 20px;
 }
 
 .cb-content .question.non-applying-question.hide-non-applying {
@@ -252,7 +262,11 @@
 }
 
 .cb-content .question .radio input[type=radio] {
-	margin: 4px 0 0 -20px;
+	margin-right:3px;
+}
+
+.cb-content .question .answer label {
+	margin-bottom:0;
 }
 
 .cb-content .question .validation-message-target {
@@ -278,7 +292,7 @@
 }
 
 .cb-content .question .question-popover.pull-right {
-	clear:right;
+	float:right;
 }
 
 .cb-content .question .question-modal-icon {
@@ -464,7 +478,8 @@
 }
 
 .cb-content .question.type-dropdown .configbox-dropdown-trigger:before {
-	font-family: FontAwesome;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
 	content: "\f0d7";
 	float: right;
 	display: block;
@@ -636,6 +651,11 @@
 .cb-content .question.type-checkbox.title-display-none {
 	margin-top: 0;
 	margin-bottom: 0;
+}
+
+.cb-content .question.type-choices .radio,
+.cb-content .question.type-choices .radio label {
+	margin-bottom:0;
 }
 
 .cb-content .visualization-frame:before {

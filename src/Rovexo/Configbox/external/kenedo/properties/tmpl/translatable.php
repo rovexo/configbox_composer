@@ -33,7 +33,7 @@ if (isset($optionTags['USE_TEXTAREA']) || isset($optionTags['USE_HTMLEDITOR'])) 
 					<?php 
 					if (isset($optionTags['USE_TEXTAREA'])) {
 						?>	
-						<textarea class="form-control text_area" name="<?php echo $dataFieldKey;?>" id="<?php echo $dataFieldKey;?>"><?php echo hsc($content);?></textarea>
+						<textarea class="form-control text_area" name="<?php echo hsc($dataFieldKey);?>" id="<?php echo hsc($dataFieldKey);?>"><?php echo hsc($content);?></textarea>
 						<?php 
 					}
 					else {
@@ -60,7 +60,7 @@ else {
 			$dataFieldKey = $this->propertyName.'-'.$language->tag;
 			$label = (count($languages) > 1) ? $this->getPropertyDefinition('label'). ' - ' .$language->label : $this->getPropertyDefinition('label');
 			?>
-			<div class="translation col-sm-6" id="translation-<?php echo hsc($dataFieldKey);?>">
+			<div class="translation col-md-6" id="translation-<?php echo hsc($dataFieldKey);?>">
 				
 					<label class="translation-label" for="<?php echo hsc($dataFieldKey);?>">
 					<?php 

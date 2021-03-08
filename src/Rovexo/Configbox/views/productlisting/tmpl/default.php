@@ -18,7 +18,7 @@ defined('CB_VALID_ENTRY') or die();
 
 		<?php foreach ($this->products as $product) { ?>
 
-			<li class="listing-product col-sm-6 col-md-4">
+			<li class="listing-product col-md-6 col-lg-4">
 
 				<?php if ($this->canQuickEdit) echo ConfigboxQuickeditHelper::renderProductButtons($product);?>
 

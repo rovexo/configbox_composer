@@ -75,7 +75,9 @@ if ($stringType == 'time') {
 
 	if ($this->getPropertyDefinition('unit')) {
 		?>
-		<div class="input-group-addon"><?php echo hsc($this->getPropertyDefinition('unit'));?></div>
+		<div class="input-group-append">
+			<span class="input-group-text"><?php echo hsc($this->getPropertyDefinition('unit'));?></span>
+		</div>
 		<?php
 	}
 	?>

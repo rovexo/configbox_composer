@@ -23,10 +23,10 @@ else {
 <input type="hidden" name="no_note" value="1">
 <input type="hidden" name="lc" value="<?php echo strtoupper(KText::getCountryCode());?>" />
 <input type="hidden" name="notify_url" value="<?php echo hsc($this->notificationUrl);?>" />
-<input type="hidden" name="return" value="<?php echo hsc($this->successUrl.((strpos('?',$this->successUrl) !== false) ? '&':'?').'utm_nooverride=1');?>" />
+<input type="hidden" name="return" value="<?php echo hsc($this->successUrl.((strpos($this->successUrl, '?') !== false) ? '&':'?').'utm_nooverride=1');?>" />
 <input type="hidden" name="charset" value="utf-8" />
 <input type="hidden" name="address_override" value="0" />
-<input type="hidden" name="invoice" value="<?php echo (int)$this->orderRecord->id;?>" />
+<input type="hidden" name="invoice" value="<?php echo 'CB-'.intval($this->orderRecord->id);?>" />
 <input type="hidden" name="no_note" value="1" />
 
 <input type="hidden" name="first_name" value="<?php echo hsc($this->orderRecord->orderAddress->billingfirstname);?>" />

@@ -362,7 +362,7 @@ define(['cbj', 'configbox/configurator'], function(cbj, configurator) {
 			var iframe = module.getIframe(iframeId);
 
 			// ..and off it goes
-			iframe.contentWindow.postMessage(payload, "https://www.shapediver.com");
+			iframe.contentWindow.postMessage(payload, "https://app.shapediver.com");
 
 		},
 

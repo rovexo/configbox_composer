@@ -434,6 +434,9 @@ class ConfigboxControllerUser extends KenedoController {
 			echo json_encode($jsonResponse);
 			return;
 		}
+
+		// Get the user ID (pre-login) for moving cart data over to ID of logged in user
+		$oldUserId = ConfigboxUserHelper::getUserId();
 		
 		// Get the user ID from the verification info
 		$userId = KSession::get('passwordChangeUserId');
@@ -451,6 +454,7 @@ class ConfigboxControllerUser extends KenedoController {
 
 				if ($isAuthenticated) {
 					ConfigboxUserHelper::loginUser($userId);
+					ConfigboxUserHelper::moveUserOrders($oldUserId, $userId);
 				}
 			}
 			

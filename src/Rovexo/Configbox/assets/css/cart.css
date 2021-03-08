@@ -1,5 +1,3 @@
-@charset "UTF-8";
-
 .view-cart .visualization-frame:before {
 	content: " ";
 	display: table;

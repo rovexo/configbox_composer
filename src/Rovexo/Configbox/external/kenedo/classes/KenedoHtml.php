@@ -131,7 +131,7 @@ class KenedoHtml {
 		
 		<?php
 		foreach ($options as $value=>$title) {
-			$id = $name.$value;
+			$id = $name.$value.rand(0,1000);
 			?>
 			<input name="<?php echo hsc($name);?>" value="<?php echo $value;?>" id="<?php echo $id;?>" type="radio"<?php echo ($selectedValue == $value) ? ' checked="checked"':'';?><?php echo $classAttribute?> />
 			<label class="radio-button-label" for="<?php echo $id;?>"><?php echo $title;?></label>

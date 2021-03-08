@@ -15,7 +15,7 @@ defined('CB_VALID_ENTRY') or die();
 
 	<div class="row">
 
-		<div class="col-sm-6">
+		<div class="col-md-6">
 			<h2><?php echo KText::_('Billing Address');?></h2>
 
 			<table>
@@ -69,7 +69,7 @@ defined('CB_VALID_ENTRY') or die();
 			</table>
 		</div>
 
-		<div class="col-sm-6">
+		<div class="col-md-6">
 			<h2><?php echo KText::_('Shipping Address');?></h2>
 
 			<table>
@@ -161,7 +161,7 @@ defined('CB_VALID_ENTRY') or die();
 						<?php } ?>
 
 						<?php if (ConfigboxPermissionHelper::isPermittedAction('removeOrderRecord', $orderRecord)) { ?>
-							<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&view=user&task=removeOrder&cid[]='.(int)$orderRecord->id, true);?>"><?php echo KText::_('Remove')?></a>
+							<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=user&view=user&task=removeOrder&cid[]='.(int)$orderRecord->id, true);?>"><?php echo KText::_('Remove')?></a>
 						<?php } ?>
 
 						<?php if ($orderRecord->invoice_released) { ?>

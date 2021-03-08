@@ -30,10 +30,10 @@ class ConfigboxQuickeditHelper {
 		?>
 		<div class="quick-edit-buttons quick-edit-buttons-element">
 			<a title="<?php echo KText::_('Delete Question');?>" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminelements&task=delete&quickedit=1&ids=' . $question->id);?>">
-				<i class="fa fa-trash-o" aria-hidden="true"></i>
+				<i class="fa fa-trash" aria-hidden="true"></i>
 			</a>			
 			<a title="<?php echo KText::_('Edit Question');?>" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminelements&task=edit&id=' . $question->id);?>">
-				<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+				<i class="fa fa-edit" aria-hidden="true"></i>
 			</a>
 		</div>
 		<?php
@@ -51,10 +51,10 @@ class ConfigboxQuickeditHelper {
 		?>
 		<div class="quick-edit-buttons quick-edit-buttons-option">
 			<a class="quick-edit-button-edit" title="<?php echo KText::_('Delete Answer');?>" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminoptionassignments&task=delete&quickedit=1&ids=' . $answer->id);?>">
-				<i class="fa fa-trash-o" aria-hidden="true"></i>
+				<i class="fa fa-trash" aria-hidden="true"></i>
 			</a>			
 			<a data-modal-width="1000" data-modal-height="700" title="<?php echo KText::_('Edit Answer');?>" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminoptionassignments&task=edit&id=' . $answer->id);?>">
-				<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+				<i class="fa fa-edit" aria-hidden="true"></i>
 			</a>
 		</div>
 		<?php
@@ -74,7 +74,7 @@ class ConfigboxQuickeditHelper {
 		<div class="quick-edit-buttons quick-edit-buttons-page">
 
 			<a class="trigger-show-page-edit-buttons" title="<?php echo KText::_('Edit Configurator Page');?>">
-				<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+				<i class="fa fa-edit" aria-hidden="true"></i>
 			</a>
 			
 			<div class="page-edit-buttons">
@@ -97,18 +97,18 @@ class ConfigboxQuickeditHelper {
 				</div>
 				<div class="toolbarbutton">
 					<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminpages&task=edit&id='.$page->id);?>">
-						<i class="fa fa-pencil-square-o" aria-hidden="true"></i><?php echo KText::_('Edit Page');?>
+						<i class="fa fa-edit" aria-hidden="true"></i><?php echo KText::_('Edit Page');?>
 					</a>
 				</div>
 				<div class="toolbarbutton">
 					<a class="toolbarimage" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminpages&task=delete&quickedit=1&ids='.$page->id);?>">
-						<i class="fa fa-trash-o" aria-hidden="true"></i><?php echo KText::_('Delete Page');?>
+						<i class="fa fa-trash" aria-hidden="true"></i><?php echo KText::_('Delete Page');?>
 					</a>
 				</div>
 				<?php if ($product) { ?>
 					<div class="toolbarbutton">
 						<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=edit&id='.$product->id);?>">
-							<i class="fa fa-pencil-square-o" aria-hidden="true"></i><?php echo KText::_('Edit Product');?>
+							<i class="fa fa-edit" aria-hidden="true"></i><?php echo KText::_('Edit Product');?>
 						</a>
 					</div>
 				<?php } ?>
@@ -139,7 +139,7 @@ class ConfigboxQuickeditHelper {
 			
 			<div class="toolbarbutton">
 				<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=edit&id='.$product->id);?>">
-					<i class="fa fa-pencil-square-o" aria-hidden="true"></i><?php echo KText::_('Edit Product');?>
+					<i class="fa fa-edit" aria-hidden="true"></i><?php echo KText::_('Edit Product');?>
 				</a>
 			</div>
 			
@@ -167,7 +167,7 @@ class ConfigboxQuickeditHelper {
 				<i class="fa fa-plus-square" aria-hidden="true"></i><?php echo KText::_('Add Listing');?>
 			</a>
 			<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminlistings&id='.$listing->id.'&task=edit');?>">
-				<i class="fa fa-pencil-square-o" aria-hidden="true"></i><?php echo KText::_('Edit Listing');?>
+				<i class="fa fa-edit" aria-hidden="true"></i><?php echo KText::_('Edit Listing');?>
 			</a>
 		</div>
 
@@ -187,11 +187,11 @@ class ConfigboxQuickeditHelper {
 		<div class="quick-edit-buttons quick-edit-buttons-product">
 			
 			<a title="<?php echo KText::_('Delete Product');?>" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=delete&quickedit=1&ids='.$product->id);?>">
-				<i class="fa fa-trash-o" aria-hidden="true"></i><?php echo KText::_('Delete Product');?>
+				<i class="fa fa-trash" aria-hidden="true"></i><?php echo KText::_('Delete Product');?>
 			</a>
 			
 			<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminproducts&task=edit&id='.$product->id);?>">
-				<i class="fa fa-pencil-square-o" aria-hidden="true"></i><?php echo KText::_('Edit Product');?>
+				<i class="fa fa-edit" aria-hidden="true"></i><?php echo KText::_('Edit Product');?>
 			</a>
 			<?php if (!$product->isConfigurable) { ?>
 				<a href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminpages&task=edit&id=0&prefill_product_id='.$product->id);?>">

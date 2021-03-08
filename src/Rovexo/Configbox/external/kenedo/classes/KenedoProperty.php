@@ -583,15 +583,17 @@ class KenedoProperty {
 	 */
 	function getHeaderCellContentInListingTable($orderingInstructions) {
 
-		$label = $this->getPropertyDefinition('listingLabel');
-		if (empty($label)) {
+		if ($this->getPropertyDefinition('listingLabel')) {
+			$label = $this->getPropertyDefinition('listingLabel');
+		}
+		elseif($this->getPropertyDefinition('label')) {
 			$label = $this->getPropertyDefinition('label');
 		}
-		if (empty($label)) {
+		else {
 			$label = $this->propertyName;
 		}
 
-		// Props without an order def simply have their label shown
+		// If you can't reorder the list by this prop, just display the label
 		if ($this->getPropertyDefinition('order', '') == '') {
 			return hsc($label);
 		}
@@ -614,26 +616,17 @@ class KenedoProperty {
 			if ($orderingInfoItem['propertyName'] == $this->propertyName) {
 				$isActive = true;
 				$direction = (strtolower($orderingInfoItem['direction']) == 'desc') ? 'desc':'asc';
+				break;
 			}
 		}
-
 		?>
 		<a data-property-name="<?php echo hsc($this->propertyName);?>"
 		   data-current-direction="<?php echo ($direction);?>"
-		   class="trigger-order-list <?php echo ($isActive) ? 'active':'inactive';?> <?php echo ($direction == 'desc') ? 'direction-desc' : 'direction-asc';?>">
-			<?php echo hsc($label);?>
+		   class="trigger-order-list <?php echo ($isActive) ? 'active':'inactive';?>">
+			<span class="property-listing-label"><?php echo hsc($label);?></span>
+			<i class="fa <?php echo ($direction == 'desc') ? 'fa-sort-amount-down' : 'fa-sort-amount-up';?>"></i>
 		</a>
 		<?php
-
-		// Ordering props get a special link-button that triggers storing the user's ordering
-		if ($this->getType() == 'ordering') {
-			?>
-			<a class="trigger-store-record-ordering" title="<?php echo KText::_('Save ordering');?>">
-				<span class="fa fa-floppy-o"></span>
-			</a>
-			<?php
-		}
-
 		return ob_get_clean();
 			
 	}
@@ -916,7 +909,9 @@ class KenedoProperty {
 				name="<?php echo hsc($filterNameRequest);?>"
 				id="<?php echo hsc($filterNameHtml);?>" />
 
-			<a class="kenedo-search btn btn-default input-group-addon"><?php echo KText::_('Filter');?></a>
+			<a class="kenedo-search input-group-append">
+				<span class="input-group-text"><?php echo KText::_('Filter');?></span>
+			</a>
 			<?php
 			$html = ob_get_clean();
 		}

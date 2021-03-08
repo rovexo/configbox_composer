@@ -222,15 +222,6 @@ class ObserverOrders {
 		// Set the order_id in session
 		$orderModel->setSessionOrderId($checkoutRecordId);
 
-//		if (defined('CONFIGBOX_CUSTOM_RESET_CART_ON_CHECKOUT') == false || constant('CONFIGBOX_CUSTOM_RESET_CART_ON_CHECKOUT') == true) {
-			// Unset the cart data
-//			$cartModel = KenedoModel::getModel('ConfigboxModelCart');
-//			$cartModel->resetCart();
-//		}
-
-		// Add the order address record
-		ConfigboxUserHelper::setOrderAddress($checkoutRecordId);
-
 		$cartDetails->redirectURL = 'index.php?option=com_configbox&view=checkout';
 		
 		return true;
