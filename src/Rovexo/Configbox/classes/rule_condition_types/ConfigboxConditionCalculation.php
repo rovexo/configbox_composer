@@ -23,7 +23,7 @@ class ConfigboxConditionCalculation extends ConfigboxCondition {
 		$oldCalcId = $conditionData['calcId'];
 		if ($oldCalcId) {
 			$calcModel = KenedoModel::getModel('ConfigboxModelAdmincalculations');
-			$conditionData['calcId'] = $calcModel->copyAcrossProducts($oldCalcId);
+			$conditionData['calcId'] = $calcModel->copyAcrossProducts($oldCalcId, $copyIds);
 		}
 
 		return $conditionData;

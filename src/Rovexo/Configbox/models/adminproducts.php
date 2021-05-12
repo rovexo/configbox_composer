@@ -507,7 +507,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 				'name' => 'enable_reviews',
 				'label' => KText::_('Enable Reviews'),
 				'type' => 'dropdown',
-				'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+				'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use default from settings')),
 				'default' => 2,
 				'tooltip' => KText::_('Choose yes to enable reviews on this item. Choose Use Default to use the setting of the configuration.'),
 				'positionForm' => 363000,
@@ -571,7 +571,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'tooltip' => KText::_('Choose yes to show page tabs above the page questions.'),
 			'type' => 'dropdown',
 			'default' => 2,
-			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use default from settings')),
 			'positionForm' => 368600,
 		);
 
@@ -581,7 +581,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'tooltip' => KText::_('Choose yes to show next and previous buttons below the page questions.'),
 			'type' => 'dropdown',
 			'default' => 2,
-			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use default from settings')),
 			'positionForm' => 368700,
 		);
 
@@ -590,7 +590,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('FIELD_LABEL_PRODUCT_BLOCK_ON_MISSING'),
 			'tooltip'=>KText::_('TOOLTIP_PRODUCT_BLOCK_ON_MISSING'),
 			'type'=>'dropdown',
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'default'=>2,
 			'positionForm'=>368800,
 		);
@@ -600,7 +600,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('FIELD_LABEL_PRODUCT_CART_BUTTON_LAST_PAGE_ONLY'),
 			'tooltip'=>KText::_('TOOLTIP_PRODUCT_CART_BUTTON_LAST_PAGE_ONLY'),
 			'type'=>'dropdown',
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'default'=>2,
 			'positionForm'=>368800,
 			'appliesWhen' => array(
@@ -793,7 +793,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'name'=>'pm_show_regular_first',
 			'label'=>KText::_('Overview to show first'),
 			'type'=>'dropdown',
-			'choices'=> array(2=>KText::_('Use Default'),1=>KText::_('Regular Prices'), 0=>KText::_('Recurring Prices')),
+			'choices'=> array(2=>KText::_('Use default from settings'),1=>KText::_('Regular Prices'), 0=>KText::_('Recurring Prices')),
 			'default'=>2,
 			'tooltip'=>KText::_('The order in which to show the 2 overviews.'),
 			'positionForm' => 610000,
@@ -804,7 +804,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label' => KText::_('Show delivery option'),
 			'type' => 'dropdown',
 			'default' => 2,
-			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use default from settings')),
 			'positionForm' => 620000,
 		);
 
@@ -813,7 +813,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label' => KText::_('Show payment option'),
 			'type' => 'dropdown',
 			'default' => 2,
-			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use default from settings')),
 			'positionForm' => 630000,
 		);
 
@@ -830,7 +830,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show net in B2C mode'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 640000,
 		);
 
@@ -847,7 +847,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show overview'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 660000,
 		);
 
@@ -856,7 +856,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show Prices'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 670000,
 		);
 
@@ -865,7 +865,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show Configurator Pages'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 680000,
 		);
 
@@ -874,7 +874,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show questions'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 690000,
 		);
 
@@ -883,7 +883,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show question prices'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 700000,
 		);
 
@@ -891,7 +891,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'name'=>'pm_regular_expand_categories',
 			'label'=>KText::_('Expand Configurator Pages'),
 			'type'=>'dropdown',
-			'choices'=> array(1=>KText::_('All'), 0=>KText::_('No Page'), 2=>KText::_('Active page only'), 3=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('All'), 0=>KText::_('No Page'), 2=>KText::_('Active page only'), 3=>KText::_('Use default from settings')),
 			'default'=>3,
 			'positionForm' => 710000,
 		);
@@ -901,7 +901,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show taxes'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 720000,
 		);
 
@@ -910,7 +910,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label' => KText::_('Show cart button'),
 			'type' => 'dropdown',
 			'default' => 2,
-			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use default from settings')),
 			'positionForm' => 730000,
 		);
 
@@ -940,7 +940,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show overview'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 760000,
 		);
 
@@ -949,7 +949,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show Prices'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 770000,
 		);
 
@@ -958,7 +958,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show Configurator Pages'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 780000,
 		);
 
@@ -967,7 +967,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show questions'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 790000,
 		);
 
@@ -976,7 +976,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show question prices'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 800000,
 		);
 
@@ -984,7 +984,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'name'=>'pm_recurring_expand_categories',
 			'label'=>KText::_('Expand Configurator Pages'),
 			'type'=>'dropdown',
-			'choices'=> array(1=>KText::_('All'), 0=>KText::_('No Page'), 2=>KText::_('Active page only'), 3=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('All'), 0=>KText::_('No Page'), 2=>KText::_('Active page only'), 3=>KText::_('Use default from settings')),
 			'default'=>3,
 			'positionForm' => 810000,
 		);
@@ -994,7 +994,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label'=>KText::_('Show taxes'),
 			'type'=>'dropdown',
 			'default'=>2,
-			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use Default')),
+			'choices'=> array(1=>KText::_('CBYES'), 0=>KText::_('CBNO'), 2=>KText::_('Use default from settings')),
 			'positionForm' => 820000,
 		);
 
@@ -1003,7 +1003,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'label' => KText::_('Show cart button'),
 			'type' => 'dropdown',
 			'default' => 2,
-			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use Default')),
+			'items' => array(1 => KText::_('CBYES'), 0 => KText::_('CBNO'), 2 => KText::_('Use default from settings')),
 			'positionForm' => 830000,
 		);
 

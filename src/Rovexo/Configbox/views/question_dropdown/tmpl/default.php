@@ -12,9 +12,9 @@ defined('CB_VALID_ENTRY') or die();
 
 		<?php echo $this->getViewOutput('question_decoration');?>
 
-		<span class="help-block validation-message-target">
+		<div class="help-block validation-message-target">
 			<?php echo ($this->hasValidationMessage) ? hsc($this->validationMessage) : '';?>
-		</span>
+		</div>
 
 		<div class="form-group">
 
@@ -68,17 +68,30 @@ defined('CB_VALID_ENTRY') or die();
 						<?php if ($answer->description) { ?>
 
 							<?php if ($answer->desc_display_method == 'tooltip') { ?>
-								<span class="fa fa-info-circle cb-popover answer-popover" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="popover" data-container="body" data-placement="top" data-content="<?php echo hsc($answer->description);?>"></span>
+								<a class="fa fa-info-circle cb-popover"
+								   aria-label="<?php echo KText::_('Details');?>"
+								   role="button"
+								   tabindex="0"
+								   data-toggle="popover"
+								   data-trigger="hover"
+								   data-placement="top"
+								   data-html="true"
+								   data-content="<?php echo hsc($answer->description);?>"></a>
 							<?php } ?>
 
 							<?php if ($answer->desc_display_method == 'modal') { ?>
-								<span class="fa fa-info-circle" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="modal" data-target="#answer-description-<?php echo intval($answer->id);?>"></span>
 
-								<div id="answer-description-<?php echo intval($answer->id);?>" class="modal answer-description-modal" tabindex="-1" role="dialog">
-									<div class="modal-dialog modal-md" role="document">
+								<a class="fa fa-info-circle"
+								   aria-label="<?php echo KText::_('Details');?>"
+								   role="button"
+								   data-toggle="modal"
+								   data-target="#answer-description-<?php echo intval($answer->id);?>"></a>
+
+								<div id="answer-description-<?php echo intval($answer->id);?>" class="modal answer-description-modal" tabindex="-1" aria-hidden="true">
+									<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
 										<div class="modal-content">
 											<button type="button" class="close" data-dismiss="modal" aria-label="<?php echo KText::_('Close');?>"><span aria-hidden="true">&times;</span></button>
-											<?php echo $answer->description;?>
+											<div class="modal-body"><?php echo $answer->description;?></div>
 										</div>
 									</div>
 								</div>

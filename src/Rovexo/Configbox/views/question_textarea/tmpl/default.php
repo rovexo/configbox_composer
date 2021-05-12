@@ -20,9 +20,9 @@ defined('CB_VALID_ENTRY') or die();
 
 			<textarea id="input-<?php echo hsc($this->questionCssId);?>" class="form-control" aria-label="<?php echo hsc($this->question->title);?>" <?php echo ($this->question->disableControl) ? 'disabled="disabled"' : '';?>><?php echo hsc($this->selection);?></textarea>
 
-			<span class="help-block validation-message-target">
+			<div class="help-block validation-message-target">
 				<?php echo ($this->hasValidationMessage) ? hsc($this->validationMessage) : '';?>
-			</span>
+			</div>
 
 		</div>
 

@@ -142,7 +142,7 @@ $publicFolders = array(
 	KenedoPlatform::p()->getDirAssets(),
 	KenedoPlatform::p()->getDirDataCustomer().DS.'public',
 	KenedoPlatform::p()->getDirDataStore().DS.'public',
-	KenedoPlatform::p()->getDirCustomizationAssets(),
+	KenedoPlatform::p()->getOldDirCustomizationAssets(),
 );
 
 foreach ($privateFolders as $folder) {

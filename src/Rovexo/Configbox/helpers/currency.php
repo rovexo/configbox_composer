@@ -116,6 +116,10 @@ class ConfigboxCurrencyHelper {
 			}
 		}
 
+		if ($current) {
+			return $current;
+		}
+
 		foreach($currencies as $currency) {
 			if ($currency->default == 1) {
 				$current = $currency;
@@ -191,7 +195,7 @@ class ConfigboxCurrencyHelper {
 
 		$current = NULL;
 
-		if (is_int($input)) {
+		if (is_numeric($input)) {
 
 			$currencies = self::getCurrencies();
 

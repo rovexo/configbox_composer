@@ -32,7 +32,7 @@ defined('CB_VALID_ENTRY') or die();
 				<td class="item-quantity">
 					<span class="position-quantity"><?php echo intval($position->quantity);?></span>
 					<?php if ($this->canEditOrder) { ?>
-						<a class="trigger-edit-quantity fa fa-pencil-square-o" title="<?php echo KText::_('Change Quantity');?>"></a>
+						<a class="trigger-edit-quantity fa fa-edit" title="<?php echo KText::_('Change Quantity');?>"></a>
 						<a class="trigger-remove-position fa fa-times trigger-ga-track-remove-position"  data-position-id="<?php echo intval($position->id);?>" title="<?php echo KText::_('Remove');?>" href="<?php echo $this->positionUrls[$positionId]['urlRemove'];?>"></a>
 						<span class="quantity-edit-wrapper">
 							<input class="quantity-edit-box" type="text" value="<?php echo intval($position->quantity);?>" />
@@ -118,7 +118,18 @@ defined('CB_VALID_ENTRY') or die();
 
 					<span class="delivery-time"><?php echo ($this->cart->delivery->deliverytime) ? KText::sprintf('Delivery time %s days',$this->cart->delivery->deliverytime) : '';?></span>
 
-					<span class="delivery-tooltip"><a class="fa fa-info-circle" data-toggle="popover" data-placement="top" data-content="<?php echo hsc( KText::_('This is method is automatically chosen. At checkout you can choose alternatives.'));?>"></a></span>
+					<span class="delivery-tooltip">
+						<a class="fa fa-info-circle cb-popover"
+						   aria-label="<?php echo KText::_('Details');?>"
+						   role="button"
+						   tabindex="0"
+						   data-toggle="popover"
+						   data-trigger="hover"
+						   data-placement="top"
+						   data-html="true"
+						   data-content="<?php echo hsc( KText::_('This is method is automatically chosen. At checkout you can choose alternatives.'));?>">
+						</a>
+					</span>
 
 				</td>
 
@@ -144,7 +155,18 @@ defined('CB_VALID_ENTRY') or die();
 
 					<span class="payment-title"><?php echo hsc($this->cart->payment->title);?></span>
 
-					<span class="payment-tooltip"><a class="fa fa-info-circle" data-toggle="popover" data-placement="top" data-content="<?php echo hsc( KText::_('This is method is automatically chosen. At checkout you can choose alternatives.'));?>"></a></span>
+					<span class="payment-tooltip">
+						<a class="fa fa-info-circle cb-popover"
+						   aria-label="<?php echo KText::_('Details');?>"
+						   role="button"
+						   tabindex="0"
+						   data-toggle="popover"
+						   data-trigger="hover"
+						   data-placement="top"
+						   data-html="true"
+						   data-content="<?php echo hsc( KText::_('This is method is automatically chosen. At checkout you can choose alternatives.'));?>">
+						</a>
+					</span>
 
 				</td>
 

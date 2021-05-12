@@ -53,7 +53,7 @@ define(['cbj'], function(cbj) {
 
 			// Clicks on 'cancel review'
 			cbj(document).on('click', '.trigger-cancel-review', function() {
-				if (cbj(this).closest('.view-reviewform').parent('.modal-content').length != 0) {
+				if (cbj(this).closest('.view-reviewform').parent('.modal-content').length !== 0) {
 					cbj(this).closest('.modal').modal('hide');
 				}
 				cbj(this).closest('.view-reviews').find('.trigger-show-review-form').show();

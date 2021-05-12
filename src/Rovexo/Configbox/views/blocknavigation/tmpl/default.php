@@ -14,7 +14,10 @@ defined('CB_VALID_ENTRY') or die('Restricted access');
 		<ul class="nav nav-tabs" role="tablist">
 			<?php foreach ($this->pages as $page) { ?>
 				<li role="presentation" class="<?php echo hsc($this->listItemCssClasses[$page->id]);?>">
-					<a role="tab" class="<?php echo hsc($this->tabLinkClasses[$page->id]);?>" href="<?php echo $page->url;?>">
+					<a role="tab"
+					   data-page-id="<?php echo intval($page->id);?>"
+					   class="<?php echo hsc($this->tabLinkClasses[$page->id]);?>"
+					   href="<?php echo $page->url;?>">
 						<span><?php echo hsc($page->title);?></span>
 					</a>
 				</li>

@@ -33,7 +33,8 @@ class ConfigboxViewBlockvisualization extends KenedoView {
 	public $urlBaseImage;
 
 	/**
-	 * @var string URL to a blank (fully transparent image). Used as placeholder for preloading and as 'cover'
+	 * @var string URL to a blank (fully transparent image).
+	 * @depecated Not in use anymore rem
 	 */
 	public $urlBlankImage;
 

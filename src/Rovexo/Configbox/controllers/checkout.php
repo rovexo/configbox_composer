@@ -37,19 +37,26 @@ class ConfigboxControllerCheckout extends KenedoController {
 
 		$orderId = KRequest::getInt('order_id');
 
-		if ($orderId) {
-			$orderModel = KenedoModel::getModel('ConfigboxModelOrderrecord');
-			$belongs = $orderModel->orderBelongsToUser($orderId);
-
-			if ($belongs) {
-				$orderModel->setSessionOrderId($orderId);
-			}
-
+		if (!$orderId) {
+			echo 'No order ID provided';
+			return;
 		}
 
+		$orderModel = KenedoModel::getModel('ConfigboxModelOrderrecord');
+		$belongs = $orderModel->orderBelongsToUser($orderId);
+
+		if (!$belongs) {
+			echo 'This order does not belong to your user account.';
+			return;
+		}
+
+		// Many things still depend on the session order ID, so we set it now
+		$orderModel->setSessionOrderId($orderId);
+
 		$view = KenedoView::getView('ConfigboxViewCheckout');
-		$view->display();
-	
+		$view->setOrderId($orderId);
+		echo $view->getHtml();
+
 	}
 
 	/**

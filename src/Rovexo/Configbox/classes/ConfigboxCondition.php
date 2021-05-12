@@ -186,10 +186,10 @@ abstract class ConfigboxCondition {
 	}
 
 	/**
-	 * Called by ConfigboxRulesHelper::getConditionCode to compare condition with provided selections
+	 * This method tells if the given condition is met or not.
 	 *
 	 * @param string[] $conditionData
-	 * @param string[] $selections
+	 * @param string[] $selections standardized selections array from ConfigboxConfiguration
 	 * @return bool true if selections meet the condition
 	 *
 	 * @see ConfigboxRulesHelper::getConditionsCode, ConfigboxRulesHelper::getConditions, ConfigboxRulesHelper::getSelections

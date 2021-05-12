@@ -25,16 +25,7 @@ class ConfigboxCalcTermElementAttribute extends ConfigboxCalcTerm {
 	}
 
 	/**
-	 * Called by ConfigboxRulesHelper::getTermCode to get the term result
-	 *
-	 * @param string[] $termData
-	 * @param string[] $selections
-	 * @param int|NULL $regardingQuestionId The ID of the question the calculation is assigned to
-	 * @param int|NULL $regardingAnswerId The ID of the answer the calculation is assigned to
-	 * @param boolean $allowNonNumeric If the result can be non-numeric
-	 * @return float The calculated result
-	 *
-	 * @see ConfigboxCalculation::getTermsCode, ConfigboxCalculation::getTerms, ConfigboxConfiguration::getSelections
+	 * @inheritDoc
 	 */
 	function getTermResult($termData, $selections, $regardingQuestionId = NULL, $regardingAnswerId = NULL, $allowNonNumeric = false) {
 
@@ -93,12 +84,7 @@ class ConfigboxCalcTermElementAttribute extends ConfigboxCalcTerm {
 	}
 
 	/**
-	 * Called by ConfigboxCalculation::getTermHtml to display the condition (either for editing or display)
-	 *
-	 * @param string[] $termData
-	 * @param bool $forEditing If edit controls or plain display should come out
-	 * @return string HTML for that term
-	 * @see ConfigboxCalculation::getTermHtml
+	 * @inheritDoc
 	 */
 	function getTermHtml($termData, $forEditing = true) {
 		$attributes = $this->getElementAttributes();

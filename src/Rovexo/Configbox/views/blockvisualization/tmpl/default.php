@@ -22,14 +22,12 @@ defined('CB_VALID_ENTRY') or die('Restricted access');
 			<?php foreach ($this->visualizationSlots as $image) { ?>
 				<div class="<?php echo hsc($image->css_classes);?>" id="<?php echo hsc($image->css_id);?>" style="<?php echo ($image->selected) ? 'display:block;':'display:none';?>">
 					<?php if ($image->visualization_image) { ?>
-						<img src="<?php echo ($image->selected) ? $image->visualization_image : $this->urlBlankImage;?>" alt="" data-src="<?php echo $image->visualization_image;?>"<?php echo (!$image->selected) ? ' class="preload-image"':'';?> />
+						<img src="<?php echo ($image->selected) ? $image->visualization_image : $this->urlBlankImage;?>"
+						     alt=""
+						     data-src="<?php echo $image->visualization_image;?>"<?php echo (!$image->selected) ? ' class="preload-image"':'';?> />
 					<?php } ?>
 				</div>
 			<?php } ?>
-
-			<div class="visualization-image blank-image">
-				<img src="<?php echo $this->urlBlankImage;?>" alt="" />
-			</div>
 
 		</div>
 	</div>

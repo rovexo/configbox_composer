@@ -31,7 +31,7 @@
 		baseUrl: appConfig.urlSystemAssets,
 
 		// For cache busting
-		urlArgs: (appConfig.useAssetsCacheBuster === true) ? 'version=' + appConfig.cacheVar : '',
+		urlArgs: (appConfig.useAssetsCacheBuster === true) ? 'version=' + appConfig.cacheVar : null,
 
 		// We spell out all paths
 		paths: {
@@ -55,13 +55,13 @@
 			'cbj': 							'kenedo/external/jquery-3.4.1/jquery',
 			// All the plugins got wrapped in a define requiring cbj, jqueryUI's define call was changed to require cbj
 			'cbj.ui': 						'kenedo/external/jquery.ui-1.12.1/jquery-ui',
-			'cbj.bootstrap': 				'kenedo/external/bootstrap-4.4.1/js/bootstrap.bundle',
+			'cbj.bootstrap': 				'kenedo/external/bootstrap-4.6.0/js/bootstrap.bundle',
 			'cbj.chosen': 					'kenedo/external/jquery.chosen-1.8.7/chosen.jquery',
 			'cbj.colorbox': 				'kenedo/external/jquery.colorbox-1.6.4/jquery.colorbox',
 			'cbj.dragtable':				'kenedo/external/jquery.dragtable-3.0.0/jquery.dragtable',
             'cbj.spectrum':				    'kenedo/external/jquery.spectrum-1.8.0/spectrum',
 			'cbj.touchpunch':			    'kenedo/external/jquery.ui.touch-punch-0.2.3/jquery.ui.touch-punch',
-			'tinyMCE':						'kenedo/external/tinymce-5.1.1/tinymce'
+			'tinyMCE':						'kenedo/external/tinymce-5.7.1/tinymce'
 		},
 
 		// As per CM's documentation, we use packages (makes editor mode JS files load properly without surprises)

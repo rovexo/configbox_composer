@@ -57,7 +57,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 			$viewName = KRequest::getKeyword('view','');
 
 			if ($controllerName) {
-				KLog::log('Manipulating page param. Taking controller name "'.$controllerName.'"', 'custom_wp_requests');
+				KLog::log('Manipulating page param. Taking controller name "'.$controllerName.'"', 'debug');
 				KRequest::setVar('page', $controllerName);
 			}
 			if ($viewName) {
@@ -941,30 +941,29 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	}
 
 	public function getUrlAssets() {
-		return plugins_url('configbox/app/assets');
+		return $this->getWpPluginsUrl().'/configbox/app/assets';
 	}
 
 	public function getDirCustomization() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'customization';
-		return $path;
+		return WP_PLUGIN_DIR.'/configbox-customization';
 	}
 
 	public function getUrlCustomization() {
-		return plugins_url('configbox/app/data/customization');
+		$url = $this->getWpPluginsUrl().'/configbox-customization';
+		return $url;
 	}
 
 	public function getDirCustomizationAssets() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'customization'.DS.'assets';
-		return $path;
+		return $this->getDirCustomization().'/assets';
 	}
 
 	public function getUrlCustomizationAssets() {
-		return plugins_url('configbox/app/data/customization/assets');
+		$url = $this->getUrlCustomization().'/assets';
+		return $url;
 	}
 
 	public function getDirCustomizationSettings() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'store'.DS.'private'.DS.'settings';
-		return $path;
+		return $this->getDirDataStore().'/private/settings';
 	}
 
 	public function getDirDataCustomer() {
@@ -1030,6 +1029,21 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	}
 
 	/**
+	 * @var null|string[] Memoizes results of getWpUploadDirInfo
+	 */
+	protected $memoGetPluginsUrl = NULL;
+
+	/**
+	 * @return string URL to the WP plugins dir
+	 */
+	protected function getWpPluginsUrl() {
+		if (empty($this->memoGetPluginsUrl)) {
+			$this->memoGetPluginsUrl = plugins_url();
+		}
+		return $this->memoGetPluginsUrl;
+	}
+
+	/**
 	 * Should set the given error handler callable unless the app should not deal with custom error handling on this platform
 	 * @param callable $errorHandler
 	 * @see set_error_handler()
@@ -1043,6 +1057,20 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	 * @see restore_error_handler()
 	 */
 	public function restoreErrorHandler() {
+		restore_error_handler();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function setExceptionHandler($callable) {
+		set_exception_handler($callable);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function restoreExceptionHandler() {
 		restore_error_handler();
 	}
 
@@ -1070,6 +1098,45 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	public function getCsrfTokenValue() {
 		//Note: Not being used on this platform
 		return '';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function requestUsesHttps() {
+
+		// Check what URI scheme we're dealing with
+		if (substr(PHP_SAPI, 0, 3) == 'cli') {
+			$scheme = '';
+		}
+		else {
+			// Figure out if on http or https (praying for a definite and straight-forward way in future)
+			if(!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+				$scheme = strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']);
+			}
+			elseif(!empty($_SERVER['HTTPS'])) {
+				$scheme = (strtolower($_SERVER['HTTPS']) !== 'off') ? 'https':'http';
+			}
+			else {
+				$scheme = ($_SERVER['SERVER_PORT'] == 443) ? 'https':'http';
+			}
+		}
+
+		return ($scheme === 'https');
+	}
+
+	/**
+	 * @return string customization dir before CB 3.3.0
+	 */
+	public function getOldDirCustomization() {
+		return $this->getComponentDir('com_configbox').DS.'data'.DS.'customization';
+	}
+
+	/**
+	 * @return string customization assets dir before CB 3.3.0
+	 */
+	public function getOldDirCustomizationAssets() {
+		return $this->getComponentDir('com_configbox').DS.'data'.DS.'customization'.DS.'assets';
 	}
 
 }

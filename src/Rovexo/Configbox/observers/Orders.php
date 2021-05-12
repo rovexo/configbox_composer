@@ -198,37 +198,6 @@ class ObserverOrders {
 	}
 
 	/**
-	 * @param ConfigboxCartData $cartDetails
-	 * @return bool
-	 */
-	function onConfigBoxCheckout(&$cartDetails) {
-	
-		KLog::log('Checkout cart for cart ID "'.$cartDetails->id.'"','debug');
-		
-		$status = $this->checkedOutStatus;
-		
-		// Create the order record
-		$orderModel = KenedoModel::getModel('ConfigboxModelOrderrecord');
-		$checkoutRecordId = $orderModel->createOrderRecord($cartDetails, $status);
-
-		if ($checkoutRecordId === false) {
-			KLog::log('Could not create order record from cart details. Cart ID was '.$cartDetails->id.'.', 'error');
-			return false;
-		}
-
-		// Set the status
-		KenedoObserver::triggerEvent('onConfigboxSetStatus', array($checkoutRecordId, $status));
-		
-		// Set the order_id in session
-		$orderModel->setSessionOrderId($checkoutRecordId);
-
-		$cartDetails->redirectURL = 'index.php?option=com_configbox&view=checkout';
-		
-		return true;
-	
-	}
-
-	/**
 	 * @param ConfigboxCartData $cartDetails Cart details from ConfigboxModelCart->getCartDetails();
 	 */
 	function onConfigBoxGetCbOrderId(&$cartDetails) {

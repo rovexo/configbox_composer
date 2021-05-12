@@ -137,6 +137,60 @@ class KenedoFileHelper {
 		return true;
 	}
 
+	/**
+	 * Copies the contents of dir $src into dir $dst (creating it if it doesn't exist)
+	 * @param string $src
+	 * @param string $dst
+	 * @return bool on success
+	 * @throws Exception on any failure
+	 */
+	public static function copyDir($src, $dst) {
+
+		if (!is_dir($src)) {
+			throw new Exception('Directory '.$src.' does not exist');
+		}
+
+		try {
+
+			$dir = opendir($src);
+
+			clearstatcache(true, $dst);
+
+			if (!is_dir($dst)) {
+				$success = mkdir($dst, 0777, true);
+				if (!$success) {
+					throw new Exception('Could not create directory '.$dst);
+				}
+			}
+
+			while(false !== ( $file = readdir($dir)) ) {
+				if (( $file != '.' ) && ( $file != '..' )) {
+					if ( is_dir($src . '/' . $file) ) {
+						self::copyDir($src . '/' . $file,$dst . '/' . $file);
+					}
+					else {
+						$success = copy($src . '/' . $file, $dst . '/' . $file);
+						if (!$success) {
+							throw new Exception('Could copy file from '.$src . '/' . $file.' to '. $dst . '/' . $file);
+						}
+					}
+				}
+			}
+
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+		finally {
+			if (is_resource($dir)) {
+				closedir($dir);
+			}
+		}
+
+		return true;
+
+	}
+
 	static function writeFile($path, $content) {
 
 		$folder = dirname($path);

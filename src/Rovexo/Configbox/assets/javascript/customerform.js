@@ -284,6 +284,9 @@ define(['cbj', 'cbj.chosen', 'cbj.bootstrap'], function(cbj) {
 			// CUSTOMER FORM: If a country dropdown changes, it updates the state dropdown
 			cbj(document).on('change', 'select.updates-states', function() {
 
+				// In case the change was triggered by the browser's address auto-fill, update the chosen dropdown
+				cbj(this).trigger('chosen:updated');
+
 				// Get the selected ID
 				var countryId = parseInt(cbj(this).val());
 
@@ -340,6 +343,9 @@ define(['cbj', 'cbj.chosen', 'cbj.bootstrap'], function(cbj) {
 			// CUSTOMER FORM: If a state dropdown changes, it updates the county dropdown
 			cbj(document).on('change', '.view-customerform select.updates-counties', function() {
 
+				// In case the change was triggered by the browser's address auto-fill, update the chosen dropdown
+				cbj(this).trigger('chosen:updated');
+
 				// Get the selected ID
 				var stateId = parseInt(cbj(this).val());
 
@@ -394,6 +400,9 @@ define(['cbj', 'cbj.chosen', 'cbj.bootstrap'], function(cbj) {
 
 			// CUSTOMER FORM: If a county dropdown changes, it updates the connected city dropdown
 			cbj(document).on('change', '.view-customerform select.updates-cities', function() {
+
+				// In case the change was triggered by the browser's address auto-fill, update the chosen dropdown
+				cbj(this).trigger('chosen:updated');
 
 				// Get the selected ID
 				var countyId = parseInt(cbj(this).val());

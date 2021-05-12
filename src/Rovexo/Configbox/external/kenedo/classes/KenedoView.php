@@ -678,8 +678,8 @@ class KenedoView {
 	function getStyleSheetUrls() {
 
 		$urls = array(
-			KenedoPlatform::p()->getUrlAssets().'/kenedo/external/bootstrap-4.4.1/css/bootstrap-prefixed.css',
-			'https://use.fontawesome.com/releases/v5.13.0/css/all.css',
+			KenedoPlatform::p()->getUrlAssets().'/kenedo/external/bootstrap-4.6.0/css/bootstrap-namespaced.css',
+			'https://use.fontawesome.com/releases/v5.15.0/css/all.css',
 		);
 
 		if (KenedoPlatform::p()->isAdminArea() == true || strpos($this->view, 'admin') === 0) {

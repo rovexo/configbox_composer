@@ -25,7 +25,7 @@ class KenedoPlatform {
 	}
 
 	/**
-	 * @return InterfaceKenedoPlatform|KenedoPlatformJoomla|KenedoPlatformMagento|KenedoPlatformMagento2|KenedoPlatformStandalone|KenedoPlatformWordpress
+	 * @return InterfaceKenedoPlatform
 	 */
 	static function &p() {
 		

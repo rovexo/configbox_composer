@@ -55,11 +55,32 @@ class ConfigboxControllerConfiguratorpage extends KenedoController {
 	 *
 	 * @throws Exception
 	 */
-	function getMissingSelections() {
+	function getMissingSelectionsProduct() {
 		$positionId = KRequest::getInt('cartPositionId', null);
 		$positionModel = KenedoModel::getModel('ConfigboxModelCartposition');
 		$missingSelections = $positionModel->getMissingSelections(null, $positionId);
 		echo json_encode($missingSelections);
+	}
+
+	/**
+	 * Renders JSON data about with missing selections for the current cart position, but only for the given page.
+	 *
+	 * @throws Exception
+	 */
+	function getMissingSelectionsPage() {
+		$positionId = KRequest::getInt('cartPositionId', null);
+		$pageId = KRequest::getInt('pageId', null);
+		$positionModel = KenedoModel::getModel('ConfigboxModelCartposition');
+		$missingSelections = $positionModel->getMissingSelections($pageId, $positionId);
+		echo json_encode($missingSelections);
+	}
+
+	/**
+	 * @throws Exception
+	 * @depecated Use getMissingSelectionsProduct() instead
+	 */
+	function getMissingSelections() {
+		$this->getMissingSelectionsProduct();
 	}
 
 	/**

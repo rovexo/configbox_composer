@@ -750,10 +750,23 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	}
 
 	/**
-	 * Should call restore_error_handler unless the app should not deal with custom error handling on this platform.
-	 * @see restore_error_handler()
+	 * @inheritDoc
 	 */
 	public function restoreErrorHandler() {
+
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function setExceptionHandler($callable) {
+
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function restoreExceptionHandler() {
 
 	}
 
@@ -779,6 +792,45 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	 */
 	public function getCsrfTokenValue() {
 		return Mage::getSingleton('core/session')->getFormKey();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function requestUsesHttps() {
+
+		// Check what URI scheme we're dealing with
+		if (substr(PHP_SAPI, 0, 3) == 'cli') {
+			$scheme = '';
+		}
+		else {
+			// Figure out if on http or https (praying for a definite and straight-forward way in future)
+			if(!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+				$scheme = strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']);
+			}
+			elseif(!empty($_SERVER['HTTPS'])) {
+				$scheme = (strtolower($_SERVER['HTTPS']) !== 'off') ? 'https':'http';
+			}
+			else {
+				$scheme = ($_SERVER['SERVER_PORT'] == 443) ? 'https':'http';
+			}
+		}
+
+		return ($scheme === 'https');
+	}
+
+	/**
+	 * @return string customization dir before CB 3.3.0
+	 */
+	public function getOldDirCustomization() {
+		return $this->getDirCustomization();
+	}
+
+	/**
+	 * @return string customization assets dir before CB 3.3.0
+	 */
+	public function getOldDirCustomizationAssets() {
+		return $this->getDirCustomizationAssets();
 	}
 
 }

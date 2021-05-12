@@ -124,7 +124,7 @@ class ConfigboxViewCustomerform extends KenedoView {
 		}
 
 		if ($this->useLoginForm === NULL) {
-			$this->useLoginForm = true;
+			$this->useLoginForm = CbSettings::getInstance()->get('show_recurring_login_cart') ? true : false;
 		}
 
 		$isLoggedIn = KenedoPlatform::p()->isLoggedIn();

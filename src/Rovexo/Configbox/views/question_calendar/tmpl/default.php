@@ -32,9 +32,9 @@ defined('CB_VALID_ENTRY') or die();
 
 			<div id="input-<?php echo hsc($this->question->id);?>" data-selection="<?php echo hsc($this->selection);?>"></div>
 
-			<span class="help-block validation-message-target">
+			<div class="help-block validation-message-target">
 				<?php echo ($this->hasValidationMessage) ? hsc($this->validationMessage) : '';?>
-			</span>
+			</div>
 
 		</div>
 

@@ -388,14 +388,9 @@ if (ConfigboxUpdateHelper::tableExists('#__configbox_elements') == true) {
 
 }
 
-// Create the customization dir if not there already
-//if (!is_dir(KenedoPlatform::p()->getDirCustomization())) {
-//	mkdir(KenedoPlatform::p()->getDirCustomization(), 0755, true);
-//}
-
 // Rename or create the customization assets dir
-$oldAssetsPath = KenedoPlatform::p()->getDirCustomization().'/style_overrides';
-$newAssetsPath = KenedoPlatform::p()->getDirCustomizationAssets();
+$oldAssetsPath = KenedoPlatform::p()->getOldDirCustomization().'/style_overrides';
+$newAssetsPath = KenedoPlatform::p()->getOldDirCustomizationAssets();
 
 if (is_dir($oldAssetsPath)) {
 	$success = rename($oldAssetsPath, $newAssetsPath);
@@ -446,24 +441,6 @@ foreach ($renamings as $old=>$new) {
 	}
 
 }
-
-/* New files in customization folder: custom_questions.js */
-//$newFiles = array(
-//	KenedoPlatform::p()->getDirCustomizationAssets().'/javascript/custom_questions.js',
-//);
-//
-//foreach ($newFiles as $newFile) {
-//
-//	if (!is_dir(dirname($newFile))) {
-//		mkdir(dirname($newFile), 0777, true);
-//	}
-//
-//	if (!is_file($newFile)) {
-//		file_put_contents($newFile, '');
-//	}
-//
-//}
-
 
 if (ConfigboxUpdateHelper::tableExists('#__configbox_cart_position_configurations') == true) {
 
@@ -1566,6 +1543,11 @@ $db->query();
 
 // Weed out orphaned cart position configurations
 $query = "DELETE FROM `#__configbox_cart_position_configurations` WHERE `cart_position_id` NOT IN (SELECT `id` FROM `#__configbox_cart_positions`)";
+$db->setQuery($query);
+$db->query();
+
+// Weed out orphaned cart position configurations
+$query = "DELETE FROM `#__configbox_cart_position_configurations` WHERE `element_id` NOT IN (SELECT `id` FROM `#__configbox_elements`)";
 $db->setQuery($query);
 $db->query();
 

@@ -65,9 +65,9 @@ if ($choiceMade != '') {
 
 			<?php } ?>
 
-			<span class="help-block validation-message-target">
+			<div class="help-block validation-message-target">
 				<?php echo ($this->hasValidationMessage) ? hsc($this->validationMessage) : '';?>
-			</span>
+			</div>
 
 		</div>
 	</div>

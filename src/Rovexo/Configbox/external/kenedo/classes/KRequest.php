@@ -174,10 +174,10 @@ class KRequest {
 
 		if (!self::$purifierConfig) {
 
-			require_once (dirname(__FILE__).'/../external/htmlpurifier/HTMLPurifier.safe-includes.php');
+			require_once (dirname(__FILE__).'/../external/htmlpurifier/HTMLPurifier.auto.php');
 
 			$config = HTMLPurifier_Config::createDefault();
-
+			$config->set('Cache', 'SerializerPath', KenedoPlatform::p()->getDirDataStore().'/private/htmlpurifier/');
 			$config->set('Core.Encoding', 'utf-8');
 			$config->set('Core.RemoveScriptContents', true);
 

@@ -69,7 +69,12 @@ class ConfigboxViewRecord extends KenedoView {
 		$inAdmin = (!empty($this->showIn) && $this->showIn == 'shopmanager');
 
 		foreach($this->orderRecord->positions as $position) {
-			$this->positionHtml[$position->id] = ConfigboxPositionHelper::getPositionHtml($this->orderRecord, $position, 'popup', ($this->hideSkus == false), $inAdmin);
+			$view = KenedoView::getView('ConfigboxViewPosition');
+			$view->setOrder($this->orderRecord);
+			$view->setPositionId($position->id);
+			$view->setDisplayPurpose('popup');
+			$view->setInAdmin($inAdmin);
+			$this->positionHtml[$position->id] = $view->getHtml();
 		}
 
 		$orderGrandTotalNet = $this->orderRecord->totalNet;

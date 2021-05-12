@@ -143,10 +143,7 @@ class KLog {
 				break;
 
 			case 'error':
-				$logFile = 'configbox_errors.php';
-				break;
-
-			case 'critical':
+			case 'exception':
 				$logFile = 'configbox_errors.php';
 				break;
 
@@ -273,6 +270,13 @@ class KLog {
 
 	}
 
+	/**
+	 * @param Exception $e
+	 */
+	static public function logException($e) {
+		KLog::log($e->getMessage().' in '.$e->getFile().':'.$e->getLine().".\nTrace:\n".$e->getTraceAsString(), 'exception');
+	}
+
 	static protected function getCallerInfo($offset = 0) {
 		$stack = debug_backtrace(false);
 		foreach ($stack as $index=>$level) {
@@ -300,7 +304,7 @@ class KLog {
 		$string = '';
 
 		for ($p = 0; $p < $length; $p++) {
-			$string .= $characters{mt_rand(0, strlen($characters) - 1)};
+			$string .= substr($characters, rand(0, strlen($characters) - 1), 1);
 		}
 
 		return $string;

@@ -157,7 +157,7 @@ abstract class ConfigboxCalcTerm {
 	/**
 	 * Called by ConfigboxRulesHelper::getTermCode to get the term result
 	 *
-	 * @param string[] $termData
+	 * @param array $termData
 	 * @param string[] $selections
 	 * @param int|NULL $regardingQuestionId The ID of the question the calculation is assigned to
 	 * @param int|NULL $regardingAnswerId The ID of the answer the calculation is assigned to
@@ -178,7 +178,7 @@ abstract class ConfigboxCalcTerm {
 	/**
 	 * Called by ConfigboxCalculation::getTermHtml to display the condition (either for editing or display)
 	 *
-	 * @param string[] $termData
+	 * @param array $termData
 	 * @param bool $forEditing If edit controls or plain display should come out
 	 * @return string HTML for that term
 	 * @see ConfigboxCalculation::getTermHtml

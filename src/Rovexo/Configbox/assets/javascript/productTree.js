@@ -216,11 +216,11 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 
 
 		makeTreeSortable : function () {
-
-			cbj('.view-adminproducttree .page-list, .view-adminproducttree .question-list, .view-adminproducttree .answer-list').sortable({
+			// For performance reasons we initialise the sortables only after the user opens a branch
+			var settings = {
 
 				placeholder: "ui-state-highlight",
-				items: "li:not(.add-item)",
+				items: ">li:not(.add-item)",
 				update: function () {
 
 					var list = cbj(this);
@@ -256,7 +256,7 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 							}
 						}
 					}
-					
+
 					var data = {
 						updates: JSON.stringify(updates)
 					};
@@ -267,9 +267,25 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 						});
 
 				}
+			};
+
+			cbj('.sub-list-trigger.product-title').one('click', function() {
+				var list = cbj(this).closest('li').find('.page-list');
+				window.setTimeout(function() {
+					list.sortable(settings).disableSelection();
+				}, 100);
 			});
 
-			cbj('.view-adminproducttree .product-item ul').disableSelection();
+			cbj('.sub-list-trigger.configurator-page-title').one('click', function() {
+				var list = cbj(this).closest('li').find('.question-list');
+				window.setTimeout(function() {
+					list.sortable(settings).disableSelection();
+				}, 100);
+			});
+
+			// When the user saves a product/page/question, part of the tree gets refreshed. Here we init the
+			// lists in the opened branches
+			cbj('.view-adminproducttree .list-opened').sortable(settings).disableSelection();
 
 		},
 
@@ -315,8 +331,6 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 				// Run ready functions on the whole view (works out great luckily)
 				// kenedo.runSubviewReadyFunctions('view-adminproducttree');
 
-				module.makeTreeSortable();
-
 				// Remove any 'active' CSS classes (they mark the currently selected item in the tree)
 				cbj('.view-adminproducttree .active').removeClass('active');
 
@@ -328,6 +342,8 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 
 				// Mark the right item
 				cbj('#'+recordType+'-' + recordId).addClass('active');
+
+				module.makeTreeSortable();
 
 			});
 

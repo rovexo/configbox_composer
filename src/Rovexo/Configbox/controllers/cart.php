@@ -126,12 +126,12 @@ class ConfigboxControllerCart extends KenedoController {
 	 */
 	function checkoutCart() {
 
-		// Get the cart details
-		$cartModel = KenedoModel::getModel('ConfigboxModelCart');
 		$cartId = KRequest::getInt('cart_id');
 		if (empty($cartId)) {
 			$cartId = KRequest::getInt('cartId');
 		}
+
+		$cartModel = KenedoModel::getModel('ConfigboxModelCart');
 
 		// Check if the user owns the cart
 		if ($cartModel->cartBelongsToUser($cartId) == false) {
@@ -160,16 +160,48 @@ class ConfigboxControllerCart extends KenedoController {
 
 		KenedoObserver::triggerEvent('onConfigBoxCheckout', array(&$cartDetails));
 
+		$orderModel = KenedoModel::getModel('ConfigboxModelOrderrecord');
+
+		// We gonna clear out any order records that have our cart ID,
+		// here we load and remember them for after creating the new order record
+		$recordIdsToDelete = $orderModel->getOrderRecordIdByCartId($cartId);
+
+		// Get the status number for 'checked out'
+		$status = KenedoObserver::triggerEvent('onConfigBoxGetStatusCodeForType', array('checked out'), true);
+
+		// Create the order record
+		$orderRecordId = $orderModel->createOrderRecord($cartDetails, $status);
+
+		if ($orderRecordId === false) {
+
+			KLog::log('Error occurred during order record creation. Message was '.$orderModel->getError(), 'error');
+
+			$response = ConfigboxJsonResponse::makeOne();
+			$response->setSuccess(false);
+			$response->setErrors(array(KText::_('A system error occurred during order record creation. Please try again later.')));
+			echo $response->toJson();
+			return;
+
+		}
+
+		KenedoObserver::triggerEvent('onConfigBoxSetStatus', array($orderRecordId, $status));
+
+		// Set the order_id in session
+		$orderModel->setSessionOrderId($orderRecordId);
+
+		// Delete any existing order records that relate to the given cart ID
+		$adminOrderModel = KenedoModel::getModel('ConfigboxModelAdminorders');
+		$adminOrderModel->delete($recordIdsToDelete);
+
 		$cartModel->forgetMemoizedData();
 
-		$checkoutViewUrl = KLink::getRoute('index.php?option=com_configbox&view=checkout&output_mode=view_only', false, CbSettings::getInstance()->get('securecheckout'));
+		$checkoutViewUrl = KLink::getRoute('index.php?option=com_configbox&view=checkout&output_mode=view_only&order_id='.$orderRecordId, false, CbSettings::getInstance()->get('securecheckout'));
 
-
-		echo json_encode(array(
-			'success' => true,
-			'errors' => array(),
-			'checkoutViewUrl' => $checkoutViewUrl,
-		));
+		// Send the JSON for the JS part to pick up
+		$response = ConfigboxJsonResponse::makeOne();
+		$response->setSuccess(true);
+		$response->setCustomData('checkoutViewUrl', $checkoutViewUrl);
+		echo $response->toJson();
 
 	}
 

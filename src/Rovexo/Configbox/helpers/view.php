@@ -71,11 +71,11 @@ class ConfigboxViewHelper {
 
 		// Prepare the URLs to requirejs and our main.js file
 		if ($useMinifiedJs) {
-			$urlRequireJs = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/require-2.3.2/require.min.js';
+			$urlRequireJs = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/requirejs-2.3.6/require.min.js';
 			$urlMainJs = KenedoPlatform::p()->getUrlAssets().'/main.min.js'.$queryStringPart;
 		}
 		else {
-			$urlRequireJs = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/require-2.3.2/require.js';
+			$urlRequireJs = KenedoPlatform::p()->getUrlAssets().'/kenedo/external/requirejs-2.3.6/require.js';
 			$urlMainJs = KenedoPlatform::p()->getUrlAssets().'/main.js'.$queryStringPart;
 		}
 
@@ -119,7 +119,7 @@ class ConfigboxViewHelper {
 			
 			// Let any other JS load first to avoid non-AMD-style loaded JS that uses define (avoiding anon mod mismatches)
 			window.addEventListener('load', function() {
-							
+				
 				// In case requireJS is already loaded by another, then just add our own main.js file
 				if (typeof(require) !== 'undefined') {
 					var mainScript = document.createElement('script');

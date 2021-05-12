@@ -240,6 +240,19 @@ interface InterfaceKenedoPlatform {
 	public function restoreErrorHandler();
 
 	/**
+	 * Sets the exception handler unless the app should not deal with custom exception handling on this platform
+	 * @param callable $callable
+	 * @see set_exception_handler()
+	 */
+	public function setExceptionHandler($callable);
+
+	/**
+	 * Should set the given error handler callable unless the app should not deal with custom error handling on this platform
+	 * @see restore_exception_handler()
+	 */
+	public function restoreExceptionHandler();
+
+	/**
 	 * Should set the given shutdown function callable unless the app should not deal with custom error handling on
 	 * this platform
 	 * @param callable $callback
@@ -258,5 +271,10 @@ interface InterfaceKenedoPlatform {
 	 * @return string
 	 */
 	public function getCsrfTokenValue();
+
+	/**
+	 * @return bool True if request uses HTTPS, false otherwise (on calls via CLI, false is used)
+	 */
+	public function requestUsesHttps();
 
 }

@@ -1142,10 +1142,10 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 		$ass = ConfigboxCacheHelper::getAssignments();
 
 		if ($pageId) {
-			$questionIds = $ass['page_to_element'][$pageId];
+			$questionIds = !empty($ass['page_to_element'][$pageId]) ? $ass['page_to_element'][$pageId] : [];
 		}
 		else {
-			$questionIds = $ass['product_to_element'][$productId];
+			$questionIds = !empty($ass['product_to_element'][$productId]) ? $ass['product_to_element'][$productId] : [];
 		}
 
 		$missingQuestions = array();

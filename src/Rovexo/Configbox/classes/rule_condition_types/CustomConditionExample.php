@@ -194,6 +194,13 @@ class CustomConditionExample extends ConfigboxCondition {
 		return true;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	function getCopiedConditionData($conditionData, $copyIds) {
+		return $conditionData;
+	}
+
 	function getTypeTitle() {
 		return KText::_('Custom Conditions');
 	}

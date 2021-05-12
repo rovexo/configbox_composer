@@ -25,7 +25,15 @@ defined('CB_VALID_ENTRY') or die();
 					<?php } ?>
 
 					<?php if (!empty($this->question->description) && $this->question->desc_display_method == 2) { ?>
-						<span class="fa fa-info-circle cb-popover question-popover" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="popover" data-placement="left" data-content="<?php echo hsc($this->question->description);?>"></span>
+						<a class="pull-right fa fa-info-circle cb-popover"
+						   aria-label="<?php echo KText::_('Details');?>"
+						   role="button"
+						   tabindex="0"
+						   data-toggle="popover"
+						   data-trigger="hover"
+						   data-placement="top"
+						   data-html="true"
+						   data-content="<?php echo hsc($this->question->description);?>"></a>
 					<?php } ?>
 
 					<?php if (!empty($this->question->description) && $this->question->desc_display_method == 3) { ?>
@@ -55,9 +63,9 @@ defined('CB_VALID_ENTRY') or die();
 				<div id="cb-slider-<?php echo intval($this->question->id);?>" class="configbox-slider"></div>
 			</div>
 
-			<span class="help-block validation-message-target">
+			<div class="help-block validation-message-target">
 				<?php echo ($this->hasValidationMessage) ? hsc($this->validationMessage) : '';?>
-			</span>
+			</div>
 
 		</div>
 

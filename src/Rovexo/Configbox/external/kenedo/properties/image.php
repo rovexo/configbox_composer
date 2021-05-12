@@ -28,13 +28,16 @@ class KenedoPropertyImage extends KenedoProperty {
 
 		$this->resetErrors();
 
-		$file = KRequest::getFile($this->propertyName);
-
-		// Return false if there is no image when it's required (and it's an insert)
-		if (!$file && $this->isRequired() && $this->applies($data) && $data->id == 0) {
-			$this->setError( KText::sprintf('You need to upload a file for field %s.',$this->getPropertyDefinition('label')) );
-			return false;
+		if ($this->isRequired() && $this->applies($data)) {
+			$fileUpload = KRequest::getFile($this->propertyName);
+			$currentFile = $this->getCurrentOriginalFileName($data->id);
+			if (!$fileUpload && !$currentFile) {
+				$this->setError( KText::sprintf('You need to upload a file for field %s.',$this->getPropertyDefinition('label')) );
+				return false;
+			}
 		}
+
+		$file = KRequest::getFile($this->propertyName);
 
 		// Otherwise, if nothing got uploaded - let be ok
 		if (empty($file['tmp_name'])) {

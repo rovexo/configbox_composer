@@ -25,7 +25,7 @@ $publicFolders = array(
 	KenedoPlatform::p()->getDirAssets(),
 	KenedoPlatform::p()->getDirDataCustomer().DS.'public',
 	KenedoPlatform::p()->getDirDataStore().DS.'public',
-	KenedoPlatform::p()->getDirCustomizationAssets(),
+	KenedoPlatform::p()->getOldDirCustomizationAssets(),
 );
 
 foreach ($privateFolders as $folder) {
@@ -50,34 +50,13 @@ foreach ($publicFolders as $folder) {
 	}
 }
 
-// In case the default product image is not there, copy it from the system's image folder
-if (!is_file(CONFIGBOX_DIR_DEFAULT_IMAGES.'/default_prod_image.jpg')) {
-	$src = KenedoPlatform::p()->getDirAssets().'/images/default_prod_image.jpg';
-	if (!is_dir(CONFIGBOX_DIR_DEFAULT_IMAGES)) {
-		mkdir(CONFIGBOX_DIR_DEFAULT_IMAGES, 0775, true);
-	}
-	copy($src, CONFIGBOX_DIR_DEFAULT_IMAGES.'/default_prod_image.jpg');
-}
+$defaultImageDir = KenedoPlatform::p()->getDirDataStore().'/public/default_images';
 
-//$assetsFolder = KenedoPlatform::p()->getDirCustomizationAssets();
-//
-//$files = array(
-//	$assetsFolder.'/css/custom.css',
-//	$assetsFolder.'/css/custom.min.css',
-//	$assetsFolder.'/javascript/custom.js',
-//	$assetsFolder.'/javascript/custom.min.js',
-//	$assetsFolder.'/javascript/custom_questions.js',
-//	$assetsFolder.'/javascript/custom_questions.min.js',
-//);
-//
-//foreach ($files as $file) {
-//
-//	$dir = dirname($file);
-//
-//	if (is_dir($dir) == false) {
-//		mkdir($dir, 0775, true);
-//	}
-//
-//	file_put_contents($file, '');
-//
-//}
+// In case the default product image is not there, copy it from the system's image folder
+if (!is_file($defaultImageDir.'/default_prod_image.jpg')) {
+	$src = KenedoPlatform::p()->getDirAssets().'/images/default_prod_image.jpg';
+	if (!is_dir($defaultImageDir)) {
+		mkdir($defaultImageDir, 0775, true);
+	}
+	copy($src, $defaultImageDir.'/default_prod_image.jpg');
+}

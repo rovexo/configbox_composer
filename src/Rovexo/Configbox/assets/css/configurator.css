@@ -8,10 +8,6 @@
 
 /* PRICE BLOCK - START */
 
-.cb-content .block-content > .configbox-block {
-	padding: 2px 8px 8px;
-}
-
 .cb-content .block-pricing ul,
 .cb-content .block-pricing li {
 	margin: 0px;
@@ -141,6 +137,7 @@
 
 .view-configuratorpage .block-navigation .nav-link {
 	text-decoration: none!important;
+	text-align: center;
 }
 
 /* TAB NAVIGATION - END */
@@ -222,7 +219,6 @@
 }
 
 .view-configuratorpage .question {
-	margin:20px 0;
 	padding-left:15px;
 	padding-right:15px;
 	flex: 0 0 100%;
@@ -286,12 +282,12 @@
 	margin: 0 0 10px;
 }
 
-.cb-content .question .question-popover {
+.cb-content .question .question-heading .cb-popover {
 	font-size: 17px;
 	margin-top: 2px;
 }
 
-.cb-content .question .question-popover.pull-right {
+.cb-content .question .question-heading .pull-right {
 	float:right;
 }
 
@@ -367,9 +363,6 @@
 }
 
 .cb-content .question.type-ralcolorpicker .pseudo-text-field {
-	line-height: 1.42857143;
-	padding: 6px 12px;
-	font-size: 14px;
 	color: #000000;
 	background: #fff none;
 	border: 1px solid #ccc;

@@ -1266,6 +1266,23 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	}
 
 	/**
+	 * Sets the exception handler (pick if the platform needs it or not)
+	 * @param callable $callable
+	 * @see set_exception_handler()
+	 */
+	public function setExceptionHandler($callable) {
+		set_exception_handler($callable);
+	}
+
+	/**
+	 * Should set the given error handler callable unless the app should not deal with custom error handling on this platform
+	 * @see restore_exception_handler()
+	 */
+	public function restoreExceptionHandler() {
+		restore_exception_handler();
+	}
+
+	/**
 	 * Should set the given shutdown function callable unless the app should not deal with custom error handling on
 	 * this platform
 	 * @param callable $callback
@@ -1287,6 +1304,45 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	 */
 	public function getCsrfTokenValue() {
 		return '1';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function requestUsesHttps() {
+
+		// Check what URI scheme we're dealing with
+		if (substr(PHP_SAPI, 0, 3) == 'cli') {
+			$scheme = '';
+		}
+		else {
+			// Figure out if on http or https (praying for a definite and straight-forward way in future)
+			if(!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+				$scheme = strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']);
+			}
+			elseif(!empty($_SERVER['HTTPS'])) {
+				$scheme = (strtolower($_SERVER['HTTPS']) !== 'off') ? 'https':'http';
+			}
+			else {
+				$scheme = ($_SERVER['SERVER_PORT'] == 443) ? 'https':'http';
+			}
+		}
+
+		return ($scheme === 'https');
+	}
+
+	/**
+	 * @return string customization dir before CB 3.3.0
+	 */
+	public function getOldDirCustomization() {
+		return $this->getDirCustomization();
+	}
+
+	/**
+	 * @return string customization assets dir before CB 3.3.0
+	 */
+	public function getOldDirCustomizationAssets() {
+		return $this->getDirCustomizationAssets();
 	}
 
 }

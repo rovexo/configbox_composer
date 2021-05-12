@@ -100,7 +100,22 @@ class KSession {
 		unset($_COOKIE[$sessionName]);
 
 		// Make the cookie expire
-		setcookie($sessionName, $sessionId, -10, '/');
+		if (version_compare(phpversion(), '7.3', '>=')) {
+
+			setcookie(self::$sessionName, self::$sessionId, array(
+				'expires'=>time() - 10000,
+				'path'=>'/',
+				'domain'=>'',
+				'secure'=>KenedoPlatform::p()->requestUsesHttps(),
+				'httponly'=>true,
+				'samesite'=>'None',
+			));
+
+		}
+		else {
+			$sameSiteTrick = '/;SameSite=None';
+			setcookie(self::$sessionName, self::$sessionId, time() - 10000, $sameSiteTrick, '', KenedoPlatform::p()->requestUsesHttps(), true);
+		}
 
 		try {
 			$db = KenedoPlatform::getDb();
@@ -134,9 +149,29 @@ class KSession {
 			self::$sessionId = $_COOKIE[self::$sessionName];
 		}
 		else {
-			self::$sessionId = substr(str_shuffle(uniqid('',true).uniqid('',true).uniqid('',true).uniqid('',true).uniqid('',true).uniqid('',true)), 0, 64);
+
+			self::$sessionId = uniqid(md5(microtime()),true);
+
+			$expiry = time() + (1 * 365 * 24 * 60 * 60);
+
 			// Set the session id cookie
-			setcookie(self::$sessionName, self::$sessionId, 0, '/');
+			if (version_compare(phpversion(), '7.3', '>=')) {
+
+				setcookie(self::$sessionName, self::$sessionId, array(
+					'expires'=>$expiry,
+					'path'=>'/',
+					'domain'=>'',
+					'secure'=>KenedoPlatform::p()->requestUsesHttps(),
+					'httponly'=>true,
+					'samesite'=>'None',
+				));
+
+			}
+			else {
+				$sameSiteTrick = '/;SameSite=None';
+				setcookie(self::$sessionName, self::$sessionId, $expiry, $sameSiteTrick, '', KenedoPlatform::p()->requestUsesHttps(), true);
+			}
+
 		}
 
 		$db = KenedoPlatform::getDb();

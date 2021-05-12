@@ -50,9 +50,11 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 		// Handler to toggle page selection display when the user clicks on a page title in the selections block
 		cbj(document).on('click', '.configurator-page-title', this.blockPricing.toggleSelectionsVisibility);
 
-		// Handler for add to cart - validates selections, switches to right page if something is missing, adds to cart
-		// otherwise
+		// Handler for add to cart - validates selections etc
 		cbj(document).on('click', '.trigger-add-to-cart', this.onAddToCart);
+
+		// Handles clicks on nav tabs and next/prev buttons
+		cbj(document).on('click', '.trigger-switch-page', this.onPageNavClick);
 
 		// Handlers for configurator page edit popover
 		cbj(document).on('click', '.trigger-show-page-edit-buttons', this.showPageEditButtons);
@@ -72,9 +74,15 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			configurator.requestInProgress = false;
 		});
 
+		// Deals with History back/forward and setting the right page
+		window.addEventListener('popstate', function(event) {
+			if (event && event.state && event.state.cbPageId) {
+				configurator.switchPage(event.state.cbPageId);
+			}
+		});
+
 		this.initDeferredPageNav();
 		this.initSelectionImageSwitcher();
-		this.initPageNavigation();
 
 	};
 
@@ -95,72 +103,250 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 		var btn = cbj(this);
 
-		// This will be called after definition (either immediately or if a selection request
-		// is ongoing, then right after it
-		var addFunction = function() {
+		if (configurator.getBtnState(btn) == 'processing') {
+			return;
+		}
 
-			if (btn.hasClass('processing')) {
-				return;
-			}
+		configurator.setBtnState(btn, 'processing');
 
-			btn.addClass('processing');
+		configurator.queueRequest(function() {
 
 			var data = {
 				cartPositionId: configurator.getCartPositionId()
 			};
 
-			server.makeRequest('configuratorpage', 'getMissingSelections', data)
+			server.makeRequest('configuratorpage', 'getMissingSelectionsProduct', data)
 
 				.done(function(missingSelections) {
 
 					if (missingSelections.length !== 0) {
 
-						var shouldPageId = parseInt(missingSelections[0].pageId);
+						configurator.switchPage(missingSelections[0].pageId, function() {
 
-						if (shouldPageId !== configurator.getPageId()) {
-							configurator.switchPage(shouldPageId, function() {
-								configurator.addValidationErrors(missingSelections);
-							});
-						}
-						else {
 							configurator.addValidationErrors(missingSelections);
-						}
+							configurator.setBtnState(btn, 'normal');
 
-						btn.removeClass('processing');
+							try {
+
+								let firstQuestionTop = cbj('#question-' + missingSelections[0].id).offset().top;
+								let viewPortTop = cbj(document).scrollTop();
+								let viewPortHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+								let viewPortBottom = viewPortTop + viewPortHeight;
+
+								if (firstQuestionTop < viewPortTop || firstQuestionTop > viewPortBottom) {
+									let pos = Math.max(0, firstQuestionTop - 100 - (window.stickyHeaderHeight || 0));
+									cbj('html, body').animate({scrollTop: pos}, 200);
+								}
+
+							}
+							catch(e) {
+								console.warn('Scrolling to question failed');
+								console.error(e);
+							}
+
+						});
+
+						configurator.setBtnState(btn, 'normal');
+						return;
+
+					}
+
+					server.makeRequest('configuratorpage', 'addConfigurationToCart', data)
+
+						.always(function() {
+							configurator.setBtnState(btn, 'normal');
+						})
+
+						.done(function(response) {
+
+							if (response.success === true) {
+								window.location.href = response.redirectUrl;
+							}
+							else {
+								configurator.setBtnState(btn, 'normal');
+								alert(response.feedback);
+							}
+
+						});
+
+				});
+
+		});
+
+	};
+
+	configurator.onPageNavClick = function(event) {
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		var btn = cbj(this);
+
+		if (configurator.getBtnState(btn) == 'processing') {
+			return;
+		}
+
+		configurator.setBtnState(btn, 'processing');
+
+		configurator.queueRequest(function() {
+
+			var pageId = btn.data('page-id') || configurator.getPageIdFromBtn(btn);
+			var currentPageId = configurator.getPageId();
+
+			let pageSequence = configurator.getConfiguratorData('pageSequence');
+			let navGoesForward = pageSequence.indexOf(pageId) > pageSequence.indexOf(currentPageId);
+
+			if (navGoesForward == false || configurator.getConfiguratorData('blockNavigationOnMissing') == false) {
+
+				configurator.switchPage(pageId);
+
+				if (btn.attr('href')) {
+
+					var state = {
+						cbPageId: pageId
+					};
+
+					window.history.pushState(state, '', btn.attr('href'));
+
+				}
+
+				return;
+
+			}
+
+			var data = {
+				cartPositionId: configurator.getCartPositionId(),
+				pageId: configurator.getPageId(),
+			};
+
+			server.makeRequest('configuratorpage', 'getMissingSelectionsPage', data)
+
+				.done(function(missingSelections) {
+
+					if (missingSelections.length !== 0) {
+
+						configurator.addValidationErrors(missingSelections);
+						configurator.setBtnState(btn, 'normal');
+
+						try {
+
+							let firstQuestionTop = cbj('#question-' + missingSelections[0].id).offset().top;
+							let viewPortTop = cbj(document).scrollTop();
+							let viewPortHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+							let viewPortBottom = viewPortTop + viewPortHeight;
+
+							if (firstQuestionTop < viewPortTop || firstQuestionTop > viewPortBottom) {
+								let pos = Math.max(0, firstQuestionTop - 100 - (window.stickyHeaderHeight || 0));
+								cbj('html, body').animate({scrollTop: pos}, 200);
+							}
+
+						}
+						catch(e) {
+							console.warn('Scrolling to question failed');
+							console.error(e);
+						}
 
 					}
 					else {
 
-						server.makeRequest('configuratorpage', 'addConfigurationToCart', data)
+						configurator.switchPage(pageId);
 
-							.done(function(response) {
+						if (btn.attr('href')) {
 
-								if (response.success === true) {
-									window.location.href = response.redirectUrl;
-								}
-								else {
-									alert(response.feedback);
-								}
+							var state = {
+								cbPageId: pageId
+							};
 
-							})
+							window.history.pushState(state, '', btn.attr('href'));
 
-							.always(function() {
-								btn.removeClass('processing');
-							});
+						}
 
 					}
 
-
 				});
 
-		};
+		});
 
+	};
+
+
+	/**
+	 * Runs fn immediately or after selection request went through
+	 * @param {function} fn
+	 */
+	configurator.queueRequest = function(fn) {
 		if (configurator.requestInProgress) {
-			cbj(document).on('serverResponseReceived', addFunction);
+			cbj(document).on('serverResponseReceived', fn);
 		}
 		else {
-			addFunction();
+			fn();
 		}
+	};
+
+	/**
+	 *
+	 * @param {jQuery} btn
+	 * @param {string} state - 'normal', 'processing'
+	 */
+	configurator.setBtnState = function(btn, state) {
+
+		btn.data('state', state);
+
+		switch (state) {
+			case 'normal':
+
+				if (btn.data('btn-text-state-normal') !== undefined) {
+					btn.html(btn.data('btn-text-state-normal'));
+				}
+				btn.removeClass('processing');
+				btn.width('auto');
+				break;
+
+			case 'processing':
+				btn.width(btn.width());
+				btn.data('btn-text-state-normal', btn.html());
+				btn.addClass('processing');
+				btn.html( btn.data('btn-text-state-processing') || '<i class="fas fa-spin fa-spinner"></i>');
+				break;
+
+		}
+
+	};
+
+	/**
+	 * Tells the given button's current state (normal or processing)
+	 * @param {jQuery} btn
+	 * @returns {string}
+	 */
+	configurator.getBtnState = function(btn) {
+		return btn.data('state') || 'normal';
+	};
+
+	/**
+	 *
+	 * @param {jQuery} btn
+	 * @returns {Number}
+	 */
+	configurator.getPageIdFromBtn = function(btn) {
+
+		var pageId;
+
+		var classAttr = btn.attr('class') || '';
+		var classes = classAttr.split(' ');
+		for (var i in classes) {
+			if (classes.hasOwnProperty(i) === true) {
+				if (classes[i].indexOf('page-id-') !== -1) {
+					pageId = classes[i].replace('page-id-', '');
+					pageId = parseInt(pageId);
+				}
+			}
+		}
+
+		if (!pageId) {
+			console.warn('Tried legacy page ID determination, but failed.');
+		}
+
+		return pageId;
 
 	};
 
@@ -176,65 +362,20 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 	};
 
 	/**
-	 * Facilitates the page switching by prev/next buttons and tabs
-	 */
-	configurator.initPageNavigation = function() {
-
-		window.addEventListener('popstate', function(event) {
-
-			if (event && event.state && event.state.cbPageId) {
-				configurator.switchPage(event.state.cbPageId);
-			}
-
-		});
-
-		cbj(document).on('click', '.cb-page-nav-prev, .cb-page-nav-next, .cb-tab-nav-link', function(event) {
-
-			if (cbj(this).hasClass('configbox-disabled') === true) {
-				event.preventDefault();
-				return;
-			}
-
-			var url = cbj(this).attr('href');
-			var pageId;
-
-			var classAttr = cbj(this).attr('class') || '';
-			var classes = classAttr.split(' ');
-			for (var i in classes) {
-				if (classes.hasOwnProperty(i) === true) {
-					if (classes[i].indexOf('page-id-') !== -1) {
-						pageId = classes[i].replace('page-id-', '');
-						pageId = parseInt(pageId);
-					}
-				}
-			}
-
-			if (!pageId) {
-				console.log('No page ID found in link classes. Skipping ajax switch');
-				return;
-			}
-
-			event.preventDefault();
-
-			var state = {
-				cbPageId: pageId
-			};
-
-			window.history.pushState(state, '', url);
-
-			configurator.switchPage(pageId);
-
-		});
-
-	};
-
-	/**
 	 * Refreshes the configurator page view, showing the page as requested by param pageId.
 	 *
 	 * @param {Number} pageId
 	 * @param {Function=} callback
 	 */
 	configurator.switchPage = function(pageId, callback) {
+
+		// Run the callback if we're on the right page already
+		if (pageId == configurator.getPageId()) {
+			if (typeof(callback) == 'function') {
+				callback();
+			}
+			return;
+		}
 
 		if (cbj('.configurator-page-wrapper').length === 0) {
 			cbj('.kenedo-view.view-configuratorpage').wrap('<div class="configurator-page-wrapper"></div>');
@@ -500,12 +641,11 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 	/**
 	 * This inits Bootstrap pop-overs.
-	 * It looks for .cb-popover elements, if found it
 	 */
 	configurator.initBsPopovers = function() {
 
 		// See if there are any .cb-popovers..
-		if (cbj('.cb-popover').length) {
+		if (cbj('.cb-popover').length > 0) {
 
 			// If so load jquery and bootstrap..
 			cbrequire(['cbj', 'cbj.bootstrap'], function(cbj) {
@@ -514,33 +654,26 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 					// Normalize placement (BS 4 no longer accepts multiple placement strings)
 					var placement = cbj(this).data('placement');
-					if (placement.indexOf(' ') !== -1) {
+					if (typeof(placement) === 'string' && placement.indexOf(' ') !== -1) {
 						var parts = placement.split(' ');
 						placement = parts[parts.length - 1];
 						cbj(this).attr('data-placement', placement);
 						cbj(this).data('placement', placement);
 					}
 
-					// ..and init the popovers (doing some settings unless instructed otherwise in data attributes)
-					var settings = {
-						trigger 	: (typeof (cbj(this).data('trigger')) !== 'undefined') ? cbj(this).data('trigger') : 'hover',
-						delay		: (typeof (cbj(this).data('delay')) !== 'undefined') ? cbj(this).data('delay') : 200,
-						html		: (typeof (cbj(this).data('html')) !== 'undefined') ? cbj(this).data('html') : true
-					};
-
-					cbj(this).popover(settings);
-
-					// Setting a data attribute 'width' with an integer overrides the popup width and max width
-					if (typeof(cbj(this).data('width')) !== 'undefined' && cbj(this).data('width') != 'default') {
-						var width = cbj(this).data('width');
-						cbj(this).on("show.bs.popover", function(event) {
-							cbj(this).data("bs.popover").tip().css({maxWidth: width, width: width});
-						});
-
+					var customClass = cbj(this).data('customClass');
+					if (typeof(customClass) !== 'undefined') {
+						customClass += ' cb-popover';
+						cbj(this).data('customClass', customClass);
+					}
+					else {
+						cbj(this).data('customClass', 'cb-popover');
 					}
 
-
 				});
+
+				cbj('.cb-popover').popover();
+
 
 
 				// This will help closing the popovers apparently
@@ -661,7 +794,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			}
 		});
 
-		// M2 add to cart form around the configurar. Submissions get delayed until xhr calls are done
+		// In M2, the configurator is within M2's 'add to cart' form. This delays submission to after xhr calls are done
 		cbj('.view-configuratorpage').closest('form').on('submit', function(event) {
 
 			if (requestInProgress === true) {
@@ -1159,7 +1292,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 	/**
 	 * Gets you the ID of the product used on the configurator page
-	 * @returns {int} CB product ID
+	 * @returns {Number} CB product ID
 	 */
 	configurator.getProductId = function() {
 		return parseInt(cbj('.kenedo-view.view-configuratorpage').data('product-id'));
@@ -1167,7 +1300,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 	/**
 	 * Gets you the ID of the configurator page
-	 * @returns {int} CB page ID
+	 * @returns {Number} CB page ID
 	 */
 	configurator.getPageId = function() {
 		return parseInt(cbj('.kenedo-view.view-configuratorpage').data('page-id'));

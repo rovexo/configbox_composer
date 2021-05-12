@@ -29,6 +29,7 @@
 
 .view-customerform .customer-form-section-heading .different-shipping-address-toggle label {
 	margin:0;
+	display:inline-block;
 }
 
 .view-customerform .text-address-heading {
@@ -72,6 +73,20 @@
 	top: -2px;
 	margin-right: 1px;
 	margin-top: 0;
+}
+
+.view-customerform.cb-content .chosen-container .chosen-single {
+	height: calc(1.5em + .75rem + 2px);
+	padding: .375rem .75rem;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #495057;
+}
+
+.view-customerform.cb-content .chosen-container-single .chosen-single div b:before {
+	position: relative;
+	top:5px;
 }
 
 .view-customerform .customer-field {

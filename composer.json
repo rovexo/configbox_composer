@@ -9,7 +9,7 @@
 	  "email": "office@rovexo.com"
 	}
   ],
-  "version": "1.2.0",
+  "version": "1.2.1",
   "require": {
 	"php": "5.6 - 7.4",
 	"ext-gd": "*",
@@ -23,7 +23,7 @@
 	"ext-Reflection": "*"
   },
   "extra": {
-	"internal-commit-hash": "c2874db33510787471c595cb048b0c9315f16b01",
+	"internal-commit-hash": "f8e9d618b4939f3f17777d827706f5a31086e68c",
 	"internal-branch": "master"
   },
   "autoload": {

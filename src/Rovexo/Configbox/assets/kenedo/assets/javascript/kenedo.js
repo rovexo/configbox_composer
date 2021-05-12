@@ -68,6 +68,13 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 			});
 
+			// Prevent Bootstrap dialog from blocking focusin
+			cbj(document).on('focusin', function(e) {
+				if (cbj(e.target).closest(".tox-tinymce, .tox-tinymce-aux, .moxman-window, .tam-assetmanager-root").length) {
+					e.stopImmediatePropagation();
+				}
+			});
+
 			// ajax-target-links do a pushState and load via loadSubview
 			cbj(document).on('click', '.ajax-target-link', function(event) {
 

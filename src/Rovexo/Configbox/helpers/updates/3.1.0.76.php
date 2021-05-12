@@ -1,8 +1,8 @@
 <?php
 defined('CB_VALID_ENTRY') or die();
 
-$assetsDir = KenedoPlatform::p()->getDirCustomizationAssets();
-$customDir = KenedoPlatform::p()->getDirCustomization();
+$assetsDir = KenedoPlatform::p()->getOldDirCustomizationAssets();
+$customDir = KenedoPlatform::p()->getOldDirCustomization();
 
 $customCss = $assetsDir.'/css/custom.css';
 $customMinCss = $assetsDir.'/css/custom.min.css';

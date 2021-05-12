@@ -15,6 +15,10 @@
 	margin-left:0;
 }
 
+.cb-content .nav-item {
+	margin-bottom:0;
+}
+
 .cb-content li {
 	line-height:normal;
 }
@@ -46,6 +50,10 @@
 	background-color:#e0e0e0;
 }
 
+.cb-popover.fade {
+	opacity: 1;
+}
+
 .popover p:first-child {
 	margin-top:0;
 }
@@ -69,13 +77,12 @@
 	padding-left:0px;
 }
 
-.cb-content .col-xs-6 {
-
-}
-
 .cb-content .modal {
 	background: rgba(0,0,0,0.5);
 	margin-left:0;
+	top:0!important;
+	left: 0!important;
+	width:100%!important;
 }
 
 .cb-content .modal-content>.close {

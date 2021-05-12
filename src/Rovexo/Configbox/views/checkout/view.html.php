@@ -24,6 +24,11 @@ class ConfigboxViewCheckout extends KenedoView {
 	public $orderAddressComplete;
 
 	/**
+	 * @var int
+	 */
+	public $orderId;
+
+	/**
 	 * Holds all information about the order
 	 * @var ConfigboxOrderData $orderRecord
 	 * @see ConfigboxModelOrderrecord::getOrderREcord
@@ -74,16 +79,6 @@ class ConfigboxViewCheckout extends KenedoView {
 	 * @var boolean $confirmRefundPolicy Indicates if the customer needs to confirm the refund policy (settings -> checkout)
 	 */
 	public $confirmRefundPolicy;
-
-	/**
-	 * @var string $linkTerms Ready-made HTML link for the T&C with modal window functionality
-	 */
-	public $linkTerms;
-
-	/**
-	 * @var string $linkRefundPolicy Ready-made HTML link for the refund policy with modal window functionality
-	 */
-	public $linkRefundPolicy;
 
 	/**
 	 * @var boolean $canGoBackToCart Indicates if the customer can go back to cart (and discard the order)
@@ -150,13 +145,20 @@ class ConfigboxViewCheckout extends KenedoView {
 		return $calls;
 	}
 
+	/**
+	 * @param int $orderId
+	 * @return $this
+	 */
+	function setOrderId($orderId) {
+		$this->orderId = $orderId;
+		return $this;
+	}
+
 	function prepareTemplateVars() {
 
 		// Get the order id (if a customer comes into this view with a set ID, the controller's display method handles setting)
 		$orderModel = KenedoModel::getModel('ConfigboxModelOrderrecord');
-		$orderId = $orderModel->getId();
-
-		$this->orderRecord = $orderModel->getOrderRecord($orderId);
+		$this->orderRecord = $orderModel->getOrderRecord($this->orderId);
 
 		// Bounce if we got no order record
 		if (empty($this->orderRecord)) {
@@ -193,10 +195,6 @@ class ConfigboxViewCheckout extends KenedoView {
 
 		$this->confirmTerms = CbSettings::getInstance()->get('explicit_agreement_terms');
 		$this->confirmRefundPolicy = CbSettings::getInstance()->get('explicit_agreement_rp');
-
-		// Links to some pages
-		$this->linkTerms = '<a class="rovedo-modal modal-link-terms" data-modal-width="900" data-modal-height="700" href="'.KLink::getRoute('index.php?option=com_configbox&view=terms&tmpl=component').'">'.KText::_('Terms and Conditions').'</a>';
-		$this->linkRefundPolicy = '<a class="rovedo-modal modal-link-refund-policy" data-modal-width="900" data-modal-height="700" href="'.KLink::getRoute('index.php?option=com_configbox&view=refundpolicy&tmpl=component').'">'.KText::_('Refund Policy').'</a>';
 
 		// Back to cart URL
 		$this->backToCartUrl = KLink::getRoute('index.php?option=com_configbox&controller=checkout&task=backToCart');

@@ -76,33 +76,13 @@ function initKenedo($component = 'com_configbox') {
 	// Run any platform specific init stuff
 	KenedoPlatform::p()->initialize();
 
-	// Let the platform start the session
-	KenedoPlatform::p()->startSession();
-
-	// Check what URI scheme we're dealing with
-	if (substr(PHP_SAPI, 0, 3) == 'cli') {
-		$scheme = '';
-	}
-	else {
-		// Figure out if on http or https (praying for a definite and straight-forward way in future)
-		if(!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
-			$scheme = strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']);
-		}
-		elseif(!empty($_SERVER['HTTPS'])) {
-			$scheme = (strtolower($_SERVER['HTTPS']) !== 'off') ? 'https':'http';
-		}
-		else {
-			$scheme = ($_SERVER['SERVER_PORT'] == 443) ? 'https':'http';
-		}
-	}
-
 	// Define paths
 	/**
 	 * URL scheme (without colons or backslashes)
 	 * E.g. https
 	 * @const  KPATH_ROOT
 	 */
-	define('KPATH_SCHEME', 	$scheme);
+	define('KPATH_SCHEME', 	KenedoPlatform::p()->requestUsesHttps() ? 'https' : 'http');
 
 	/**
 	 * HTTP Hostname
@@ -122,6 +102,9 @@ function initKenedo($component = 'com_configbox') {
 	 * @const  KPATH_ROOT
 	 */
 	define('KPATH_ROOT', KenedoPlatform::p()->getRootDirectory());
+
+	// Let the platform start the session
+	KenedoPlatform::p()->startSession();
 
 	// KenedoView template paths
 	define('KPATH_TABLE_TMPL', 	 __DIR__.'/../tmpl/default-table.php');

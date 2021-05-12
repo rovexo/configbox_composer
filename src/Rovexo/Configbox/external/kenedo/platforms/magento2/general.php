@@ -746,6 +746,20 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function setExceptionHandler($callable) {
+
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function restoreExceptionHandler() {
+
+	}
+
+	/**
 	 * Should set the given shutdown function callable unless the app should not deal with custom error handling on
 	 * this platform
 	 * @param callable $callback
@@ -838,6 +852,29 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 		$formKey = $objectManager->get('Magento\Framework\Data\Form\FormKey');
 		return $formKey->getFormKey();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function requestUsesHttps() {
+		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+		$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+		return $storeManager->getStore()->isCurrentlySecure();
+	}
+
+	/**
+	 * @return string customization dir before CB 3.3.0
+	 */
+	public function getOldDirCustomization() {
+		return $this->getDirCustomization();
+	}
+
+	/**
+	 * @return string customization assets dir before CB 3.3.0
+	 */
+	public function getOldDirCustomizationAssets() {
+		return $this->getDirCustomizationAssets();
 	}
 
 }

@@ -122,6 +122,19 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 	}
 
 	/**
+	 * Provide the cart id and you get the IDs of order records that use this cart ID.
+	 * @param int $cartId
+	 * @return int[] Order record IDs
+	 */
+	function getOrderRecordIdByCartId($cartId) {
+		$query = "SELECT `id` FROM `#__cbcheckout_order_records` WHERE `cart_id` = ".intval($cartId);
+		$db = KenedoPlatform::getDb();
+		$db->setQuery($query);
+		$ids = $db->loadResultList();
+		return $ids;
+	}
+
+	/**
 	 * @param $orderId
 	 * @return ConfigboxOrderData|NULL
 	 */

@@ -194,6 +194,11 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 	public $showNetPrices;
 
 	/**
+	 * @var int[] Array of IDs of the pages in ordering
+	 */
+	public $pageSequence;
+
+	/**
 	 * @var ConfigboxPageData Object holding all configurator page data (augmented in display method)
 	 * @see ConfigboxModelConfiguratorpage::getPage()
 	 * @deprecated Use page instead
@@ -366,6 +371,10 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 		// Get info on all pages of the product
 		$pages = $pageModel->getPages($this->productId);
 
+		foreach ($pages as $page) {
+			$this->pageSequence[] = intval($page->id);
+		}
+
 		$this->showTabNavigation = (count($pages) > 1 && ($this->product->page_nav_show_tabs == 1 or ($this->product->page_nav_show_tabs == 2 && CbSettings::getInstance()->get('page_nav_show_tabs') == 1)));
 		$this->showButtonNavigation = (count($pages) > 1 && ($this->product->page_nav_show_buttons == 1 or ($this->product->page_nav_show_buttons == 2 && CbSettings::getInstance()->get('page_nav_show_buttons') == 1)));
 		$this->blockNavigationOnMissing = (count($pages) > 1 && ($this->product->page_nav_block_on_missing_selections == 1 or ($this->product->page_nav_block_on_missing_selections == 2 && CbSettings::getInstance()->get('page_nav_block_on_missing_selections') == 1)));
@@ -413,18 +422,10 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 			}
 		}
 
-		// Set CSS classes for navigation buttons, indicates what shall be hidden
-		if (count($this->missingPageSelections) && $this->blockNavigationOnMissing) {
-			$this->nextButtonClasses    = 'configbox-disabled cb-page-nav-next wait-for-xhr';
-			$this->finishButtonClasses  = 'configbox-disabled add-to-cart-button cb-page-nav-finish wait-for-xhr trigger-add-to-cart trigger-ga-track-add-to-cart';
-		}
-		else {
-			$this->nextButtonClasses    = 'cb-page-nav-next wait-for-xhr';
-			$this->finishButtonClasses  = 'cb-page-nav-finish add-to-cart-button wait-for-xhr trigger-add-to-cart trigger-ga-track-add-to-cart';
-		}
-
 		// This class let's the system know that all xhr request need to finish before navigating to another page
-		$this->prevButtonClasses = 'cb-page-nav-prev wait-for-xhr';
+		$this->nextButtonClasses    = 'cb-page-nav-next trigger-switch-page';
+		$this->prevButtonClasses 	= 'cb-page-nav-prev trigger-switch-page';
+		$this->finishButtonClasses  = 'cb-page-nav-finish add-to-cart-button trigger-add-to-cart trigger-ga-track-add-to-cart';
 
 		if ($this->prevPage) {
 			$this->prevButtonClasses .= ' page-id-'.$this->prevPage->id;
@@ -548,7 +549,8 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 			'page'						=> $this->page,
 			'questions'					=> $this->questions,
 			'dateFormat'				=> KText::_('CALENDAR_DATEFORMAT_JS', 'M d, yy'),
-			'blockNavigationOnMissing'  => (bool) $this->blockNavigationOnMissing
+			'blockNavigationOnMissing'  => (bool) $this->blockNavigationOnMissing,
+			'pageSequence'				=> $this->pageSequence
 		);
 
 		$this->configuratorDataJson = json_encode($configuratorData);

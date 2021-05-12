@@ -668,6 +668,10 @@ class ConfigboxCacheHelper {
 					$output = cbprice($price);
 					$product->custom_price_text = str_replace($search,$output,$product->custom_price_text);
 				}
+
+				// Replace the %s with the product price
+				$product->custom_price_text = sprintf($product->custom_price_text, cbprice($product->price));
+
 			}
 
 			// Set the custom price text for the recurring price
@@ -682,6 +686,9 @@ class ConfigboxCacheHelper {
 					$output = cbprice($price);
 					$product->custom_price_text_recurring = str_replace($search,$output,$product->custom_price_text_recurring);
 				}
+
+				// Replace the %s with the product price
+				$product->custom_price_text = sprintf($product->custom_price_text, cbprice($product->priceRecurring));
 			}
 
 			// Determine if reviews shall be shown
@@ -804,7 +811,8 @@ class ConfigboxCacheHelper {
 	public static function &getProductData($productId = NULL) {
 
 		if ($productId) {
-			return self::getProduct($productId);
+			$product = self::getProduct($productId);
+			return $product;
 		}
 
 		if (!isset( self::$cache['products'] )) {

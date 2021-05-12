@@ -37,6 +37,7 @@ $query = "
 	`defaultprodimage` = 'default_prod_image.jpg',
 	`default_customer_group_id` = 1,
 	`license_manager_satellites` = 'licenses.configbox.at',
+	`page_nav_show_tabs` = '1',
 	`language_tag` = '".$db->getEscaped($defaultLangTag)."'
 ";
 $db->setQuery($query);

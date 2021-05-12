@@ -32,9 +32,11 @@ class ConfigboxControllerCustomview extends KenedoController {
 	}
 
 	/**
-	 * Outputs the product view
+	 * Gets the custom view's controller and calls its execute() method instead
+	 * @param string $task
+	 * @throws Exception
 	 */
-	function display() {
+	function execute($task) {
 
 		$viewName = KRequest::getKeyword('viewname');
 		if (!$viewName) {

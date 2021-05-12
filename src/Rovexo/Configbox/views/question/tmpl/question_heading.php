@@ -8,7 +8,15 @@ defined('CB_VALID_ENTRY') or die();
 	<div class="question-heading">
 
 		<?php if (!empty($this->question->description) && $this->question->desc_display_method == 2) { ?>
-			<span class="pull-right fa fa-info-circle cb-popover question-popover" aria-label="<?php echo KText::_('Details');?>" role="button" data-toggle="popover" data-placement="left" data-content="<?php echo hsc($this->question->description);?>"></span>
+			<a class="pull-right fa fa-info-circle cb-popover"
+			   aria-label="<?php echo KText::_('Details');?>"
+			   role="button"
+			   tabindex="0"
+			   data-toggle="popover"
+			   data-trigger="hover"
+			   data-placement="top"
+			   data-html="true"
+			   data-content="<?php echo hsc($this->question->description);?>"></a>
 		<?php } ?>
 
 		<?php if (!empty($this->question->description) && $this->question->desc_display_method == 3) { ?>
@@ -18,11 +26,10 @@ defined('CB_VALID_ENTRY') or die();
 
 		<h2 class="question-title"><?php echo hsc($this->question->title);?></h2>
 
-		<?php if (!empty($this->question->description) && $this->question->desc_display_method == 1) { ?>
-			<div class="question-description"><?php echo $this->question->description;?></div>
-		<?php } ?>
-
 	</div>
 
 <?php } ?>
 
+<?php if (!empty($this->question->description) && $this->question->desc_display_method == 1) { ?>
+	<div class="question-description"><?php echo $this->question->description;?></div>
+<?php } ?>
