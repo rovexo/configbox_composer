@@ -2,9 +2,9 @@
 @import "../scss/variables";
 @import "../scss/mixins";
 @import "../scss/root";
-@import "../scss/reboot";
 
 .cb-content {
+  @import "../scss/reboot";
   @import "../scss/type";
   @import "../scss/images";
   @import "../scss/code";
@@ -38,4 +38,4 @@
 @import "../scss/modal";
 @import "../scss/tooltip";
 @import "../scss/popover";
-@import "../scss/print";
+//@import "../scss/print";
