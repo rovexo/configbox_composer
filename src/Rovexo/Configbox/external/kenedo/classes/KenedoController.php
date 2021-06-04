@@ -631,21 +631,23 @@ abstract class KenedoController {
 		}
 
 		// Deliver the good news
-		if($responseType == 'json') {
+		if ($responseType == 'json') {
 
-			$feedback = ($success == true) ? KText::_('Records deleted.') : '';
+			$messages = array();
+			if ($success == true) {
+				$messages[] = KText::_('Records deleted.');
+			}
 
 			KenedoPlatform::p()->setDocumentMimeType('application/json');
 
 			echo ConfigboxJsonResponse::makeOne()
 				->setSuccess($success)
 				->setErrors($model->getErrors())
-				->setCustomData('messages', array($feedback))
-				->setFeedback($feedback)
+				->setCustomData('messages', $messages)
 				->toJson();
 
 		}
-		elseif($responseType == 'list'){
+		elseif ($responseType == 'list'){
 			$msg = KText::_('Records deleted.');
 			KenedoPlatform::p()->sendSystemMessage($msg, 'notice');
 			KenedoViewHelper::addMessage($msg, 'notice');

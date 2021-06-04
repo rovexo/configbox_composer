@@ -51,7 +51,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'tooltip'=>KText::_('Enter how the URL to your account page should be like. Use only characters that can be in a URL'),
 				'type'=>'translatable',
 				'stringTable'=>'#__configbox_strings',
-				'langType'=>101,
+				'langType'=>105,
 				'required'=>0,
 				'positionForm'=>3,
 			);

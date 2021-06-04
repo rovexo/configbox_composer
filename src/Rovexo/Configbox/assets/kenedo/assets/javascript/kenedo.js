@@ -1185,8 +1185,9 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 			switch (taskInfo.task) {
 				case 'copy':
 				case 'remove':
+					let viewId = taskInfo.list.data('view');
 					kenedo.refreshList(taskInfo.list, function() {
-						taskInfo.list = cbj('.kenedo-listing-form').first();
+						taskInfo.list = cbj('.kenedo-view[data-view-id=' + viewId + ']').find('.kenedo-listing-form');
 						kenedo.showResponseMessages(taskInfo.list, data.errors || [], data.messages || []);
 					});
 			}

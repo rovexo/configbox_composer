@@ -50,11 +50,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
      */
 	private $assetRepository;
 
-    /**
-     * @var Magento\Framework\View\Element\Template\Context
-     */
-	private $context;
-
 	/**
 	 * @var string[] $errors
 	 */
@@ -92,16 +87,17 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	public function __construct()
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $this->directoryList = $objectManager->get('Magento\Framework\App\Filesystem\DirectoryList');
-        $this->locale = $objectManager->get('Magento\Framework\Locale\OptionInterface');
-        $this->state =  $objectManager->get('Magento\Framework\App\State');
+
+		$this->directoryList = $objectManager->get('Magento\Framework\App\Filesystem\DirectoryList');
+		$this->locale = $objectManager->get('Magento\Framework\Locale\OptionInterface');
+		$this->state =  $objectManager->get('Magento\Framework\App\State');
         $this->storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
         $this->formKey = $objectManager->get('Magento\Framework\Data\Form\FormKey');
         $this->backendUrl = $objectManager->get('Magento\Backend\Model\UrlInterface');
         $this->url = $objectManager->get('Magento\Framework\UrlInterface');
         $this->moduleReader = $objectManager->get('Magento\Framework\Module\Dir\Reader');
         $this->assetRepository = $objectManager->get('Magento\Framework\View\Asset\Repository');
-        $this->context = $objectManager->get('Magento\Framework\View\Element\Template\Context');
+
     }
 
     public function initialize() {
@@ -636,7 +632,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 
 	public function getUrlAssets() {
 
-    	$params = array('_secure' => $this->context->getRequest()->isSecure());
+    	$params = array('_secure' => $this->requestUsesHttps());
 	    $url = $this->assetRepository->getUrlWithParams('', $params);
 	    return $url . "/rovexo/configbox/assets";
 	}
@@ -698,7 +694,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getUrlCustomizationAssets() {
-		$params = array('_secure' => $this->context->getRequest()->isSecure());
+		$params = array('_secure' => $this->requestUsesHttps());
 		$url = $this->assetRepository->getUrlWithParams('', $params);
 		return $url . '/Rovexo_ConfigboxCustomizations';
 	}
