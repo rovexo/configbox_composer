@@ -26,11 +26,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	private $storeManager;
 
     /**
-     * @var Magento\Framework\Data\Form\FormKey
-     */
-	private $formKey;
-
-    /**
      * @var Magento\Backend\Model\UrlInterface
      */
 	private $backendUrl;
@@ -92,7 +87,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		$this->locale = $objectManager->get('Magento\Framework\Locale\OptionInterface');
 		$this->state =  $objectManager->get('Magento\Framework\App\State');
         $this->storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
-        $this->formKey = $objectManager->get('Magento\Framework\Data\Form\FormKey');
         $this->backendUrl = $objectManager->get('Magento\Backend\Model\UrlInterface');
         $this->url = $objectManager->get('Magento\Framework\UrlInterface');
         $this->moduleReader = $objectManager->get('Magento\Framework\Module\Dir\Reader');
@@ -562,7 +556,9 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 			parse_str($parsed['query'],$params);
 		}
 
-		$params['form_key'] = $this->formKey->getFormKey();
+		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+		$formKey = $objectManager->get('Magento\Framework\Data\Form\FormKey');
+		$params['form_key'] = $formKey->getFormKey();
 
 		if ($secure !== NULL) {
 			$params['_secure'] = $secure;
