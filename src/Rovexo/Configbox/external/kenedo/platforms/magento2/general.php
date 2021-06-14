@@ -714,15 +714,39 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
         return $this->getM2DirectoryList()->getRoot() . "/vendor/rovexo/configbox-php/src/Rovexo/Configbox";
 	}
 
+	private $memoUrlAssets;
+
 	public function getUrlAssets() {
 
-    	$params = array('_secure' => $this->requestUsesHttps());
-	    $url = $this->getM2AssetsRepository()->getUrlWithParams('', $params);
-	    return $url . "/rovexo/configbox/assets";
+		if ($this->memoUrlAssets === null) {
+			$fileId = 'Rovexo_Configbox::lib-assets/main.js';
+			$params = [
+				'area' => 'frontend'
+			];
+			$asset = $this->getM2AssetsRepository()->createAsset($fileId, $params);
+			$url = $asset->getUrl();
+
+			$this->memoUrlAssets = str_replace('/main.js', '', $url);
+		}
+
+		return $this->memoUrlAssets;
+
 	}
 
+	private $memoDirAssets;
+
 	public function getDirAssets() {
-        return $this->getM2DirectoryList()->getPath(\Magento\Framework\App\Filesystem\DirectoryList::LIB_WEB) . "/rovexo/configbox/assets";
+
+		if ($this->memoDirAssets === null) {
+			$viewDir = $this->getM2ModuleReader()->getModuleDir(
+				\Magento\Framework\Module\Dir::MODULE_VIEW_DIR,
+				'Rovexo_Configbox'
+			);
+			$this->memoDirAssets = $viewDir . '/base/web/lib-assets';
+		}
+
+		return $this->memoDirAssets;
+
 	}
 
 	public function getDirCache() {
