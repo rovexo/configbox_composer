@@ -102,25 +102,15 @@ class IpnAuthorizenet_sim {
 	function getResponseString() {
 	
 		if ($this->getPaymentSuccess()) {
-			$url = KLink::getRoute('index.php?option=com_configbox&view=userorder&order_id='.$this->getOrderId(), false, CbSettings::getInstance()->get('securecheckout'));
+			$url = KLink::getRoute('index.php?option=com_configbox&view=userorder&order_id='.$this->getOrderId(), false, true);
 			$return = 'Thank you for your order.';
 		}
 		else {
 			KenedoPlatform::p()->sendSystemMessage($this->getErrorMessage());
-			$url = KLink::getRoute('index.php?option=com_configbox&view=checkout', false, CbSettings::getInstance()->get('securecheckout'));
+			$url = KLink::getRoute('index.php?option=com_configbox&view=checkout', false, true);
 			$return = 'Your transaction has not been processed. Please try again and confirm that the credit card number, expiration date and billing address entered are correct.';
 		}
-		
-		if (strpos($url,'http') !== 0) {
-			
-			if (CbSettings::getInstance()->get('securecheckout')) {
-				$url = 'https://'.KPATH_HOST.$url;
-			}
-			else {
-				$url = 'http://'.KPATH_HOST.$url;
-			}
-		}
-		
+
 		if ($this->getPaymentSuccess()) {
 			$return .= '<script type="text/javascript">window.location.href = "'.$url.'"</script>';
 		}

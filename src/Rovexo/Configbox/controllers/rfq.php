@@ -166,29 +166,8 @@ class ConfigboxControllerRfq extends KenedoController {
 			$db->query();
 		}
 
-		// Prepare the quote pdf if configured that way
-		$quoteData = $quotationModel->createQuotation($orderId);
-		if ($quoteData === false) {
-			$response = new stdClass();
-			$response->success = false;
-			$response->errors = array(KText::_('An error occurred during creating your quotation. Please try again later or contact us directly.'));
-			echo json_encode($response);
-			return;
-		}
-
-		// Fire the quotation request event
-		$orderRecord = $orderModel->getOrderRecord($orderId);
-		KenedoObserver::triggerEvent('onQuotationRequested', array($orderRecord, $quoteData));
-
-		// Quotation: Depending on customer group settings do:
-		$groupId = ConfigboxUserHelper::getGroupId();
-		$groupData = ConfigboxUserHelper::getGroupData($groupId);
-
-		// Send the email if configured that way
-		if ($groupData->quotation_email) {
-			// Set order status to 'Quotation sent' - That will trigger the quote email dispatch
-			$orderModel->setStatus(11, $orderId);
-		}
+		// Set order status to 'Quotation sent' - That will trigger the quote email dispatch if there is a notification
+		$orderModel->setStatus(11, $orderId);
 
 		// Respond with the right URL
 		$response = new stdClass();

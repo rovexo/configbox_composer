@@ -64,28 +64,28 @@ class ConfigboxViewEmailtemplate extends KenedoView {
 		$maxWidth = 250;
 		$maxHeight = 60;
 		
-		$filePath = CONFIGBOX_DIR_SHOP_LOGOS .DS. $this->shopData->shoplogo;
+		$filePath = KenedoPlatform::p()->getDirDataStore().'/public/shoplogos/'. $this->shopData->shoplogo;
 
 		if (is_file($filePath)) {
 
-			$this->assign('useShopLogo',true);
-			$this->assign('shopLogoUrl', CONFIGBOX_URL_SHOP_LOGOS .'/'. $this->shopData->shoplogo);
+			$this->useShopLogo = true;
+			$this->shopLogoUrl = KenedoPlatform::p()->getUrlDataStore().'/public/shoplogos/'. $this->shopData->shoplogo;
 				
 			$image = new ConfigboxImageResizer($filePath);
 				
 			if ($image->width > $maxWidth || $image->height > $maxHeight) {
 				$dimensions = $image->getDimensions($maxWidth, $maxHeight, 'containment');
-				$this->assign('shopLogoWidth',	intval($dimensions['optimalWidth']));
-				$this->assign('shopLogoHeight',	intval($dimensions['optimalHeight']));
+				$this->shopLogoWidth = intval($dimensions['optimalWidth']);
+				$this->shopLogoHeight = intval($dimensions['optimalHeight']);
 			}
 			else {
-				$this->assign('shopLogoWidth',	$image->width);
-				$this->assign('shopLogoHeight',	$image->height);
+				$this->shopLogoWidth = $image->width;
+				$this->shopLogoHeight = $image->height;
 			}
 				
 		}
 		else {
-			$this->assign('useShopLogo',false);
+			$this->useShopLogo = false;
 		}
 		
 	}

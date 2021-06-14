@@ -76,18 +76,18 @@ abstract class ConfigboxCalcTerm {
 
 		if (!self::$termClassesLoaded) {
 
-			$path = KPATH_DIR_CB.DS.'classes'.DS.'calc_term_types';
+			$path = KenedoPlatform::p()->getComponentDir('com_configbox').'/classes/calc_term_types';
 			$conditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 
 			foreach ($conditionFiles as $file) {
-				include_once($path.DS.$file);
+				include_once($path.'/'.$file);
 			}
 
-			$path = KenedoPlatform::p()->getDirCustomization().DS.'calc_term_types';
+			$path = KenedoPlatform::p()->getDirCustomization().'/'.'calc_term_types';
 			if (is_dir($path)) {
 				$customConditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 				foreach ($customConditionFiles as $file) {
-					include_once($path.DS.$file);
+					include_once($path.'/'.$file);
 				}
 			}
 			self::$termClassesLoaded = true;
@@ -104,13 +104,13 @@ abstract class ConfigboxCalcTerm {
 
 			self::$termClassNames = array();
 
-			$path = KPATH_DIR_CB.DS.'classes'.DS.'calc_term_types';
+			$path = KenedoPlatform::p()->getComponentDir('com_configbox').'/classes/calc_term_types';
 			$conditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 			foreach ($conditionFiles as $file) {
 				self::$termClassNames[] = str_replace('.php', '',$file);
 			}
 
-			$path = KenedoPlatform::p()->getDirCustomization().DS.'calc_term_types';
+			$path = KenedoPlatform::p()->getDirCustomization().'/calc_term_types';
 			if (is_dir($path)) {
 				$customConditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 				foreach ($customConditionFiles as $file) {

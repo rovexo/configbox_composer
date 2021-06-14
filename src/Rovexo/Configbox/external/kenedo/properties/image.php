@@ -167,7 +167,7 @@ class KenedoPropertyImage extends KenedoProperty {
 				throw new Exception('User tried to delete a file that should not be deletable (by settings)');
 			}
 
-			$fileToRemove = $storageFolder . DS . $currentOriginalFileName;
+			$fileToRemove = $storageFolder . '/' . $currentOriginalFileName;
 
 			// Go on and delete the file (if it exists, otherwise just let it be)
 			if (is_file($fileToRemove)) {
@@ -209,7 +209,7 @@ class KenedoPropertyImage extends KenedoProperty {
 		$newOriginalFileName = $this->getNewOriginalFilename($data);
 
 		// Figure out the full filesystem path for the file
-		$destinationPath = $storageFolder . DS . $newOriginalFileName;
+		$destinationPath = $storageFolder . '/' . $newOriginalFileName;
 
 		// Move the file from tmp to destination
 		$moveSuccess = rename($file['tmp_name'], $destinationPath);
@@ -249,7 +249,7 @@ class KenedoPropertyImage extends KenedoProperty {
 		// If the file name changed (because of the 'appendSerial' setting or anything else), remove the old file
 		if ($currentOriginalFileName && $currentOriginalFileName != $newOriginalFileName) {
 
-			$fileToRemove = $storageFolder . DS . $currentOriginalFileName;
+			$fileToRemove = $storageFolder . '/' . $currentOriginalFileName;
 
 			if (is_file($fileToRemove)) {
 
@@ -294,16 +294,16 @@ class KenedoPropertyImage extends KenedoProperty {
 		$pathFilesystem = $this->getPropertyDefinition('dirBase');
 
 		// Check if the original file exists
-		if (is_file($pathFilesystem.DS.$originalFilename) == false) {
-			KLog::log('Original file to copy not found in location "'.$pathFilesystem.DS.$originalFilename.'"', 'error');
+		if (is_file($pathFilesystem.'/'.$originalFilename) == false) {
+			KLog::log('Original file to copy not found in location "'.$pathFilesystem.'/'.$originalFilename.'"', 'error');
 			throw new Exception('Original image not found for property '.$this->getPropertyDefinition('label').' in model "'.get_class($this->model).'", record ID '.$oldId.'.');
 		}
 
 		// Check if any of the mutation images are missing
 		foreach($mutationFilenames as $mutationKey => $mutationFilename) {
 
-			if (is_file($pathFilesystem.DS.$mutationFilename) == false) {
-				KLog::log('Mutation file "'.$mutationKey.'" to copy not found in location "'.$pathFilesystem.DS.$originalFilename.'"', 'error');
+			if (is_file($pathFilesystem.'/'.$mutationFilename) == false) {
+				KLog::log('Mutation file "'.$mutationKey.'" to copy not found in location "'.$pathFilesystem.'/'.$originalFilename.'"', 'error');
 				throw new Exception('Mutation image "'.$mutationKey.'" not found for property '.$this->getPropertyDefinition('label').' in model "'.get_class($this->model).'", record ID '.$oldId.'.');
 
 			}
@@ -321,7 +321,7 @@ class KenedoPropertyImage extends KenedoProperty {
 		}
 
 		// Copy the original image
-		$result = copy($pathFilesystem.DS.$originalFilename, $pathFilesystem.DS.$newOriginalFilename);
+		$result = copy($pathFilesystem.'/'.$originalFilename, $pathFilesystem.'/'.$newOriginalFilename);
 
 		if ($result === false) {
 			KLog::log('Could not copy original image for property '.$this->propertyName.' in model "'.get_class($this->model).'". Last PHP message was '.error_get_last(), 'error');
@@ -331,7 +331,7 @@ class KenedoPropertyImage extends KenedoProperty {
 		// Copy each mutation image
 		foreach($mutationFilenames as $mutationKey => $mutationFilename) {
 
-			$result = copy($pathFilesystem.DS.$mutationFilename, $pathFilesystem.DS.$newMutationFilenames[$mutationKey]);
+			$result = copy($pathFilesystem.'/'.$mutationFilename, $pathFilesystem.'/'.$newMutationFilenames[$mutationKey]);
 
 			if ($result === false) {
 				KLog::log('Could not copy mutation image for property '.$this->propertyName.' in model "'.get_class($this->model).'". Last PHP message was '.error_get_last(), 'error');
@@ -386,8 +386,8 @@ class KenedoPropertyImage extends KenedoProperty {
 		$currentFilename = $this->getCurrentOriginalFileName($id);
 
 		if (!empty($currentFilename)) {
-			if (is_file($this->getPropertyDefinition('dirBase').DS.$currentFilename)) {
-				unlink($this->getPropertyDefinition('dirBase').DS.$currentFilename);
+			if (is_file($this->getPropertyDefinition('dirBase').'/'.$currentFilename)) {
+				unlink($this->getPropertyDefinition('dirBase').'/'.$currentFilename);
 			}
 		}
 
@@ -626,7 +626,7 @@ class KenedoPropertyImage extends KenedoProperty {
 			case 'forceRatioAndContain':
 
 				try	{
-					$mutation = new GD($baseDir . DS . $filenameOriginal, array('resizeUp' => true, 'jpegQuality' => 75));
+					$mutation = new GD($baseDir . '/' . $filenameOriginal, array('resizeUp' => true, 'jpegQuality' => 75));
 				}
 				catch (Exception $e) {
 					KLog::log('Problem with processing image. Exception message from GD was '.$e->getMessage(), 'error');
@@ -641,7 +641,7 @@ class KenedoPropertyImage extends KenedoProperty {
 				// Do the resizing and save the image
 				try	{
 					$mutation->adaptiveResize($mutationParameters['width'], $mutationParameters['height']);
-					$mutation->save($baseDir . DS . $filenameMutation);
+					$mutation->save($baseDir . '/' . $filenameMutation);
 				}
 				catch (Exception $e) {
 					KLog::log('Mode "'.$mode.'" on image failed. Error message was '. $e->getMessage(), 'error');
@@ -654,7 +654,7 @@ class KenedoPropertyImage extends KenedoProperty {
 			case 'contain':
 
 				try	{
-					$mutation = new GD($baseDir . DS . $filenameOriginal, array('resizeUp' => false, 'jpegQuality' => 75));
+					$mutation = new GD($baseDir . '/' . $filenameOriginal, array('resizeUp' => false, 'jpegQuality' => 75));
 				}
 				catch (Exception $e) {
 					KLog::log('Problem with processing image. Exception message from GD was '.$e->getMessage(), 'error');
@@ -679,7 +679,7 @@ class KenedoPropertyImage extends KenedoProperty {
 				// Do the resizing and save the image
 				try	{
 					$mutation->resize($mutationParameters['width'], $mutationParameters['height']);
-					$mutation->save($baseDir . DS . $filenameMutation);
+					$mutation->save($baseDir . '/' . $filenameMutation);
 				}
 				catch (Exception $e) {
 					KLog::log('Mode "'.$mode.'" on image failed. Error message was '. $e->getMessage(), 'error');
@@ -692,7 +692,7 @@ class KenedoPropertyImage extends KenedoProperty {
 			case 'cover':
 
 				try	{
-					$mutation = new GD($baseDir . DS . $filenameOriginal, array('resizeUp' => true, 'jpegQuality' => 75));
+					$mutation = new GD($baseDir . '/' . $filenameOriginal, array('resizeUp' => true, 'jpegQuality' => 75));
 				}
 				catch (Exception $e) {
 					KLog::log('Problem with processing image. Exception message from GD was '.$e->getMessage(), 'error');
@@ -707,7 +707,7 @@ class KenedoPropertyImage extends KenedoProperty {
 				// Do the resizing and save the image
 				try	{
 					$mutation->resize($mutationParameters['width'], $mutationParameters['height']);
-					$mutation->save($baseDir . DS . $filenameMutation);
+					$mutation->save($baseDir . '/' . $filenameMutation);
 				}
 				catch (Exception $e) {
 					KLog::log('Mode "'.$mode.'" on image failed. Error message was '. $e->getMessage(), 'error');
@@ -738,7 +738,7 @@ class KenedoPropertyImage extends KenedoProperty {
 
 		if(!empty($mutationsToDelete)) {
 			foreach ($mutationsToDelete as $key => $item) {
-				$file2delete =  $folder . DS . $item;
+				$file2delete =  $folder . '/' . $item;
 				if(is_file($file2delete)) {
 					unlink($file2delete);
 				}

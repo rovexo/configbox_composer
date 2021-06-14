@@ -22,7 +22,7 @@ class ConfigboxViewCheckoutpspbridge extends KenedoView {
 
 	/**
 	 * Holds all information about the order
-	 * @var object $shopData
+	 * @var ConfigboxShopData $shopData
 	 * @see ConfigboxStoreHelper::getStoreRecord
 	 */
 	public $shopData;
@@ -49,18 +49,6 @@ class ConfigboxViewCheckoutpspbridge extends KenedoView {
 	public $notificationUrl;
 
 	/**
-	 * @var string URL to send payment notification to (HTTP)
-	 * @see ConfigboxControllerIpn::processIpn
-	 */
-	public $notificationUrlNormal;
-
-	/**
-	 * @var string URL to send payment notification to (HTTPS)
-	 * @see ConfigboxControllerIpn::processIpn
-	 */
-	public $notificationUrlSecure;
-
-	/**
 	 * @var string $pspBridgeFilePath Path to the PSP connector's bridge template file
 	 */
 	public $pspBridgeFilePath;
@@ -81,61 +69,21 @@ class ConfigboxViewCheckoutpspbridge extends KenedoView {
 		$orderModel = KenedoModel::getModel('ConfigboxModelOrderrecord');
 		$orderId = $orderModel->getId();
 		
-		$orderRecord = $orderModel->getOrderRecord($orderId);
-		$this->assignRef('orderRecord',$orderRecord);
-		
+		$this->orderRecord = $orderModel->getOrderRecord($orderId);
+
 		// Get store information
-		$shopdata = ConfigboxStoreHelper::getStoreRecord($orderRecord->store_id);
-		$this->assignRef('shopdata',$shopdata);
-		$this->assignRef('shopData',$shopdata);
+		$this->shopData = ConfigboxStoreHelper::getStoreRecord($this->orderRecord->store_id);
 
-		$this->assign('statid',0);
-
-		if (empty($orderRecord->payment)) {
+		if (empty($this->orderRecord->payment)) {
 			return;
 		}
 
-		// New path generation for payment options
-		$notificationPath = KLink::getRoute('index.php?option=com_configbox&controller=ipn&task=processipn&Itemid=0&connector_name='.$orderRecord->payment->connector_name,false);
-		$successPath = KLink::getRoute('index.php?option=com_configbox&view=userorder&order_id='.$this->orderRecord->id, false);
-		$failurePath = KLink::getRoute('index.php?option=com_configbox&view=checkout', false);
-		$cancelPath = KLink::getRoute('index.php?option=com_configbox&view=checkout', false);
+		$this->notificationUrl = KLink::getRoute('index.php?option=com_configbox&controller=ipn&task=processipn&Itemid=0&connector_name='.$this->orderRecord->payment->connector_name,false, true);
+		$this->successUrl = KLink::getRoute('index.php?option=com_configbox&view=userorder&order_id='.$this->orderRecord->id, false, true);
+		$this->failureUrl = KLink::getRoute('index.php?option=com_configbox&view=checkout', false, true);
+		$this->cancelUrl = KLink::getRoute('index.php?option=com_configbox&view=checkout', false, true);
 
-		if (KenedoPlatform::getName() == 'joomla') {
-			$prefixNormal = 'http://'.KPATH_HOST;
-			$prefixSecure = 'https://'.KPATH_HOST;
-		}
-		else {
-			$prefixNormal = '';
-			$prefixSecure = '';
-		}
-
-		if (CbSettings::getInstance()->get('securecheckout')) {
-			$successUrl 		= $prefixSecure . $successPath;
-			$failureUrl 		= $prefixSecure . $failurePath;
-			$cancelUrl 			= $prefixSecure . $cancelPath;
-			$notificationUrl 	= $prefixSecure . $notificationPath;
-		}
-		else {
-			$successUrl 		= $prefixNormal . $successPath;
-			$failureUrl 		= $prefixNormal . $failurePath;
-			$cancelUrl 			= $prefixNormal . $cancelPath;
-			$notificationUrl 	= $prefixNormal . $notificationPath;
-		}
-
-		$notificationUrlNormal = $prefixNormal . $notificationPath;
-		$notificationUrlSecure = $prefixSecure . $notificationPath;
-
-		$pspBridgeFilePath = ConfigboxPspHelper::getPspConnectorFolder($orderRecord->payment->connector_name) . DS . 'bridge.php';
-		$this->assignRef('pspBridgeFilePath', $pspBridgeFilePath);
-
-		$this->assignRef('successUrl', $successUrl);
-		$this->assignRef('failureUrl', $failureUrl);
-		$this->assignRef('cancelUrl', $cancelUrl);
-		$this->assignRef('notificationUrl', $notificationUrl);
-		$this->assignRef('notificationUrlNormal', $notificationUrlNormal);
-		$this->assignRef('notificationUrlSecure', $notificationUrlSecure);
-
+		$this->pspBridgeFilePath = ConfigboxPspHelper::getPspConnectorFolder($this->orderRecord->payment->connector_name) . '/bridge.php';
 
 	}
 }

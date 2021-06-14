@@ -2,10 +2,10 @@
 defined('CB_VALID_ENTRY') or die();
 /** @var $this ConfigboxViewCheckoutpspbridge */
 
-ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . dirname(__FILE__).DS.'Billsafe');
+ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . __DIR__.'/Billsafe');
 
-require (dirname(__FILE__).DS.'Billsafe'.DS.'Sdk.php');
-require (dirname(__FILE__).DS.'Billsafe'.DS.'LoggerFile.php');
+require (__DIR__.'/Billsafe/Sdk.php');
+require (__DIR__.'/Billsafe/LoggerFile.php');
 
 $bs = new Billsafe_Sdk();
 
@@ -19,7 +19,7 @@ $credentials = array(
 
 $bs->setCredentials($credentials);
 
-$logPath = KenedoPlatform::p()->getLogPath().DS.'configbox'.DS.'billsafe.log';
+$logPath = KenedoPlatform::p()->getLogPath().'/configbox/billsafe.log';
 
 $bs->setLogger(new Billsafe_LoggerFile($logPath));
 

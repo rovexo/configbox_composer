@@ -161,8 +161,8 @@ class KenedoModel {
 			}
 
 			// Get the complete path to the regular and custom model
-			$regularPath = KenedoPlatform::p()->getComponentDir($component) .DS. 'models' .DS. $modelFileName;
-			$customPath = KenedoPlatform::p()->getDirCustomization() .DS. 'models' .DS. $modelFileName;
+			$regularPath = KenedoPlatform::p()->getComponentDir($component) .'/models/'. $modelFileName;
+			$customPath = KenedoPlatform::p()->getDirCustomization() .'/models/'. $modelFileName;
 
 			// Overwrite $path to get the file from either customization or system
 			if ($path == '') {
@@ -710,10 +710,10 @@ class KenedoModel {
 
 		$customPropDefs = array();
 
-		$dir = CONFIGBOX_DIR_MODEL_PROPERTY_CUSTOMIZATION;
+		$dir = KenedoPlatform::p()->getDirCustomization().'/model_property_customization';
 		$fileBase = strtolower( substr(get_class($this), strpos(get_class($this), 'Model') + 5 ) );
 		$file = $fileBase . '.php';
-		$path = $dir.DS.$file;
+		$path = $dir.'/'.$file;
 		if (is_file($path) == false) {
 			return $customPropDefs;
 		}
@@ -782,13 +782,13 @@ class KenedoModel {
 
 		if (empty(self::$memoPropertyClassNames[$propertyType])) {
 
-			$regularFolder = CONFIGBOX_DIR_PROPERTIES_DEFAULT;
-			$customFolder = CONFIGBOX_DIR_PROPERTIES_CUSTOM;
+			$regularFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/external/kenedo/properties';
+			$customFolder = KenedoPlatform::p()->getDirCustomization().'/properties';
 
 			$fileName = strtolower($propertyType).'.php';
 
-			$pathCustom = $customFolder.DS.$fileName;
-			$pathSystem = $regularFolder.DS.$fileName;
+			$pathCustom = $customFolder.'/'.$fileName;
+			$pathSystem = $regularFolder.'/'.$fileName;
 
 			// Check in customization folder
 			if (file_exists($pathCustom)) {

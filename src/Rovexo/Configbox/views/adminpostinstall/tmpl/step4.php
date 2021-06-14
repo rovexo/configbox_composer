@@ -17,7 +17,7 @@ defined('CB_VALID_ENTRY') or die();
 
 	<div class="form-group">
 		<label for="shopWebsite"><?php echo KText::_('Store Website');?></label>
-		<input class="form-control" type="text" id="shopWebsite" aria-describedby="help-shopWebsite" value="<?php echo empty($this->shopData->shopwebsite) ? KPATH_HOST : hsc($this->shopData->shopwebsite);?>">
+		<input class="form-control" type="text" id="shopWebsite" aria-describedby="help-shopWebsite" value="<?php echo empty($this->shopData->shopwebsite) ? $_SERVER['HTTP_HOST'] : hsc($this->shopData->shopwebsite);?>">
 		<div class="help-block validation-placeholder"></div>
 		<span id="help-shopWebsite" class="help-block"><?php echo KText::_('TOOLTIP_SHOPDATA_SHOPWEBSITE');?></span>
 	</div>

@@ -141,7 +141,7 @@ class ConfigboxUpdateHelper {
 
 
 		// Get the folder with update scripts and get all files there
-		$configboxUpdateFileFolder 	= KenedoPlatform::p()->getComponentDir('com_configbox').DS.'helpers'.DS.'updates';
+		$configboxUpdateFileFolder 	= KenedoPlatform::p()->getComponentDir('com_configbox').'/helpers/updates';
 		$configboxUpdateFiles 		= KenedoFileHelper::getFiles($configboxUpdateFileFolder, '.php$', false, false);
 
 		// Sort the files by version
@@ -170,7 +170,7 @@ class ConfigboxUpdateHelper {
 
 			// Include the file
 			try {
-				require($configboxUpdateFileFolder . DS . $configboxUpdateFile);
+				require($configboxUpdateFileFolder . '/' . $configboxUpdateFile);
 			}
 			catch(Exception $e) {
 
@@ -262,7 +262,7 @@ class ConfigboxUpdateHelper {
 			self::$latestUpdateVersion = '0.0.0';
 		}
 
-		$configboxUpdateFileFolder 	= KenedoPlatform::p()->getDirCustomization().DS.'updates';
+		$configboxUpdateFileFolder 	= KenedoPlatform::p()->getDirCustomization().'/updates';
 		$configboxUpdateFiles 		= KenedoFileHelper::getFiles($configboxUpdateFileFolder, '.php$', false, false);
 
 		// Sort the files by version
@@ -285,7 +285,7 @@ class ConfigboxUpdateHelper {
 				$db->resetFailedQueryCount();
 
 				try {
-					require( $configboxUpdateFileFolder.DS.$configboxUpdateFile );
+					require( $configboxUpdateFileFolder.'/'.$configboxUpdateFile );
 				}
 				catch(Exception $e) {
 

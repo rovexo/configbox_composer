@@ -51,7 +51,7 @@ class KenedoPropertyFile extends KenedoProperty {
 		$filename = $this->getCurrentFilename($id);
 
 		if (!empty($filename)) {
-			$fullPath = $this->getPropertyDefinition('dirBase').DS.$filename;
+			$fullPath = $this->getPropertyDefinition('dirBase').'/'.$filename;
 			if (is_file($fullPath)) {
 				$success = unlink($fullPath);
 				if ($success == false) {
@@ -169,7 +169,7 @@ class KenedoPropertyFile extends KenedoProperty {
 				throw new Exception('User tried to delete a file that should not be deletable (by settings)');
 			}
 
-			$fileToRemove = $storageFolder.DS.$currentFileName;
+			$fileToRemove = $storageFolder.'/'.$currentFileName;
 
 			// Go on and delete the file (if it exists, otherwise just let it be)
 			if (is_file($fileToRemove)) {
@@ -210,7 +210,7 @@ class KenedoPropertyFile extends KenedoProperty {
 		$newFileName = $this->getNewFileName($data);
 
 		// Figure out the full filesystem path for the file
-		$destinationPath = $storageFolder . DS . $newFileName;
+		$destinationPath = $storageFolder . '/' . $newFileName;
 
 		// Move the file from tmp to destination
 		$moveSuccess = rename($file['tmp_name'], $destinationPath);
@@ -236,7 +236,7 @@ class KenedoPropertyFile extends KenedoProperty {
 		// If the file name changed (because of the 'appendSerial' setting or anything else), remove the old file
 		if ($currentFileName && $currentFileName != $newFileName) {
 
-			$fileToRemove = $storageFolder . DS . $currentFileName;
+			$fileToRemove = $storageFolder . '/' . $currentFileName;
 
 			if (is_file($fileToRemove)) {
 
@@ -286,8 +286,8 @@ class KenedoPropertyFile extends KenedoProperty {
 		$directory = $this->getPropertyDefinition('dirBase');
 
 		// If the source file is gone, then warn in log file, but don't abort (just don't copy)
-		if (is_file($directory.DS.$filename) == false) {
-			$msg = $logPrefix.'Issue with copying: Data shows there is a file, but we do not find it where it should be. Record ID was '.$oldId.'. Ignoring it for copying. Path was "'.$directory.DS.$filename.'"';
+		if (is_file($directory.'/'.$filename) == false) {
+			$msg = $logPrefix.'Issue with copying: Data shows there is a file, but we do not find it where it should be. Record ID was '.$oldId.'. Ignoring it for copying. Path was "'.$directory.'/'.$filename.'"';
 			KLog::log($msg, 'warning');
 			KLog::log($msg, 'custom_copying');
 
@@ -308,19 +308,19 @@ class KenedoPropertyFile extends KenedoProperty {
 			return false;
 		}
 
-		$result = copy($directory.DS.$filename,$directory.DS.$newFilename);
+		$result = copy($directory.'/'.$filename,$directory.'/'.$newFilename);
 
 		if ($result === false) {
 
 			$error = error_get_last();
 
 			if ($error) {
-				$msg = $logPrefix.'Copying file failed. Last PHP error message was '.$error['message'].'. Source path was "'.$directory.DS.$filename.'". Destination path was '.$directory.DS.$newFilename;
+				$msg = $logPrefix.'Copying file failed. Last PHP error message was '.$error['message'].'. Source path was "'.$directory.'/'.$filename.'". Destination path was '.$directory.'/'.$newFilename;
 				KLog::log($msg, 'error');
 				KLog::log($msg, 'custom_copying');
 			}
 			else {
-				$msg = $logPrefix.'Copying file failed. No PHP error message was issued. Source path was "'.$directory.DS.$filename.'". Destination path was '.$directory.DS.$newFilename;
+				$msg = $logPrefix.'Copying file failed. No PHP error message was issued. Source path was "'.$directory.'/'.$filename.'". Destination path was '.$directory.'/'.$newFilename;
 				KLog::log($msg, 'error');
 				KLog::log($msg, 'custom_copying');
 			}

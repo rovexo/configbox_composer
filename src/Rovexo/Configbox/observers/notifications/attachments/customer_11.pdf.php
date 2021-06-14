@@ -13,5 +13,5 @@ if ($orderRecord->groupData->quotation_email == false) {
 	return;
 }
 else {
-	include(dirname(__FILE__).DS.'manager_11.pdf.php');
+	include(dirname(__FILE__).'/manager_11.pdf.php');
 }

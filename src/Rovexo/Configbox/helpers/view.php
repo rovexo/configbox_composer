@@ -179,7 +179,7 @@ class ConfigboxViewHelper {
 
 		// Replace relative URLs with absolute ones
 		foreach ($replacements as $replacement) {
-			$html = str_replace($replacement, KPATH_URL_BASE .'/'. $replacement, $html);
+			$html = str_replace($replacement, KenedoPlatform::p()->getUrlBase() .'/'. $replacement, $html);
 		}
 
 	}

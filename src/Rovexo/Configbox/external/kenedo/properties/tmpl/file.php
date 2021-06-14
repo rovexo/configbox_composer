@@ -7,7 +7,7 @@ defined('CB_VALID_ENTRY') or die();
 $filename = $this->data->{$this->propertyName};
 $pathUrl = $this->getPropertyDefinition('urlBase');
 $pathFilesystem = $this->getPropertyDefinition('dirBase');
-$fileMissing = ($filename && !is_file($pathFilesystem.DS.$filename));
+$fileMissing = ($filename && !is_file($pathFilesystem.'/'.$filename));
 $fileSet = ($filename);
 $optionTags = $this->getPropertyDefinition('optionTags');
 $canDelete = ($fileSet && empty($optionTags['NODELETEFILE']) && ($this->isRequired() == false) && $this->data->id != 0);
@@ -19,9 +19,9 @@ $canDelete = ($fileSet && empty($optionTags['NODELETEFILE']) && ($this->isRequir
 		<?php if ($filename) { ?>
 
 			<?php if (!empty($pathUrl)) { ?>
-				<span><?php echo KText::_('Current file:');?></span> <a title="<?php echo hsc($pathFilesystem.DS.$filename);?>" class="kenedo-new-tab file-link" href="<?php echo $pathUrl .'/'. $filename;?>"><?php echo hsc($filename);?></a>
+				<span><?php echo KText::_('Current file:');?></span> <a title="<?php echo hsc($pathFilesystem.'/'.$filename);?>" class="kenedo-new-tab file-link" href="<?php echo $pathUrl .'/'. $filename;?>"><?php echo hsc($filename);?></a>
 			<?php } else { ?>
-				<span><?php echo KText::_('Current file:');?></span> <span title="<?php echo hsc($pathFilesystem.DS.$filename);?>"><?php echo $filename;?></span>
+				<span><?php echo KText::_('Current file:');?></span> <span title="<?php echo hsc($pathFilesystem.'/'.$filename);?>"><?php echo $filename;?></span>
 			<?php } ?>
 
 			<?php if ($fileMissing) { ?>

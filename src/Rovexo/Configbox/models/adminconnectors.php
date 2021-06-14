@@ -57,7 +57,7 @@ class ConfigboxModelAdminconnectors extends KenedoModel {
 			'allowedExtensions'=>array('php'),
 			'required'=>0,
 			'size'=>'100000',
-			'dirBase'=>KenedoPlatform::p()->getDirCustomization().DS.'custom_observers',
+			'dirBase'=>KenedoPlatform::p()->getDirCustomization().'/custom_observers',
 			'urlBase'=>'',
 			'options'=>'PRESERVE_EXT SAVE_FILENAME',
 			'positionForm'=>400,

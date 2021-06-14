@@ -569,8 +569,8 @@ class ConfigboxCacheHelper {
 
 			// Overwrite product image with default product image if there is none
 			if (!$product->prod_image && $filenameDefault) {
-				$product->prod_image_href = CONFIGBOX_URL_DEFAULT_IMAGES.'/'.$filenameDefault;
-				$product->prod_image_path = CONFIGBOX_DIR_DEFAULT_IMAGES.'/'.$filenameDefault;
+				$product->prod_image_href = KenedoPlatform::p()->getUrlDataStore().'/public/default_images/'.$filenameDefault;
+				$product->prod_image_path = KenedoPlatform::p()->getDirDataStore().'/public/default_images/'.$filenameDefault;
 			}
 
 			$product->listing_id = NULL;
@@ -1818,10 +1818,10 @@ class ConfigboxCacheHelper {
 
 		}
 
-		$key = str_replace('.', DS, $key);
+		$key = str_replace('.', '/', $key);
 
 		$cacheDir = KenedoPlatform::p()->getDirCache().'/configbox';
-		$filename = $cacheDir.DS.$key.'.cache';
+		$filename = $cacheDir.'/'.$key.'.cache';
 
 		clearstatcache(true, $filename);
 
@@ -1854,9 +1854,9 @@ class ConfigboxCacheHelper {
 			return apcu_exists($wholeKey);
 		}
 
-		$key = str_replace('.', DS, $key);
+		$key = str_replace('.', '/', $key);
 
-		$filename = KenedoPlatform::p()->getDirCache().DS.'configbox'.DS.$key.'.cache';
+		$filename = KenedoPlatform::p()->getDirCache().'/configbox/'.$key.'.cache';
 
 		clearstatcache(true, $filename);
 
@@ -1887,11 +1887,11 @@ class ConfigboxCacheHelper {
 
 		}
 
-		$key = str_replace('.', DS, $key);
+		$key = str_replace('.', '/', $key);
 
 		$cacheDir = KenedoPlatform::p()->getDirCache().'/configbox';
 
-		$filename = $cacheDir.DS.$key.'.cache';
+		$filename = $cacheDir.'/'.$key.'.cache';
 
 		clearstatcache(true, $filename);
 

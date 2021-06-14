@@ -40,7 +40,7 @@ class ConfigboxControllerPaymentresult extends KenedoController {
 		
 		if ($connectorName) {
 			$folder = ConfigboxPspHelper::getPspConnectorFolder($connectorName);
-			$file = $folder.DS.'save_payment_info.php';
+			$file = $folder.'/save_payment_info.php';
 			
 			if (file_exists($file)) {
 				include($file);

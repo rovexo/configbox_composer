@@ -256,8 +256,8 @@ class ConfigboxModelAdminoptions extends KenedoModel {
 			'allow'=>array('image/pjpeg','image/jpg','image/jpeg','image/gif','image/tif','image/bmp','image/png','image/x-png'),
 			'required'=>0,
 			'size'=>'1000',
-			'dirBase'=>CONFIGBOX_DIR_ANSWER_IMAGES,
-			'urlBase'=>CONFIGBOX_URL_ANSWER_IMAGES,
+			'dirBase'=>KenedoPlatform::p()->getDirDataStore().'/public/answer_images',
+			'urlBase'=>KenedoPlatform::p()->getUrlDataStore().'/public/answer_images',
 			'options'=>'FILENAME_TO_RECORD_ID PRESERVE_EXT SAVE_FILENAME',
 			'positionForm'=>2750,
 		);

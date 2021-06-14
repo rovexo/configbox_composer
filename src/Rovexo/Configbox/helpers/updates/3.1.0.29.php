@@ -4,33 +4,32 @@ defined('CB_VALID_ENTRY') or die();
 $db = KenedoPlatform::getDb();
 
 if (KenedoPlatform::getName() == 'magento') {
-	$oldStoreFolder = Mage::getBaseDir('media').DS.'elovaris'.DS.'configbox'.DS.'store_data';
-	$oldCustomerFolder = Mage::getBaseDir('media').DS.'elovaris'.DS.'configbox'.DS.'customer_data';
-	$oldSettingsFolder = Mage::getBaseUrl('media').DS.'elovaris'.DS.'configbox'.DS.'settings';
+	$oldStoreFolder = Mage::getBaseDir('media').'/elovaris/configbox/store_data';
+	$oldCustomerFolder = Mage::getBaseDir('media').'/elovaris/configbox/customer_data';
+	$oldSettingsFolder = Mage::getBaseUrl('media').'/elovaris/configbox/settings';
 }
 else {
-	$oldStoreFolder = KenedoPlatform::p()->getComponentDir('com_configbox').DS.'data';
-	$oldCustomerFolder = KenedoPlatform::p()->getComponentDir('com_configbox').DS.'data';
-	$oldSettingsFolder = KenedoPlatform::p()->getComponentDir('com_configbox').DS.'data'.DS.'settings';
+	$oldStoreFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/data';
+	$oldCustomerFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/data';
+	$oldSettingsFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/data/settings';
 }
 
 $mappings = array(
-	$oldStoreFolder.'/default_images' 				=> CONFIGBOX_DIR_DEFAULT_IMAGES,
-	$oldStoreFolder.'/element_images' 				=> CONFIGBOX_DIR_QUESTION_DECORATIONS,
-	$oldStoreFolder.'/maxmind_geoip'				=> CONFIGBOX_DIR_MAXMIND_DBS,
-	$oldStoreFolder.'/opt_images'					=> CONFIGBOX_DIR_VIS_ANSWER_IMAGES,
-	$oldStoreFolder.'/option_images'				=> CONFIGBOX_DIR_ANSWER_IMAGES,
-	$oldStoreFolder.'/option_picker_images'			=> CONFIGBOX_DIR_ANSWER_PICKER_IMAGES,
-	$oldStoreFolder.'/prod_baseimages'				=> CONFIGBOX_DIR_VIS_PRODUCT_BASE_IMAGES,
-	$oldStoreFolder.'/product_gallery_images'		=> CONFIGBOX_DIR_PRODUCT_GALLERY_IMAGES,
-	$oldStoreFolder.'/prod_images'					=> CONFIGBOX_DIR_PRODUCT_IMAGES,
-	$oldStoreFolder.'/product_detail_pane_icons'	=> CONFIGBOX_DIR_PRODUCT_DETAIL_PANE_ICONS,
-	$oldStoreFolder.'/shoplogo'						=> CONFIGBOX_DIR_SHOP_LOGOS,
+	$oldStoreFolder.'/default_images' 				=> KenedoPlatform::p()->getDirDataStore().'/public/default_images',
+	$oldStoreFolder.'/element_images' 				=> KenedoPlatform::p()->getDirDataStore().'/public/question_decorations',
+	$oldStoreFolder.'/maxmind_geoip'				=> KenedoPlatform::p()->getDirDataStore().'/private/maxmind',
+	$oldStoreFolder.'/opt_images'					=> KenedoPlatform::p()->getDirDataStore().'/public/vis_answer_images',
+	$oldStoreFolder.'/option_images'				=> KenedoPlatform::p()->getDirDataStore().'/public/answer_images',
+	$oldStoreFolder.'/option_picker_images'			=> KenedoPlatform::p()->getDirDataStore().'/public/answer_picker_images',
+	$oldStoreFolder.'/prod_baseimages'				=> KenedoPlatform::p()->getDirDataStore().'/public/vis_product_images',
+	$oldStoreFolder.'/prod_images'					=> KenedoPlatform::p()->getDirDataStore().'/public/product_images',
+	$oldStoreFolder.'/product_detail_pane_icons'	=> KenedoPlatform::p()->getDirDataStore().'/public/product_detail_pane_icons',
+	$oldStoreFolder.'/shoplogo'						=> KenedoPlatform::p()->getDirDataStore().'/public/shoplogos',
 
-	$oldCustomerFolder.'/file_uploads'				=> CONFIGBOX_DIR_CONFIGURATOR_FILEUPLOADS,
-	$oldCustomerFolder.'/invoices'					=> CONFIGBOX_DIR_INVOICES,
-	$oldCustomerFolder.'/position_images'			=> CONFIGBOX_DIR_POSITION_IMAGES,
-	$oldCustomerFolder.'/quotations'				=> CONFIGBOX_DIR_QUOTATIONS,
+	$oldCustomerFolder.'/file_uploads'				=> KenedoPlatform::p()->getDirDataCustomer().'/public/file_uploads',
+	$oldCustomerFolder.'/invoices'					=> KenedoPlatform::p()->getDirDataCustomer().'/private/invoices',
+	$oldCustomerFolder.'/position_images'			=> KenedoPlatform::p()->getDirDataCustomer().'/public/position_images',
+	$oldCustomerFolder.'/quotations'				=> KenedoPlatform::p()->getDirDataCustomer().'/private/quotations',
 
 	$oldSettingsFolder								=> KenedoPlatform::p()->getDirCustomizationSettings(),
 
@@ -46,9 +45,11 @@ $deletions = array(
 
 function aea_write_note($mappings) {
 
+	$rootDir = KenedoPlatform::p()->getRootDirectory();
+
 	$lines = array();
 	foreach ($mappings as $old=>$new) {
-		$lines[] = str_replace(KPATH_ROOT, '', $old). ' -> '. str_replace(KPATH_ROOT, '', $new);
+		$lines[] = str_replace($rootDir, '', $old). ' -> '. str_replace($rootDir, '', $new);
 	}
 	$text = implode("<br /><br />", $lines);
 
@@ -60,10 +61,12 @@ function aea_write_note($mappings) {
 
 }
 
+$rootDir = KenedoPlatform::p()->getRootDirectory();
+
 foreach ($mappings as $old=>$new) {
 
-	$oldShort = str_replace(KPATH_ROOT, '', $old);
-	$newShort = str_replace(KPATH_ROOT, '', $new);
+	$oldShort = str_replace($rootDir, '', $old);
+	$newShort = str_replace($rootDir, '', $new);
 
 	clearstatcache(true);
 
@@ -113,8 +116,8 @@ foreach ($deletions as $dir) {
 
 // Remove old htaccess files
 foreach ($mappings as $old=>$new) {
-	if (is_file($new.DS.'.htaccess')) {
-		unlink($new.DS.'.htaccess');
+	if (is_file($new.'/.htaccess')) {
+		unlink($new.'/.htaccess');
 	}
 }
 
@@ -134,31 +137,31 @@ $htaccessPublic = "allow from all
 $htaccessPrivate = "deny from all";
 
 $privateFolders = array(
-	KenedoPlatform::p()->getDirDataCustomer().DS.'private',
-	KenedoPlatform::p()->getDirDataStore().DS.'private',
+	KenedoPlatform::p()->getDirDataCustomer().'/private',
+	KenedoPlatform::p()->getDirDataStore().'/private',
 );
 
 $publicFolders = array(
 	KenedoPlatform::p()->getDirAssets(),
-	KenedoPlatform::p()->getDirDataCustomer().DS.'public',
-	KenedoPlatform::p()->getDirDataStore().DS.'public',
+	KenedoPlatform::p()->getDirDataCustomer().'/public',
+	KenedoPlatform::p()->getDirDataStore().'/public',
 	KenedoPlatform::p()->getOldDirCustomizationAssets(),
 );
 
 foreach ($privateFolders as $folder) {
 	if (is_dir($folder)) {
-		file_put_contents($folder.DS.'.htaccess', $htaccessPrivate);
+		file_put_contents($folder.'/.htaccess', $htaccessPrivate);
 	}
 }
 
 foreach ($publicFolders as $folder) {
 	if (is_dir($folder)) {
-		file_put_contents($folder.DS.'.htaccess', $htaccessPublic);
+		file_put_contents($folder.'/.htaccess', $htaccessPublic);
 	}
 }
 
 // In case the default product image is not there, copy it from the system's image folder
-if (!is_file(CONFIGBOX_DIR_DEFAULT_IMAGES.'/default_prod_image.jpg')) {
+if (!is_file(KenedoPlatform::p()->getDirDataStore().'/public/default_images/default_prod_image.jpg')) {
 	$src = KenedoPlatform::p()->getDirAssets().'/images/default_prod_image.jpg';
-	copy($src, CONFIGBOX_DIR_DEFAULT_IMAGES.'/default_prod_image.jpg');
+	copy($src, KenedoPlatform::p()->getDirDataStore().'/public/default_images/default_prod_image.jpg');
 }

@@ -52,7 +52,7 @@ class ConfigboxControllerInvoice extends KenedoController {
 		$model = KenedoModel::getModel('ConfigboxModelInvoice');
 		$invoiceData = $model->getInvoiceData($orderId);
 		
-		$file = CONFIGBOX_DIR_INVOICES.DS.$invoiceData->file;
+		$file = KenedoPlatform::p()->getDirDataCustomer().'/private/invoices/'.$invoiceData->file;
 		
 		$filename = KText::sprintf('Invoice_%s',$invoiceData->invoice_number). '.pdf';
 		

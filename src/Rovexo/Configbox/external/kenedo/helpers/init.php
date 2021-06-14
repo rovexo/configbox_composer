@@ -19,13 +19,6 @@ function initKenedo($component = 'com_configbox') {
 		define('DS', DIRECTORY_SEPARATOR);
 	}
 
-	$hasOpCache = extension_loaded('opcache') && ini_get('opcache.enabled');
-	$hasApcu = extension_loaded('apcu') && ini_get('apc.enabled');
-
-	if ($hasOpCache && !$hasApcu) {
-		ini_set('opcache.revalidate_freq', 0);
-	}
-
 	// Load the autoload class file
 	require_once (__DIR__.'/../classes/KenedoAutoload.php');
 
@@ -62,54 +55,8 @@ function initKenedo($component = 'com_configbox') {
 	KenedoAutoload::registerClass( 'KenedoTimeHelper', 		__DIR__.'/../helpers/time.php' );
 	KenedoAutoload::registerClass( 'KenedoFileHelper', 		__DIR__.'/../helpers/file.php' );
 
-	// Try to overcome the class name change on updates, class name reference is in cache files
-	// We used to have KObject, but another popular extension uses that name, renaming it and changing references
-	// only got us so far. KObject was used in CB cache files so we had to keep it at least as class alias.
-	// REMOVE IN CB 4.0
-	if (class_exists('KObject') == false) {
-		class_alias('KenedoObject', 'KObject');
-	}
-
-	// Legacy class name (Remove in CB 4.0)
-	class_alias('KLog', 'ConfigboxDebugger');
-
 	// Run any platform specific init stuff
 	KenedoPlatform::p()->initialize();
-
-	// Define paths
-	/**
-	 * URL scheme (without colons or backslashes)
-	 * E.g. https
-	 * @const  KPATH_ROOT
-	 */
-	define('KPATH_SCHEME', 	KenedoPlatform::p()->requestUsesHttps() ? 'https' : 'http');
-
-	/**
-	 * HTTP Hostname
-	 * E.g. configbox.dev
-	 * @const  KPATH_HOST
-	 */
-	define('KPATH_HOST', 	(substr(PHP_SAPI, 0, 3) == 'cli') ? '' : $_SERVER['HTTP_HOST']);
-
-	/**
-	 * Platform base URL (scheme://host/path) - without a trailing slash
-	 * @const  KPATH_URL_BASE
-	 */
-	define('KPATH_URL_BASE', KenedoPlatform::p()->getUrlBase());
-
-	/**
-	 * Full path to the application's root directory (not the web server's root)
-	 * @const  KPATH_ROOT
-	 */
-	define('KPATH_ROOT', KenedoPlatform::p()->getRootDirectory());
-
-	// Let the platform start the session
-	KenedoPlatform::p()->startSession();
-
-	// KenedoView template paths
-	define('KPATH_TABLE_TMPL', 	 __DIR__.'/../tmpl/default-table.php');
-	define('KPATH_LISTING_TMPL', __DIR__.'/../tmpl/default-listing.php');
-	define('KPATH_DETAILS_TMPL', __DIR__.'/../tmpl/default-editform.php');
 
 	// Set error handlers to log all errors. Shutdown function is there for the same reason
 	KenedoPlatform::p()->setErrorHandler(array('KLog', 'handleError'));

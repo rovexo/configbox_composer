@@ -66,7 +66,7 @@ class ConfigboxControllerPayments extends KenedoController {
 		}
 
 		$pspFolder = ConfigboxPspHelper::getPspConnectorFolder('stripe');
-		include_once($pspFolder.DS.'lib'.DS.'Stripe.php');
+		include_once($pspFolder.'/lib/Stripe.php');
 		
 		Stripe::setApiKey($privateKey);
 		
@@ -149,16 +149,16 @@ class ConfigboxControllerPayments extends KenedoController {
 		$token = KRequest::getString('token');
 
 		$pspFolder = ConfigboxPspHelper::getPspConnectorFolder('paymill_api');
-		require_once($pspFolder.DS.'api'.DS.'Request.php');
-		require_once($pspFolder.DS.'api'.DS.'Models'.DS.'Internal'.DS.'AbstractAddress.php');
-		require_once($pspFolder.DS.'api'.DS.'Models'.DS.'Internal'.DS.'BillingAddress.php');
-		require_once($pspFolder.DS.'api'.DS.'Models'.DS.'Internal'.DS.'ShippingAddress.php');
-		require_once($pspFolder.DS.'api'.DS.'Models'.DS.'Internal'.DS.'Item.php');
-		require_once($pspFolder.DS.'api'.DS.'Models'.DS.'Request'.DS.'Base.php');
-		require_once($pspFolder.DS.'api'.DS.'Models'.DS.'Response'.DS.'Base.php');
-		require_once($pspFolder.DS.'api'.DS.'API'.DS.'CommunicationAbstract.php');
-		require_once($pspFolder.DS.'api'.DS.'API'.DS.'Curl.php');
-		$files = KenedoFileHelper::getFiles($pspFolder.DS.'api','.php',true,true);
+		require_once($pspFolder.'/api/Request.php');
+		require_once($pspFolder.'/api/Models/Internal/AbstractAddress.php');
+		require_once($pspFolder.'/api/Models/Internal/BillingAddress.php');
+		require_once($pspFolder.'/api/Models/Internal/ShippingAddress.php');
+		require_once($pspFolder.'/api/Models/Internal/Item.php');
+		require_once($pspFolder.'/api/Models/Request/Base.php');
+		require_once($pspFolder.'/api/Models/Response/Base.php');
+		require_once($pspFolder.'/api/API/CommunicationAbstract.php');
+		require_once($pspFolder.'/api/API/Curl.php');
+		$files = KenedoFileHelper::getFiles($pspFolder.'/api','.php',true,true);
 		
 		foreach ($files as $file) {
 			require_once($file);

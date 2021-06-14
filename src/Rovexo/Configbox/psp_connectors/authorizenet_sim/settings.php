@@ -37,7 +37,7 @@ defined('CB_VALID_ENTRY') or die();
 <p><b><?php echo KText::_('Configuration in the merchant interface');?>:</b></p>
 <div><?php echo KText::_('At Account -> Transaction Format Settings -> Relay Response, enter this exact URL and update it when your domain or language settings change.');?></div>
 <?php
-$requestUrl = KPATH_URL_BASE.'/index.php?option=com_configbox&controller=ajaxapi&output_mode=view_only&task=getNotificationUrl&payment_class=authorizenet_sim';
+$requestUrl = KenedoPlatform::p()->getUrlBase().'/index.php?option=com_configbox&controller=ajaxapi&output_mode=view_only&task=getNotificationUrl&payment_class=authorizenet_sim';
 $feedbackUrl = file_get_contents($requestUrl);
 ?>
 <div>

@@ -20,7 +20,7 @@ if (!$quotation) {
 }
 
 if ($quotation) {
-	$email->attachments[] = CONFIGBOX_DIR_QUOTATIONS.DS.$quotation->file;
+	$email->attachments[] = $quotationModel->getQuotationsDir().'/'.$quotation->file;
 }
 else {
 	KLog::log('Could not create quotation for order ID "'.$orderRecord->id.'".','error',KText::_('Could not create quotation.'));

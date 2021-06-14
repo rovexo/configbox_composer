@@ -256,22 +256,22 @@ class ObserverNotifications {
 		// Make paths for override and regular template
 		$fileHtml = $recipientData['recipientType'].'_'. $status.'.html.php';
 
-		$regularPath = dirname(__FILE__).DS.'notifications'.DS.'templates';
+		$regularPath = __DIR__.'/notifications/templates';
 
-		$customFolder = KenedoPlatform::p()->getDirCustomization() .DS. 'notification_templates';
+		$customFolder = KenedoPlatform::p()->getDirCustomization() .'/notification_templates';
 
-		if (file_exists($customFolder.DS.$fileHtml)) {
+		if (file_exists($customFolder.'/'.$fileHtml)) {
 			ob_start();
-			include($customFolder.DS.$fileHtml);
+			include($customFolder.'/'.$fileHtml);
 			$content = ob_get_clean();
 			if (trim($content)) {
 				$email->body = $content;
 				return true;
 			}
 		}
-		elseif (file_exists($regularPath.DS.$fileHtml)) {
+		elseif (file_exists($regularPath.'/'.$fileHtml)) {
 			ob_start();
-			include($regularPath.DS.$fileHtml);
+			include($regularPath.'/'.$fileHtml);
 			$content = ob_get_clean();
 			if (trim($content)) {
 				$email->body = $content;
@@ -294,7 +294,7 @@ class ObserverNotifications {
 	 */
 	protected function processNotificationSnippets(&$email, $shopData, $orderRecord, $recipientData, $status) {
 
-		$customBaseFolder = KenedoPlatform::p()->getDirCustomization().DS.'notification_snippets';
+		$customBaseFolder = KenedoPlatform::p()->getDirCustomization().'/notification_snippets';
 
 		// Deal with notification elements
 		preg_match_all("/\{element_(.*)\}/", $email->body, $matches);
@@ -310,9 +310,9 @@ class ObserverNotifications {
 				$fileName = $elementTemplate.'.html.php';
 
 				// Prepare the file paths for regular and custom template
-				$regularPath = dirname(__FILE__).DS.'notifications'.DS.'elements'.DS.$fileName;
+				$regularPath = __DIR__.'/notifications/elements/'.$fileName;
 
-				$customPath = $customBaseFolder.DS.$fileName;
+				$customPath = $customBaseFolder.'/'.$fileName;
 
 				// Set up output buffering to get template output in a variable
 				ob_start();
@@ -362,20 +362,20 @@ class ObserverNotifications {
 
 
 		// Get the paths to regular and override attachment file
-		$regularPath = dirname(__FILE__).DS.'notifications'.DS.'attachments';
+		$regularPath = __DIR__.'/notifications/attachments';
 
-		$customFolder = KenedoPlatform::p()->getDirCustomization().DS.'notification_attachments';
+		$customFolder = KenedoPlatform::p()->getDirCustomization().'/notification_attachments';
 
 		foreach ($filePdfs as $filePdf) {
 
 			$this->doNotSend = false;
 
 			// Figure out which template to use
-			if (is_file($customFolder.DS.$filePdf)) {
-				$templatePath = $customFolder.DS.$filePdf;
+			if (is_file($customFolder.'/'.$filePdf)) {
+				$templatePath = $customFolder.'/'.$filePdf;
 			}
-			elseif (is_file($regularPath.DS.$filePdf)) {
-				$templatePath = $regularPath.DS.$filePdf;
+			elseif (is_file($regularPath.'/'.$filePdf)) {
+				$templatePath = $regularPath.'/'.$filePdf;
 			}
 			else {
 				$templatePath = NULL;
@@ -400,7 +400,7 @@ class ObserverNotifications {
 
 				$baseName = KText::_('NOTIFICATION_ATTACHMENT_'.$status, KText::_('Attachment'));
 
-				$fileName = KenedoPlatform::p()->getTmpPath() .DS. $baseName.'-'.$orderRecord->id.'-'.$status.'-'.(count($email->attachments) + 1).'.pdf';
+				$fileName = KenedoPlatform::p()->getTmpPath() .'/'. $baseName.'-'.$orderRecord->id.'-'.$status.'-'.(count($email->attachments) + 1).'.pdf';
 
 				// Write the PDF file
 				file_put_contents($fileName,$domPdf->output());
@@ -533,7 +533,7 @@ class ObserverNotifications {
 
 	/**
 	 * Scans the email body for relative urls in src attributes and url() statements (like CSS styles) and
-	 * makes them absolute URIs, based on KPATH_URL_BASE
+	 * makes them absolute URIs, based on platforms base URL
 	 *
 	 * @param stdClass $email The email object holding all email dispatch data - referenced
 	 * @return void
@@ -566,9 +566,11 @@ class ObserverNotifications {
 			}
 		}
 
+		$baseUrl = KenedoPlatform::p()->getUrlBase();
+
 		// Replace relative URLs with absolute ones
 		foreach ($replacements as $replacement) {
-			$email->body = str_replace($replacement, KPATH_URL_BASE .'/'. $replacement, $email->body);
+			$email->body = str_replace($replacement, $baseUrl .'/'. $replacement, $email->body);
 		}
 
 	}

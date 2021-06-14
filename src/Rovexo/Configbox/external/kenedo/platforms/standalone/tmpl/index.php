@@ -8,10 +8,10 @@ defined('CB_VALID_ENTRY') or die();
 <html lang="<?php echo $this->getLanguageTag();?>">
 <head>
 <title><?php echo $this->getDocumentTitle();?></title>
-<base href="<?php echo KPATH_URL_BASE;?>" />
+<base href="<?php echo KenedoPlatform::p()->getUrlBase();?>" />
 <meta charset="utf-8" />
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="<?php echo KPATH_URL_BASE.'/components/com_configbox/external/kenedo/platforms/standalone/tmpl/css/standalone.css';?>" type="text/css" />
+<link rel="stylesheet" href="<?php echo KenedoPlatform::p()->getUrlBase().'/components/com_configbox/external/kenedo/platforms/standalone/tmpl/css/standalone.css';?>" type="text/css" />
 <?php
 
 if (!empty($GLOBALS['document']['stylesheets'])) {

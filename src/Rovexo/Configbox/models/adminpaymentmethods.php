@@ -72,6 +72,7 @@ class ConfigboxModelAdminpaymentmethods extends KenedoModel {
 			'type'=>'published',
 			'listing'=>70,
 			'listingwidth'=>'60px',
+			'default'=>1,
 			'order'=>60,
 			'positionForm'=>1300,
 		);
@@ -221,7 +222,7 @@ class ConfigboxModelAdminpaymentmethods extends KenedoModel {
 
 		$data->connector_name = str_replace('/','', $data->connector_name);
 		$data->connector_name = str_replace('\\','', $data->connector_name);
-		$data->connector_name = str_replace(DS,'', $data->connector_name);
+		$data->connector_name = str_replace(DIRECTORY_SEPARATOR,'', $data->connector_name);
 		$data->connector_name = str_replace('..','', $data->connector_name);
 
 		return true;

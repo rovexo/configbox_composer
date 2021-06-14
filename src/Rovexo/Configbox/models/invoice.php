@@ -34,7 +34,7 @@ class ConfigboxModelInvoice extends KenedoModel {
 		// Get a filename
 		$file = __FILE__;
 		while(is_file($file)) {
-			$file = CONFIGBOX_DIR_INVOICES.DS.$invoiceNumberPrefix.$invoiceNumberSerial.'_'.uniqid().'.'.pathinfo($customInvoicePath, PATHINFO_EXTENSION);
+			$file = KenedoPlatform::p()->getDirDataCustomer().'/private/invoices/'.$invoiceNumberPrefix.$invoiceNumberSerial.'_'.uniqid().'.'.pathinfo($customInvoicePath, PATHINFO_EXTENSION);
 		}
 			
 		// Move the file
@@ -89,7 +89,7 @@ class ConfigboxModelInvoice extends KenedoModel {
 		// Get a filename
 		$file = __FILE__;
 		while(is_file($file)) {
-			$file = CONFIGBOX_DIR_INVOICES.DS.$invoiceNumberPrefix.$invoiceNumberSerial.'_'.uniqid().'.'.pathinfo($customInvoicePath, PATHINFO_EXTENSION);
+			$file = KenedoPlatform::p()->getDirDataCustomer().'/private/invoices/'.$invoiceNumberPrefix.$invoiceNumberSerial.'_'.uniqid().'.'.pathinfo($customInvoicePath, PATHINFO_EXTENSION);
 		}
 			
 		// Move the file
@@ -169,7 +169,7 @@ class ConfigboxModelInvoice extends KenedoModel {
 		// Get invoice file
 		$file = $this->writeInvoice($orderId, $invoiceNumberPrefix.$invoiceNumberSerial);
 		if (!$file) {
-			KLog::log('Could not generate invoice for order ID "'.$orderId.'". Check if folder "'.CONFIGBOX_DIR_INVOICES.'" is writable','error',KText::_('System error: Could not generate invoice file.'));
+			KLog::log('Could not generate invoice for order ID "'.$orderId.'". Check if folder "'.KenedoPlatform::p()->getDirDataCustomer().'/private/invoices" is writable','error',KText::_('System error: Could not generate invoice file.'));
 			return false;
 		}
 
@@ -254,7 +254,7 @@ class ConfigboxModelInvoice extends KenedoModel {
 		$email->fromName	= $shopData->shopname;
 		$email->subject		= KText::sprintf('EMAIL_INVOICE_SUBJECT',$orderRecord->id);
 		$email->body 		= $emailBody;
-		$email->attachments	= array( CONFIGBOX_DIR_INVOICES.DS.$invoiceRecord->file );
+		$email->attachments	= array( KenedoPlatform::p()->getDirDataCustomer().'/private/invoices/'.$invoiceRecord->file );
 		
 		// Send the email
 		$dispatchResponse = KenedoPlatform::p()->sendEmail($email->fromEmail, $email->fromName, $email->toEmail, $email->subject, $email->body, true, NULL, NULL, $email->attachments);
@@ -291,7 +291,7 @@ class ConfigboxModelInvoice extends KenedoModel {
 				
 		$file = __FILE__;
 		while(is_file($file)) {
-			$file = CONFIGBOX_DIR_INVOICES.DS.$invoiceNumber.'_'.uniqid().'.pdf';
+			$file = KenedoPlatform::p()->getDirDataCustomer().'/private/invoices/'.$invoiceNumber.'_'.uniqid().'.pdf';
 		}
 		
 		if (!is_dir(dirname($file))) {
@@ -374,7 +374,7 @@ class ConfigboxModelInvoice extends KenedoModel {
 		}
 		
 		foreach ($replacements as $replacement) {
-			$invoice = str_replace($replacement, KPATH_URL_BASE.'/'.$replacement, $invoice);
+			$invoice = str_replace($replacement, KenedoPlatform::p()->getUrlBase().'/'.$replacement, $invoice);
 		}
 		
 		return $invoice;

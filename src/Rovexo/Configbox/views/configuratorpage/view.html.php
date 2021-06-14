@@ -300,11 +300,11 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 		// Collect all possible template paths (in the order the should be chosen from)
 		$templates = array();
 		$templates['templateOverride'] 	= KenedoPlatform::p()->getTemplateOverridePath('com_configbox', 'configuratorpage', $layoutName);
-		$templates['customTemplate'] 	= KenedoPlatform::p()->getDirCustomization().DS.'templates'.DS.'configuratorpage'.DS. $layoutName .'.php';
-		$templates['defaultTemplate'] 	= KPATH_DIR_CB.DS.'views'.DS.'configuratorpage'.DS.'tmpl'.DS.'default.php';
+		$templates['customTemplate'] 	= KenedoPlatform::p()->getDirCustomization().'/templates/configuratorpage/'. $layoutName .'.php';
+		$templates['defaultTemplate'] 	= KenedoPlatform::p()->getComponentDir('com_configbox').'/views/configuratorpage/tmpl/default.php';
 
         if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento2')) {
-			$templates['defaultTemplate'] 	= KPATH_DIR_CB.DS.'views'.DS.'configuratorpage'.DS.'tmpl'.DS.'magento.php';
+			$templates['defaultTemplate'] 	= KenedoPlatform::p()->getComponentDir('com_configbox').'/views/configuratorpage/tmpl/magento.php';
 		}
 
 		// Loop through and see which exists, use the first one we find

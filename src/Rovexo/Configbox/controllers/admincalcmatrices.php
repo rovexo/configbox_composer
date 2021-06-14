@@ -60,7 +60,7 @@ class ConfigboxControllerAdmincalcmatrices extends KenedoController {
 		if($copyResult) $inputFileName = $newFileName;
 
 		//  Include PHPExcel_IOFactory
-		require_once KenedoPlatform::p()->getComponentDir('com_configbox').DS.'external'.DS.'phpexcel/PHPExcel/IOFactory.php';
+		require_once KenedoPlatform::p()->getComponentDir('com_configbox').'/external/phpexcel/PHPExcel/IOFactory.php';
 
 		//  Read your Excel workbook
 		try {

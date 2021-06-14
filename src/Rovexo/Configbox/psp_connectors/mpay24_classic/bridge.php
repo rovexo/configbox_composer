@@ -15,7 +15,7 @@ else {
 	$isTestMode = false;
 }
 
-require_once(dirname(__FILE__).DS.'php_api'.DS.'MPay24Shop.php');
+require_once(__DIR__.'/php_api/MPay24Shop.php');
 
 class MyShop extends MPay24Shop {
 

@@ -5,7 +5,7 @@ class ConfigboxDomPdfHelper {
 	static $dpi = 300;
 
 	static function getLocation() {
-		return KPATH_DIR_CB.DS.'external'.DS.'dompdf';
+		return KenedoPlatform::p()->getComponentDir('com_configbox').'/external/dompdf';
 	}
 
 	static function init() {

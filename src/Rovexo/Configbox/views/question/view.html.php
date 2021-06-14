@@ -313,7 +313,7 @@ class ConfigboxViewQuestion extends KenedoView {
 			if ($answer->option_image) {
 				$answer->optionImageSrc = $answer->option_image_href;
 				$answer->optionImagePopupContent = '<img src="'.$answer->optionImageSrc.'" alt="'.hsc($answer->title).'" />';
-				$dim = KenedoFileHelper::getImageDimensions(CONFIGBOX_DIR_ANSWER_IMAGES.DS.$answer->option_image);
+				$dim = KenedoFileHelper::getImageDimensions(KenedoPlatform::p()->getDirDataStore().'/public/answer_images/'.$answer->option_image);
 				$answer->optionImagePopupWidth = $dim['width'] + 20;
 			}
 			else {
@@ -371,23 +371,23 @@ class ConfigboxViewQuestion extends KenedoView {
 			$template = 'default';
 		}
 
-		$template = str_replace(DS , '', $template);
+		$template = str_replace('/' , '', $template);
 		$template = str_replace('.', '', $template);
 
 		$viewFolder = dirname($this->getViewPath());
-		$viewName = strtolower(substr($viewFolder,strrpos($viewFolder, DS) + 1));
+		$viewName = strtolower(substr($viewFolder,strrpos($viewFolder, '/') + 1));
 
 		$templatePaths = array();
 		// Joomla-typical template override location
 		$templatePaths['templateOverride'] 	= KenedoPlatform::p()->getTemplateOverridePath('com_configbox', $viewName, $template);
 		// Custom template for the specific question type view
-		$templatePaths['customTemplate'] 	= KenedoPlatform::p()->getDirCustomization() .DS. 'templates' .DS. $viewName .DS. $template.'.php';
+		$templatePaths['customTemplate'] 	= KenedoPlatform::p()->getDirCustomization() .'/templates/'. $viewName .'/'. $template.'.php';
 		// SPECIAL: Custom template for the base question view
-		$templatePaths['customGeneralTemplate'] 	= KenedoPlatform::p()->getDirCustomization() .DS. 'templates' .DS. 'question' .DS. $template.'.php';
+		$templatePaths['customGeneralTemplate'] 	= KenedoPlatform::p()->getDirCustomization() .'/templates/question/'. $template.'.php';
 		// Regular template for specific question type view
-		$templatePaths['defaultTemplate'] 	= dirname($this->getViewPath()).DS.'tmpl'.DS.$template.'.php';
+		$templatePaths['defaultTemplate'] 	= dirname($this->getViewPath()).'/tmpl/'.$template.'.php';
 		// SPECIAL: Regular template for the base question view
-		$templatePaths['baseTemplate'] 	    = KPATH_DIR_CB.'/views/question/tmpl/'.$template.'.php';
+		$templatePaths['baseTemplate'] 	    = KenedoPlatform::p()->getComponentDir('com_configbox').'/views/question/tmpl/'.$template.'.php';
 
 		$output = '';
 

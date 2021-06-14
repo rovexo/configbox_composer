@@ -5,6 +5,11 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	
 	protected $db;
 
+	/**
+	 * @var Magento\Framework\App\ObjectManager
+	 */
+	private $objectManager;
+
     /**
      * @var Magento\Framework\App\Filesystem\DirectoryList
      */
@@ -24,6 +29,11 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
      * @var Magento\Store\Model\StoreManagerInterface
      */
 	private $storeManager;
+
+    /**
+     * @var Magento\Framework\Data\Form\FormKey
+     */
+	private $formKey;
 
     /**
      * @var Magento\Backend\Model\UrlInterface
@@ -79,20 +89,105 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
      */
     protected $scriptAssets = array();
 
-	public function __construct()
-    {
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+	/**
+	 * @return \Magento\Framework\Module\Dir\Reader
+	 */
+	protected function getM2ModuleReader() {
+		if ($this->moduleReader === null) {
+			$this->moduleReader =  $this->getM2ObjectManager()->get('Magento\Framework\Module\Dir\Reader');
+		}
+		return $this->moduleReader;
+	}
 
-		$this->directoryList = $objectManager->get('Magento\Framework\App\Filesystem\DirectoryList');
-		$this->locale = $objectManager->get('Magento\Framework\Locale\OptionInterface');
-		$this->state =  $objectManager->get('Magento\Framework\App\State');
-        $this->storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
-        $this->backendUrl = $objectManager->get('Magento\Backend\Model\UrlInterface');
-        $this->url = $objectManager->get('Magento\Framework\UrlInterface');
-        $this->moduleReader = $objectManager->get('Magento\Framework\Module\Dir\Reader');
-        $this->assetRepository = $objectManager->get('Magento\Framework\View\Asset\Repository');
-
+	/**
+	 * @return \Magento\Framework\App\State
+	 */
+	protected function getM2State() {
+		if ($this->state === null) {
+			$this->state =  $this->getM2ObjectManager()->get('Magento\Framework\App\State');
+		}
+		return $this->state;
     }
+
+	/**
+	 * @return \Magento\Store\Model\StoreManagerInterface
+	 */
+	protected function getM2StoreManager() {
+		if ($this->storeManager === null) {
+			$this->storeManager = $this->getM2ObjectManager()->get('Magento\Store\Model\StoreManagerInterface');
+		}
+		return $this->storeManager;
+	}
+
+	/**
+	 * @return \Magento\Framework\App\Filesystem\DirectoryList
+	 */
+	protected function getM2DirectoryList() {
+
+		if ($this->directoryList === null) {
+			$this->directoryList = $this->getM2ObjectManager()->get('Magento\Framework\App\Filesystem\DirectoryList');
+		}
+		return $this->directoryList;
+
+	}
+
+	/**
+	 * @return \Magento\Framework\UrlInterface
+	 */
+	protected function getM2Url() {
+
+		if ($this->url === null) {
+			$this->url = $this->getM2ObjectManager()->get('Magento\Framework\UrlInterface');
+		}
+		return $this->url;
+
+	}
+
+	/**
+	 * @return \Magento\Framework\UrlInterface
+	 */
+	protected function getM2BackendUrl() {
+
+		if ($this->backendUrl === null) {
+			$this->backendUrl = $this->getM2ObjectManager()->get('Magento\Backend\Model\UrlInterface');
+		}
+		return $this->backendUrl;
+
+	}
+
+	/**
+	 * @return \Magento\Framework\Data\Form\FormKey
+	 */
+	protected function getM2FormKey() {
+
+		if ($this->formKey === null) {
+			$this->formKey = $this->getM2ObjectManager()->get('Magento\Framework\Data\Form\FormKey');
+		}
+		return $this->formKey;
+
+	}
+
+	/**
+	 * @return \Magento\Framework\View\Asset\Repository
+	 */
+	protected function getM2AssetsRepository() {
+
+		if ($this->assetRepository === null) {
+			$this->assetRepository = $this->getM2ObjectManager()->get('Magento\Framework\View\Asset\Repository');
+		}
+		return $this->assetRepository;
+
+	}
+
+	/**
+	 * @return \Magento\Framework\App\ObjectManager
+	 */
+	protected function getM2ObjectManager() {
+		if ($this->objectManager === null) {
+			$this->objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+		}
+		return $this->objectManager;
+	}
 
     public function initialize() {
 		// Set the option request var like for Joomla, as all is built around that
@@ -135,7 +230,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 
 		if ($this->memoConnectionData === NULL) {
 
-			$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+			$objectManager = $this->getM2ObjectManager();
 			/**
 			 * @var \Magento\Framework\App\ResourceConnection $resource
 			 */
@@ -166,7 +261,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	
 	public function &getDb() {
 		if (!$this->db) {
-			require_once(dirname(__FILE__).DS.'database.php');
+			require_once(dirname(__FILE__).'/database.php');
 			$this->db = new KenedoDatabaseMagento2();
 		}
 		
@@ -220,8 +315,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getVersionShort() {
-		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-		$productMetadata = $objectManager->get('Magento\Framework\App\ProductMetadataInterface');
+		$productMetadata = $this->getM2ObjectManager()->get('Magento\Framework\App\ProductMetadataInterface');
 		$version = $productMetadata->getVersion();
 		return $version;
 	}
@@ -243,7 +337,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getTmpPath() {
-		$path = $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::TMP);
+		$path = $this->getM2DirectoryList()->getPath(\Magento\Framework\App\Filesystem\DirectoryList::TMP);
 		if (!is_dir($path)) {
 			mkdir($path, 0777, true);
 		}
@@ -251,7 +345,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getLogPath() {
-        $path = $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::LOG);
+        $path = $this->getM2DirectoryList()->getPath(\Magento\Framework\App\Filesystem\DirectoryList::LOG);
         if (!is_dir($path)) {
             mkdir($path, 0777, true);
         }
@@ -259,10 +353,10 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
     public function getLanguageTag() {
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $store = $objectManager->get('Magento\Store\Api\Data\StoreInterface');
-        $locale = str_replace('_', '-', $store->getLocaleCode());
-        return $locale;
+		$objectManager = $this->getM2ObjectManager();
+		$store = $objectManager->get('Magento\Store\Api\Data\StoreInterface');
+		$locale = str_replace('_', '-', $store->getLocaleCode());
+		return $locale;
     }
 	
 	public function getLanguageUrlCode($languageTag = NULL) {
@@ -338,7 +432,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 	
 	public function isAdminArea() {
-		if($this->state->getAreaCode() == 'adminhtml') {
+		if ($this->getM2State()->getAreaCode() == 'adminhtml') {
 			return true;
 		}
 
@@ -346,7 +440,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function isSiteArea() {
-        if($this->state->getAreaCode() == 'frontend') {
+        if($this->getM2State()->getAreaCode() == 'frontend') {
             return true;
         }
 
@@ -387,7 +481,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getUrlBase() {
-        $baseUrl = $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB);
+        $baseUrl = $this->getM2StoreManager()->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB);
 		return rtrim($baseUrl, '/');
 	}
 
@@ -509,7 +603,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getRootDirectory() {
-        return $this->directoryList->getRoot();
+        return $this->getM2DirectoryList()->getRoot();
 	}
 
 	public function getAppParameters() {
@@ -532,10 +626,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 
 	}
 
-	public function startSession() {
-		return true;
-	}
-
 	public function getPasswordResetLink() {
         return "";
 	}
@@ -556,22 +646,20 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 			parse_str($parsed['query'],$params);
 		}
 
-		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-		$formKey = $objectManager->get('Magento\Framework\Data\Form\FormKey');
-		$params['form_key'] = $formKey->getFormKey();
+		$params['form_key'] = $this->getM2FormKey()->getFormKey();
 
 		if ($secure !== NULL) {
 			$params['_secure'] = $secure;
 		}
 
 		if ($this->isAdminArea()) {
-			$url = $this->backendUrl->getUrl('*/*/index', $params);
+			$url = $this->getM2BackendUrl()->getUrl('*/*/index', $params);
 		}
 		else {
 			if (KRequest::getVar('key')) {
 				$params['key'] = KRequest::getString('key');
 			}
-			$url = $this->url->getUrl('configbox/index/index',$params);
+			$url = $this->getM2Url()->getUrl('configbox/index/index',$params);
 		}
 
 		return $url;
@@ -582,10 +670,10 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
     public function getLanguages() {
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
-        $scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
-        $languages = [];
+		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+		$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+		$scopeConfig = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface');
+		$languages = [];
 
         $stores = $storeManager->getStores();
         $collectedTags = [];
@@ -623,22 +711,22 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	}
 
 	public function getComponentDir($componentName) {
-        return $this->directoryList->getRoot() . DS . "vendor" . DS . "rovexo" . DS . "configbox-php" . DS . "src" . DS . "Rovexo" . DS . "Configbox";
+        return $this->getM2DirectoryList()->getRoot() . "/vendor/rovexo/configbox-php/src/Rovexo/Configbox";
 	}
 
 	public function getUrlAssets() {
 
     	$params = array('_secure' => $this->requestUsesHttps());
-	    $url = $this->assetRepository->getUrlWithParams('', $params);
+	    $url = $this->getM2AssetsRepository()->getUrlWithParams('', $params);
 	    return $url . "/rovexo/configbox/assets";
 	}
 
 	public function getDirAssets() {
-        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::LIB_WEB) . DS . "rovexo" . DS . "configbox" . DS . "assets";
+        return $this->getM2DirectoryList()->getPath(\Magento\Framework\App\Filesystem\DirectoryList::LIB_WEB) . "/rovexo/configbox/assets";
 	}
 
 	public function getDirCache() {
-        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::CACHE);
+        return $this->getM2DirectoryList()->getPath(\Magento\Framework\App\Filesystem\DirectoryList::CACHE);
 	}
 
 	protected $memoGetDirCustomization;
@@ -651,7 +739,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		if ($this->memoGetDirCustomization === null) {
 
 			if ($this->customizationIsModuleInstalled()) {
-				$this->memoGetDirCustomization = $this->moduleReader->getModuleDir(\Magento\Framework\Module\Dir::MODULE_VIEW_DIR, "Rovexo_ConfigboxCustomizations").DS.'customizations';
+				$this->memoGetDirCustomization = $this->getM2ModuleReader()->getModuleDir(\Magento\Framework\Module\Dir::MODULE_VIEW_DIR, "Rovexo_ConfigboxCustomizations").'/customizations';
 			}
 			else {
 				$this->memoGetDirCustomization = $this->getTmpPath();
@@ -677,7 +765,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		if ($this->memoGetDirCustomizationAssets === null) {
 
 			if ($this->customizationIsModuleInstalled()) {
-				$this->memoGetDirCustomizationAssets = $this->moduleReader->getModuleDir(\Magento\Framework\Module\Dir::MODULE_VIEW_DIR, "Rovexo_ConfigboxCustomizations") . DS . "base" . DS . "web";
+				$this->memoGetDirCustomizationAssets = $this->getM2ModuleReader()->getModuleDir(\Magento\Framework\Module\Dir::MODULE_VIEW_DIR, "Rovexo_ConfigboxCustomizations") . "/base/web";
 			}
 			else {
 				$this->memoGetDirCustomizationAssets = $this->getTmpPath();
@@ -691,28 +779,28 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 
 	public function getUrlCustomizationAssets() {
 		$params = array('_secure' => $this->requestUsesHttps());
-		$url = $this->assetRepository->getUrlWithParams('', $params);
+		$url = $this->getM2AssetsRepository()->getUrlWithParams('', $params);
 		return $url . '/Rovexo_ConfigboxCustomizations';
 	}
 
 	public function getDirCustomizationSettings() {
-        return $this->getDirCustomization() . DS . "settings";
+        return $this->getDirCustomization() . "/settings";
 	}
 
 	public function getDirDataCustomer() {
-        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA) . DS . "rovexo" . DS . "customer";
+        return $this->getM2DirectoryList()->getPath(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA) . "/rovexo/customer";
 	}
 
 	public function getUrlDataCustomer() {
-        return $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . DS . "rovexo" . DS . "customer";
+        return $this->getM2StoreManager()->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . "/rovexo/customer";
 	}
 
 	public function getDirDataStore() {
-        return $this->directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA) . DS . "rovexo" . DS . "store";
+        return $this->getM2DirectoryList()->getPath(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA) . "/rovexo/store";
 	}
 
 	public function getUrlDataStore() {
-        return $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . DS . "rovexo" . DS . "store";
+        return $this->getM2StoreManager()->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . "/rovexo/store";
 	}
 
 	public function getTemplateOverridePath($component, $viewName, $templateName) {
@@ -802,12 +890,6 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 
     }
 
-    public function renderScriptAssets() {
-        foreach ($this->scriptAssets as $asset) { ?>
-            <script type="<?php echo hsc($asset['type']);?>" async="<?php echo ($asset['async']) ? 'true':'false';?>" defer="<?php echo ($asset['defer']) ? 'true':'false';?>"></script>
-        <?php }
-    }
-
     public function echoOutput($output) {
 		echo $output;
 		exit();
@@ -821,8 +903,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
     protected function customizationIsModuleInstalled() {
 
     	if ($this->memoCustomizationIsModuleInstalled === NULL) {
-			$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-			$moduleManager = $objectManager->get('\Magento\Framework\Module\Manager');
+			$moduleManager = $this->getM2ObjectManager()->get('\Magento\Framework\Module\Manager');
 			$this->memoCustomizationIsModuleInstalled = $moduleManager->isEnabled('Rovexo_ConfigboxCustomizations');
 	    }
 
@@ -841,8 +922,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	 * @inheritDoc
 	 */
 	public function getCsrfTokenValue() {
-		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-		$formKey = $objectManager->get('Magento\Framework\Data\Form\FormKey');
+		$formKey = $this->getM2ObjectManager()->get('Magento\Framework\Data\Form\FormKey');
 		return $formKey->getFormKey();
 	}
 
@@ -850,8 +930,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 	 * @inheritDoc
 	 */
 	public function requestUsesHttps() {
-		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-		$storeManager = $objectManager->get('Magento\Store\Model\StoreManagerInterface');
+		$storeManager = $this->getM2ObjectManager()->get('Magento\Store\Model\StoreManagerInterface');
 		return $storeManager->getStore()->isCurrentlySecure();
 	}
 

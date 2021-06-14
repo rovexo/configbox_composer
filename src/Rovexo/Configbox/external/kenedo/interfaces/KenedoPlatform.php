@@ -108,7 +108,7 @@ interface InterfaceKenedoPlatform {
      */
 	public function getOutputMode();
 	public function renderOutput(&$output);
-	public function startSession();
+
 	public function getPasswordResetLink();
 	public function getPlatformLoginLink();
 

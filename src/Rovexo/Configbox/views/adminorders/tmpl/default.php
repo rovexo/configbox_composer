@@ -8,7 +8,7 @@ defined('CB_VALID_ENTRY') or die();
 	<?php if (!empty($this->pageTitle)) { ?>
 		<h1 class="kenedo-page-title"><?php echo hsc($this->pageTitle);?></h1>
 	<?php } ?>
-	<?php echo (count($this->pageTasks)) ? KenedoViewHelper::renderTaskItems($this->pageTasks) : ''; ?>
+	<?php echo (count($this->pageTasks)) ? KenedoViewHelper::renderTaskItems($this->pageTasks, 'list') : ''; ?>
 	
 	<div class="tasks-and-filters">
 

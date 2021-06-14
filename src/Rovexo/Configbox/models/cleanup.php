@@ -116,65 +116,73 @@ class ConfigboxModelCleanup extends KenedoModelLight {
 
 		$logMessage  = 'Searching for temporary users older than '. KenedoTimeHelper::getFormattedOnly($minimumTimestampUser, 'datetime').'. That would be '.CbSettings::getInstance()->get('usertime', 0).' hours old.';
 		KLog::log($logMessage, 'cleanup');
-		
+
 		$db = KenedoPlatform::getDb();
-		$query = "SELECT `id` FROM `#__configbox_users` WHERE `is_temporary` = '1' AND UNIX_TIMESTAMP(`created`) < ".intval($minimumTimestampUser);
-		$db->setQuery($query);
-		$userIdsToDelete = $db->loadResultList();
 
-		if (count($userIdsToDelete) == 0) {
-			KLog::log('No users to delete.', 'cleanup');
-			return true;
-		}
+		while (count($this->getOldTemporaryUsers($minimumTimestampUser))) {
 
-		KLog::log('Going to delete '.intval(count($userIdsToDelete)).' users.', 'cleanup');
+			$userIdsToDelete = $this->getOldTemporaryUsers($minimumTimestampUser);
 
-		KLog::log('Checking those users\' carts. Dealing with 100 user carts at a time.', 'cleanup');
+			if (count($userIdsToDelete) == 0) {
+				KLog::log('No old users to delete.', 'cleanup');
+				return true;
+			}
 
-		while (count($userIdsToDelete)) {
+			KLog::log('Starting to delete '.intval(count($userIdsToDelete)).' temporary users.', 'cleanup');
 
-			$usersToDeletePortion = array_splice($userIdsToDelete, 0, 100);
+			KLog::log('Checking those users\' carts. Dealing with 100 user carts at a time.', 'cleanup');
+			$query = "SELECT `id` FROM `#__configbox_carts` WHERE `user_id` IN (".implode(',', $userIdsToDelete).")";
+			$db->setQuery($query);
+			$cartIds = $db->loadResultList();
 
-			if (is_array($usersToDeletePortion) && count($usersToDeletePortion)) {
+			KLog::log('Got '.intval(count($cartIds)).' carts to delete for this user delete portion.', 'cleanup');
 
-				$query = "SELECT `id` FROM `#__configbox_carts` WHERE `user_id` IN (".implode(',', $usersToDeletePortion).")";
-				$db->setQuery($query);
-				$cartIds = $db->loadResultList();
+			$success = $this->deleteCarts($cartIds);
+			if (!$success) {
+				KLog::log('Deleting carts failed.', 'cleanup');
+				return false;
+			}
 
-				KLog::log('Got '.intval(count($cartIds)).' carts to delete for this user delete portion.', 'cleanup');
+			$query = "SELECT `id` FROM `#__cbcheckout_order_records` WHERE `user_id` IN (".implode(',', $userIdsToDelete).")";
+			$db->setQuery($query);
+			$orderIdsToDelete = $db->loadResultList();
+			KLog::log('Got '.intval(count($orderIdsToDelete)).' order records to delete for this user delete portion.', 'cleanup');
+			$success = $this->deleteOrders($orderIdsToDelete);
 
-				$success = $this->deleteCarts($cartIds);
-				if (!$success) {
-					KLog::log('Deleting carts failed.', 'cleanup');
-					return false;
-				}
+			if (!$success) {
+				KLog::log('Deleting orders failed.', 'cleanup');
+				return false;
+			}
 
-				$query = "SELECT `id` FROM `#__cbcheckout_order_records` WHERE `user_id` IN (".implode(',', $usersToDeletePortion).")";
-				$db->setQuery($query);
-				$orderIdsToDelete = $db->loadResultList();
-				KLog::log('Got '.intval(count($orderIdsToDelete)).' order records to delete for this user delete portion.', 'cleanup');
-				$success = $this->deleteOrders($orderIdsToDelete);
+			KLog::log('Got '.intval(count($userIdsToDelete)).' users to delete for this user delete portion.', 'cleanup');
 
-				if (!$success) {
-					KLog::log('Deleting orders failed.', 'cleanup');
-					return false;
-				}
-
-				KLog::log('Got '.intval(count($usersToDeletePortion)).' users to delete for this user delete portion.', 'cleanup');
-
-				$query = "DELETE FROM `#__configbox_users` WHERE `id` IN (".implode(',', $usersToDeletePortion).")";
-				$db->setQuery($query);
-				$success = $db->query();
-				if (!$success) {
-					KLog::log('Deleting users failed.', 'cleanup');
-					return false;
-				}
-
+			$query = "DELETE FROM `#__configbox_users` WHERE `id` IN (".implode(',', $userIdsToDelete).")";
+			$db->setQuery($query);
+			$success = $db->query();
+			if (!$success) {
+				KLog::log('Deleting users failed.', 'cleanup');
+				return false;
 			}
 
 		}
 
 		return true;
+
+	}
+
+	/**
+	 * @param int $minimumTimestampUser
+	 * @return int[]
+	 */
+	private function getOldTemporaryUsers($minimumTimestampUser) {
+		$db = KenedoPlatform::getDb();
+		$query = "
+			SELECT `id` 
+			FROM `#__configbox_users` 
+			WHERE `is_temporary` = '1' AND UNIX_TIMESTAMP(`created`) < ".intval($minimumTimestampUser)."
+			LIMIT 0, 200";
+		$db->setQuery($query);
+		return $db->loadResultList();
 
 	}
 

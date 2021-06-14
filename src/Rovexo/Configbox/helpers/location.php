@@ -153,7 +153,7 @@ class ConfigboxLocationHelper {
 
 		if (!isset(self::$maxMindCache[$ipAddress])) {
 
-			$maxMindGeoLiteCityPathFile = CONFIGBOX_DIR_MAXMIND_DBS .DS. self::$maxMindGeoLiteCityFilename;
+			$maxMindGeoLiteCityPathFile = KenedoPlatform::p()->getDirDataStore().'/private/maxmind/'. self::$maxMindGeoLiteCityFilename;
 
 			$serviceType = CbSettings::getInstance()->get('geolocation_type');
 			$maxMindUserId = CbSettings::getInstance()->get('maxmind_user_id');
@@ -193,10 +193,10 @@ class ConfigboxLocationHelper {
 
 		require_once KenedoPlatform::p()->getComponentDir('com_configbox').'/external/geoip2/vendor/autoload.php';
 
-		$databaseFolder = KenedoPlatform::p()->getDirDataStore().DS.'private'.DS.'maxmind';
+		$databaseFolder = KenedoPlatform::p()->getDirDataStore().'/private/maxmind';
 
 		try {
-			$databaseFile = $databaseFolder .DS. self::$maxMindGeoLiteCityFilename;
+			$databaseFile = $databaseFolder .'/'. self::$maxMindGeoLiteCityFilename;
 			if(!is_file($databaseFile)) throw new Exception('Could not find MaxMind Database file in '.$databaseFile);
 			$reader = new GeoIp2\Database\Reader($databaseFile);
 		}

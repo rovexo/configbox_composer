@@ -45,8 +45,8 @@ $formParams->DECLINEURL 	= $this->failureUrl;
 $formParams->EXCEPTIONURL 	= $this->failureUrl;
 $formParams->CANCELURL	 	= $this->cancelUrl;
 $formParams->BACKURL	 	= $this->cancelUrl;
-$formParams->CATALOGURL	 	= KPATH_URL_BASE;
-$formParams->HOMEURL	 	= KPATH_URL_BASE;
+$formParams->CATALOGURL	 	= KenedoPlatform::p()->getUrlBase();
+$formParams->HOMEURL	 	= KenedoPlatform::p()->getUrlBase();
 
 $hashData = (array)$formParams;
 	

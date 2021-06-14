@@ -1,14 +1,21 @@
 <?php
 class ConfigboxPspHelper {
 
+	static private function getDefaultDir() {
+		return KenedoPlatform::p()->getComponentDir('com_configbox').'/psp_connectors';
+	}
+
+	static private function getCustomDir() {
+		return KenedoPlatform::p()->getDirCustomization().'/psp_connectors';
+	}
+
 	/**
 	 * Returns an array of all available PSP connector names. Default and custom are merged
 	 * @return array Array of connector names
 	 */
 	static function getConnectorNames() {
-
-		$defaultConnectors = KenedoFileHelper::getFolders( CONFIGBOX_DIR_PSPS_DEFAULT );
-		$customConnectors = KenedoFileHelper::getFolders( CONFIGBOX_DIR_PSPS_CUSTOM );
+		$defaultConnectors = KenedoFileHelper::getFolders( self::getDefaultDir() );
+		$customConnectors = KenedoFileHelper::getFolders( self::getCustomDir() );
 		$connectorNames = array_unique(array_merge($defaultConnectors, $customConnectors));
 		natcasesort($connectorNames);
 		return $connectorNames;
@@ -23,11 +30,11 @@ class ConfigboxPspHelper {
 
 		$subFolder = KenedoFileHelper::sanitizeFileName($connectorName);
 
-		if (is_dir(CONFIGBOX_DIR_PSPS_CUSTOM . DS . $subFolder)) {
-			$pspBaseDirectory = CONFIGBOX_DIR_PSPS_CUSTOM . DS . $subFolder;
+		if (is_dir(self::getCustomDir() .'/'. $subFolder)) {
+			$pspBaseDirectory = self::getCustomDir() .'/'. $subFolder;
 		}
 		else {
-			$pspBaseDirectory =  CONFIGBOX_DIR_PSPS_DEFAULT . DS . $subFolder;
+			$pspBaseDirectory =  self::getDefaultDir() .'/'. $subFolder;
 		}
 
 		return $pspBaseDirectory;
@@ -44,7 +51,7 @@ class ConfigboxPspHelper {
 
 		$folder = self::getPspConnectorFolder($connectorName);
 
-		$adminFile = $folder.DS.'administration.php';
+		$adminFile = $folder.'/administration.php';
 		$getSettingsKeysFunctionName = $connectorName.'_get_setting_keys';
 
 		$settingKeys = array();
@@ -75,8 +82,8 @@ class ConfigboxPspHelper {
 
 		$functionName = $connectorName.'_get_title';
 
-		if (is_file($folder . DS . 'administration.php')) {
-			include_once($folder . DS . 'administration.php');
+		if (is_file($folder .'/'. 'administration.php')) {
+			include_once($folder.'/'. 'administration.php');
 
 			if (function_exists($functionName)) {
 				return $functionName();
@@ -98,9 +105,9 @@ class ConfigboxPspHelper {
 
 		$functionName = $connectorName.'_has_instant_payment_notification';
 
-		if (is_file($folder . DS . 'administration.php')) {
+		if (is_file($folder . '/administration.php')) {
 
-			include_once($folder . DS . 'administration.php');
+			include_once($folder . '/administration.php');
 
 			if (function_exists($functionName)) {
 				return $functionName();
@@ -125,7 +132,7 @@ class ConfigboxPspHelper {
 
 		$pspFolder = ConfigboxPspHelper::getPspConnectorFolder($connectorName);
 
-		$ipnFile = $pspFolder.DS.'ipn.php';
+		$ipnFile = $pspFolder.'/ipn.php';
 
 		if (is_file($ipnFile)) {
 			require_once($ipnFile);

@@ -17,14 +17,14 @@ $htaccessPublic = "allow from all
 $htaccessPrivate = "deny from all";
 
 $privateFolders = array(
-	KenedoPlatform::p()->getDirDataCustomer().DS.'private',
-	KenedoPlatform::p()->getDirDataStore().DS.'private',
+	KenedoPlatform::p()->getDirDataCustomer().'/private',
+	KenedoPlatform::p()->getDirDataStore().'/private',
 );
 
 $publicFolders = array(
 	KenedoPlatform::p()->getDirAssets(),
-	KenedoPlatform::p()->getDirDataCustomer().DS.'public',
-	KenedoPlatform::p()->getDirDataStore().DS.'public',
+	KenedoPlatform::p()->getDirDataCustomer().'/public',
+	KenedoPlatform::p()->getDirDataStore().'/public',
 	KenedoPlatform::p()->getOldDirCustomizationAssets(),
 );
 
@@ -35,7 +35,7 @@ foreach ($privateFolders as $folder) {
 	}
 
 	if (is_dir($folder)) {
-		file_put_contents($folder.DS.'.htaccess', $htaccessPrivate);
+		file_put_contents($folder.'/.htaccess', $htaccessPrivate);
 	}
 }
 
@@ -46,7 +46,7 @@ foreach ($publicFolders as $folder) {
 	}
 
 	if (is_dir($folder)) {
-		file_put_contents($folder.DS.'.htaccess', $htaccessPublic);
+		file_put_contents($folder.'/.htaccess', $htaccessPublic);
 	}
 }
 

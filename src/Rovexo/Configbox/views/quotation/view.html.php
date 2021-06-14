@@ -93,14 +93,14 @@ class ConfigboxViewQuotation extends KenedoView {
 		$this->shopCountryName = ConfigboxCountryHelper::getCountryName($this->shopData->country_id);
 		$this->shopStateName = ConfigboxCountryHelper::getStateName($this->shopData->state_id);
 
-		$this->hrefCssSystem = KenedoPlatform::p()->getDirAssets().DS.'css'.DS.'pdf-quotation.css';
-		$this->hrefCssCustom = KenedoPlatform::p()->getDirCustomizationAssets().DS.'css'.DS.'custom.css';
+		$this->hrefCssSystem = KenedoPlatform::p()->getDirAssets().'/css/pdf-quotation.css';
+		$this->hrefCssCustom = KenedoPlatform::p()->getDirCustomizationAssets().'css/custom.css';
 
 		$this->useShopLogo = false;
 		$this->shopLogoWidth = 0;
 		$this->shopLogoHeight = 0;
 
-		$filePath = CONFIGBOX_DIR_SHOP_LOGOS .DS. $this->shopData->shoplogo;
+		$filePath = KenedoPlatform::p()->getDirDataStore().'/public/shoplogos/'. $this->shopData->shoplogo;
 
 		if (is_file($filePath)) {
 

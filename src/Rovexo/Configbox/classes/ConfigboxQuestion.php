@@ -170,14 +170,14 @@ class ConfigboxQuestion {
 			$className = 'ConfigboxQuestion'.ucfirst($questionData->question_type);
 
 			if (class_exists($className) == false) {
-				$filename = KPATH_DIR_CB.DS.'classes'.DS.'question_types'.DS.$className.'.php';
+				$filename = KenedoPlatform::p()->getComponentDir('com_configbox').'/classes/question_types/'.$className.'.php';
 				if (is_file($filename)) {
 					require_once($filename);
 				}
 			}
 
 			if (class_exists($className) == false) {
-				$filename = KenedoPlatform::p()->getDirCustomization().DS.'question_types'.DS.$className.'.php';
+				$filename = KenedoPlatform::p()->getDirCustomization().'/question_types/'.$className.'.php';
 				if (is_file($filename)) {
 					require_once($filename);
 				}
@@ -254,11 +254,11 @@ class ConfigboxQuestion {
 
 				$newFilename = $cartPositionId.'-'.$this->id.'-'.rand(0,1000).'.'.KenedoFileHelper::getExtension($data['name']);
 
-				$data['path'] = CONFIGBOX_DIR_CONFIGURATOR_FILEUPLOADS .DS. $newFilename;
-				$data['url'] = CONFIGBOX_URL_CONFIGURATOR_FILEUPLOADS .DS. $newFilename;
+				$data['path'] = KenedoPlatform::p()->getDirDataCustomer().'/public/file_uploads/'. $newFilename;
+				$data['url'] = KenedoPlatform::p()->getUrlDataCustomer().'/public/file_uploads/'. $newFilename;
 
-				if (!is_dir(CONFIGBOX_DIR_CONFIGURATOR_FILEUPLOADS)) {
-					mkdir(CONFIGBOX_DIR_CONFIGURATOR_FILEUPLOADS, 0777, true);
+				if (!is_dir(KenedoPlatform::p()->getDirDataCustomer().'/public/file_uploads')) {
+					mkdir(KenedoPlatform::p()->getDirDataCustomer().'/public/file_uploads', 0777, true);
 				}
 
 				KLog::log('Storing uploaded file', 'custom_uploads');

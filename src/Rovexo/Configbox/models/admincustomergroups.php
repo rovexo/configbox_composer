@@ -121,8 +121,8 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 
 		$propDefs['quotation_email'] = array(
 			'name'=>'quotation_email',
-			'label'=>KText::_('Automated quotation via email'),
-			'tooltip'=>KText::_('You need to have a notification for the status Quotation sent in order. You can manage notifications at Order Management -> Notifications.'),
+			'label'=>KText::_('Quote PDF attachment in notification'),
+			'tooltip'=>KText::_('You need to have a notification for the status Quotation Sent. You can manage notifications at Order Management -> Notifications.'),
 			'type'=>'boolean',
 			'default'=>1,
 			'positionForm'=>1300,

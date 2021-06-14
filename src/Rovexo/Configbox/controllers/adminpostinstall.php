@@ -75,7 +75,8 @@ class ConfigboxControllerAdminpostinstall extends KenedoController {
 
 		// Prepend scheme to website just for validation since I can't get filter_var to ignore a missing scheme
 		if (stripos($website, 'http:') !== 0 && stripos($website, 'https:') !== 0) {
-			$websiteNormalized = KPATH_SCHEME.'://'.ltrim($website,'/');
+			$scheme = KenedoPlatform::p()->requestUsesHttps() ? 'https' : 'http';
+			$websiteNormalized = $scheme.'://'.ltrim($website,'/');
 		}
 		else {
 			$websiteNormalized = $website;

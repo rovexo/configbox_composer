@@ -16,11 +16,11 @@ else {
 
 	$connectorFolder = ConfigboxPspHelper::getPspConnectorFolder($connectorName);
 
-	$file = $connectorFolder.DS.'language'.DS. $tag . DS . $tag.'.ini';
+	$file = $connectorFolder.'/language/'. $tag . '/' . $tag.'.ini';
 	if (is_file($file)) {
 		KText::load($file, KText::getLanguageTag());
 	}
-	$settingsFile = $connectorFolder.DS.'settings.php';
+	$settingsFile = $connectorFolder.'/settings.php';
 
 	$this->settings = new KStorage($this->data->{$this->propertyName});
 

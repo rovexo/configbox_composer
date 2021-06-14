@@ -147,7 +147,7 @@ class ConfigboxControllerQuotation extends KenedoController {
 		}
 		
 		// Prepare the quotation path
-		$quotationPath = CONFIGBOX_DIR_QUOTATIONS.DS.$quotation->file;
+		$quotationPath = $quotationModel->getQuotationsDir().'/'.$quotation->file;
 		
 		// If somehow the file is gone, flee in panic
 		if(is_file($quotationPath) == false) {

@@ -66,8 +66,8 @@ class ConfigboxViewPaymentresult extends KenedoView {
 		if ($this->orderRecord->payment->connector_name) {
 			$connectorFolder = ConfigboxPspHelper::getPspConnectorFolder($this->orderRecord->payment->connector_name);
 
-			if (file_exists($connectorFolder.DS.'result.php' )) {
-				include($connectorFolder.DS.'result.php');
+			if (file_exists($connectorFolder.'/result.php' )) {
+				include($connectorFolder.'/result.php');
 				return;
 			}
 		}

@@ -101,8 +101,8 @@ class ConfigboxModelAdminorders extends KenedoModel {
 					// Delete position images, if there are any
 					foreach ($positions as $position) {
 						if ($position['product_image']) {
-							$path = CONFIGBOX_DIR_POSITION_IMAGES . DS . $position['product_image'];
-							if (is_file($path) && is_writable($path) && is_writable(CONFIGBOX_DIR_POSITION_IMAGES)) {
+							$path = KenedoPlatform::p()->getDirDataCustomer().'/public/position_images/' . $position['product_image'];
+							if (is_file($path) && is_writable($path) && is_writable(KenedoPlatform::p()->getDirDataCustomer().'/public/position_images')) {
 								$succ = unlink($path);
 								// If deleting failed, log it, but continue
 								if (!$succ) {

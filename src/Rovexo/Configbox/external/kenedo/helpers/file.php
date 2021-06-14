@@ -3,7 +3,8 @@ class KenedoFileHelper {
 
 	static function sanitizeFileName($filename) {
 		$filename = str_replace('..','',$filename);
-		$filename = str_replace(DS,'',$filename);
+		$filename = str_replace('/','',$filename);
+		$filename = str_replace("\\",'',$filename);
 		return $filename;
 	}
 
@@ -22,7 +23,7 @@ class KenedoFileHelper {
 				continue;
 			}
 
-			$path = $dir.DS.$file;
+			$path = $dir.'/'.$file;
 
 			if ($recursive && is_dir($path)) {
 				$files2 = self::getFiles($path, $filter, $recursive, $fullPath, $ignore);
@@ -56,11 +57,11 @@ class KenedoFileHelper {
 
 		while (($file = readdir($handle)) !== false) {
 
-			if (!is_dir($dir.DS.$file) || ($file == '.') || ($file == '..') || (in_array($file, $ignore))) {
+			if (!is_dir($dir.'/'.$file) || ($file == '.') || ($file == '..') || (in_array($file, $ignore))) {
 				continue;
 			}
 
-			$path = $dir.DS.$file;
+			$path = $dir.'/'.$file;
 
 			if ($recursive && is_dir($path)) {
 				$files2 = self::getFolders($path, $filter, $recursive, $fullPath, $ignore);
@@ -97,11 +98,11 @@ class KenedoFileHelper {
 				continue;
 			}
 
-			if (is_dir($path.DS.$file)) {
-				$success = self::deleteFolder($path.DS.$file);
+			if (is_dir($path.'/'.$file)) {
+				$success = self::deleteFolder($path.'/'.$file);
 				if ($success == false) {
 					closedir($handle);
-					KLog::log('Directory `'.$path.DS.$file.'` could not be deleted.', 'error');
+					KLog::log('Directory `'.$path.'/'.$file.'` could not be deleted.', 'error');
 					return false;
 				}
 			}
@@ -110,16 +111,16 @@ class KenedoFileHelper {
 				// If it's a PHP file, Invalidate any OPcache cache for the file
 				if (self::getExtension($file) == 'php') {
 					if (function_exists('opcache_invalidate')) {
-						opcache_invalidate($path.DS.$file, true);
+						opcache_invalidate($path.'/'.$file, true);
 					}
 					if (function_exists('apc_delete_file')) {
-						apc_delete_file($path.DS.$file);
+						apc_delete_file($path.'/'.$file);
 					}
 				}
 
-				$success = unlink($path.DS.$file);
+				$success = unlink($path.'/'.$file);
 				if ($success == false) {
-					KLog::log('File `'.$path.DS.$file.'` could not be deleted.','error');
+					KLog::log('File `'.$path.'/'.$file.'` could not be deleted.','error');
 					closedir($handle);
 					return false;
 				}
@@ -328,7 +329,7 @@ class KenedoFileHelper {
 
 						$fileContent = zip_entry_read($file, zip_entry_filesize($file));
 
-						$dir = $destination . DS . dirname(zip_entry_name($file));
+						$dir = $destination . '/' . dirname(zip_entry_name($file));
 
 						if (!is_dir($dir)) {
 							$succ = mkdir($dir,0755,true);
@@ -336,7 +337,7 @@ class KenedoFileHelper {
 								return false;
 							}
 						}
-						$fileName = $dir.DS.basename(zip_entry_name($file));
+						$fileName = $dir.'/'.basename(zip_entry_name($file));
 						$succ = file_put_contents($fileName, $fileContent);
 
 						if ($succ === false) {

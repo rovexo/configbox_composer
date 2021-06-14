@@ -80,6 +80,7 @@ defined('CB_VALID_ENTRY') or die();
 
 		<input type="hidden" id="option" 		name="option" 			value="<?php echo hsc($this->component);?>" />
 		<input type="hidden" id="controller"	name="controller" 		value="<?php echo hsc($this->controllerName);?>" />
+		<input type="hidden" id="output_mode"	name="output_mode" 		value="view_only" />
 		<input type="hidden" id="task" 			name="task" 			value="" />
 		<input type="hidden" id="lang"			name="lang" 			value="<?php echo hsc(KenedoPlatform::p()->getLanguageUrlCode());?>" />
 		<!-- unencoded return url "<?php echo $this->returnUrl;?>" -->

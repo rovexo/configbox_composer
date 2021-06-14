@@ -37,7 +37,7 @@ class ConfigboxDataHelper {
 
 	static function writeClassDeclaration($className, $object) {
 
-		$filename = KPATH_DIR_CB.'/classes/datahelpers/'.$className.'.php';
+		$filename = KenedoPlatform::p()->getComponentDir('com_configbox').'/classes/datahelpers/'.$className.'.php';
 
 		file_put_contents($filename, self::getClassDeclaration($className, $object));
 	}

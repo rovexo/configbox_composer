@@ -313,7 +313,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'title'=>KText::_('Invoicing'),
 				'toggle'=>true,
 				'defaultState'=>'closed',
-				'notes'=>KText::sprintf('Invoice PDF files are stored in the folder %s.',str_replace(DS, DS.'<wbr>',CONFIGBOX_DIR_INVOICES) ),
+				'notes'=>KText::sprintf('Invoice PDF files are stored in the folder %s.',str_replace(array(DIRECTORY_SEPARATOR, '/', "\\"), '/'.'<wbr>',KenedoPlatform::p()->getDirDataCustomer().'/private/invoices') ),
 				'positionForm'=>280,
 			);
 
@@ -475,8 +475,8 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'allow'=>array('image/pjpeg','image/jpg','image/jpeg','image/gif','image/tif','image/bmp','image/png'),
 				'size'=>'500',
 				'filetype'=>'image',
-				'dirBase'=>CONFIGBOX_DIR_DEFAULT_IMAGES,
-				'urlBase'=>CONFIGBOX_URL_DEFAULT_IMAGES,
+				'dirBase'=>KenedoPlatform::p()->getDirDataStore().'/public/default_images',
+				'urlBase'=>KenedoPlatform::p()->getUrlDataStore().'/public/default_images',
 				'filename'=>'default_prod_image',
 				'required'=>0,
 				'options'=>'PRESERVE_EXT SAVE_FILENAME',

@@ -181,6 +181,10 @@ define(['configbox/server','kenedo', 'cbj', 'cbj.ui', 'cbj.chosen'], function(se
 					return;
 				}
 
+				if (!response.data) {
+					return;
+				}
+
 				var productId;
 				var recordId = response.data.id;
 				var recordType = taskInfo.viewName.replace('admin', '');

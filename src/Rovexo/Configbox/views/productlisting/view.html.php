@@ -202,7 +202,7 @@ class ConfigboxViewProductlisting extends KenedoView {
 					$product->show_product_details_button = false;
 				}
 				if (strpos($url, 'http') !== 0) {
-					$url = KPATH_URL_BASE.'/'.ltrim($url, '/');
+					$url = KenedoPlatform::p()->getUrlBase().'/'.ltrim($url, '/');
 				}
 
 				$this->urlsProductPage[$product->id] = $url;
@@ -246,8 +246,8 @@ class ConfigboxViewProductlisting extends KenedoView {
 
 		// List the template paths sorted by how specific they are
 		$templates['templateOverride'] = KenedoPlatform::p()->getTemplateOverridePath('com_configbox', 'productlisting', $template);
-		$templates['customTemplate'] = KenedoPlatform::p()->getDirCustomization().DS.'templates'.DS.'productlisting'.DS.$template.'.php';
-		$templates['defaultTemplate'] = KPATH_DIR_CB.DS.'views'.DS.'productlisting'.DS.'tmpl'.DS.$template.'.php';
+		$templates['customTemplate'] = KenedoPlatform::p()->getDirCustomization().'/templates/productlisting/'.$template.'.php';
+		$templates['defaultTemplate'] = KenedoPlatform::p()->getComponentDir('com_configbox').'/views/productlisting/tmpl/'.$template.'.php';
 
 		// Try which template to use
 		foreach ($templates as $template) {

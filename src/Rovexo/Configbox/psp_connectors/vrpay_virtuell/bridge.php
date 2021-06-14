@@ -13,11 +13,8 @@ $params['WAEHRUNG'] = ConfigboxCurrencyHelper::getCurrency()->code;
 $params['INFOTEXT'] = KText::sprintf('Order ID %s from %s',$this->orderRecord->id,$this->shopData->shopname);
 $params['ARTIKELANZ'] = 0;
 $params['VERWENDANZ'] = 0;
-
-$prefix = KPATH_SCHEME . '://' . KPATH_HOST;
-
-$params['URLANTWORT'] = $this->notificationUrlSecure;
-$params['URLAGB'] = $prefix . KLink::getRoute('index.php?option=com_configbox&view=terms');
+$params['URLANTWORT'] = $this->notificationUrl;
+$params['URLAGB'] = KLink::getRoute('index.php?option=com_configbox&view=terms', false, true);
 $params['URLFEHLER'] = $this->failureUrl;;
 $params['URLABBRUCH'] = $this->cancelUrl;
 $params['URLERFOLG'] = $this->successUrl;

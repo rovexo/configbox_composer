@@ -689,18 +689,18 @@ class KenedoProperty {
 
 	protected function getAdminTemplateFile() {
 
-		$regularFolder = CONFIGBOX_DIR_PROPERTIES_DEFAULT.DS.'tmpl';
-		$customFolder = CONFIGBOX_DIR_PROPERTIES_CUSTOM.DS.'tmpl';
+		$regularFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/external/kenedo/properties/tmpl';
+		$customFolder = KenedoPlatform::p()->getDirCustomization().'/properties/tmpl';
 	
 		$filename = strtolower( $this->propertyDefinition['type'] ).'.php';
 
 		// Custom folder
-		if ( file_exists($customFolder .DS. $filename) ) {
-			$templateFile = $customFolder .DS. $filename;
+		if ( file_exists($customFolder .'/'. $filename) ) {
+			$templateFile = $customFolder .'/'. $filename;
 		}
 		// Regular folder
-		elseif ( file_exists($regularFolder .DS. $filename) ) {
-			$templateFile = $regularFolder .DS. $filename;
+		elseif ( file_exists($regularFolder .'/'. $filename) ) {
+			$templateFile = $regularFolder .'/'. $filename;
 		}
 		// If needed, deal with non-existent prop templates
 		else {

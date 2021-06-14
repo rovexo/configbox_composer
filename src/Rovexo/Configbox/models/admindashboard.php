@@ -400,11 +400,11 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 
 		// Parse active languages override files
 		$languages = KenedoLanguageHelper::getActiveLanguages();
-		$dir = KenedoPlatform::p()->getDirCustomization().DS.'language_overrides'.DS;
+		$dir = KenedoPlatform::p()->getDirCustomization().'/language_overrides/';
 
 		foreach($languages as $languageTag => $languageObject) {
 
-			$filename = $dir.$languageTag.DS.'overrides.ini';
+			$filename = $dir.$languageTag.'/overrides.ini';
 
 			if(!is_file($filename)) {
 				continue;
@@ -503,7 +503,7 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 			$warnings[] = $warning;
 		}
 
-		$confTemplate = KenedoPlatform::p()->getDirCustomization() .DS.'templates'.DS.'confirmation'.DS.'default.php';
+		$confTemplate = KenedoPlatform::p()->getDirCustomization() .'/templates/confirmation/default.php';
 
 		if (is_file($confTemplate)) {
 			$content = file_get_contents($confTemplate);

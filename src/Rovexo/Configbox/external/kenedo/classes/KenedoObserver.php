@@ -35,10 +35,10 @@ class KenedoObserver {
 			$path = KenedoPlatform::p()->getDirCustomization() .'/custom_observers';
 
 			foreach ($connectors as $connector) {
-				if (is_file($path.DS.$connector->file) && ($connector->after_system == (int)$afterSystem)) {
+				if (is_file($path.'/'.$connector->file) && ($connector->after_system == (int)$afterSystem)) {
 
-					require_once($path.DS.$connector->file);
-					$className = 'Observer'.KenedoFileHelper::stripExtension(basename($path.DS.$connector->file));
+					require_once($path.'/'.$connector->file);
+					$className = 'Observer'.KenedoFileHelper::stripExtension(basename($path.'/'.$connector->file));
 
 					KenedoObserver::registerObserver($className);
 				}
@@ -56,7 +56,7 @@ class KenedoObserver {
 		// Register observers lazily only once the first event was triggered
 		if (self::$registrationDone == false) {
 			self::registerCustomObservers(false);
-			self::registerObservers(KPATH_DIR_CB.'/observers');
+			self::registerObservers(KenedoPlatform::p()->getComponentDir('com_configbox').'/observers');
 			self::registerCustomObservers(true);
 			self::$registrationDone = true;
 		}

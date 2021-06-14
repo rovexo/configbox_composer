@@ -19,11 +19,15 @@ class ConfigboxModelQuotation {
 		}
 		else {
 			// Append full path and download URL
-			$quotation->path = CONFIGBOX_DIR_QUOTATIONS.$quotation->file;
+			$quotation->path = $this->getQuotationsDir().'/'.$quotation->file;
 			$quotation->url = KLink::getRoute('index.php?option=com_configbox&view=quotation&order_id='.$orderId);;
 			return $quotation;
 		}
 		
+	}
+
+	function getQuotationsDir() {
+		return KenedoPlatform::p()->getDirDataCustomer().'/private/quotations';
 	}
 	
 	function isQuotationFileRemovable($orderId) {
@@ -33,7 +37,7 @@ class ConfigboxModelQuotation {
 			return true;
 		}
 		else {
-			if (is_file(CONFIGBOX_DIR_QUOTATIONS.DS.$quotation->file) && !is_writable(CONFIGBOX_DIR_QUOTATIONS.DS.$quotation->file)) {
+			if (is_file($this->getQuotationsDir().'/'.$quotation->file) && !is_writable($this->getQuotationsDir().'/'.$quotation->file)) {
 				return false;
 			}
 			else {
@@ -48,7 +52,7 @@ class ConfigboxModelQuotation {
 		
 		if ($quotation) {
 
-			$filePath = CONFIGBOX_DIR_QUOTATIONS.DS.$quotation->file;
+			$filePath = $this->getQuotationsDir().'/'.$quotation->file;
 
 			if (is_file($filePath)) {
 				$success = unlink($filePath);
@@ -119,17 +123,17 @@ class ConfigboxModelQuotation {
 		// Prepare the file name
 		$file = __FILE__;
 		while(is_file($file)) {
-			$file = CONFIGBOX_DIR_QUOTATIONS.DS.$orderId.'_'.uniqid().'.pdf';
+			$file = $this->getQuotationsDir().'/'.$orderId.'_'.uniqid().'.pdf';
 		}
 		
 		// Store the quotation HTML for debug
 		if (KenedoPlatform::p()->getDebug()) {
 			$logPath = KenedoPlatform::p()->getLogPath();
-			$folder = $logPath.DS.'configbox'.DS.'quotations_html';
+			$folder = $logPath.'/configbox/quotations_html';
 			if (!is_dir($folder)) {
 				mkdir($folder,0777,true);
 			}
-			file_put_contents($folder.DS.basename($file).'.html', $quotationHtml);
+			file_put_contents($folder.'/'.basename($file).'.html', $quotationHtml);
 		}
 		
 		//TODO: Replace the permission lookup with something more specific
@@ -142,9 +146,9 @@ class ConfigboxModelQuotation {
 		$domPdf->render();
 		
 		// Create quotation folder if not there already
-		if (!is_dir(CONFIGBOX_DIR_QUOTATIONS)) {
-			mkdir(CONFIGBOX_DIR_QUOTATIONS,0777,true);
-			file_put_contents( CONFIGBOX_DIR_QUOTATIONS.DS.'.htaccess' , "deny from all");
+		if (!is_dir($this->getQuotationsDir())) {
+			mkdir($this->getQuotationsDir(),0777,true);
+			file_put_contents( $this->getQuotationsDir().'/.htaccess' , "deny from all");
 		}
 		
 		// Write the file to the filesystem

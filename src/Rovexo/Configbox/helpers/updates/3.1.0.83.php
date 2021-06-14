@@ -7,6 +7,10 @@ $query = "SET FOREIGN_KEY_CHECKS=0";
 $db->setQuery($query);
 $db->query();
 
+$query = "DELETE FROM #__configbox_countries WHERE `id` = 0";
+$db->setQuery($query);
+$db->query();
+
 $query = "ALTER TABLE #__configbox_countries MODIFY id INT UNSIGNED AUTO_INCREMENT NOT NULL;";
 $db->setQuery($query);
 $db->query();

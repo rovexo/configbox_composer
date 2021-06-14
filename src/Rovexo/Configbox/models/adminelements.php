@@ -897,8 +897,8 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'allow'=>array('image/svg+xml','image/pjpeg','image/jpg','image/jpeg','image/gif','image/tif','image/bmp','image/png','image/x-png'),
 			'required'=>0,
 			'size'=>'1000',
-			'dirBase'=>CONFIGBOX_DIR_QUESTION_DECORATIONS,
-			'urlBase'=>CONFIGBOX_URL_QUESTION_DECORATIONS,
+			'dirBase'=>KenedoPlatform::p()->getDirDataStore().'/public/question_decorations',
+			'urlBase'=>KenedoPlatform::p()->getUrlDataStore().'/public/question_decorations',
 			'options'=>'FILENAME_TO_RECORD_ID PRESERVE_EXT SAVE_FILENAME',
 			'positionForm'=>59000,
 		);
@@ -1017,6 +1017,16 @@ class ConfigboxModelAdminelements extends KenedoModel {
 		$parentResponse = parent::validateData($data, $context);
 		if ($parentResponse == false) {
 			return false;
+		}
+
+		// On updating a question and if the user tries to disable the question, check if question
+		// is used in rules or calculations
+		if ($data->id && isset($data->published) && $data->published == '0') {
+			$issues = $this->getDeletionOrDisablingIssues($data->id);
+			if (count($issues)) {
+				$this->setErrors($issues);
+				return false;
+			}
 		}
 
 		// perform validation checks on default value if is set
@@ -1146,17 +1156,43 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			return false;
 		}
 
-		// Checks if element is used in one of the calculation code placeholders
+		$issues = $this->getDeletionOrDisablingIssues($id);
+
+		foreach ($issues as $issue) {
+			$this->setError($issue);
+		}
+
+		if (count($issues)) {
+			return false;
+		}
+
+		return true;
+
+	}
+
+	/**
+	 * Returns user feedback strings with reasons why deletion or disabling isn't possible
+	 * @param int $questionId
+	 * @return string[]
+	 */
+	function getDeletionOrDisablingIssues($questionId) {
+
+		$messages = [];
+
+		$calculationNames = [];
+
+		// Checks if question is used in one of the calculation code placeholders
 		$query = "
 		SELECT `calculation`.`id`, `calculation`.`name`
 		FROM `#__configbox_calculation_codes` as `codes`
 		LEFT JOIN `#__configbox_calculations` AS `calculation` ON `calculation`.id = `codes`.`id`
 		WHERE
-			`codes`.`element_id_a` = ".intval($id)." OR
-			`codes`.`element_id_b` = ".intval($id)." OR
-			`codes`.`element_id_c` = ".intval($id)." OR
-			`codes`.`element_id_d` = ".intval($id)."
+			`codes`.`element_id_a` = ".intval($questionId)." OR
+			`codes`.`element_id_b` = ".intval($questionId)." OR
+			`codes`.`element_id_c` = ".intval($questionId)." OR
+			`codes`.`element_id_d` = ".intval($questionId)."
 		";
+		$db = KenedoPlatform::getDb();
 		$db->setQuery($query);
 		$potentials = $db->loadAssocList();
 
@@ -1165,45 +1201,70 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			foreach ($potentials as $potential) {
 				$calculationNames[] = $potential['name'].' (ID: '.$potential['id'].')';
 			}
-			$msg = KText::sprintf('Cannot delete element because it is used in these calculations: %s', implode(', ', $calculationNames));
-			$this->setError($msg);
-			return false;
+
 		}
 
 
-		// Checks if element is used in matrices as parameter or multiplier
+
+		// Checks if question is used in matrices as parameter or multiplier
 		$query = "
 		SELECT `calculation`.`id`, `calculation`.`name`
 		FROM `#__configbox_calculation_matrices` as `matrices`
 		LEFT JOIN `#__configbox_calculations` AS `calculation` ON `calculation`.id = `matrices`.`id`
 		WHERE
-			`matrices`.`column_element_id` = ".intval($id)." OR
-			`matrices`.`row_element_id` = ".intval($id)." OR
-			`matrices`.`multielementid` = ".intval($id)."
+			`matrices`.`column_element_id` = ".intval($questionId)." OR
+			`matrices`.`row_element_id` = ".intval($questionId)." OR
+			`matrices`.`multielementid` = ".intval($questionId)."
 		";
 		$db->setQuery($query);
 		$potentials = $db->loadAssocList();
 
 		if (count($potentials)) {
-			$calculationNames = array();
 			foreach ($potentials as $potential) {
 				$calculationNames[] = $potential['name'].' (ID: '.$potential['id'].')';
 			}
-			$msg = KText::sprintf('Cannot delete element because it is used in these calculations: %s', implode(', ', $calculationNames));
-			$this->setError($msg);
-			return false;
 		}
 
 
 
 
-		// Find elements with rules containing the element id in the string (just roughly - the ID might mean something else)
+
+
+
+		// Check calculation formulas if they use the question
+		$ass = ConfigboxCacheHelper::getAssignments();
+		$productId = $ass['element_to_product'][$questionId];
+
+		$filters = array(
+			'admincalculations.type'=>'formula',
+			'admincalculations.product_id'=>$productId,
+		);
+
+		$formulaCalculations = KenedoModel::getModel('ConfigboxModelAdmincalculations')->getRecords($filters);
+		$formulaModel = KenedoModel::getModel('ConfigboxModelAdmincalcformulas');
+
+		foreach ($formulaCalculations as $calculation) {
+			$formulaJson = $formulaModel->getCalculationJson($calculation->id);
+			$contains = ConfigboxCalculation::formulaContainsQuestion($formulaJson, $questionId);
+
+			if ($contains) {
+				$calculationNames[] = $calculation->name.' (ID: '.$calculation->id.')';
+			}
+
+		}
+
+		if (count($calculationNames)) {
+			$messages[] = KText::sprintf('Cannot delete or deactivate question because it is used in these calculations %s', implode(', ', $calculationNames));
+		}
+
+
+
+
+		// Find elements with rules containing the question id in the string (just for pre-filtering to avoid unneeded checks)
 		// This just saves some processing, we check more carefully later.
-		$query = "SELECT `id` AS `element_id`, `rules` FROM `#__configbox_elements` WHERE `rules` LIKE '%".intval($id) . "%'";
+		$query = "SELECT `id` AS `element_id`, `rules` FROM `#__configbox_elements` WHERE `rules` LIKE '%".intval($questionId) . "%'";
 		$db->setQuery($query);
 		$potentials = $db->loadAssocList();
-
-		$occurencesInRules = 0;
 
 		// Loop through and scan the rule for the xref id
 		if ($potentials) {
@@ -1212,24 +1273,22 @@ class ConfigboxModelAdminelements extends KenedoModel {
 				$ruleString = $potential['rules'];
 				$ruleQuestionId = $potential['element_id'];
 
-				$result = ConfigboxRulesHelper::ruleContainsQuestion($ruleString, $id);
+				$result = ConfigboxRulesHelper::ruleContainsQuestion($ruleString, $questionId);
 
 				if ($result == true) {
 
 					// Get the titles for the error message
-					$elementTitle 		= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 4, $id);
-					$ruleElementTitle 	= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 4, $ruleQuestionId);
+					$questionTitle 		= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 4, $questionId);
+					$ruleQuestionTitle 	= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 4, $ruleQuestionId);
 
-					$message = KText::sprintf('You cannot remove element %s, ID %s. It is referenced in the rule for element %s, ID %s. Please change the rule first.', $elementTitle, $id, $ruleElementTitle, $ruleQuestionId);
-					$this->setError($message);
-					$occurencesInRules++;
+					$messages[] = KText::sprintf('You cannot remove element %s, ID %s. It is referenced in the rule for element %s, ID %s. Please change the rule first.', $questionTitle, $questionId, $ruleQuestionTitle, $ruleQuestionId);
 				}
 			}
 		}
 
-		// Find elements with rules containing the xref id in the string (just roughly - the ID might mean something else)
+		// Find answers with rules containing the question id in the string (just roughly - the ID might mean something else)
 		// This just saves some processing, we check more carefully later.
-		$query = "SELECT `id` AS `xref_id` ,`element_id`, `option_id`, `rules` FROM `#__configbox_xref_element_option` WHERE `rules` LIKE '%".intval($id) . "%'";
+		$query = "SELECT `id` AS `xref_id` ,`element_id`, `option_id`, `rules` FROM `#__configbox_xref_element_option` WHERE `rules` LIKE '%".intval($questionId) . "%'";
 		$db->setQuery($query);
 		$potentials = $db->loadAssocList();
 
@@ -1243,61 +1302,24 @@ class ConfigboxModelAdminelements extends KenedoModel {
 				$ruleOptionId = $potential['option_id'];
 
 				// Check if rule contains the xref
-				$result = ConfigboxRulesHelper::ruleContainsQuestion($ruleString, $id);
+				$result = ConfigboxRulesHelper::ruleContainsQuestion($ruleString, $questionId);
 
 				if ($result == true) {
 
 					// Get more info about the xref with the rule attached
 
 					// Get the titles for the error message
-					$elementTitle 		= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 4, $id);
-					$ruleElementTitle 	= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 4, $ruleQuestionId);
-					$ruleOptionTitle 	= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 5, $ruleOptionId);
+					$questionTitle 		= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 4, $questionId);
+					$ruleQuestionTitle 	= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 4, $ruleQuestionId);
+					$ruleAnswerTitle 	= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 5, $ruleOptionId);
 
-					$message = KText::sprintf('You cannot remove element %s, ID %s. It is referenced in the rule for option assignment %s, ID %s in element %s, ID %s. Please change the rule first.', $elementTitle, $id, $ruleOptionTitle, $ruleAnswerId, $ruleElementTitle, $ruleQuestionId);
-					$this->setError($message);
-					$occurencesInRules++;
+					$messages[] = KText::sprintf('You cannot remove element %s, ID %s. It is referenced in the rule for option assignment %s, ID %s in element %s, ID %s. Please change the rule first.', $questionTitle, $questionId, $ruleAnswerTitle, $ruleAnswerId, $ruleQuestionTitle, $ruleQuestionId);
 
 				}
 			}
 		}
 
-		if ($occurencesInRules > 0) {
-			return false;
-		}
-
-		// Check formulas if they use the question
-		$ass = ConfigboxCacheHelper::getAssignments();
-		$productId = $ass['element_to_product'][$id];
-
-		$filters = array(
-			'admincalculations.type'=>'formula',
-			'admincalculations.product_id'=>$productId,
-		);
-
-		$formulaCalculations = KenedoModel::getModel('ConfigboxModelAdmincalculations')->getRecords($filters);
-		$formulaModel = KenedoModel::getModel('ConfigboxModelAdmincalcformulas');
-		$occurrencesInFormulas = 0;
-
-		foreach ($formulaCalculations as $calculation) {
-			$formulaJson = $formulaModel->getCalculationJson($calculation->id);
-			$contains = ConfigboxCalculation::formulaContainsQuestion($formulaJson, $id);
-
-			if ($contains) {
-				// Get the titles for the error message
-				$questionTitle 		= ConfigboxCacheHelper::getTranslation('#__configbox_strings', 4, $id);
-				$message = KText::sprintf('QUESTION_CAN_DELETE_FEEDBACK_QUESTION_USED_IN_FORMULAS', $questionTitle, $id, $calculation->name);
-				$this->setError($message);
-				$occurrencesInFormulas++;
-			}
-
-		}
-
-		if ($occurrencesInFormulas > 0) {
-			return false;
-		}
-
-		return true;
+		return $messages;
 
 	}
 

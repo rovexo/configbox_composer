@@ -15,7 +15,7 @@ else {
 	$siteCode = $this->orderRecord->payment->params->get('site_code_production','');
 }
 
-include(dirname(__FILE__).DS.'api'.DS.'MultiSafepay.combined.php');
+include(__DIR__.'/api/MultiSafepay.combined.php');
 
 $msp = new MultiSafepay();
 

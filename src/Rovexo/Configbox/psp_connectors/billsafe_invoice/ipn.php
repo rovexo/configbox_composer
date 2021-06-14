@@ -12,7 +12,7 @@ class IpnBillsafe_invoice {
 		
 		KLog::log(__CLASS__ .' gateway selected.','payment');
 
-		ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . dirname(__FILE__).DS.'Billsafe');
+		ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . __DIR__.'/Billsafe');
 		
 		require (dirname(__FILE__).'/Billsafe/Sdk.php');
 		require (dirname(__FILE__).'/Billsafe/LoggerFile.php');
@@ -39,7 +39,7 @@ class IpnBillsafe_invoice {
 		
 		$this->sdk->setCredentials($credentials);
 		
-		$logPath = KenedoPlatform::p()->getLogPath().DS.'configbox'.DS.'billsafe.log';
+		$logPath = KenedoPlatform::p()->getLogPath().'/configbox/billsafe.log';
 		
 		$this->sdk->setLogger(new Billsafe_LoggerFile($logPath));
 

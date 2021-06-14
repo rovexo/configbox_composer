@@ -10,6 +10,9 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	protected $errors;
 	
 	public function initialize() {
+
+		session_start();
+
 		// Set the option request var like for Joomla, as all is built around that
 		if (KRequest::getVar('option') == '') {
 			KRequest::setVar('option', 'com_configbox');
@@ -38,8 +41,8 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
     }
 
 	public function getDbConnectionData() {
-				
-		require_once(KPATH_ROOT.'/configuration.php');
+
+		require_once(KenedoPlatform::p()->getRootDirectory().'/configuration.php');
 
 		$platformConfig = new JConfig();
 		
@@ -57,7 +60,7 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	
 	public function &getDb() {
 		if (!$this->db) {
-			require_once(dirname(__FILE__).DS.'database.php');
+			require_once(__DIR__.'/database.php');
 			$this->db = new KenedoDatabaseStandalone();
 		}
 		
@@ -125,13 +128,13 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	public function getMailerFromEmail() {
 		return '';
 	}
-	//TODO: Implement
+
 	public function getTmpPath() {
-		return KPATH_ROOT.DS.'tmp';
+		return KenedoPlatform::p()->getRootDirectory().'/tmp';
 	}
-	//TODO: Implement
+
 	public function getLogPath() {
-		return KPATH_ROOT.DS.'logs';
+		return KenedoPlatform::p()->getRootDirectory().'/logs';
 	}
 	//TODO: Implement
 	public function getLanguageTag() {
@@ -229,19 +232,14 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	
 	public function getUrlBase() {
 		$uri = str_replace('components/com_configbox/configbox.php', '', $_SERVER['REQUEST_URI']);
-		$response = KPATH_SCHEME.'://'.KPATH_HOST . $uri;
+		$scheme = $this->requestUsesHttps() ? 'https' : 'http';
+		$response = $scheme.'://'.$_SERVER['HTTP_HOST'] . $uri;
 		$response = rtrim($response, '/');
 		return $response;
 	}
 
 	public function getUrlBaseAssets() {
-
-		$uri = str_replace('components/com_configbox/configbox.php', '', $_SERVER['REQUEST_URI']);
-
-		$response = KPATH_SCHEME.'://'.KPATH_HOST . $uri;
-		$response = rtrim($response, '/');
-		return $response;
-
+		return $this->getUrlBase();
 	}
 	
 	public function getDocumentBase() {
@@ -377,20 +375,14 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	
 	public function renderOutput(&$output) {
 		if ($this->getDocumentType() != 'html') {
-			require(dirname(__FILE__).DS.'tmpl'.DS. 'raw.php');
+			require(__DIR__.'/tmpl/raw.php');
 		}
 		else {
-			require(dirname(__FILE__).DS.'tmpl'.DS. KRequest::getKeyword('tmpl','index').'.php');
+			require(__DIR__.'/tmpl/'. KRequest::getKeyword('tmpl','index').'.php');
 		}
 		
 	}
-	
-	public function startSession() {
-		session_start();
-		return true;
-	}
-	
-	//TODO: Implement
+
 	public function getPasswordResetLink() {
 		return '';
 	}
@@ -415,7 +407,7 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 		}
 		
 		if ($secure === NULL) {
-			$scheme = KPATH_SCHEME;
+			$scheme = $this->requestUsesHttps() ? 'https' : 'http';
 		}
 		elseif ($secure == true) {
 			$scheme = 'http';
@@ -424,7 +416,7 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 			$scheme = 'https';
 		}
 
-		$url = str_replace('index.php', $scheme .'://'. KPATH_HOST . dirname($_SERVER['PHP_SELF']) .'/../../components/'.$option.'/'.str_ireplace('com_','',$option).'.php', $url);
+		$url = str_replace('index.php', $scheme .'://'. $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) .'/../../components/'.$option.'/'.str_ireplace('com_','',$option).'.php', $url);
 		return $url;
 		
 	}
@@ -464,11 +456,11 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	}
 
 	public function getComponentDir($componentName) {
-		return $this->getRootDirectory().DS.'components'.DS.strtolower($componentName);
+		return $this->getRootDirectory().'/components/'.strtolower($componentName);
 	}
 
 	public function getDirAssets() {
-		$path = $this->getComponentDir('com_configbox').DS.'assets';
+		$path = $this->getComponentDir('com_configbox').'/assets';
 		return $path;
 	}
 
@@ -479,11 +471,11 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 
 	public function getDirCache() {
 		// Not using JPATH_CACHE on purpose to avoid writing into the admin cache
-		return $this->getRootDirectory().DS.'cache';
+		return $this->getRootDirectory().'/cache';
 	}
 
 	public function getDirCustomization() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'customization';
+		$path = $this->getComponentDir('com_configbox').'/data/customization';
 		return $path;
 	}
 
@@ -493,7 +485,7 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirCustomizationAssets() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'customization'.DS.'assets';
+		$path = $this->getComponentDir('com_configbox').'/data/customization/assets';
 		return $path;
 	}
 
@@ -503,12 +495,12 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirCustomizationSettings() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'store'.DS.'private'.DS.'settings';
+		$path = $this->getComponentDir('com_configbox').'/data/store/private/settings';
 		return $path;
 	}
 
 	public function getDirDataCustomer() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'customer';
+		$path = $this->getComponentDir('com_configbox').'/data/customer';
 		return $path;
 	}
 
@@ -518,7 +510,7 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirDataStore() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'store';
+		$path = $this->getComponentDir('com_configbox').'/data/store';
 		return $path;
 	}
 

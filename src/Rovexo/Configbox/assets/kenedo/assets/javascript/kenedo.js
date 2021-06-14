@@ -17,7 +17,7 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 
 				var list = cbj(this);
 
-				list.find('.trigger-kenedo-form-task').each(function() {
+				list.find('.trigger-kenedo-list-task').each(function() {
 					cbj(this).on('click', kenedo.onListTaskButtonClicked);
 				});
 
@@ -1134,6 +1134,8 @@ define(['cbj', 'configbox/server'], function(cbj, server) {
 						var prefillValue = kenedo.getListParameter(taskInfo.list, 'foreignKeyPresetValue');
 						kenedo.openDetailsFormModal(taskInfo.list, form, controller, 'edit', 0, prefillPropName, prefillValue);
 					}
+
+					taskInfo.btn.removeClass('disabled');
 
 					break;
 

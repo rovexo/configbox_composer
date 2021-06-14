@@ -76,17 +76,17 @@ abstract class ConfigboxCondition {
 
 		if (!self::$conditionClassesLoaded) {
 
-			$path = KPATH_DIR_CB.DS.'classes'.DS.'rule_condition_types';
+			$path = KenedoPlatform::p()->getComponentDir('com_configbox').'/classes/rule_condition_types';
 			$conditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 			foreach ($conditionFiles as $file) {
-				include_once($path.DS.$file);
+				include_once($path.'/'.$file);
 			}
 
-			$path = KenedoPlatform::p()->getDirCustomization().DS.'rule_condition_types';
+			$path = KenedoPlatform::p()->getDirCustomization().'/rule_condition_types';
 			if (is_dir($path)) {
 				$customConditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 				foreach ($customConditionFiles as $file) {
-					include_once($path.DS.$file);
+					include_once($path.'/'.$file);
 				}
 			}
 			self::$conditionClassesLoaded = true;
@@ -103,13 +103,13 @@ abstract class ConfigboxCondition {
 
 			self::$conditionClassNames = array();
 
-			$path = KPATH_DIR_CB.DS.'classes'.DS.'rule_condition_types';
+			$path = KenedoPlatform::p()->getComponentDir('com_configbox').'/classes/rule_condition_types';
 			$conditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 			foreach ($conditionFiles as $file) {
 				self::$conditionClassNames[] = str_replace('.php', '',$file);
 			}
 
-			$path = KenedoPlatform::p()->getDirCustomization().DS.'rule_condition_types';
+			$path = KenedoPlatform::p()->getDirCustomization().'/rule_condition_types';
 			if (is_dir($path)) {
 				$customConditionFiles = KenedoFileHelper::getFiles($path, '.php$');
 				foreach ($customConditionFiles as $file) {

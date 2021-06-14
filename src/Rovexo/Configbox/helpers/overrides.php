@@ -17,7 +17,7 @@ class ConfigboxOverridesHelper {
 			ini_set('display_errors',$settingDisplayErrors);
 		}
 
-		$folder = KenedoPlatform::p()->getDirCustomization() .DS.'system_overrides';
+		$folder = KenedoPlatform::p()->getDirCustomization() .'/system_overrides';
 		$files = (is_dir($folder)) ? KenedoFileHelper::getFiles( $folder, '.php$', false, true) : array();
 
 		if (count($files)) {

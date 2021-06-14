@@ -94,8 +94,8 @@ abstract class KenedoController {
 			}
 
 			// Get the absolute path to the custom or system file
-			$regularPath = KenedoPlatform::p()->getComponentDir($component) .DS. 'controllers' .DS. $filename;
-			$customPath = KenedoPlatform::p()->getDirCustomization() .DS. 'controllers' .DS. $filename;
+			$regularPath = KenedoPlatform::p()->getComponentDir($component) .'/controllers/'. $filename;
+			$customPath = KenedoPlatform::p()->getDirCustomization() .'/controllers/'. $filename;
 
 			// Overwrite $path to get the file from either customization or system
 			if ($path == '') {
@@ -155,8 +155,8 @@ abstract class KenedoController {
 		}
 
 		// Get the absolute path to the custom or system file
-		$regularPath = KenedoPlatform::p()->getComponentDir($component) .DS. 'controllers' .DS. $filename;
-		$customPath = KenedoPlatform::p()->getDirCustomization() .DS. 'controllers' .DS. $filename;
+		$regularPath = KenedoPlatform::p()->getComponentDir($component) .'/controllers/'. $filename;
+		$customPath = KenedoPlatform::p()->getDirCustomization() .'/controllers/'. $filename;
 
 		// Overwrite $path to get the file from either customization or system
 		if ($path == '') {

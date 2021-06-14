@@ -56,7 +56,7 @@ class KenedoPlatform {
 		}
 		self::$platformName = strtolower($name);
 			
-		$path = dirname(__FILE__).DS.'..'.DS.'platforms'.DS. self::$platformName .DS.'general.php';
+		$path = __DIR__.'/../platforms/'. self::$platformName .'/general.php';
 		$className = 'KenedoPlatform'.ucfirst( self::$platformName );
 		
 		require_once ($path);

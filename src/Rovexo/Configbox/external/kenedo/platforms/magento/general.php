@@ -46,6 +46,8 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 			KRequest::setVar('option', 'com_configbox');
 		}
 
+		session_start();
+
 	}
 
     /**
@@ -98,7 +100,7 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 
 	public function &getDb() {
 		if (!$this->db) {
-			require_once(dirname(__FILE__).DS.'database.php');
+			require_once(__DIR__.'/database.php');
 			$this->db = new KenedoDatabaseMagento();
 		}
 
@@ -588,12 +590,6 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 		echo $output;
 	}
 
-	public function startSession() {
-		session_start();
-		return true;
-	}
-
-	//TODO: Implement
 	public function getPasswordResetLink() {
 		return Mage::getUrl('*/*/forgotpassword');
 	}
@@ -681,7 +677,7 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirAssets() {
-		$path = rtrim(Mage::getBaseDir('skin'), DS).DS.'frontend'.DS.'base'.DS.'default'.DS.'css'.DS.'elovaris'.DS.'configbox'.DS.'assets';
+		$path = rtrim(Mage::getBaseDir('skin'), DIRECTORY_SEPARATOR).'/frontend/base/default/css/elovaris/configbox/assets';
 		return $path;
 	}
 
@@ -691,7 +687,7 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirCustomization() {
-		$path = rtrim(Mage::getBaseDir('media'), DS).DS.'elovaris'.DS.'configbox'.DS.'customization';
+		$path = rtrim(Mage::getBaseDir('media'), DIRECTORY_SEPARATOR).'/elovaris/configbox/customization';
 		return $path;
 	}
 
@@ -701,7 +697,7 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirCustomizationAssets() {
-		$path = trim(Mage::getBaseDir('media'), DS).DS.'elovaris'.DS.'configbox'.DS.'customization'.DS.'assets';
+		$path = trim(Mage::getBaseDir('media'), DIRECTORY_SEPARATOR).'/elovaris/configbox/customization/assets';
 		return $path;
 	}
 
@@ -711,12 +707,12 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirCustomizationSettings() {
-		$path = rtrim(Mage::getBaseDir('media'), DS).DS.'elovaris'.DS.'configbox'.DS.'data'.DS.'store'.DS.'private'.DS.'settings';
+		$path = rtrim(Mage::getBaseDir('media'), DIRECTORY_SEPARATOR).'/elovaris/configbox/data/store/private/settings';
 		return $path;
 	}
 
 	public function getDirDataCustomer() {
-		$path = rtrim(Mage::getBaseDir('media'), DS).DS.'elovaris'.DS.'configbox'.DS.'data'.DS.'customer';
+		$path = rtrim(Mage::getBaseDir('media'), DIRECTORY_SEPARATOR).'/elovaris/configbox/data/customer';
 		return $path;
 	}
 
@@ -726,7 +722,7 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirDataStore() {
-		$path = rtrim(Mage::getBaseDir('media'), DS).DS.'elovaris'.DS.'configbox'.DS.'data'.DS.'store';
+		$path = rtrim(Mage::getBaseDir('media'), DIRECTORY_SEPARATOR).'/elovaris/configbox/data/store';
 		return $path;
 	}
 

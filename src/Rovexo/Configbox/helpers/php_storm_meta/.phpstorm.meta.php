@@ -58,7 +58,6 @@ namespace PHPSTORM_META {
        	     'ConfigboxModelAdminoptionassignments' instanceof \ConfigboxModelAdminoptionassignments,
        	     'ConfigboxModelAdminpages' instanceof \ConfigboxModelAdminpages,
        	     'ConfigboxModelAdmincounties' instanceof \ConfigboxModelAdmincounties,
-       	     'ConfigboxModelAdmintemplates' instanceof \ConfigboxModelAdmintemplates,
        	     'ConfigboxModelAdminpostinstall' instanceof \ConfigboxModelAdminpostinstall,
        	     'ConfigboxModelOrderrecord' instanceof \ConfigboxModelOrderrecord,
        	     'ConfigboxModelAdminxrefelementoptions' instanceof \ConfigboxModelAdminxrefelementoptions,

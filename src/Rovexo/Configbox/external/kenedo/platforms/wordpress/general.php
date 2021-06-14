@@ -82,6 +82,8 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 		}
 
+		$this->defineLegacyConstants();
+
 		// Set WP noheader if we deal with view_only or blank body
 		if (in_array($this->getOutputMode(), array('view_only', 'in_html_doc') )) {
             KRequest::setVar('noheader', '1', 'GET');
@@ -93,6 +95,76 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 		add_action('admin_head', array($this, 'renderHeadScriptDeclarations'), 100000);
 		add_action('admin_footer', array($this, 'renderBodyScriptDeclarations'), 100000);
+
+	}
+
+	private function defineLegacyConstants() {
+
+		define('CONFIGBOX_DIR_CACHE',						KenedoPlatform::p()->getDirCache().'/configbox');
+		define('CONFIGBOX_DIR_SETTINGS',					KenedoPlatform::p()->getDirCustomizationSettings());
+
+		define('CONFIGBOX_URL_CONFIGURATOR_FILEUPLOADS',	KenedoPlatform::p()->getUrlDataCustomer().'/public/file_uploads' );
+		define('CONFIGBOX_URL_POSITION_IMAGES',				KenedoPlatform::p()->getUrlDataCustomer().'/public/position_images' );
+
+		define('CONFIGBOX_DIR_PRODUCT_IMAGES',				KenedoPlatform::p()->getDirDataStore().'/public/product_images');
+		define('CONFIGBOX_DIR_PRODUCT_DETAIL_PANE_ICONS',	KenedoPlatform::p()->getDirDataStore().'/public/product_detail_pane_icons');
+		define('CONFIGBOX_DIR_VIS_PRODUCT_BASE_IMAGES',		KenedoPlatform::p()->getDirDataStore().'/public/vis_product_images');
+		define('CONFIGBOX_DIR_VIS_ANSWER_IMAGES', 			KenedoPlatform::p()->getDirDataStore().'/public/vis_answer_images');
+		define('CONFIGBOX_DIR_DEFAULT_IMAGES',				KenedoPlatform::p()->getDirDataStore().'/public/default_images');
+		define('CONFIGBOX_DIR_QUESTION_DECORATIONS',		KenedoPlatform::p()->getDirDataStore().'/public/question_decorations');
+		define('CONFIGBOX_DIR_ANSWER_IMAGES',				KenedoPlatform::p()->getDirDataStore().'/public/answer_images');
+		define('CONFIGBOX_DIR_ANSWER_PICKER_IMAGES',		KenedoPlatform::p()->getDirDataStore().'/public/answer_picker_images');
+		define('CONFIGBOX_DIR_SHOP_LOGOS',					KenedoPlatform::p()->getDirDataStore().'/public/shoplogos');
+		define('CONFIGBOX_DIR_MAXMIND_DBS',					KenedoPlatform::p()->getDirDataStore().'/private/maxmind');
+
+		define('CONFIGBOX_URL_PRODUCT_IMAGES',				KenedoPlatform::p()->getUrlDataStore().'/public/product_images');
+		define('CONFIGBOX_URL_PRODUCT_GALLERY_IMAGES',		KenedoPlatform::p()->getUrlDataStore().'/public/product_gallery_images');
+		define('CONFIGBOX_URL_PRODUCT_DETAIL_PANE_ICONS',	KenedoPlatform::p()->getUrlDataStore().'/public/product_detail_pane_icons');
+		define('CONFIGBOX_URL_VIS_PRODUCT_BASE_IMAGES',		KenedoPlatform::p()->getUrlDataStore().'/public/vis_product_images');
+		define('CONFIGBOX_URL_VIS_ANSWER_IMAGES', 			KenedoPlatform::p()->getUrlDataStore().'/public/vis_answer_images');
+		define('CONFIGBOX_URL_DEFAULT_IMAGES',				KenedoPlatform::p()->getUrlDataStore().'/public/default_images');
+		define('CONFIGBOX_URL_QUESTION_DECORATIONS',		KenedoPlatform::p()->getUrlDataStore().'/public/question_decorations');
+		define('CONFIGBOX_URL_ANSWER_IMAGES',				KenedoPlatform::p()->getUrlDataStore().'/public/answer_images');
+		define('CONFIGBOX_URL_ANSWER_PICKER_IMAGES',		KenedoPlatform::p()->getUrlDataStore().'/public/answer_picker_images');
+		define('CONFIGBOX_URL_SHOP_LOGOS',					KenedoPlatform::p()->getUrlDataStore().'/public/shoplogos');
+		define('CONFIGBOX_URL_MAXMIND_DBS',					KenedoPlatform::p()->getUrlDataStore().'/private/maxmind');
+
+		define('CONFIGBOX_DIR_QUOTATIONS',					KenedoPlatform::p()->getDirDataCustomer().'/private/quotations' );
+
+		// CUSTOMER DATA
+		define('CONFIGBOX_DIR_INVOICES',					KenedoPlatform::p()->getDirDataCustomer().'/private/invoices' );
+		define('CONFIGBOX_DIR_CONFIGURATOR_FILEUPLOADS',	KenedoPlatform::p()->getDirDataCustomer().'/public/file_uploads' );
+		define('CONFIGBOX_DIR_POSITION_IMAGES',				KenedoPlatform::p()->getDirDataCustomer().'/public/position_images' );
+
+
+
+		// Define paths
+		/**
+		 * URL scheme (without colons or backslashes)
+		 * E.g. https
+		 * @const  KPATH_ROOT
+		 */
+		define('KPATH_SCHEME', 	KenedoPlatform::p()->requestUsesHttps() ? 'https' : 'http');
+
+		/**
+		 * HTTP Hostname
+		 * E.g. configbox.dev
+		 * @const  KPATH_HOST
+		 */
+		define('KPATH_HOST', 	(substr(PHP_SAPI, 0, 3) == 'cli') ? '' : $_SERVER['HTTP_HOST']);
+
+		/**
+		 * Platform base URL (scheme://host/path) - without a trailing slash
+		 * @const  KPATH_URL_BASE
+		 */
+		define('KPATH_URL_BASE', KenedoPlatform::p()->getUrlBase());
+
+		/**
+		 * Full path to the application's root directory (not the web server's root)
+		 * @const  KPATH_ROOT
+		 */
+		define('KPATH_ROOT', KenedoPlatform::p()->getRootDirectory());
+
 
 	}
 
@@ -139,7 +211,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 	public function &getDb() {
 		if (!$this->db) {
-			require_once(dirname(__FILE__).DS.'database.php');
+			require_once(__DIR__.'/database.php');
 			$this->db = new KenedoDatabaseWordpress();
 		}
 
@@ -691,10 +763,6 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 	}
 
-	public function startSession() {
-		return true;
-	}
-
 	//TODO: Test
 	public function getPasswordResetLink() {
 		return wp_lostpassword_url();
@@ -936,7 +1004,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirAssets() {
-		$path = $this->getComponentDir('com_configbox').DS.'assets';
+		$path = $this->getComponentDir('com_configbox').'/assets';
 		return $path;
 	}
 
@@ -1129,14 +1197,14 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	 * @return string customization dir before CB 3.3.0
 	 */
 	public function getOldDirCustomization() {
-		return $this->getComponentDir('com_configbox').DS.'data'.DS.'customization';
+		return $this->getComponentDir('com_configbox').'/data/customization';
 	}
 
 	/**
 	 * @return string customization assets dir before CB 3.3.0
 	 */
 	public function getOldDirCustomizationAssets() {
-		return $this->getComponentDir('com_configbox').DS.'data'.DS.'customization'.DS.'assets';
+		return $this->getComponentDir('com_configbox').'/data/customization/assets';
 	}
 
 }

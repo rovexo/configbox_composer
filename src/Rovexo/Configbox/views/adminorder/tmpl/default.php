@@ -131,7 +131,7 @@ defined('CB_VALID_ENTRY') or die();
 		<?php
 		$pspFolder = ConfigboxPspHelper::getPspConnectorFolder($this->orderRecord->payment->connector_name);
 		
-		$file = $pspFolder.DS.'order_details.php';
+		$file = $pspFolder.'/order_details.php';
 		
 		if (!empty($this->orderRecord->payment->id) && is_file($file)) {
 			include($file);

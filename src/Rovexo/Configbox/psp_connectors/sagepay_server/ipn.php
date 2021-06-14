@@ -93,19 +93,12 @@ class IpnSagepay_server {
 	function getResponseString() {
 		
 		if ($this->getPaymentSuccess() == true) {
-			$redirectUrl = KLink::getRoute('index.php?option=com_configbox&view=userorder&order_id='.$this->getOrderId(),false,false);
+			$redirectUrl = KLink::getRoute('index.php?option=com_configbox&view=userorder&order_id='.$this->getOrderId(),false, true);
 		}
 		else {
-			$redirectUrl = KLink::getRoute('index.php?option=com_configbox&view=checkout',false,false);
+			$redirectUrl = KLink::getRoute('index.php?option=com_configbox&view=checkout',false, true);
 		}
-		
-		if (CbSettings::getInstance()->get('securecheckout')) {
-			$redirectUrl = 'https://'.KPATH_HOST . $redirectUrl;
-		}
-		else {
-			$redirectUrl = 'http://'.KPATH_HOST . $redirectUrl;
-		}
-		
+
 		$status = "Status=OK\r\nRedirectURL=$redirectUrl\r\nStatusDetail=All Good";
 		
 		return $status;

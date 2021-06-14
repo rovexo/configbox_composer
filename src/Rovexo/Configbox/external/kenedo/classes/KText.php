@@ -167,19 +167,21 @@ class KText {
 		// Prepare the array of paths to load
 		$files = array();
 
-		$files[] = KPATH_DIR_CB.DS.'language'.DS.$fallbackTag.DS.'frontend.ini';
-		$files[] = KPATH_DIR_CB.DS.'language'.DS.$languageTag.DS.'frontend.ini';
+		$appDir = KenedoPlatform::p()->getComponentDir('com_configbox');
+
+		$files[] = $appDir.'/language/'.$fallbackTag.'/frontend.ini';
+		$files[] = $appDir.'/language/'.$languageTag.'/frontend.ini';
 
 		// Figure if we deal with an admin page (careful, this means that an admin related page - like a record edit screen)
 		$onAdminPage = ( ( KRequest::getString('controller') == NULL && KRequest::getString('view') == NULL) || strpos(KRequest::getString('controller'), 'admin') === 0 || strpos(KRequest::getString('view'), 'admin') === 0 );
 
 		if ($onAdminPage) {
-			$files[] = KPATH_DIR_CB.DS.'language'.DS.$fallbackTag.DS.'backend.ini';
-			$files[] = KPATH_DIR_CB.DS.'language'.DS.$languageTag.DS.'backend.ini';
+			$files[] = $appDir.'/language/'.$fallbackTag.'/backend.ini';
+			$files[] = $appDir.'/language/'.$languageTag.'/backend.ini';
 		}
 
 		// Load frontend overrides
-		$files[] = KenedoPlatform::p()->getDirCustomization() .DS.'language_overrides'.DS.$languageTag.DS.'overrides.ini';
+		$files[] = KenedoPlatform::p()->getDirCustomization() .'/language_overrides/'.$languageTag.'/overrides.ini';
 
 		// Se which files exist and return those
 		$filesToReturn = array();

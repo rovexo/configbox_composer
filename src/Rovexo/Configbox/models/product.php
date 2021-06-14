@@ -199,8 +199,10 @@ class ConfigboxModelProduct extends KenedoModelLight{
 			}
 			$urlbuilt = KLink::getRoute($url,false);
 
+			$scheme = KenedoPlatform::p()->requestUsesHttps() ? 'https' : 'http';
+
 			// If new URL differs from actual URL, redirect
-			if ($urlbuilt != KPATH_SCHEME . '://'. KPATH_HOST . $_SERVER['REQUEST_URI']) {
+			if ($urlbuilt != $scheme . '://'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']) {
 				KLog::log('Redirecting to URL "'.$url.'", built URL is "'.$urlbuilt.'"');
 				KenedoPlatform::p()->redirect($urlbuilt, 301);
 			}

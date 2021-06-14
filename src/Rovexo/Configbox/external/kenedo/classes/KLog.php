@@ -214,7 +214,7 @@ class KLog {
 
 		}
 
-		$logPath = KenedoPlatform::p()->getLogPath().DS.'configbox';
+		$logPath = KenedoPlatform::p()->getLogPath().'/configbox';
 		if (!is_dir($logPath)) {
 			mkdir($logPath,0777,true);
 		}
@@ -225,12 +225,12 @@ class KLog {
 
 		$line = "\n". $timeString ."\t". $logLevel ."\t". $identifier ."\t".  $backTrace['class'].'->'.$backTrace['method'].' (Line '.$backTrace['line'].')' ."\t". $messageInternal;
 
-		if (!is_file($logPath.DS.$logFile)) {
-			touch($logPath.DS.$logFile);
-			file_put_contents($logPath.DS.$logFile, "<?php\ndie('No browser access, use FTP.');\n?>\n\n", FILE_APPEND);
+		if (!is_file($logPath.'/'.$logFile)) {
+			touch($logPath.'/'.$logFile);
+			file_put_contents($logPath.'/'.$logFile, "<?php\ndie('No browser access, use FTP.');\n?>\n\n", FILE_APPEND);
 		}
 
-		$response = file_put_contents($logPath.DS.$logFile, $line, FILE_APPEND);
+		$response = file_put_contents($logPath.'/'.$logFile, $line, FILE_APPEND);
 
 		if (in_array($logLevel, array('error', 'db_error'))) {
 
@@ -242,7 +242,7 @@ class KLog {
 			// Remove first item from backtrace as it's this function which is redundant.
 			$trace = preg_replace ('/^#0\s+' . __FUNCTION__ . "[^\n]*\n/", '', $trace, 1);
 
-			file_put_contents($logPath.DS.$logFile, "\nBacktrace:\n". $trace, FILE_APPEND);
+			file_put_contents($logPath.'/'.$logFile, "\nBacktrace:\n". $trace, FILE_APPEND);
 
 		}
 

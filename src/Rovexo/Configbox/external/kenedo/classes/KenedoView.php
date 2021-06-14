@@ -196,8 +196,8 @@ class KenedoView {
 			$viewName = strtolower( substr($className, strpos($className, 'View') + 4 ) );
 
 			// Prepare paths for both system and customization file location
-			$regularPath 	= KenedoPlatform::p()->getComponentDir($component) .DS. 'views' .DS. strtolower($viewName) .DS. 'view.html.php';
-			$customPath 	= KenedoPlatform::p()->getDirCustomization() .DS. 'views' .DS. strtolower($viewName) .DS. 'view.html.php';
+			$regularPath 	= KenedoPlatform::p()->getComponentDir($component) .'/views/'. strtolower($viewName) .'/view.html.php';
+			$customPath 	= KenedoPlatform::p()->getDirCustomization() .'/views/'. strtolower($viewName) .'/view.html.php';
 
 			// Overwrite $path with the right one based on existence
 			if (is_file($regularPath)) {
@@ -232,6 +232,18 @@ class KenedoView {
 		$this->view 		= KenedoView::getViewNameFromClass($className);
 		$this->className 	= $className;
 		$this->viewPath		= $path;
+
+		if (!defined('KPATH_TABLE_TMPL')) {
+			define('KPATH_TABLE_TMPL', 	 __DIR__.'/../tmpl/default-table.php');
+		}
+
+		if (!defined('KPATH_LISTING_TMPL')) {
+			define('KPATH_LISTING_TMPL', 	 __DIR__.'/../tmpl/default-listing.php');
+		}
+
+		if (!defined('KPATH_DETAILS_TMPL')) {
+			define('KPATH_DETAILS_TMPL', 	 __DIR__.'/../tmpl/default-editform.php');
+		}
 
 		if (KRequest::getString('return')) {
 			$this->returnUrl = KLink::base64UrlDecode( KRequest::getString('return'));
@@ -455,19 +467,19 @@ class KenedoView {
 			$template = KRequest::getKeyword('layout','default');
 		}
 
-		$template = str_replace(DS , '', $template);
+		$template = str_replace(array(DIRECTORY_SEPARATOR, '/', "\\") , '', $template);
 		$template = str_replace('.', '', $template);
 
 		$viewFolder = dirname($this->getViewPath());
-		$viewName = strtolower(substr($viewFolder,strrpos($viewFolder, DS) + 1));
+		$viewName = strtolower(substr($viewFolder,\strrpos($viewFolder, DIRECTORY_SEPARATOR) + 1));
 
 		$templatePaths = array();
 		// Joomla-typical template override location
 		$templatePaths['templateOverride'] 	= KenedoPlatform::p()->getTemplateOverridePath($this->component, $viewName, $template);
 		// Custom template for the view's template
-		$templatePaths['customTemplate'] 	= KenedoPlatform::p()->getDirCustomization() .DS. 'templates' .DS. $viewName .DS. $template.'.php';
+		$templatePaths['customTemplate'] 	= KenedoPlatform::p()->getDirCustomization() .'/templates/'. $viewName .'/'. $template.'.php';
 		// Original template for that view
-		$templatePaths['defaultTemplate'] 	= dirname($this->getViewPath()).DS.'tmpl'.DS.$template.'.php';
+		$templatePaths['defaultTemplate'] 	= dirname($this->getViewPath()).'/tmpl/'.$template.'.php';
 
 		$output = '';
 

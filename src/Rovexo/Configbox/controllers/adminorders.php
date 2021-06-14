@@ -246,7 +246,7 @@ class ConfigboxControllerAdminorders extends KenedoController {
 		if (CbSettings::getInstance()->get('enable_invoicing') && CbSettings::getInstance()->get('invoice_generation') == 2) {
 			
 			$file = KRequest::getFile('invoice_file');
-			$customInvoicePath = KenedoPlatform::p()->getTmpPath().DS.$file['name'];
+			$customInvoicePath = KenedoPlatform::p()->getTmpPath().'/'.$file['name'];
 
 			if (!empty($file['tmp_name'])) {
 

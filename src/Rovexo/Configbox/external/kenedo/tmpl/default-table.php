@@ -15,7 +15,7 @@ defined('CB_VALID_ENTRY') or die();
 
 <div class="tasks-and-filters">
 
-	<?php echo (count($this->pageTasks)) ? KenedoViewHelper::renderTaskItems($this->pageTasks) : ''; ?>
+	<?php echo (count($this->pageTasks)) ? KenedoViewHelper::renderTaskItems($this->pageTasks, 'list') : ''; ?>
 	
 	<?php if (isset($this->filterInputs) && count($this->filterInputs)) { ?>
 		<div class="kenedo-filters">

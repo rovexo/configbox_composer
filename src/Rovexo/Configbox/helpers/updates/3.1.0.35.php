@@ -64,7 +64,7 @@ $removals = array(
 
 // Go on doing it
 foreach ($removals as $removal) {
-	$path = KPATH_DIR_CB.DS.$removal;
+	$path = KenedoPlatform::p()->getComponentDir('com_configbox').'/'.$removal;
 	if (is_file($path)) {
 		unlink($path);
 	}
@@ -75,7 +75,7 @@ foreach ($removals as $removal) {
 
 
 // Delete old language files (leaving only frontend.ini and backend.ini)
-$languageBaseFolder = KenedoPlatform::p()->getComponentDir('com_configbox').DS.'language';
+$languageBaseFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/language';
 
 $languageFolders = KenedoFileHelper::getFolders($languageBaseFolder, NULL, false, true);
 
@@ -83,7 +83,7 @@ foreach ($languageFolders as $languageFolder) {
 	$fileNames = KenedoFileHelper::getFiles($languageFolder);
 	foreach ($fileNames as $fileName) {
 		if (!in_array($fileName, array('frontend.ini', 'backend.ini'))) {
-			unlink($languageFolder.DS.$fileName);
+			unlink($languageFolder.'/'.$fileName);
 		}
 	}
 }

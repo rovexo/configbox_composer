@@ -693,7 +693,7 @@ CREATE TABLE `sltxh_configbox_config`
     `sku_in_order_record`                  varchar(1)       NOT NULL DEFAULT '0',
     `newsletter_preset`                    varchar(1)       NOT NULL DEFAULT '0',
     `alternate_shipping_preset`            varchar(1)       NOT NULL DEFAULT '0',
-    `show_recurring_login_cart`            varchar(1)       NOT NULL DEFAULT '0',
+    `show_recurring_login_cart`            varchar(1)       NOT NULL DEFAULT '1',
     `explicit_agreement_terms`             varchar(1)       NOT NULL DEFAULT '0',
     `explicit_agreement_rp`                varchar(1)       NOT NULL DEFAULT '0',
     `enable_invoicing`                     varchar(1)       NOT NULL DEFAULT '0',

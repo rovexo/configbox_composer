@@ -2,29 +2,29 @@
 defined('CB_VALID_ENTRY') or die();
 
 if (KenedoPlatform::getName() == 'magento') {
-	$oldStoreFolder = Mage::getBaseDir('media').DS.'elovaris'.DS.'configbox'.DS.'store_data';
-	$oldCustomerFolder = Mage::getBaseDir('media').DS.'elovaris'.DS.'configbox'.DS.'customer_data';
-	$oldSettingsFolder = Mage::getBaseUrl('media').DS.'elovaris'.DS.'configbox'.DS.'settings';
+	$oldStoreFolder = Mage::getBaseDir('media').'/elovaris/configbox/store_data';
+	$oldCustomerFolder = Mage::getBaseDir('media').'/elovaris/configbox/customer_data';
+	$oldSettingsFolder = Mage::getBaseUrl('media').'/elovaris/configbox/settings';
 }
 else {
-	$oldStoreFolder = KenedoPlatform::p()->getComponentDir('com_configbox').DS.'data';
-	$oldCustomerFolder = KenedoPlatform::p()->getComponentDir('com_configbox').DS.'data';
-	$oldSettingsFolder = KenedoPlatform::p()->getComponentDir('com_configbox').DS.'data'.DS.'settings';
+	$oldStoreFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/data';
+	$oldCustomerFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/data';
+	$oldSettingsFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/data/settings';
 }
 
 /* MOVE OUT ORDER MANAGEMENT DATA FOLDER STUFF - START */
-$oldDataFolder = KenedoPlatform::p()->getComponentDir('com_cbcheckout').DS.'data';
+$oldDataFolder = KenedoPlatform::p()->getComponentDir('com_cbcheckout').'/data';
 
 $folderRenamings = array(
-	$oldDataFolder.DS.'invoices' 							=> $oldCustomerFolder.DS.'invoices',
-	$oldDataFolder.DS.'order_files' 						=> $oldCustomerFolder.DS.'order_files',
-	$oldDataFolder.DS.'position_images' 					=> $oldCustomerFolder.DS.'position_images',
-	$oldDataFolder.DS.'quotations' 							=> $oldCustomerFolder.DS.'quotations',
-	$oldDataFolder.DS.'shoplogo' 							=> $oldStoreFolder.DS.'shoplogo',
-	$oldDataFolder.DS.'notification_attachments' 			=> KenedoPlatform::p()->getOldDirCustomization().DS.'notification_attachments',
-	$oldDataFolder.DS.'notification_templates' 				=> KenedoPlatform::p()->getOldDirCustomization().DS.'notification_templates',
-	$oldDataFolder.DS.'notification_elements' 				=> KenedoPlatform::p()->getOldDirCustomization().DS.'notification_elements',
-	KenedoPlatform::p()->getOldDirCustomization().DS.'notification_elements' 	=> KenedoPlatform::p()->getOldDirCustomization().DS.'notification_snippets',
+	$oldDataFolder.'/invoices' 							=> $oldCustomerFolder.'/invoices',
+	$oldDataFolder.'/order_files' 						=> $oldCustomerFolder.'/order_files',
+	$oldDataFolder.'/position_images' 					=> $oldCustomerFolder.'/position_images',
+	$oldDataFolder.'/quotations' 							=> $oldCustomerFolder.'/quotations',
+	$oldDataFolder.'/shoplogo' 							=> $oldStoreFolder.'/shoplogo',
+	$oldDataFolder.'/notification_attachments' 			=> KenedoPlatform::p()->getOldDirCustomization().'/notification_attachments',
+	$oldDataFolder.'/notification_templates' 				=> KenedoPlatform::p()->getOldDirCustomization().'/notification_templates',
+	$oldDataFolder.'/notification_elements' 				=> KenedoPlatform::p()->getOldDirCustomization().'/notification_elements',
+	KenedoPlatform::p()->getOldDirCustomization().'/notification_elements' 	=> KenedoPlatform::p()->getOldDirCustomization().'/notification_snippets',
 );
 
 foreach ($folderRenamings as $old=>$new) {
@@ -42,6 +42,7 @@ if (KenedoPlatform::getName() == 'joomla' && KenedoPlatform::p()->getVersionShor
 	if (ConfigboxUpdateHelper::tableExists('#__assets')) {
 		// Get both rulesets
 		$query = "SELECT * FROM `#__assets` WHERE `name` = 'com_cbcheckout' OR `name` = 'com_configbox'";
+		$db = KenedoPlatform::getDb();
 		$db->setQuery($query);
 		$rules = $db->loadObjectList('name');
 		// Go on if the om rules are actually there and if they're not just an empty object
@@ -1010,7 +1011,7 @@ if (ConfigboxUpdateHelper::tableExists('#__cbcheckout_order_countries') == false
 
 }
 
-$base = KenedoPlatform::p()->getOldDirCustomization().DS.'templates';
+$base = KenedoPlatform::p()->getOldDirCustomization().'/templates';
 
 if (is_dir($base)) {
 
@@ -1023,8 +1024,8 @@ if (is_dir($base)) {
 	);
 
 	foreach ($folderRenamings as $old=>$new) {
-		if (is_dir($base.DS.$old) && !is_dir($base.DS.$new)) {
-			rename($base.DS.$old, $base.DS.$new);
+		if (is_dir($base.'/'.$old) && !is_dir($base.'/'.$new)) {
+			rename($base.'/'.$old, $base.'/'.$new);
 		}
 	}
 

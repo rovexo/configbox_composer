@@ -96,7 +96,7 @@ defined('CB_VALID_ENTRY') or die();
 	<ul>
 		<li><?php echo KText::_('Timing of the request - Online but switch to a deferred request when the online requests fail.');?></li>
 		<?php
-		$requestUrl = KPATH_URL_BASE.'/index.php?option=com_configbox&controller=ajaxapi&output_mode=view_only&task=getNotificationUrl&payment_class=postfinance';
+		$requestUrl = KenedoPlatform::p()->getUrlBase().'/index.php?option=com_configbox&controller=ajaxapi&output_mode=view_only&task=getNotificationUrl&payment_class=postfinance';
 		$feedbackUrl = file_get_contents($requestUrl);
 		if ($feedbackUrl == false) {
 			?>

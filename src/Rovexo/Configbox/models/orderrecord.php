@@ -844,7 +844,7 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 
 		$pspFolder = ConfigboxPspHelper::getPspConnectorFolder($item->connector_name);
 
-		$file = $pspFolder .DS. 'language' .DS. $tag .DS. $tag .'.ini';
+		$file = $pspFolder .'/language/'. $tag .'/'. $tag .'.ini';
 		if (is_file($file)) {
 			KText::load($file, $orderRecord->orderAddress->language_tag);
 		}
@@ -1384,15 +1384,15 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 
 
 
-
+				$dirPositionImages = KenedoPlatform::p()->getDirDataCustomer().'/public/position_images';
 
 				/* COPY THE PRODUCT IMAGE - START */
 
 				// Create the position images folder if necessary
-				if (is_dir(CONFIGBOX_DIR_POSITION_IMAGES) == false) {
-					$success = mkdir(CONFIGBOX_DIR_POSITION_IMAGES, 0755, true);
+				if (is_dir($dirPositionImages) == false) {
+					$success = mkdir($dirPositionImages, 0755, true);
 					if ($success == false) {
-						KLog::log('Error copying product image. Could not create folder "'.CONFIGBOX_DIR_POSITION_IMAGES.'". Make sure the containing folder is writable.', 'error');
+						KLog::log('Error copying product image. Could not create folder "'.$dirPositionImages.'". Make sure the containing folder is writable.', 'error');
 						throw new Exception('Cannot create order, because the system cannot create the missing position image folder. See ConfigBox error log file for details.');
 					}
 				}
@@ -1406,7 +1406,7 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 						$fileName = $orderRecord->id.'-'.$position->id.'.'.pathinfo($cartPosition->productData->prod_image_path, PATHINFO_EXTENSION);
 
 						$source = $cartPosition->productData->prod_image_path;
-						$destination = CONFIGBOX_DIR_POSITION_IMAGES.DS.$fileName;
+						$destination = $dirPositionImages.'/'.$fileName;
 
 						$success = copy($source, $destination);
 
@@ -1423,12 +1423,12 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 
 						$fileName = $orderRecord->id.'-'.$position->id.'.png';
 
-						$destination = CONFIGBOX_DIR_POSITION_IMAGES.DS.$fileName;
+						$destination = $dirPositionImages.'/'.$fileName;
 						$success = ConfigboxProductImageHelper::getMergedProductImage($cartPosition, $destination);
 
 						// Go all crazy if creating it failed
 						if ($success === false) {
-							KLog::log('Could not create merged visualization image. Make sure the folder "'.CONFIGBOX_DIR_POSITION_IMAGES.'" is writable','error');
+							KLog::log('Could not create merged visualization image. Make sure the folder "'.$dirPositionImages.'" is writable','error');
 							throw new Exception('Could not create merged visualization image. See ConfigBox error log file for details.');
 						}
 
@@ -1440,7 +1440,7 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 							$fileName = $orderRecord->id.'-'.$position->id.'.'.pathinfo($cartPosition->productData->prod_image_path, PATHINFO_EXTENSION);
 
 							$source = $cartPosition->productData->prod_image_path;
-							$destination = CONFIGBOX_DIR_POSITION_IMAGES.DS.$fileName;
+							$destination = $dirPositionImages.'/'.$fileName;
 
 							$success = copy($source, $destination);
 
@@ -1460,7 +1460,7 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 						$fileName = $orderRecord->id.'-'.$position->id.'.'.pathinfo($cartPosition->productData->prod_image_path, PATHINFO_EXTENSION);
 
 						$source = $cartPosition->productData->prod_image_path;
-						$destination = CONFIGBOX_DIR_POSITION_IMAGES.DS.$fileName;
+						$destination = $dirPositionImages.'/'.$fileName;
 
 						$success = copy($source, $destination);
 

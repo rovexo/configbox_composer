@@ -215,8 +215,11 @@ class KenedoRouterHelper {
 		// Get the current URI (drop starting slash and the last item (conveniently removing any query string or SEF suffix in the process)
 		$segments = dirname($_SERVER['REQUEST_URI']);
 
+		$scheme = KenedoPlatform::p()->requestUsesHttps() ? 'https' : 'http';
+		$host = (substr(PHP_SAPI, 0, 3) == 'cli') ? '' : $_SERVER['HTTP_HOST'];
+
 		// Get the path part of the base URL..
-		$base = str_replace(KPATH_SCHEME .'://'. KPATH_HOST, '', KPATH_URL_BASE);
+		$base = str_replace($scheme .'://'. $host, '', KenedoPlatform::p()->getUrlBase() );
 
 		// ..and take it off
 		$segments = substr($segments, strlen($base));
@@ -270,8 +273,11 @@ class KenedoRouterHelper {
 		// Get the current URI (drop starting slash and the last item (conveniently removing any query string or SEF suffix in the process)
 		$segments = dirname($_SERVER['REQUEST_URI']);
 
+		$scheme = KenedoPlatform::p()->requestUsesHttps() ? 'https' : 'http';
+		$host = (substr(PHP_SAPI, 0, 3) == 'cli') ? '' : $_SERVER['HTTP_HOST'];
+
 		// Get the path part of the base URL..
-		$base = str_replace(KPATH_SCHEME .'://'. KPATH_HOST, '', KPATH_URL_BASE);
+		$base = str_replace($scheme .'://'. $host, '', KenedoPlatform::p()->getUrlBase() );
 
 		// ..and take it off
 		$segments = substr($segments, strlen($base));

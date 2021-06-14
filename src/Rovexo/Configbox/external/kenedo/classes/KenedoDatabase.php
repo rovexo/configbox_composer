@@ -217,7 +217,7 @@ class KenedoDatabase {
 
 			// Prepare the caller info for the log entry
 			$callerInfo = array(
-				'file' => !empty($stack[$i]['file']) ? str_replace(KPATH_ROOT,'KPATH_ROOT',$stack[$i]['file']) : 'File unkown',
+				'file' => !empty($stack[$i]['file']) ? $stack[$i]['file'] : 'File unkown',
 				'line' => !empty($stack[$i]['line']) ? $stack[$i]['line'] : 'Line unkown',
 				'class' => !empty($stack[$i+1]['class']) ? $stack[$i+1]['class'] : 'No class',
 				'function' => !empty($stack[$i+1]['function']) ? $stack[$i+1]['function'] : 'No function',

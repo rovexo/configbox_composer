@@ -3,14 +3,14 @@ defined('CB_VALID_ENTRY') or die();
 $db = KenedoPlatform::getDb();
 
 if (KenedoPlatform::getName() == 'magento') {
-	$oldStoreFolder = Mage::getBaseDir('media').DS.'elovaris'.DS.'configbox'.DS.'store_data';
-	$oldCustomerFolder = Mage::getBaseDir('media').DS.'elovaris'.DS.'configbox'.DS.'customer_data';
-	$oldSettingsFolder = Mage::getBaseUrl('media').DS.'elovaris'.DS.'configbox'.DS.'settings';
+	$oldStoreFolder = Mage::getBaseDir('media').'/elovaris/configbox/store_data';
+	$oldCustomerFolder = Mage::getBaseDir('media').'/elovaris/configbox/customer_data';
+	$oldSettingsFolder = Mage::getBaseUrl('media').'/elovaris/configbox/settings';
 }
 else {
-	$oldStoreFolder = KenedoPlatform::p()->getComponentDir('com_configbox').DS.'data';
-	$oldCustomerFolder = KenedoPlatform::p()->getComponentDir('com_configbox').DS.'data';
-	$oldSettingsFolder = KenedoPlatform::p()->getComponentDir('com_configbox').DS.'data'.DS.'settings';
+	$oldStoreFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/data';
+	$oldCustomerFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/data';
+	$oldSettingsFolder = KenedoPlatform::p()->getComponentDir('com_configbox').'/data/settings';
 }
 
 /* UPGRADE CONFIGBOX STRINGS TABLE TO LANGUAGE TAGS - START */
@@ -219,9 +219,11 @@ if (isset($fields['article'])) {
 }
 /* UPGRADE ELEMENT POPUP PICKER TO USE ITS OWN HTML - END */
 
+$appDir = KenedoPlatform::p()->getComponentDir('com_configbox');
+
 /* REMOVE THE OLD CART VIEW FOLDER AND UPDATE JOOMLA MENU ITEM LINKS - START */
-$oldView = KPATH_DIR_CB.DS.'views'.DS.'grandorder';
-$newView = KPATH_DIR_CB.DS.'views'.DS.'cart';
+$oldView = $appDir.'/views/grandorder';
+$newView = $appDir.'/views/cart';
 
 if (is_dir($newView) && is_dir($oldView)) {
 	KenedoFileHelper::deleteFolder($oldView);
@@ -292,8 +294,8 @@ if (!isset($fields['desc_display_method'])) {
 
 
 /* UNPACK DOMPDF - START */
-$folder  = KPATH_DIR_CB.DS.'external'.DS.'dompdf';
-$zipFile = KPATH_DIR_CB.DS.'external'.DS.'dompdf.zip';
+$folder  = $appDir.'/external/dompdf';
+$zipFile = $appDir.'/external/dompdf.zip';
 if (!is_dir($folder) && is_file($zipFile)) {
 	KenedoFileHelper::extractZip($zipFile, $folder);
 	unlink($zipFile);
@@ -302,8 +304,8 @@ if (!is_dir($folder) && is_file($zipFile)) {
 
 
 /* UNPACK HTMLPURIFIER - START */
-$folder  = KPATH_DIR_CB.DS.'external'.DS.'kenedo'.DS.'external'.DS.'htmlpurifier';
-$zipFile = KPATH_DIR_CB.DS.'external'.DS.'kenedo'.DS.'external'.DS.'htmlpurifier.zip';
+$folder  = $appDir.'/external/kenedo/external/htmlpurifier';
+$zipFile = $appDir.'/external/kenedo/external/htmlpurifier.zip';
 if (!is_dir($folder) && is_file($zipFile)) {
 	KenedoFileHelper::extractZip($zipFile, $folder);
 	unlink($zipFile);
@@ -2423,21 +2425,21 @@ if (ConfigboxUpdateHelper::tableFieldExists('#__configbox_config', 'enable_perfo
 
 /* CREATE DATA SUBFOLDERS - START */
 $dataFolders = array(
-		'data'.DS.'cache',
-		'data'.DS.'customization',
-		'data'.DS.'default_images',
-		'data'.DS.'downloads',
-		'data'.DS.'element_images',
-		'data'.DS.'file_uploads',
-		'data'.DS.'opt_images',
-		'data'.DS.'option_images',
-		'data'.DS.'option_picker_images',
-		'data'.DS.'prod_baseimages',
-		'data'.DS.'prod_images',
+		'data/cache',
+		'data/customization',
+		'data/default_images',
+		'data/downloads',
+		'data/element_images',
+		'data/file_uploads',
+		'data/opt_images',
+		'data/option_images',
+		'data/option_picker_images',
+		'data/prod_baseimages',
+		'data/prod_images',
 );
 
 foreach ($dataFolders as $dataFolder) {
-	$dataFolder = KPATH_DIR_CB.DS.$dataFolder;
+	$dataFolder = $appDir.'/'.$dataFolder;
 	if (!is_dir($dataFolder)) {
 		mkdir($dataFolder,0777,true);
 	}
@@ -2446,7 +2448,7 @@ foreach ($dataFolders as $dataFolder) {
 
 /* COPY THE DEFAULT PRODUCT IMAGE IF NOT THERE YET - START */
 $defaultImage =  KenedoPlatform::p()->getComponentDir('com_configbox').'/data/default_images/default_prod_image.jpg';
-$srcFile = KenedoPlatform::p()->getDirAssets().DS.'images'.DS.'default_prod_image.jpg';
+$srcFile = KenedoPlatform::p()->getDirAssets().'/images/default_prod_image.jpg';
 
 if (is_dir(dirname($defaultImage)) == false) {
 	mkdir( dirname($defaultImage), 0777, true );
@@ -2458,23 +2460,23 @@ if (!is_file($defaultImage) && is_file($defaultImage)) {
 /* COPY THE DEFAULT PRODUCT IMAGE IF MISSING - END */
 
 /* REPAIR INCORRECTLY CREATED LANGUAGE OVERRIDE FILES (NO .INI EXTENSION) - START */
-$baseLangFolder = KenedoPlatform::p()->getOldDirCustomization().DS.'language_overrides';
+$baseLangFolder = KenedoPlatform::p()->getOldDirCustomization().'/language_overrides';
 
 
-if( is_file($baseLangFolder.DS.'frontend'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox')) {
-	rename($baseLangFolder.DS.'frontend'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox', $baseLangFolder.DS.'frontend'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox.ini');
+if( is_file($baseLangFolder.'/frontend/language/de-DE/de-DE.com_configbox')) {
+	rename($baseLangFolder.'/frontend/language/de-DE/de-DE.com_configbox', $baseLangFolder.'/frontend/language/de-DE/de-DE.com_configbox.ini');
 }
 
-if( is_file($baseLangFolder.DS.'backend'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox')) {
-	rename($baseLangFolder.DS.'backend'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox', $baseLangFolder.DS.'backend'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox.ini');
+if( is_file($baseLangFolder.'/backend/language/de-DE/de-DE.com_configbox')) {
+	rename($baseLangFolder.'/backend/language/de-DE/de-DE.com_configbox', $baseLangFolder.'/backend/language/de-DE/de-DE.com_configbox.ini');
 }
 
-if( is_file($baseLangFolder.DS.'mod_configboxcurrencies'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox')) {
-	rename($baseLangFolder.DS.'mod_configboxcurrencies'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox', $baseLangFolder.DS.'mod_configboxcurrencies'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox.ini');
+if( is_file($baseLangFolder.'/mod_configboxcurrencies/language/de-DE/de-DE.com_configbox')) {
+	rename($baseLangFolder.'/mod_configboxcurrencies/language/de-DE/de-DE.com_configbox', $baseLangFolder.'/mod_configboxcurrencies/language/de-DE/de-DE.com_configbox.ini');
 }
 
-if( is_file($baseLangFolder.DS.'mod_configboxprices'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox')) {
-	rename($baseLangFolder.DS.'mod_configboxprices'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox', $baseLangFolder.DS.'mod_configboxprices'.DS.'language'.DS.'de-DE'.DS.'de-DE.com_configbox.ini');
+if( is_file($baseLangFolder.'/mod_configboxprices/language/de-DE/de-DE.com_configbox')) {
+	rename($baseLangFolder.'/mod_configboxprices/language/de-DE/de-DE.com_configbox', $baseLangFolder.'/mod_configboxprices/language/de-DE/de-DE.com_configbox.ini');
 }
 /* REPAIR INCORRECTLY CREATED LANGUAGE OVERRIDE FILES (NO .INI EXTENSION) - END */
 
@@ -3021,12 +3023,12 @@ if (count($orders) && !$orderRecords) {
 			/* INSERT EACH POSITION - END */
 
 			/* COPY THE PRODUCT IMAGE - START */
-			$productImage = $oldStoreFolder .DS. 'prod_images' .DS. $gorder->productData->prod_image;
+			$productImage = $oldStoreFolder .'/prod_images/'. $gorder->productData->prod_image;
 
 			if (!empty($gorder->productData->prod_image) && is_file( $productImage )) {
 				// Written out without use of constants because at this point we do not have those constants ready (and it does not matter because the folder wasn't flexible at this point)
 
-				$folder = $oldCustomerFolder.DS.'position_images';
+				$folder = $oldCustomerFolder.'/position_images';
 				if (!is_dir($folder)) {
 					$succ = mkdir($folder,0755,true);
 					if (!$succ) {
@@ -3037,7 +3039,7 @@ if (count($orders) && !$orderRecords) {
 					}
 				}
 				$fileName = $orderRecord->id.'-'.$position->id.'.'.pathinfo($productImage, PATHINFO_EXTENSION);
-				$succ = copy($productImage,$folder.DS.$fileName);
+				$succ = copy($productImage,$folder.'/'.$fileName);
 				if (!$succ) {
 					$query = "ROLLBACK";
 					$db->setQuery($query);
@@ -3496,29 +3498,29 @@ if (ConfigboxUpdateHelper::tableExists('#__configbox_pcategories') == true && Co
 }
 
 // Remove old category view
-$oldDir = KPATH_DIR_CB.DS.'views'.DS.'category';
-$newDir = KPATH_DIR_CB.DS.'views'.DS.'configuratorpage';
+$oldDir = $appDir.'/views/category';
+$newDir = $appDir.'/views/configuratorpage';
 if (is_dir($newDir) && is_dir($oldDir)) {
 	KenedoFileHelper::deleteFolder($oldDir);
 }
 
 // Remove old product listing view
-$oldDir = KPATH_DIR_CB.DS.'views'.DS.'products';
-$newDir = KPATH_DIR_CB.DS.'views'.DS.'productlisting';
+$oldDir = $appDir.'/views/products';
+$newDir = $appDir.'/views/productlisting';
 if (is_dir($newDir) && is_dir($oldDir)) {
 	KenedoFileHelper::deleteFolder($oldDir);
 }
 
 // Rename old template override folder for the configurator page
-$oldDir = KenedoPlatform::p()->getOldDirCustomization().DS.'templates'.DS.'configuration_page';
-$newDir = KenedoPlatform::p()->getOldDirCustomization().DS.'templates'.DS.'configuratorpage';
+$oldDir = KenedoPlatform::p()->getOldDirCustomization().'/templates/configuration_page';
+$newDir = KenedoPlatform::p()->getOldDirCustomization().'/templates/configuratorpage';
 if (!is_dir($newDir) && is_dir($oldDir)) {
 	rename($oldDir,$newDir);
 }
 
 // Rename old template override folder for the listing
-$oldDir = KenedoPlatform::p()->getOldDirCustomization().DS.'templates'.DS.'product_listing';
-$newDir = KenedoPlatform::p()->getOldDirCustomization().DS.'templates'.DS.'productlisting';
+$oldDir = KenedoPlatform::p()->getOldDirCustomization().'/templates/product_listing';
+$newDir = KenedoPlatform::p()->getOldDirCustomization().'/templates/productlisting';
 if (!is_dir($newDir) && is_dir($oldDir)) {
 	rename($oldDir,$newDir);
 }

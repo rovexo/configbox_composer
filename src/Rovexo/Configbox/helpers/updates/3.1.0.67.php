@@ -6,23 +6,23 @@ if (KenedoPlatform::getName() == 'wordpress') {
 
 	$moveInfos = array(
 		array(
-			'old' => KenedoPlatform::p()->getComponentDir('com_configbox').DS.'data'.DS.'customer',
+			'old' => KenedoPlatform::p()->getComponentDir('com_configbox').'/data/customer',
 			'new' => KenedoPlatform::p()->getDirDataCustomer()
 		),
 		array(
-			'old' => KenedoPlatform::p()->getComponentDir('com_configbox').DS.'data'.DS.'store',
+			'old' => KenedoPlatform::p()->getComponentDir('com_configbox').'/data/store',
 			'new' => KenedoPlatform::p()->getDirDataStore()
 		),
 		array(
-			'old' => KenedoPlatform::p()->getRootDirectory().DS.'cache',
+			'old' => KenedoPlatform::p()->getRootDirectory().'/cache',
 			'new' => KenedoPlatform::p()->getDirCache()
 		),
 		array(
-			'old' => KenedoPlatform::p()->getRootDirectory().DS.'tmp',
+			'old' => KenedoPlatform::p()->getRootDirectory().'/tmp',
 			'new' => KenedoPlatform::p()->getTmpPath()
 		),
 		array(
-			'old' => KenedoPlatform::p()->getRootDirectory().DS.'logs',
+			'old' => KenedoPlatform::p()->getRootDirectory().'/logs',
 			'new' => KenedoPlatform::p()->getLogPath()
 		),
 	);

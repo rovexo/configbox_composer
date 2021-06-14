@@ -152,7 +152,7 @@ class KenedoViewHelper {
 		return $tabs;
 	}
 	
-	static function renderTaskItems($taskItems) {
+	static function renderTaskItems($taskItems, $listOrForm = 'form') {
 		
 		if (!$taskItems) {
 			return '';
@@ -162,7 +162,8 @@ class KenedoViewHelper {
 		<div class="kenedo-tasks">
 			<ul class="kenedo-task-list">
 				<?php foreach ($taskItems as $task) {
-					$cssClasses = 'trigger-kenedo-form-task btn '.( (!empty($task['primary'])) ? ' btn-primary' : 'btn-default');
+					$cssClasses = ($listOrForm == 'form') ? 'trigger-kenedo-form-task' : 'trigger-kenedo-list-task';
+					$cssClasses .= ' btn '.( (!empty($task['primary'])) ? ' btn-primary' : 'btn-default');
 					?>
 					<?php if (!empty($task['link'])) { ?>
 						<li class="link">

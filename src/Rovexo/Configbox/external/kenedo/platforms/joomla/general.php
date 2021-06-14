@@ -42,6 +42,83 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		$this->setGeneratorTag($this->getGeneratorTag().' and ConfigBox (https://www.configbox.at)');
 
 		$this->do2Point6LegacyStuff();
+		$this->defineLegacyConstants();
+
+	}
+
+	private function defineLegacyConstants() {
+
+		define('CONFIGBOX_DIR_CACHE',						KenedoPlatform::p()->getDirCache().'/configbox');
+		define('CONFIGBOX_DIR_SETTINGS',					KenedoPlatform::p()->getDirCustomizationSettings());
+
+		define('CONFIGBOX_URL_CONFIGURATOR_FILEUPLOADS',	KenedoPlatform::p()->getUrlDataCustomer().'/public/file_uploads' );
+		define('CONFIGBOX_URL_POSITION_IMAGES',				KenedoPlatform::p()->getUrlDataCustomer().'/public/position_images' );
+
+		define('CONFIGBOX_DIR_PRODUCT_IMAGES',				KenedoPlatform::p()->getDirDataStore().'/public/product_images');
+		define('CONFIGBOX_DIR_PRODUCT_DETAIL_PANE_ICONS',	KenedoPlatform::p()->getDirDataStore().'/public/product_detail_pane_icons');
+		define('CONFIGBOX_DIR_VIS_PRODUCT_BASE_IMAGES',		KenedoPlatform::p()->getDirDataStore().'/public/vis_product_images');
+		define('CONFIGBOX_DIR_VIS_ANSWER_IMAGES', 			KenedoPlatform::p()->getDirDataStore().'/public/vis_answer_images');
+		define('CONFIGBOX_DIR_DEFAULT_IMAGES',				KenedoPlatform::p()->getDirDataStore().'/public/default_images');
+		define('CONFIGBOX_DIR_QUESTION_DECORATIONS',		KenedoPlatform::p()->getDirDataStore().'/public/question_decorations');
+		define('CONFIGBOX_DIR_ANSWER_IMAGES',				KenedoPlatform::p()->getDirDataStore().'/public/answer_images');
+		define('CONFIGBOX_DIR_ANSWER_PICKER_IMAGES',		KenedoPlatform::p()->getDirDataStore().'/public/answer_picker_images');
+		define('CONFIGBOX_DIR_SHOP_LOGOS',					KenedoPlatform::p()->getDirDataStore().'/public/shoplogos');
+		define('CONFIGBOX_DIR_MAXMIND_DBS',					KenedoPlatform::p()->getDirDataStore().'/private/maxmind');
+
+		define('CONFIGBOX_URL_PRODUCT_IMAGES',				KenedoPlatform::p()->getUrlDataStore().'/public/product_images');
+		define('CONFIGBOX_URL_PRODUCT_GALLERY_IMAGES',		KenedoPlatform::p()->getUrlDataStore().'/public/product_gallery_images');
+		define('CONFIGBOX_URL_PRODUCT_DETAIL_PANE_ICONS',	KenedoPlatform::p()->getUrlDataStore().'/public/product_detail_pane_icons');
+		define('CONFIGBOX_URL_VIS_PRODUCT_BASE_IMAGES',		KenedoPlatform::p()->getUrlDataStore().'/public/vis_product_images');
+		define('CONFIGBOX_URL_VIS_ANSWER_IMAGES', 			KenedoPlatform::p()->getUrlDataStore().'/public/vis_answer_images');
+		define('CONFIGBOX_URL_DEFAULT_IMAGES',				KenedoPlatform::p()->getUrlDataStore().'/public/default_images');
+		define('CONFIGBOX_URL_QUESTION_DECORATIONS',		KenedoPlatform::p()->getUrlDataStore().'/public/question_decorations');
+		define('CONFIGBOX_URL_ANSWER_IMAGES',				KenedoPlatform::p()->getUrlDataStore().'/public/answer_images');
+		define('CONFIGBOX_URL_ANSWER_PICKER_IMAGES',		KenedoPlatform::p()->getUrlDataStore().'/public/answer_picker_images');
+		define('CONFIGBOX_URL_SHOP_LOGOS',					KenedoPlatform::p()->getUrlDataStore().'/public/shoplogos');
+		define('CONFIGBOX_URL_MAXMIND_DBS',					KenedoPlatform::p()->getUrlDataStore().'/private/maxmind');
+
+		define('CONFIGBOX_DIR_QUOTATIONS',					KenedoPlatform::p()->getDirDataCustomer().'/private/quotations' );
+
+		// CUSTOMER DATA
+		define('CONFIGBOX_DIR_INVOICES',					KenedoPlatform::p()->getDirDataCustomer().'/private/invoices' );
+		define('CONFIGBOX_DIR_CONFIGURATOR_FILEUPLOADS',	KenedoPlatform::p()->getDirDataCustomer().'/public/file_uploads' );
+		define('CONFIGBOX_DIR_POSITION_IMAGES',				KenedoPlatform::p()->getDirDataCustomer().'/public/position_images' );
+
+
+
+		// Define paths
+		/**
+		 * URL scheme (without colons or backslashes)
+		 * E.g. https
+		 * @const  KPATH_ROOT
+		 */
+		define('KPATH_SCHEME', 	KenedoPlatform::p()->requestUsesHttps() ? 'https' : 'http');
+
+		/**
+		 * HTTP Hostname
+		 * E.g. configbox.dev
+		 * @const  KPATH_HOST
+		 */
+		define('KPATH_HOST', 	(substr(PHP_SAPI, 0, 3) == 'cli') ? '' : $_SERVER['HTTP_HOST']);
+
+		/**
+		 * Platform base URL (scheme://host/path) - without a trailing slash
+		 * @const  KPATH_URL_BASE
+		 */
+		define('KPATH_URL_BASE', KenedoPlatform::p()->getUrlBase());
+
+		/**
+		 * Full path to the platform's root directory (not the web server's root)
+		 * @const  KPATH_ROOT
+		 */
+		define('KPATH_ROOT', KenedoPlatform::p()->getRootDirectory());
+
+		/**
+		 * Full path to CB's lib directory
+		 * @const KPATH_DIR_CB
+		 */
+		define('KPATH_DIR_CB', KenedoPlatform::p()->getComponentDir('com_configbox') );
+
 
 	}
 
@@ -152,7 +229,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	public function &getDb() {
 
 		if (!$this->db) {
-			require_once(dirname(__FILE__).DS.'database.php');
+			require_once(__DIR__.'/database.php');
 			$this->db = new KenedoDatabaseJoomla();
 		}
 
@@ -593,28 +670,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	}
 
 	public function getUrlBaseAssets() {
-
-		if (!empty($_SERVER['HTTP_HOST'])) {
-			$path = JUri::base(true);
-		}
-		else {
-			$path = '';
-		}
-
-		$base = KPATH_SCHEME.'://'.KPATH_HOST.'/'.$path;
-
-		if ($this->isAdminArea()) {
-			$base = rtrim($base, '/');
-			$ex = explode('/', $base);
-			if (array_pop($ex) == 'administrator') {
-				$base = implode('/',$ex);
-			}
-		}
-
-		$base = rtrim($base, '/');
-
-		return $base;
-
+		return $this->getUrlBase();
 	}
 
 	public function getDocumentBase() {
@@ -952,11 +1008,6 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 
 	}
 
-	public function startSession() {
-
-		return true;
-	}
-
 	public function getPasswordResetLink() {
 		if ($this->getVersionShort() == 1.5) {
 			return KLink::getRoute('index.php?option=com_user&view=reset');
@@ -1061,10 +1112,10 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	public function getPlatformUserEditUrl($platformUserId) {
 
 		if ($this->getVersionShort() == 1.5) {
-			$link = KPATH_URL_BASE.'/administrator/index.php?option=com_users&view=user&task=edit&cid[]='.$platformUserId;
+			$link = KenedoPlatform::p()->getUrlBase().'/administrator/index.php?option=com_users&view=user&task=edit&cid[]='.$platformUserId;
 		}
 		else {
-			$link = KPATH_URL_BASE.'/administrator/index.php?option=com_users&view=user&layout=edit&id=106'.$platformUserId;
+			$link = KenedoPlatform::p()->getUrlBase().'/administrator/index.php?option=com_users&view=user&layout=edit&id=106'.$platformUserId;
 		}
 
 		return $link;
@@ -1072,7 +1123,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	}
 
 	public function getComponentDir($componentName) {
-		return JPATH_SITE.DS.'components'.DS.strtolower($componentName);
+		return JPATH_SITE.'/components/'.strtolower($componentName);
 	}
 
 	public function getUrlAssets() {
@@ -1081,22 +1132,22 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirAssets() {
-		$path = $this->getComponentDir('com_configbox').DS.'assets';
+		$path = $this->getComponentDir('com_configbox').'/assets';
 		return $path;
 	}
 
 	public function getDirCache() {
 		// Not using JPATH_CACHE on purpose to avoid writing into the admin cache
-		return JPATH_SITE.DS.'cache';
+		return JPATH_SITE.'/cache';
 	}
 
 	public function getDirCustomization() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'customization';
+		$path = $this->getComponentDir('com_configbox').'/data/customization';
 		return $path;
 	}
 
 	public function getDirCustomizationAssets() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'customization'.DS.'assets';
+		$path = $this->getComponentDir('com_configbox').'/data/customization/assets';
 		return $path;
 	}
 
@@ -1111,12 +1162,12 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirCustomizationSettings() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'store'.DS.'private'.DS.'settings';
+		$path = $this->getComponentDir('com_configbox').'/data/store/private/settings';
 		return $path;
 	}
 
 	public function getDirDataCustomer() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'customer';
+		$path = $this->getComponentDir('com_configbox').'/data/customer';
 		return $path;
 	}
 
@@ -1126,7 +1177,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	}
 
 	public function getDirDataStore() {
-		$path = $this->getComponentDir('com_configbox').DS.'data'.DS.'store';
+		$path = $this->getComponentDir('com_configbox').'/data/store';
 		return $path;
 	}
 
@@ -1136,7 +1187,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	}
 
 	public function getTemplateOverridePath($component, $viewName, $templateName) {
-		$path = JPATH_SITE .DS. 'templates' .DS. $this->getTemplateName() .DS. 'html' .DS. $component .DS. $viewName .DS. $templateName.'.php';
+		$path = JPATH_SITE .'/templates/'. $this->getTemplateName() .'/html/'. $component .'/'. $viewName .'/'. $templateName.'.php';
 		return $path;
 	}
 

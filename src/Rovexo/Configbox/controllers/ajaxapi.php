@@ -64,16 +64,10 @@ class ConfigboxControllerAjaxapi extends KenedoController {
 
 	function getNotificationUrl() {
 		
-//		$langUrlCode = KenedoPlatform::p()->getLanguageUrlCode( CONFIGBOX_LANGUAGE_TAG );
 		$paymentClassName = KRequest::getKeyword('payment_class');
-		
 		$url = 'index.php?option=com_configbox&controller=ipn&task=processipn&connector_name='.$paymentClassName;
-		
 		$route = KLink::getRoute($url, false);
-
-		$prefix = (CbSettings::getInstance()->get('securecheckout')) ? 'https://'.KPATH_HOST : 'http://'.KPATH_HOST;
-		
-		$url = $prefix . $route;
+		$url = KenedoPlatform::p()->getUrlBase() . $route;
 		
 		echo $url;
 		

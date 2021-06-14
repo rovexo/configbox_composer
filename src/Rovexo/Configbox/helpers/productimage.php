@@ -70,13 +70,13 @@ class ConfigboxProductImageHelper {
 				<div class="visualization-frame">
 					<?php if (!empty($cartPositionDetails->productData->baseimage)) { ?>
 						<div class="base-image">
-							<img src="<?php echo CONFIGBOX_URL_VIS_PRODUCT_BASE_IMAGES.'/'.$cartPositionDetails->productData->baseimage;?>" alt="" />
+							<img src="<?php echo KenedoPlatform::p()->getUrlDataStore().'/public/vis_product_images/'.$cartPositionDetails->productData->baseimage;?>" alt="" />
 						</div>
 					<?php } ?>
 
 					<?php foreach ($images as $image) { ?>
 						<div class="visualization-image">
-							<img src="<?php echo CONFIGBOX_URL_VIS_ANSWER_IMAGES.'/'.$image->visualization_image;?>" alt="" />
+							<img src="<?php echo KenedoPlatform::p()->getUrlDataStore().'/public/vis_answer_images/'.$image->visualization_image;?>" alt="" />
 						</div>
 					<?php } ?>
 				</div>
@@ -108,16 +108,16 @@ class ConfigboxProductImageHelper {
 	static function getMergedProductImage($cartPositionDetails, $destination = '') {
 		
 		if (empty($destination)) {
-			$destinationFile = KenedoPlatform::p()->getTmpPath().DS.uniqid().'.png';
+			$destinationFile = KenedoPlatform::p()->getTmpPath().'/'.uniqid().'.png';
 		}
 		elseif (is_dir($destination)) {
-			$destinationFile = $destination.DS.uniqid().'.png';
+			$destinationFile = $destination.'/'.uniqid().'.png';
 		}
 		elseif (is_dir(dirname($destination))) {
 			$destinationFile = $destination;
 		}
 		else {
-			$destinationFile = KenedoPlatform::p()->getTmpPath().DS.uniqid().'.png';
+			$destinationFile = KenedoPlatform::p()->getTmpPath().'/'.uniqid().'.png';
 		}
 
 		$images = self::getVisualizationData($cartPositionDetails->id);
@@ -128,7 +128,7 @@ class ConfigboxProductImageHelper {
 
 		if (!empty($cartPositionDetails->productData->baseimage)) {
 
-			$path = CONFIGBOX_DIR_VIS_PRODUCT_BASE_IMAGES .DS. $cartPositionDetails->productData->baseimage;
+			$path = KenedoPlatform::p()->getDirDataStore().'/public/vis_product_images/'. $cartPositionDetails->productData->baseimage;
 
 			$dim = KenedoFileHelper::getImageDimensions($path);
 
@@ -148,7 +148,7 @@ class ConfigboxProductImageHelper {
 
 		// Shortcut for the case if just one image is there (and no base image) - this helps because imagealphablending and imagesavealpha goes wrong otherwise
 		if (count($images) == 1 && !isset($base)) {
-			$sourceFile = CONFIGBOX_DIR_VIS_ANSWER_IMAGES .DS. $images[key($images)]->visualization_image;
+			$sourceFile = KenedoPlatform::p()->getDirDataStore().'/public/vis_answer_images/'. $images[key($images)]->visualization_image;
 			$success = copy($sourceFile, $destinationFile);
 			if ($success) {
 				return $destinationFile;
@@ -162,7 +162,7 @@ class ConfigboxProductImageHelper {
 
 			if (!isset($base)) {
 
-				$path = CONFIGBOX_DIR_VIS_ANSWER_IMAGES .DS. $image->visualization_image;
+				$path = KenedoPlatform::p()->getDirDataStore().'/public/vis_answer_images/'. $image->visualization_image;
 
 				$dim = KenedoFileHelper::getImageDimensions($path);
 
@@ -184,7 +184,7 @@ class ConfigboxProductImageHelper {
 			}
 			else {
 
-				$path = CONFIGBOX_DIR_VIS_ANSWER_IMAGES .DS. $image->visualization_image;
+				$path = KenedoPlatform::p()->getDirDataStore().'/public/vis_answer_images/'. $image->visualization_image;
 
 				$dim = KenedoFileHelper::getImageDimensions($path);
 
@@ -285,7 +285,7 @@ class ConfigboxProductImageHelper {
 				$slot->css_id = 'image-answer-id-'.$slot->answer_id;
 				$slot->css_classes .= ' image-answer-id-'.$slot->answer_id;
 	
-				$slot->visualization_image = CONFIGBOX_URL_VIS_ANSWER_IMAGES .'/'. $slot->visualization_image;
+				$slot->visualization_image = KenedoPlatform::p()->getUrlDataStore().'/public/vis_answer_images/'. $slot->visualization_image;
 	
 				if ($configuration->getSelection($slot->question_id) == $slot->answer_id) {
 					$slot->selected = true;
