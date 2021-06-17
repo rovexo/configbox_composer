@@ -86,11 +86,6 @@ class ConfigboxQuestion {
 	public $shapediver_parameter_id;
 
 	/**
-	 * @var string Shadpediver geometry name. Can be set when question is of type upload and user has set a texture name
-	 */
-	public $shapediver_geometry_name;
-
-	/**
 	 * @var string heading|label|none
 	 */
 	public $title_display;

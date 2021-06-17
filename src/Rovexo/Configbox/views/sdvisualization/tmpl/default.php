@@ -2,17 +2,19 @@
 defined('CB_VALID_ENTRY') or die();
 /** @var $this ConfigboxViewSdvisualization */
 ?>
-<aside <?php echo $this->getViewAttributes();?>>
+<aside <?php echo $this->getViewAttributes();?>
+		data-ticket="<?php echo hsc($this->ticket);?>"
+		data-model-view-url="<?php echo hsc($this->modelViewUrl);?>"
+		data-parameters="<?php echo hsc($this->parameterJson);?>"
+		data-used-images="<?php echo hsc(json_encode($this->currentImageUploads));?>">
 
-	<?php if ($this->iframeUrl) { ?>
-
-		<iframe id="shapediver-vis" src="about:blank" data-src="<?php echo $this->iframeUrl;?>" data-relative-height="<?php echo hsc($this->relativeIframeHeight);?>" allowfullscreen></iframe>
-
-	<?php } ?>
+	<div id="sdv-container"></div>
 
 	<div class="current-images">
 		<?php foreach ($this->currentImageUploads as $imageData) { ?>
-			<img alt="" id="image-question-id-<?php echo intval($imageData['question_id']);?>" src="<?php echo $imageData['url'];?>" data-question-id="<?php echo intval($imageData['question_id']);?>" data-geometry-name="<?php echo hsc($imageData['geometry_name']);?>" />
+			<img src="<?php echo $imageData['url'];?>"
+			     data-question-id="<?php echo intval($imageData['question_id']);?>"
+			     alt="" />
 		<?php } ?>
 	</div>
 

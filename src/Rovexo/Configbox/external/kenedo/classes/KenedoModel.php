@@ -292,10 +292,18 @@ class KenedoModel {
 		$finalResponse = true;
 		foreach ($properties as $property) {
 
+			if ($property->applies($data)) {
+				continue;
+			}
 			$response = $property->check($data);
 
 			if ($response !== true) {
-				$this->setErrors($property->getErrors());
+				$errors = $property->getErrors();
+				if (count($errors) == 0) {
+					$errors[] = 'Field "'. $property->getPropertyDefinition('label').'" reported failed validation but gives no error message.';
+				}
+
+				$this->setErrors($errors);
 				$finalResponse = false;
 			}
 

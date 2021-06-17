@@ -22,9 +22,18 @@ class ConfigboxViewAdminproduct extends KenedoView {
      */
     function getJsInitCallsOnce() {
         $calls = parent::getJsInitCallsOnce();
-        $calls[] = 'configbox/adminShapediver::initBackendPropsOnce';
+        $calls[] = 'configbox/adminShapediverV2::initBackendPropsOnce';
         return $calls;
     }
+
+	/**
+	 * @inheritDoc
+	 */
+	function getJsInitCallsEach() {
+		$calls = parent::getJsInitCallsEach();
+		$calls[] = 'configbox/adminShapediverV2::initBackendPropsEach';
+		return $calls;
+	}
 
     /**
 	 * For Wordpress it adds the product's shortcode under the title

@@ -549,20 +549,6 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'positionForm'=>34030,
 			'appliesWhen'=>array(
 				'is_shapediver_control'=>'1',
-				'question_type'=>'!upload',
-			),
-		);
-
-		$propDefs['shapediver_geometry_name'] = array(
-			'name'=>'shapediver_geometry_name',
-			'label'=>KText::_('Please choose a ShapeDiver geometry'),
-			'tooltip' => KText::_('Be sure to make the file validation so that only images like jpegs, pngs or gifs can be uploaded.'),
-			'type'=>'shapedivergeometry',
-			'required'=>0,
-			'positionForm'=>34035,
-			'appliesWhen'=>array(
-				'is_shapediver_control'=>'1',
-				'question_type'=>'upload',
 			),
 		);
 

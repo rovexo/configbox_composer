@@ -35,7 +35,7 @@ else {
 		if ($parameter['hidden'] == true) {
 			continue;
 		}
-		$options[$parameterId] = $parameter['title'];
+		$options[$parameterId] = $parameter['name'];
 	}
 
 	// Add some feedback in case some non-existing geometry is set currently
@@ -59,7 +59,7 @@ else {
 
 		<table class="table">
 			<tr>
-				<th><?php echo KText::_('Title');?></th>
+				<th><?php echo KText::_('Name');?></th>
 				<th><?php echo KText::_('Type');?></th>
 				<th><?php echo KText::_('Minimum');?></th>
 				<th><?php echo KText::_('Maximum');?></th>
@@ -70,11 +70,17 @@ else {
 				<?php if ($parameter['hidden'] == true) { continue; };?>
 
 				<tr>
-					<td><?php echo hsc($parameter['title']);?></td>
+					<td><?php echo hsc($parameter['name']);?></td>
 					<td><?php echo hsc($parameter['type']);?></td>
 					<td><?php echo hsc(isset($parameter['min']) ? $parameter['min'] : KText::_('NA') ) ;?></td>
 					<td><?php echo hsc(isset($parameter['max']) ? $parameter['max'] : KText::_('NA') ) ;?></td>
-					<td><?php echo hsc(isset($parameter['choices']) ? implode(', ', $parameter['choices']) : KText::_('NA') ) ;?></td>
+					<td>
+						<?php if ($parameter['type'] == 'File') { ?>
+							<?php echo hsc(isset($parameter['format']) ? implode(', ', $parameter['format']) : KText::_('NA') ) ;?>
+						<?php } else { ?>
+							<?php echo hsc(isset($parameter['choices']) ? implode(', ', $parameter['choices']) : KText::_('NA') ) ;?>
+						<?php } ?>
+					</td>
 				</tr>
 
 			<?php } ?>

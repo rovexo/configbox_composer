@@ -19,26 +19,35 @@ class ConfigboxViewSdvisualization extends KenedoView {
 	public $iframeUrl;
 
 	/**
-	 * @var float Height of the iframe as percent of the current width
-	 */
-	public $relativeIframeHeight = 60;
-
-	/**
 	 * @var string[][] Array with image data. Keys are question_id, url, geometry_name
 	 */
 	public $currentImageUploads;
 
+	/**
+	 * @var string ShapeDiver Ticket
+	 */
+	public $ticket;
+
+	/**
+	 * @var string Override for the SD setting modelViewUrl
+	 */
+	public $modelViewUrl;
+
+	/**
+	 * @var string[] Shapediver parameter settings (key is parameter id, value is parameter value)
+	 */
+	public $parameters;
+
+	/**
+	 * JSON made from $this->parameters
+	 * @see parameters
+	 * @var string
+	 */
+	public $parameterJson;
+
 	function getJsInitCallsOnce() {
 		$calls = parent::getJsInitCallsOnce();
-
-		$calls[] = 'configbox/shapediver::initShapeDiverVisOnce';
-
-		return $calls;
-	}
-
-	function getJsInitCallsEach() {
-		$calls = [];
-		$calls[] = 'configbox/shapediver::initShapeDiverVisEach';
+		$calls[] = 'configbox/shapediverV2::initFrontendOnce';
 		return $calls;
 	}
 
@@ -63,22 +72,19 @@ class ConfigboxViewSdvisualization extends KenedoView {
 
 		$modelData = json_decode($product->shapediver_model_data, true);
 
-		if (empty($modelData['iframeUrl'])) {
-			KLog::log('Product ID '.$this->productId.' uses ShapeDiver, but the URL is not set', 'error');
+		if (empty($modelData['ticket'])) {
+			KLog::log('Product ID '.$this->productId.' uses ShapeDiver, but the Ticket is not set', 'error');
 			return;
 		}
 
-		if (filter_var($modelData['iframeUrl'], FILTER_VALIDATE_URL) == false) {
-			KLog::log('Product ID '.$this->productId.' seems to have an invalid iframe URL. URL is "'.$modelData['iframeUrl'].'"', 'error');
-			return;
-		}
+		$this->ticket = $modelData['ticket'];
 
-		// iframe width is responsive and width/height ratio should be constant. So we made a width to height ratio setting.
-		$ratio = !empty($modelData['ratioDimensions']) ? $modelData['ratioDimensions'] : '4:3';
-		$exp = explode(':', $ratio);
-		$this->relativeIframeHeight = number_format($exp[1] / $exp[0] * 100, 3, '.', '');
+		$configuration = ConfigboxConfiguration::getInstance($this->positionId);
+		$this->parameters = ConfigboxShapediverHelper::getParameterValuesV2($configuration);
+		$this->parameterJson = json_encode($this->parameters);
 
-		$this->iframeUrl = ConfigboxShapediverHelper::getVisualizationUrl($product->id, ConfigboxConfiguration::getInstance());
+		$standardUrl = 'https://sdeuc1.eu-central-1.shapediver.com';
+		$this->modelViewUrl = !empty($modelData['modelViewUrlOverride']) ? $modelData['modelViewUrlOverride'] : $standardUrl;
 
 		// Here we prepare the image stash (image data used for reapplying textures after a geometry update)
 		$configuration = ConfigboxConfiguration::getInstance($this->positionId);
@@ -94,7 +100,7 @@ class ConfigboxViewSdvisualization extends KenedoView {
 
 			$question = ConfigboxQuestion::getQuestion($questionId);
 
-			if ($question->is_shapediver_control == '0' || $question->shapediver_geometry_name == '') {
+			if ($question->is_shapediver_control == '0' || $question->shapediver_parameter_id == '') {
 				continue;
 			}
 
@@ -113,9 +119,9 @@ class ConfigboxViewSdvisualization extends KenedoView {
 				}
 
 				$this->currentImageUploads[] = array(
+					'parameter_id' => $question->shapediver_parameter_id,
 					'question_id' => $question->id,
 					'url' => $imgData['url'],
-					'geometry_name' => $question->shapediver_geometry_name,
 				);
 
 			}

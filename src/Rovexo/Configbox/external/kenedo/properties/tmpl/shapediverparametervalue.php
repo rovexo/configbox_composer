@@ -50,7 +50,7 @@ else {
 
 		echo KenedoHtml::getSelectField($this->propertyName, $options, $selected);
 	}
-	elseif (in_array($parameter['type'], array('Boolean'))) {
+	elseif (in_array($parameter['type'], array('Boolean', 'Bool'))) {
 
 		$options = array(
 			'true' => KText::_('CBYES'),
