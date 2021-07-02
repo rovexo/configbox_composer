@@ -25,10 +25,11 @@ class ConfigboxViewAdminconfig extends KenedoView {
 		$model = $this->getDefaultModel();
 		$this->record = $model->getRecord(1);
 
-		$this->assign('recordUsage', array());
-		$this->assignRef('properties', $model->getProperties());
-		$this->assignRef('pageTitle', $this->getPageTitle());
-		$this->assignRef('pageTasks', $model->getDetailsTasks());
+		$this->recordUsage = array();
+		$this->properties = $model->getProperties();
+		$this->pageTitle = $this->getPageTitle();
+		$this->pageTasks = $model->getDetailsTasks();
+
 	}
 
 }

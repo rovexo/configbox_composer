@@ -11,8 +11,7 @@ class KenedoView {
 	}
 
 	/**
-	 * @var string $component Name of the component dealing with tasks in this view (e.g. com_configbox). To be
-	 * overridden in sub classes
+	 * @var string $component Name of the component dealing with tasks in this view (e.g. com_configbox). Set during instantiation
 	 */
 	public $component = '';
 
@@ -481,7 +480,7 @@ class KenedoView {
 		// Original template for that view
 		$templatePaths['defaultTemplate'] 	= dirname($this->getViewPath()).'/tmpl/'.$template.'.php';
 
-		$output = '';
+		$output = NULL;
 
 		foreach ($templatePaths as $templatePath) {
 			if (is_file($templatePath)) {
@@ -492,8 +491,9 @@ class KenedoView {
 			}
 		}
 
-		if ($output === false) {
-			KLog::log('Template "'.$template.'" not found in "'.$templatePaths['defaultTemplate'].'" for view "'.get_class($this).'".', 'error', 'Template "'.$template.'" not found for view "'.get_class($this).'".');
+		if ($output === null) {
+			KLog::log('Template "'.$template.'" not found in "'.$templatePaths['defaultTemplate'].'" for view "'.get_class($this).'".', 'debug');
+			throw new Exception('View template not found.');
 		}
 
 		echo $output;

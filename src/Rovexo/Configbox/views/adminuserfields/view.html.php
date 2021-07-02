@@ -39,10 +39,10 @@ class ConfigboxViewAdminuserfields extends KenedoView {
 	function prepareTemplateVars() {
 				
 		$model = KenedoModel::getModel('ConfigboxModelAdminuserfields');
-		
-		$this->assignRef('pageTitle', $this->getPageTitle());
-		$this->assignRef('pageTasks', $model->getDetailsTasks());
-		
+
+		$this->pageTitle = $this->getPageTitle();
+		$this->pageTasks = $model->getDetailsTasks();
+
 		$userFields = ConfigboxUserHelper::getUserFields();
 		$userFieldTranslations = ConfigboxUserHelper::getUserFieldTranslations();
 		
@@ -51,10 +51,10 @@ class ConfigboxViewAdminuserfields extends KenedoView {
 		}
 		
 		usort($userFields, array('ConfigboxViewAdminuserfields', 'sortUserFields'));
-		
-		$this->assignRef('userFields', $userFields );
-		$this->assignRef('userFieldTranslations', $userFieldTranslations);
-		
+
+		$this->userFields = $userFields;
+		$this->userFieldTranslations = $userFieldTranslations;
+
 		$this->addViewCssClasses();
 
 	}

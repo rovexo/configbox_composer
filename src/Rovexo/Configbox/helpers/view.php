@@ -89,7 +89,7 @@ class ConfigboxViewHelper {
 			'urlSystemAssets'   => KenedoPlatform::p()->getUrlAssets(),
 			'urlCustomAssets'   => KenedoPlatform::p()->getUrlCustomizationAssets(),
 			'urlBase'           => KenedoPlatform::p()->getUrlBase(),
-			'urlTinyMceBase'    => KenedoPlatform::p()->getUrlAssets().'/kenedo/external/tinymce/',
+			'urlTinyMceBase'    => KenedoPlatform::p()->getUrlAssets().'/kenedo/external/tinymce-5.7.1/',
 			'languageCode'      => KText::getLanguageCode(),
 			'languageTag'      	=> KText::getLanguageTag(),
 			'decimalSymbol'     => KText::_('DECIMAL_MARK', '.'),

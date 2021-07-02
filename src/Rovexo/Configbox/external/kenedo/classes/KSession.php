@@ -108,12 +108,12 @@ class KSession {
 				'domain'=>'',
 				'secure'=>KenedoPlatform::p()->requestUsesHttps(),
 				'httponly'=>true,
-				'samesite'=>'None',
+				'samesite'=> KenedoPlatform::p()->requestUsesHttps() ? 'None' : 'Lax',
 			));
 
 		}
 		else {
-			$sameSiteTrick = '/;SameSite=None';
+			$sameSiteTrick = KenedoPlatform::p()->requestUsesHttps() ? '/;SameSite=None' : '/;SameSite=Lax';
 			setcookie(self::$sessionName, self::$sessionId, time() - 10000, $sameSiteTrick, '', KenedoPlatform::p()->requestUsesHttps(), true);
 		}
 
@@ -163,12 +163,12 @@ class KSession {
 					'domain'=>'',
 					'secure'=>KenedoPlatform::p()->requestUsesHttps(),
 					'httponly'=>true,
-					'samesite'=>'None',
+					'samesite'=> KenedoPlatform::p()->requestUsesHttps() ? 'None' : 'Lax',
 				));
 
 			}
 			else {
-				$sameSiteTrick = '/;SameSite=None';
+				$sameSiteTrick = KenedoPlatform::p()->requestUsesHttps() ? '/;SameSite=None' : '/;SameSite=Lax';
 				setcookie(self::$sessionName, self::$sessionId, $expiry, $sameSiteTrick, '', KenedoPlatform::p()->requestUsesHttps(), true);
 			}
 

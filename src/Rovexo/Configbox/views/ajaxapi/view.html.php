@@ -30,17 +30,15 @@ class ConfigboxViewAjaxapi extends KenedoView {
 		switch ($task) {
 			
 			case 'getstateselectoptions':
-				$data = ConfigboxCountryHelper::getStateSelectOptions(KRequest::getInt('country_id'));
-				$this->assign('data',$data);
-				$this->assign('selectedId', KRequest::getString('selected_id'));
+				$this->selectedId = KRequest::getString('selected_id');
+				$this->data = ConfigboxCountryHelper::getStateSelectOptions($this->selectedId);
 				$template = 'stateselectoptions';
 				$this->renderView($template);
 				break;
 			
 			case 'getcountyselectoptions':
-				$data = ConfigboxCountryHelper::getCountySelectOptions(KRequest::getInt('state_id'));
-				$this->assign('data',$data);
-				$this->assign('selectedId', KRequest::getString('selected_id'));
+				$this->selectedId = KRequest::getString('selected_id');
+				$this->data = ConfigboxCountryHelper::getCountySelectOptions($this->selectedId);
 				$template = 'stateselectoptions';
 				$this->renderView($template);
 				break;

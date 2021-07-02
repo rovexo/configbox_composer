@@ -96,13 +96,13 @@ class ConfigboxViewUserorder extends KenedoView {
 
 		// Put order record display into view
 		$view = KenedoView::getView('ConfigboxViewRecord');
-		$view->assignRef('orderRecord', $orderRecord);
+		$view->orderRecord = $orderRecord;
 		$view->prepareTemplateVars();
-		$view->assign('showIn', 'confirmation');
-		$view->assign('showChangeLinks', false);
-		$view->assign('showProductDetails', true);
-		$html = $view->getViewOutput();
-		$this->assignRef('orderRecordHtml', $html);
+		$view->showIn = 'confirmation';
+		$view->showChangeLinks = false;
+		$view->showProductDetails = true;
+
+		$this->orderRecordHtml = $view->getViewOutput();
 
 		// Add the order record status string
 		$orderStatuses = $orderModel->getOrderStatuses();
@@ -113,20 +113,15 @@ class ConfigboxViewUserorder extends KenedoView {
 		$this->orderStatusString = $orderStatuses[$orderRecord->status]->title;
 
 		// Add the order record data
-		$this->assignRef('orderRecord', $orderRecord);
-
-		// Add invoice data
-		$invoiceModel = KenedoModel::getModel('ConfigboxModelInvoice');
-		$invoiceData = $invoiceModel->getInvoiceData( $orderId );
-		$this->assignRef('invoiceData', $invoiceData);
+		$this->orderRecord = $orderRecord;
 
 		// Add permissions
-		$this->assign('canCheckout', $orderRecord->status == 11 || $orderRecord->status == 14);
+		$this->canCheckout = $orderRecord->status == 11 || $orderRecord->status == 14;
 
 		// Add urls to checkout and account
-		$this->assign('urlCheckoutOrder', KLink::getRoute('index.php?option=com_configbox&view=cart&cart_id='.intval($orderRecord->cart_id), true, CbSettings::getInstance()->get('securecheckout')));
-		$this->assign('urlBackToAccount', KLink::getRoute('index.php?option=com_configbox&view=user', true, CbSettings::getInstance()->get('securecheckout')));
-		
+		$this->urlCheckoutOrder = KLink::getRoute('index.php?option=com_configbox&view=cart&cart_id='.intval($orderRecord->cart_id), true, CbSettings::getInstance()->get('securecheckout'));
+		$this->urlBackToAccount = KLink::getRoute('index.php?option=com_configbox&view=user', true, CbSettings::getInstance()->get('securecheckout'));
+
 	}
 	
 }

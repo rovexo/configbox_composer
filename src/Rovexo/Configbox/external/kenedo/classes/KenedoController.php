@@ -301,8 +301,7 @@ abstract class KenedoController {
 			throw new Exception('Display task called, but there is no view assigned to that controller. Check method getDefaultView.');
 		}
 
-		// Hint the view that it's a listing (KenedoView::display() uses it to set the right template file)
-		$view->assign('listing', true);
+		$view->listing = true;
 
 		// Wrap the output of the views depending on the way the stuff should be shown
 		$this->wrapViewAndDisplay($view);
@@ -327,7 +326,7 @@ abstract class KenedoController {
 		}
 
 		// Hint the view that it's not a listing, but a form (KenedoView::display() uses it to set the right template file)
-		$view->assign('listing', false);
+		$view->listing = false;
 
 		// Wrap the output of the views depending on the way the stuff should be shown
 		$this->wrapViewAndDisplay($view);
@@ -475,42 +474,6 @@ abstract class KenedoController {
 	 * @param bool $success Indicates if saving was successful
 	 */
 	protected function afterStore($success) {
-
-	}
-
-	/**
-	 * Ajax save differs from regular saving that it returns some json only and that it updates individual fields
-	 * of an item (as opposed to all fields)
-	 *
-	 * @see KenedoModel::ajaxStore()
-	 */
-	function ajaxStore() {
-
-		// Check authorization, abort if negative
-		$this->isAuthorized() or $this->abortUnauthorized();
-
-		$model = $this->getDefaultModel();
-
-		$id = KRequest::getInt('id');
-		$success = $model->ajaxStore($id);
-
-		// Prepare the response object
-		$response = new stdClass();
-		if ($success) {
-			$response->status = 1;
-			$response->errors = array();
-		}
-		else {
-			$response->status = 0;
-			$response->errors = $model->getErrors();
-		}
-
-		$this->afterStore($success);
-
-		// Purge the cache
-		$this->purgeCache();
-
-		echo json_encode($response);
 
 	}
 

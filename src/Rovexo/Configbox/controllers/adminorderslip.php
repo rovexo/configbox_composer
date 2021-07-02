@@ -36,7 +36,7 @@ class ConfigboxControllerAdminorderslip extends KenedoController {
 		$orderId = KRequest::getInt('order_id');
 		
 		$slipView = KenedoView::getView('ConfigboxViewAdminorderslip');
-		$slipView->assign('orderId', $orderId);
+		$slipView->orderId = $orderId;
 		
 		// Generate the PDF
 		ob_start();

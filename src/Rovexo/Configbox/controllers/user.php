@@ -332,7 +332,7 @@ class ConfigboxControllerUser extends KenedoController {
 		
 		$emailView = KenedoView::getView('ConfigboxViewEmailtemplate');
 		$emailView->prepareTemplateVars();
-		$emailView->assign('emailContent', $emailBody);
+		$emailView->emailContent = $emailBody;
 		$emailBody = $emailView->getViewOutput('default');
 
 		// Use shop data email sales (and fall back to platform's mailer address

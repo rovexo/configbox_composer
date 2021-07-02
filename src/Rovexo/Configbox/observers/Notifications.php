@@ -145,7 +145,7 @@ class ObserverNotifications {
 					if (!isset($email->doNotWrap) || $email->doNotWrap == false) {
 						$emailView = KenedoView::getView('ConfigboxViewEmailtemplate');
 						$emailView->prepareTemplateVars();
-						$emailView->assign('emailContent', $email->body);
+						$emailView->emailContent = $email->body;
 						$email->body = $emailView->getViewOutput('default');
 					}
 

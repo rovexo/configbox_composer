@@ -54,7 +54,7 @@ class ConfigboxViewBlockcart extends KenedoView {
 			
 		if (empty($this->params)) {
 			$params = new KStorage();
-			$this->assignRef('params',$params);
+			$this->params = $params;
 		}
 		
 		$model = KenedoModel::getModel('ConfigboxModelCart');
@@ -66,19 +66,15 @@ class ConfigboxViewBlockcart extends KenedoView {
 			$cartDetails = NULL;
 		}
 
-		
-		$this->assignRef('cartDetails', $cartDetails);
-		
-		// Legacy var, remove in 2.7 or 3.0
-		$this->assignRef('grandOrderDetails', $cartDetails);
-		
+		$this->cartDetails = $cartDetails;
+
 		if ( ConfigboxPrices::showNetPrices() ) {
-			$this->assign('totalKey', 'totalNet');
-			$this->assign('totalKeyRecurring', 'totalRecurringNet');
+			$this->totalKey = 'totalNet';
+			$this->totalKeyRecurring = 'totalRecurringNet';
 		}
 		else {
-			$this->assign('totalKey', 'totalGross');
-			$this->assign('totalKeyRecurring', 'totalRecurringGross');
+			$this->totalKey = 'totalGross';
+			$this->totalKeyRecurring = 'totalRecurringGross';
 		}
 
 		$this->blockTitle = CbSettings::getInstance()->get('blocktitle_cart', '');

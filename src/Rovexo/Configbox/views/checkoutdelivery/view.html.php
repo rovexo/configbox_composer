@@ -38,9 +38,9 @@ class ConfigboxViewCheckoutdelivery extends KenedoView {
 		$orderModel = KenedoModel::getModel('ConfigboxModelOrderrecord');
 		$orderId = $orderModel->getId();
 		$orderRecord = $orderModel->getOrderRecord($orderId);
-		
-		$this->assign('mode', $orderRecord->groupData->b2b_mode ? 'b2b' : 'b2c' );
-		
+
+		$this->mode = $orderRecord->groupData->b2b_mode ? 'b2b' : 'b2c';
+
 		$shippingOptions = $orderModel->getOrderRecordDeliveryOptions($orderRecord);
 		$selected = $orderRecord->delivery_id;
 		
@@ -54,10 +54,10 @@ class ConfigboxViewCheckoutdelivery extends KenedoView {
 				$optionsHavePricing = true;
 			}
 		}
-		
-		$this->assignRef('optionsHavePricing', $optionsHavePricing);
-		$this->assignRef('selected', $selected);
-		$this->assignRef('options', $shippingOptions);
+
+		$this->optionsHavePricing = $optionsHavePricing;
+		$this->selected = $selected;
+		$this->options = $shippingOptions;
 		
 	}
 

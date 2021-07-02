@@ -75,30 +75,28 @@ class ConfigboxViewRfqthankyou extends KenedoView {
 			return;
 		}
 
-		// Prime the indicators
-		$this->assign('showQuotationDownload', false);
-		$this->assign('showQuotationEmail', false);
-		$this->assign('showRequestConfirmation', false);
+		// Set defaults
+		$this->showQuotationDownload = false;
+		$this->showQuotationEmail = false;
+		$this->showRequestConfirmation = false;
 
 		// If quote downloads are enabled, generate the download URL and indicate
 		if ($group->quotation_download == true) {
 			$orderId = KRequest::getInt('order_id');
-			$link = KLink::getRoute('index.php?option=com_configbox&view=quotation&order_id='.$orderId);
-			$this->assign('urlQuotationDownload', $link);
-			$this->assign('showQuotationDownload', true);
+			$this->urlQuotationDownload = KLink::getRoute('index.php?option=com_configbox&view=quotation&order_id='.$orderId);
+			$this->showQuotationDownload = true;
 		}
 		elseif ($group->quotation_email == true) {
-			$this->assign('showQuotationEmail', true);
+			$this->showQuotationEmail = true;
 		}
 		else {
-			$this->assign('showRequestConfirmation', true);
+			$this->showRequestConfirmation = true;
 		}
 
 		// Put the order record in the view (for use in tracking template)
 		$orderModel = KenedoModel::getModel('ConfigboxModelOrderrecord');
 		$orderId = KRequest::getInt('order_id');
-		$orderRecord = $orderModel->getOrderRecord($orderId);
-		$this->assignRef('orderRecord', $orderRecord);
+		$this->orderRecord = $orderModel->getOrderRecord($orderId);
 
 		// Add the continue shopping URL
 		$listingId = CbSettings::getInstance()->get('continue_listing_id');
@@ -115,18 +113,16 @@ class ConfigboxViewRfqthankyou extends KenedoView {
 		$loggedIn = KenedoPlatform::p()->isLoggedIn();
 
 		if ($loggedIn) {
-			$accountLink = KLink::getRoute('index.php?option=com_configbox&view=user');
-			$this->assign('urlAccount', $accountLink);
-			$this->assign('showAccountLink', true);
+			$this->urlAccount = KLink::getRoute('index.php?option=com_configbox&view=user');
+			$this->showAccountLink = true;
 		}
 		else {
-			$this->assign('urlAccount', '');
-			$this->assign('showAccountLink', false);
+			$this->urlAccount = '';
+			$this->showAccountLink = false;
 		}
 
 		// Get tracking code (comes from overridden templates, empty otherwise)
-		$trackingCode = $this->getViewOutput('tracking_code');
-		$this->assign('trackingCode', $trackingCode);
+		$this->trackingCode = $this->getViewOutput('tracking_code');
 
 		$this->addViewCssClasses();
 

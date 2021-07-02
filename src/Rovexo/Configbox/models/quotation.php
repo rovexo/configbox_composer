@@ -106,18 +106,18 @@ class ConfigboxModelQuotation {
 
 		// Get the order record view's HTML
 		$view = KenedoView::getView('ConfigboxViewRecord');
-		$view->assignRef('orderRecord', $orderRecord);
+		$view->orderRecord = $orderRecord;
 		$view->prepareTemplateVars();
-		$view->assign('showIn', 'quotation');
-		$view->assign('showChangeLinks', false);
-		$view->assign('showProductDetails', false);
+		$view->showIn = 'quotation';
+		$view->showChangeLinks = false;
+		$view->showProductDetails = false;
 		$orderRecordHtml = $view->getViewOutput();
 
 		// Get the quotation view's HTML
 		$quotationView = KenedoView::getView('ConfigboxViewQuotation');
-		$quotationView->assign('orderId', $orderId);
+		$quotationView->orderId = $orderId;
 		$quotationView->prepareTemplateVars();
-		$quotationView->assignRef('orderRecordHtml', $orderRecordHtml);
+		$quotationView->orderRecordHtml = $orderRecordHtml;
 		$quotationHtml = $quotationView->getViewOutput('default');
 		
 		// Prepare the file name

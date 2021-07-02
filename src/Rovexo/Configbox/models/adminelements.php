@@ -420,6 +420,12 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			)
 		);
 
+		$customTypes = $this->getCustomQuestionTypes();
+		foreach ($customTypes as $type=>$name) {
+			$propDefs['assignments_group']['appliesWhen']['question_type'][] = $type;
+			$propDefs['assignments']['appliesWhen']['question_type'][] = $type;
+		}
+
 		$propDefs['assignments_group_end'] = array(
 			'name'=>'assignments_group_end',
 			'type'=>'groupend',

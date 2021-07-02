@@ -232,16 +232,16 @@ class ConfigboxModelInvoice extends KenedoModel {
 		// Get the email invoice view
 		$view = KenedoView::getView('ConfigboxViewEmailinvoice');
 		$view->prepareTemplateVars();
-		$view->assignRef('invoiceRecord', $invoiceRecord);
-		$view->assignRef('orderRecord', $orderRecord);
-		
+		$view->invoiceRecord = $invoiceRecord;
+		$view->orderRecord = $orderRecord;
+
 		// Get the view's output
 		$emailContent = $view->getViewOutput();
 		
 		// Get the email template view, assign the content and get the resulting output
 		$emailView = KenedoView::getView('ConfigboxViewEmailtemplate');
 		$emailView->prepareTemplateVars();
-		$emailView->assign('emailContent', $emailContent);
+		$emailView->emailContent = $emailContent;
 		$emailBody = $emailView->getViewOutput('default');
 		
 		// Get the store information
@@ -280,8 +280,8 @@ class ConfigboxModelInvoice extends KenedoModel {
 		}
 		
 		$invoiceView = KenedoView::getView('ConfigboxViewInvoice');
-		$invoiceView->assign('orderId', $orderId);
-		$invoiceView->assign('invoiceNumber', $invoiceNumber);
+		$invoiceView->orderId = $orderId;
+		$invoiceView->invoiceNumber = $invoiceNumber;
 		$invoiceView->prepareTemplateVars();
 		$invoiceHtml = $invoiceView->getViewOutput('default');
 

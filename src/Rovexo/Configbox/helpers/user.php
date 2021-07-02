@@ -977,16 +977,17 @@ class ConfigboxUserHelper {
 
 		// Load the registration view content
 		$registrationView = KenedoView::getView('ConfigboxViewEmailcustomerregistration');
-		$registrationView->assign('shopData', $shopData);
-		$registrationView->assign('customer', $user);
-		$registrationView->assign('passwordClear', $passwordClear);
+		$registrationView->shopData = $shopData;
+		$registrationView->customer = $user;
+		$registrationView->passwordClear = $passwordClear;
 
 		$registrationHtml = $registrationView->getViewOutput('default');
 
 		// Load the general email template and put the registration view content in it
 		$emailView = KenedoView::getView('ConfigboxViewEmailtemplate');
 		$emailView->prepareTemplateVars();
-		$emailView->assign('emailContent', $registrationHtml);
+		$emailView->emailContent = $registrationHtml;
+
 		$registrationHtml = $emailView->getViewOutput('default');
 
 		// Use shop data email sales (and fall back to platform's mailer address

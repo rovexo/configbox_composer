@@ -94,18 +94,15 @@ class ConfigboxViewPaymentresult extends KenedoView {
 			$this->urlContinueShopping = '';
 		}
 
-		$this->assign('linkToOrder', KLink::getRoute('index.php?option=com_configbox&view=userorder&order_id='.$orderRecord->id));
-		$this->assign('linkToCustomerProfile', KLink::getRoute('index.php?option=com_configbox&view=user'));
-		$this->assign('linkToDefaultProductListing', KLink::getRoute('index.php?option=com_configbox&view=productlisting&listing_id='.CbSettings::getInstance()->get('continue_listing_id')));
-		
-		$this->assignRef('user',		$orderRecord->orderAddress);
-		$this->assignRef('orderRecord',	$orderRecord);
-		$this->assignRef('shopdata',	$shopData);
-		$this->assignRef('shopData',	$shopData);
-		$this->assignRef('total',		$orderRecord->payableAmount);
-		
-		$placeOrderPermitted = ConfigboxPermissionHelper::isPermittedAction('placeOrder', $orderRecord);
-		$this->assignRef('placeOrderPermitted', $placeOrderPermitted);
+		$this->linkToOrder = KLink::getRoute('index.php?option=com_configbox&view=userorder&order_id='.$orderRecord->id);
+		$this->linkToDefaultProductListing = KLink::getRoute('index.php?option=com_configbox&view=productlisting&listing_id='.CbSettings::getInstance()->get('continue_listing_id'));
+		$this->linkToCustomerProfile = KLink::getRoute('index.php?option=com_configbox&view=user');
+		$this->user = $orderRecord->orderAddress;
+		$this->orderRecord = $orderRecord;
+		$this->shopdata = $this->shopData = $shopData;
+		$this->total = $orderRecord->payableAmount;
+
+		$this->placeOrderPermitted = ConfigboxPermissionHelper::isPermittedAction('placeOrder', $orderRecord);
 
 	}
 	

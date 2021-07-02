@@ -1147,12 +1147,10 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 	 */
 	function prepareForStorage($data) {
 
-		if (KRequest::getKeyword('task') != 'ajaxStore') {
-			// In case we got labels (CB for Magento doesn't), auto-fill labels if nec.
-			$props = $this->getProperties();
-			if (!empty($props['label'])) {
-				$this->fillEmptyUrlSegments($data);
-			}
+		// In case we got labels (CB for Magento doesn't), auto-fill labels if nec.
+		$props = $this->getProperties();
+		if (!empty($props['label'])) {
+			$this->fillEmptyUrlSegments($data);
 		}
 
 		return parent::prepareForStorage($data);
@@ -1175,13 +1173,11 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			return false;
 		}
 
-		// Fill the URL segment (label), but not for ajaxStore (no titles sent)
-		if (KRequest::getKeyword('task') != 'ajaxStore') {
-			$response = $this->checkForDuplicateUrlSegment($data);
+		// Fill the URL segment (label)
+		$response = $this->checkForDuplicateUrlSegment($data);
 
-			if ($response === false) {
-				return false;
-			}
+		if ($response === false) {
+			return false;
 		}
 
 		$this->storeOldUrlSegments($data);

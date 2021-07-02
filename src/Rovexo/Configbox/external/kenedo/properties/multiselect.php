@@ -95,11 +95,6 @@ class KenedoPropertyMultiselect extends KenedoProperty {
 	 */
 	function store(&$data) {
 
-		// Don't act on ajaxStore, multiselects don't add the xrefs during KenedoModel::getRecord
-		if (KRequest::getKeyword('task','') == 'ajaxStore') {
-			return true;
-		}
-
 		// Get the xref values for convenience
 		$fieldValues = $data->{$this->propertyName};
 

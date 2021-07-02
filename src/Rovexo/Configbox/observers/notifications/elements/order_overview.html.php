@@ -102,10 +102,10 @@ li {
 	
 	<?php 
 	$recordView  = KenedoView::getView('ConfigboxViewRecord');
-	$recordView->assign('orderRecord', $orderRecord);
-	$recordView->assign('showIn','emailNotification');
-	$recordView->assign('showChangeLinks',false);
-	$recordView->assign('showProductDetails',false);
+	$recordView->orderRecord = $orderRecord;
+	$recordView->showIn = 'emailNotification';
+	$recordView->showChangeLinks = false;
+	$recordView->showProductDetails = false;
 	$recordView->renderView('default');
 	?>
 

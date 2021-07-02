@@ -87,7 +87,7 @@ class ConfigboxViewInvoice extends KenedoView {
 
 	function prepareTemplateVars() {
 
-		// Order ID has to be passed via ->assign()
+		// Order ID has to be set from outside
 		$orderId = $this->orderId;
 
 		$orderModel = KenedoModel::getModel('ConfigboxModelOrderrecord');

@@ -77,34 +77,29 @@ class ConfigboxViewUser extends KenedoView {
 		$view = KenedoView::getView('ConfigboxViewCustomerform');
 		$view->setFormType('profile');
 		$view->prepareTemplateVars();
-		$formHtml = $view->getViewOutput('default');
-		$this->assign('customerFormHtml', $formHtml);
+		$this->customerFormHtml = $view->getViewOutput('default');
 
-		$urlCustomerAccount = KLink::getRoute('index.php?option=com_configbox&view=user');
-		$this->assign('urlCustomerAccount', $urlCustomerAccount);
+		$this->urlCustomerAccount = KLink::getRoute('index.php?option=com_configbox&view=user');
+		$this->urlEditForm = KLink::getRoute('index.php?view=user&layout=editprofile', true, CbSettings::getInstance()->get('securecheckout'));
 
 		$customer = ConfigboxUserHelper::getUser();
-		$this->assignRef('customer', $customer);
-		$this->assign('isTemporaryAccount', $customer->id == 0 || $customer->is_temporary == 1);
+		$this->customer = $customer;
+		$this->isTemporaryAccount = $customer->id == 0 || $customer->is_temporary == 1;
 
 		$orderModel  	= KenedoModel::getModel('ConfigboxModelOrderrecord');
 		$ordersModel  	= KenedoModel::getModel('ConfigboxModelAdminorders');
 
 		$orderRecords = $ordersModel->getUserOrders();
 		$orderStatuses = $orderModel->getOrderStatuses();
-		$this->assignRef('orderStatuses', $orderStatuses);
-		
+
 		$orderPageStatuses = array(2,3,4,5,6,7,11,13,14);
 		
 		foreach ($orderRecords as $orderRecord) {
 			$orderRecord->statusString = $orderStatuses[$orderRecord->status]->title;
 			$orderRecord->toUserOrders = (in_array($orderRecord->status,$orderPageStatuses));
 		}
-		
-		$this->assignRef('orderRecords',$orderRecords);
 
-		$urlEditForm = KLink::getRoute('index.php?view=user&layout=editprofile', true, CbSettings::getInstance()->get('securecheckout'));
-		$this->assign('urlEditForm', $urlEditForm);
+		$this->orderRecords = $orderRecords;
 
 		$attributes = array(
 			'data-url-after-store' => KLink::getRoute('index.php?option=com_configbox&view=user'),
