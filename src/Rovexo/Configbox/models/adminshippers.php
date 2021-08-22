@@ -26,8 +26,8 @@ class ConfigboxModelAdminshippers extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>10,
-			'order'=>100,
+			'positionList'=>10,
+			'canSortBy'=>true,
 			'positionForm'=>100,
 		);
 
@@ -35,11 +35,10 @@ class ConfigboxModelAdminshippers extends KenedoModel {
 			'name'=>'title',
 			'label'=>KText::_('Title'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>44,
 			'required'=>1,
-			'listing'=>20,
-			'listinglink'=>1,
+			'positionList'=>20,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'adminshippers',
 			'positionForm'=>200,
@@ -50,8 +49,8 @@ class ConfigboxModelAdminshippers extends KenedoModel {
 			'label'=>KText::_('Active'),
 			'type'=>'published',
 			'default'=>1,
-			'listing'=>30,
-			'listingwidth'=>'60px',
+			'positionList'=>30,
+			'listCellWidth'=>'60px',
 			'positionForm'=>300,
 		);
 

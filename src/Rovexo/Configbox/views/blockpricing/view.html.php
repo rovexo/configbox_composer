@@ -218,49 +218,40 @@ class ConfigboxViewBlockpricing extends KenedoView {
 		$this->showPayment = $product->pm_show_payment_options;
 		$this->showNetInB2c = $product->pm_show_net_in_b2c;
 
-		$this->productId = $position->prod_id;
+		$this->productId = $product->id;
 
 		$this->addToCartLink = '';
 		$this->addToCartLinkClasses = 'trigger-add-to-cart wait-for-xhr';
 
-		$this->assign('deliveryNetKey',		'priceNet');
-		$this->assign('shippingNetTaxKey',	'priceTax');
-		$this->assign('shippingNetGrossKey','priceGross');
-			
-		$this->assign('paymentNetKey',		'priceNet');
-		$this->assign('paymentTaxKey',		'priceTax');
-		$this->assign('paymentGrossKey',	'priceGross');
-
 		if ($product->pm_regular_show_overview) {
-			
-			$this->assignRef('showPrices', 			$product->pm_regular_show_prices);
-			$this->assignRef('showPages', 			$product->pm_regular_show_categories);
-			$this->assignRef('showQuestions', 		$product->pm_regular_show_elements);
-			$this->assignRef('showQuestionPrices', 	$product->pm_regular_show_elementprices);
-			$this->assignRef('expandPages', 		$product->pm_regular_expand_categories);
-			$this->assign('showTaxes', 				$product->pm_regular_show_taxes);
-			$this->assign('showCartButton', 		$product->pm_regular_show_cart_button);
-			$this->assign('cssClass', 				'pricing-regular');
-			$this->assign('priceKey', 				'price');
-			$this->assign('productPriceKey', 		'productPrice');
-			$this->assign('labelKey', 				'priceLabel');
-			$this->assign('totalKey', 				'price');
-			
-			$this->assign('pricePerItemNetKey', 	'pricePerItemNet');
-			$this->assign('pricePerItemTaxKey', 	'pricePerItemTax');
-			$this->assign('pricePerItemGrossKey', 	'pricePerItemGross');
-			
-			$this->assign('taxRateKey',				'taxRate');
-			
-			$this->assign('totalNetKey',			'priceNet');
-			$this->assign('totalTaxKey',			'priceTax');
-			$this->assign('totalGrossKey',			'priceGross');
-			
-			$this->assign('isRegular',			true);
 
+			$this->showPrices = $product->pm_regular_show_prices;
+			$this->showPages = $product->pm_regular_show_categories;
+			$this->showQuestions = $product->pm_regular_show_elements;
+			$this->showQuestionPrices = $product->pm_regular_show_elementprices;
+			$this->expandPages = $product->pm_regular_expand_categories;
+			$this->showTaxes = $product->pm_regular_show_taxes;
+			$this->showCartButton = $product->pm_regular_show_cart_button;
+			$this->cssClass = 'pricing-regular';
+			$this->priceKey = 'price';
+			$this->productPriceKey = 'productPrice';
+			$this->labelKey = 'priceLabel';
+			$this->totalKey = 'price';
 
-            if (KenedoPlatform::getName() == 'magento') {
-                $this->assign('showCartButton', 		0);
+			$this->pricePerItemNetKey = 'pricePerItemNet';
+			$this->pricePerItemTaxKey = 'pricePerItemTax';
+			$this->pricePerItemGrossKey = 'pricePerItemGross';
+
+			$this->taxRateKey = 'taxRate';
+
+			$this->totalNetKey = 'priceNet';
+			$this->totalTaxKey = 'priceTax';
+			$this->totalGrossKey = 'priceGross';
+
+			$this->isRegular = true;
+
+			if (KenedoPlatform::getName() == 'magento2') {
+            	$this->showCartButton = false;
             }
 
 
@@ -272,37 +263,36 @@ class ConfigboxViewBlockpricing extends KenedoView {
 		}
 		
 		if ($product->use_recurring_pricing && $product->pm_recurring_show_overview) {
-			
-			$this->assignRef('showPrices', 			$product->pm_recurring_show_prices);
-			$this->assignRef('showPages', 			$product->pm_recurring_show_categories);
-			$this->assignRef('showQuestions', 		$product->pm_recurring_show_elements);
-			$this->assignRef('showQuestionPrices', 	$product->pm_recurring_show_elementprices);
-			$this->assignRef('expandPages', 		$product->pm_recurring_expand_categories);
-			$this->assign('showTaxes', 				$product->pm_recurring_show_taxes);
-			$this->assign('showCartButton', 		$product->pm_recurring_show_cart_button);
-			$this->assign('cssClass', 				'pricing-recurring');
-			$this->assign('priceKey', 				'priceRecurring');
-			$this->assign('productPriceKey', 		'productPriceRecurring');
-			$this->assign('labelKey', 				'priceRecurringLabel');
-			$this->assign('totalKey', 				'priceRecurring');
-			
-			$this->assign('pricePerItemNetKey', 	'pricePerItemRecurringNet');
-			$this->assign('pricePerItemTaxKey', 	'pricePerItemRecurringTax');
-			$this->assign('pricePerItemGrossKey', 	'pricePerItemRecurringGross');
-			
-			$this->assign('taxRateKey',				'taxRateRecurring');
-			
-			$this->assign('totalNetKey',			'priceRecurringNet');
-			$this->assign('totalTaxKey',			'priceRecurringTax');
-			$this->assign('totalGrossKey',			'priceRecurringGross');
-			
-			$this->assign('isRegular',				false);
+
+			$this->showPrices = $product->pm_recurring_show_prices;
+			$this->showPages = $product->pm_recurring_show_categories;
+			$this->showQuestions = $product->pm_recurring_show_elements;
+			$this->showQuestionPrices = $product->pm_recurring_show_elementprices;
+			$this->expandPages = $product->pm_recurring_expand_categories;
+			$this->showTaxes = $product->pm_recurring_show_taxes;
+			$this->showCartButton = $product->pm_recurring_show_cart_button;
+
+			$this->cssClass = 'price-recurring';
+			$this->priceKey = 'priceRecurring';
+			$this->productPriceKey = 'productPriceRecurring';
+			$this->labelKey = 'priceRecurringLabel';
+			$this->totalKey = 'priceRecurring';
+
+			$this->pricePerItemNetKey = 'pricePerItemRecurringNet';
+			$this->pricePerItemTaxKey = 'pricePerItemRecurringTax';
+			$this->pricePerItemGrossKey = 'pricePerItemRecurringGross';
+
+			$this->taxRateKey = 'taxRateRecurring';
+			$this->totalNetKey = 'priceRecurringNet';
+			$this->totalTaxKey = 'priceRecurringTax';
+			$this->totalGrossKey = 'priceRecurringGross';
+
+			$this->isRegular = false;
 
 
-            if (KenedoPlatform::getName() == 'magento') {
-                $this->assign('showCartButton', 		0);
+            if (KenedoPlatform::getName() == 'magento2') {
+				$this->showCartButton = false;
             }
-
 
             $recurringTree = $this->getViewOutput();
 		
@@ -311,7 +301,8 @@ class ConfigboxViewBlockpricing extends KenedoView {
 			$recurringTree = '';
 		}
 
-		$this->assign('priceKey', ( ConfigboxPrices::showNetPrices() ) ? 'priceNet':'priceGross');
+		$this->priceKey = (ConfigboxPrices::showNetPrices()) ? 'priceNet' : 'priceGross';
+
 		?>
 		<div class="<?php echo hsc($this->wrapperClasses);?>">
 

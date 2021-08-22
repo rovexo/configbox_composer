@@ -43,18 +43,18 @@ class KenedoProperty {
 
 	protected $default;
 	protected $label;
-	protected $listingLabel;
-	protected $listing;
+	protected $labelList;
+	protected $positionList;
+	protected $positionForm;
 
-	protected $listinglink;
+	protected $makeEditLink;
 	protected $component;
 	protected $controller;
 
-	protected $listingwidth;
-	protected $order;
-	protected $search;
-	protected $filter;
-	protected $positionForm;
+	protected $listCellWidth;
+	protected $canSortBy;
+	protected $addSearchBox;
+	protected $addDropdownFilter;
 	protected $required;
 	protected $tooltip;
 	protected $hideAdminLabel;
@@ -68,18 +68,12 @@ class KenedoProperty {
 
 	function __construct($propertyDefinition, KenedoModel $model) {
 
+		$this->modernizeOldPropertySettings($propertyDefinition);
+
 		$this->propertyName = $propertyDefinition['name'];
 		$this->propertyDefinition = $propertyDefinition;
 		$this->model = $model;
 
-		if (!isset($this->propertyDefinition['required'])) {
-			$this->propertyDefinition['required'] = 0;
-		}
-		
-		if (!isset($this->propertyDefinition['invisible'])) {
-			$this->propertyDefinition['invisible'] = false;
-		}
-		
 		$this->cssId = 'property-name-'.$this->propertyDefinition['name'];
 
 		$this->cssClasses[] = 'property-name-'.$this->propertyDefinition['name'];
@@ -105,6 +99,57 @@ class KenedoProperty {
 			$this->propertyDefinition['optionTags'] = array();
 		}
 		
+	}
+
+	/**
+	 * Changes old property settings to new names and values
+	 * @param array $propDef
+	 */
+	function modernizeOldPropertySettings(&$propDef) {
+
+		if (isset($propDef['listingwidth'])) {
+			$propDef['listCellWidth'] = $propDef['listingwidth'];
+			unset($propDef['listingwidth']);
+		}
+
+		if (isset($propDef['listing'])) {
+			$propDef['positionList'] = $propDef['listing'];
+			unset($propDef['listing']);
+		}
+
+		if (isset($propDef['order'])) {
+			if ($propDef['order'] !== null) {
+				$propDef['canSortBy'] = true;
+			}
+			unset($propDef['order']);
+		}
+
+		if (isset($propDef['search'])) {
+			if ($propDef['search'] != '0') {
+				$propDef['addSearchBox'] = true;
+			}
+			unset($propDef['search']);
+		}
+
+		if (isset($propDef['filter'])) {
+			if ($propDef['filter'] != '0') {
+				$propDef['addDropdownFilter'] = true;
+			}
+			unset($propDef['filter']);
+		}
+
+		if (isset($propDef['listinglink'])) {
+			$propDef['makeEditLink'] = ($propDef['listinglink']) ? true : false;
+			unset($propDef['listinglink']);
+		}
+
+		if ($propDef['type'] == 'file') {
+			if (isset($propDef['size'])) {
+				$propDef['maxFileSizeKb'] = $propDef['size'];
+				unset($propDef['size']);
+			}
+		}
+
 	}
 
 	/**
@@ -525,8 +570,8 @@ class KenedoProperty {
 
 		$content = $this->getOutputValueFromRecordData($record);
 
-		if ($this->getPropertyDefinition('listinglink')) {
-			$content = $this->wrapInListingLink($content, $record);
+		if ($this->getPropertyDefinition('makeEditLink')) {
+			$content = $this->wrapWithEditLink($content, $record);
 		}
 
 		return $content;
@@ -551,7 +596,7 @@ class KenedoProperty {
 	 *
 	 * @return string
 	 */
-	function wrapInListingLink($cellContent, $record) {
+	function wrapWithEditLink($cellContent, $record) {
 
 		$option = $this->getPropertyDefinition('component');
 		$controller = $this->getPropertyDefinition('controller');
@@ -583,8 +628,8 @@ class KenedoProperty {
 	 */
 	function getHeaderCellContentInListingTable($orderingInstructions) {
 
-		if ($this->getPropertyDefinition('listingLabel')) {
-			$label = $this->getPropertyDefinition('listingLabel');
+		if ($this->getPropertyDefinition('labelList')) {
+			$label = $this->getPropertyDefinition('labelList');
 		}
 		elseif($this->getPropertyDefinition('label')) {
 			$label = $this->getPropertyDefinition('label');
@@ -593,42 +638,37 @@ class KenedoProperty {
 			$label = $this->propertyName;
 		}
 
-		// If you can't reorder the list by this prop, just display the label
-		if ($this->getPropertyDefinition('order', '') == '') {
+		if ($this->getPropertyDefinition('canSortBy') == true) {
+
+			ob_start();
+
+			// Prime settings for ordering
+			$isActive = false;
+			$direction = '';
+
+			// Check ordering instructions and get settings for this prop
+			foreach ($orderingInstructions as $orderingInfoItem) {
+				if ($orderingInfoItem['propertyName'] == $this->propertyName) {
+					$isActive = true;
+					$direction = (strtolower($orderingInfoItem['direction']) == 'desc') ? 'desc':'asc';
+					break;
+				}
+			}
+			?>
+			<a data-property-name="<?php echo hsc($this->propertyName);?>"
+			   data-current-direction="<?php echo ($direction);?>"
+			   class="trigger-order-list <?php echo ($isActive) ? 'active':'inactive';?>">
+				<span class="property-listing-label"><?php echo hsc($label);?></span>
+				<i class="fa <?php echo ($direction == 'desc') ? 'fa-sort-amount-down' : 'fa-sort-amount-up';?>"></i>
+			</a>
+			<?php
+			return ob_get_clean();
+
+		}
+		else {
 			return hsc($label);
 		}
 
-		ob_start();
-
-		// The key prop get's a checkbox that makes all records selected
-		if ($this->model->getTableKey() == $this->propertyName) {
-			?>
-			<input type="checkbox" name="checkall" class="kenedo-check-all-items" />
-			<?php
-		}
-
-		// Prime settings for ordering
-		$isActive = false;
-		$direction = '';
-
-		// Check ordering instructions and get settings for this prop
-		foreach ($orderingInstructions as $orderingInfoItem) {
-			if ($orderingInfoItem['propertyName'] == $this->propertyName) {
-				$isActive = true;
-				$direction = (strtolower($orderingInfoItem['direction']) == 'desc') ? 'desc':'asc';
-				break;
-			}
-		}
-		?>
-		<a data-property-name="<?php echo hsc($this->propertyName);?>"
-		   data-current-direction="<?php echo ($direction);?>"
-		   class="trigger-order-list <?php echo ($isActive) ? 'active':'inactive';?>">
-			<span class="property-listing-label"><?php echo hsc($label);?></span>
-			<i class="fa <?php echo ($direction == 'desc') ? 'fa-sort-amount-down' : 'fa-sort-amount-up';?>"></i>
-		</a>
-		<?php
-		return ob_get_clean();
-			
 	}
 	
 	function getBodyAdmin() {
@@ -663,19 +703,25 @@ class KenedoProperty {
 	}
 	
 	function isRequired() {
-		return (!empty($this->propertyDefinition['required']) && $this->propertyDefinition['required'] == 1);
+		if (!isset($this->propertyDefinition['required'])) {
+			return false;
+		}
+		return ($this->propertyDefinition['required'] == true);
 	}
 	
 	function isVisible() {
-		return ($this->propertyDefinition['invisible'] == 0);
+		if (!isset($this->propertyDefinition['invisible'])) {
+			return true;
+		}
+		return ( $this->propertyDefinition['invisible'] == false);
 	}
 	
 	function isInListing() {
-		return ( !empty($this->propertyDefinition['listing']));
+		return ( !empty($this->propertyDefinition['positionList']) );
 	}
 	
 	function getListingPosition() {
-		return isset($this->propertyDefinition['listing']) ? $this->propertyDefinition['listing'] : 0;
+		return isset($this->propertyDefinition['positionList']) ? $this->propertyDefinition['positionList'] : 0;
 	}
 	
 	function usesWrapper() {
@@ -827,7 +873,7 @@ class KenedoProperty {
 	 */
 	public function getFilterName() {
 
-		if ($this->getPropertyDefinition('filter', false) == false && $this->getPropertyDefinition('search', false) == false) {
+		if ($this->getPropertyDefinition('addDropdownFilter') != true && $this->getPropertyDefinition('addSearchBox') != true) {
 			return '';
 		}
 
@@ -888,7 +934,7 @@ class KenedoProperty {
 	 */
 	public function getFilterInput(KenedoView $view, $filters) {
 
-		if (!$this->getPropertyDefinition('search') && !$this->getPropertyDefinition('filter')) {
+		if ($this->getPropertyDefinition('addDropdownFilter') != true && $this->getPropertyDefinition('addSearchBox') != true) {
 			return '';
 		}
 
@@ -899,7 +945,7 @@ class KenedoProperty {
 
 		$html = '';
 
-		if ($this->getPropertyDefinition('search')) {
+		if ($this->getPropertyDefinition('addSearchBox') == true) {
 			ob_start();
 			?>
 			<input
@@ -915,7 +961,7 @@ class KenedoProperty {
 			<?php
 			$html = ob_get_clean();
 		}
-		elseif ($this->getPropertyDefinition('filter')) {
+		elseif ($this->getPropertyDefinition('addDropdownFilter')) {
 			$options = $this->getPossibleFilterValues();
 			$html = KenedoHtml::getSelectField($filterNameRequest, $options, $chosenValue, 'all', false, 'listing-filter', $filterNameHtml);
 		}

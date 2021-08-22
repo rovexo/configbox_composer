@@ -283,7 +283,7 @@ class ConfigboxCacheHelper {
 	}
 
 	/**
-	 * @param string $translationTable (incl. #__)
+	 * @param string $translationTable (Obsolete)
 	 * @param int $type
 	 * @param int $key
 	 * @param string|null $languageTag
@@ -294,15 +294,6 @@ class ConfigboxCacheHelper {
 		if ($languageTag === NULL) {
 			$languageTag = KText::getLanguageTag();
 		}
-
-		// Legacy, remove in 2.7
-		if ($translationTable == '#__cbcheckout_strings') {
-			KLog::logLegacyCall('Do not get translations from cbcheckout_strings, use configbox_strings instead. Some type ids have changed, see update notes on 2.6.18');
-		}
-
-		// Table names in cache file are stored as integers (desparate attempt to use SplFixedArray, abandoned idea, yeah well)
-		$translationTables['#__configbox_strings'] = 0;
-		$tableId = 0;
 
 		if (!isset(self::$cache['translations'][$languageTag])) {
 
@@ -318,9 +309,8 @@ class ConfigboxCacheHelper {
 
 		}
 
-
-		if ( isset(self::$cache['translations'][$languageTag][$tableId][$type][$key]) ) {
-			return self::$cache['translations'][$languageTag][$tableId][$type][$key];
+		if ( isset(self::$cache['translations'][$languageTag][$type][$key]) ) {
+			return self::$cache['translations'][$languageTag][$type][$key];
 		}
 		else {
 			return '';
@@ -342,7 +332,7 @@ class ConfigboxCacheHelper {
 		if ($items) {
 			foreach ($items as &$t) {
 				if (!empty($t['text']))	{
-					$translations[0][$t['type']][$t['key']] = $t['text'];
+					$translations[$t['type']][$t['key']] = $t['text'];
 				}
 			}
 		}

@@ -8,7 +8,7 @@ function paypal_wpstandard_get_title() {
 }
 
 function paypal_wpstandard_get_product_url() {
-	return 'https://www.paypal.com/webapps/mpp/paypal-payments-standard';
+	return 'https://www.paypal.com/us/webapps/mpp/referral/paypal-payments-standard';
 }
 
 function paypal_wpstandard_has_instant_payment_notification() {

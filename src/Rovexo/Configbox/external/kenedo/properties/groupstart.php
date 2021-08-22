@@ -3,9 +3,6 @@ defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyGroupstart extends KenedoProperty {
 
-	protected $toggle;
-	protected $defaultState;
-
 	function usesWrapper() {
 		return false;
 	}

@@ -20,8 +20,8 @@ class ConfigboxModelAdmincurrencies extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>10,
-			'order'=>100,
+			'positionList'=>10,
+			'canSortBy'=>true,
 			'positionForm'=>100,
 		);
 
@@ -29,14 +29,13 @@ class ConfigboxModelAdmincurrencies extends KenedoModel {
 			'name'=>'title',
 			'label'=>KText::_('Title'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>6,
 			'required'=>1,
-			'listing'=>20,
-			'listinglink'=>1,
+			'positionList'=>20,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'admincurrencies',
-			'order'=>10,
+			'canSortBy'=>true,
 			'positionForm'=>200,
 		);
 
@@ -46,8 +45,8 @@ class ConfigboxModelAdmincurrencies extends KenedoModel {
 			'type'=>'string',
 			'stringType'=>'number',
 			'required'=>1,
-			'listing'=>30,
-			'listingwidth'=>'70px',
+			'positionList'=>30,
+			'listCellWidth'=>'70px',
 			'positionForm'=>300,
 		);
 
@@ -57,8 +56,8 @@ class ConfigboxModelAdmincurrencies extends KenedoModel {
 			'type'=>'string',
 			'stringType'=>'string',
 			'required'=>1,
-			'listing'=>40,
-			'listingwidth'=>'70px',
+			'positionList'=>40,
+			'listCellWidth'=>'70px',
 			'positionForm'=>400,
 		);
 
@@ -68,8 +67,8 @@ class ConfigboxModelAdmincurrencies extends KenedoModel {
 			'type'=>'string',
 			'stringType'=>'string',
 			'required'=>1,
-			'listing'=>50,
-			'listingwidth'=>'90px',
+			'positionList'=>50,
+			'listCellWidth'=>'90px',
 			'positionForm'=>500,
 		);
 
@@ -77,8 +76,8 @@ class ConfigboxModelAdmincurrencies extends KenedoModel {
 			'name'=>'default',
 			'label'=>KText::_('Default'),
 			'type'=>'boolean',
-			'listing'=>60,
-			'listingwidth'=>'90px',
+			'positionList'=>60,
+			'listCellWidth'=>'90px',
 			'default'=>0,
 			'invisible'=>true,
 			'positionForm'=>600,
@@ -88,8 +87,8 @@ class ConfigboxModelAdmincurrencies extends KenedoModel {
 			'name'=>'base',
 			'label'=>KText::_('Base Currency'),
 			'type'=>'boolean',
-			'listing'=>70,
-			'listingwidth'=>'90px',
+			'positionList'=>70,
+			'listCellWidth'=>'90px',
 			'default'=>0,
 			'invisible'=>true,
 			'positionForm'=>700,
@@ -100,8 +99,8 @@ class ConfigboxModelAdmincurrencies extends KenedoModel {
 			'label'=>KText::_('Active'),
 			'type'=>'published',
 			'default'=>1,
-			'listing'=>80,
-			'listingwidth'=>'50px',
+			'positionList'=>80,
+			'listCellWidth'=>'50px',
 			'positionForm'=>800,
 		);
 

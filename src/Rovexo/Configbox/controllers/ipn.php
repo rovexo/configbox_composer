@@ -130,7 +130,7 @@ class ConfigboxControllerIPN extends KenedoController {
 				
 				// Multiply expected amount with currency multiplier
 				$checkAmount = round($orderRecord->basePayableAmount * $currency->multiplicator,2);
-				
+
 				KLog::log('Expecting "'.round($orderRecord->basePayableAmount,2).'" in base currency as full payment for order "'.$orderId.'".','payment');
 				KLog::log('Expecting "'.$checkAmount.'" in "'.$currency->code.'" as full payment (Multiplicator is '.$currency->multiplicator.').','payment');
 				

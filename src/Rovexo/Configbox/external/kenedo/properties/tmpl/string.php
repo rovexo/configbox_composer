@@ -34,25 +34,6 @@ if ($stringType == 'number' or $stringType == 'price' or $stringType == 'time') 
 	$value = str_replace('.', KText::_('DECIMAL_MARK', '.'), $value);
 }
 
-if ($stringType == 'time') {
-
-	if ($this->getPropertyDefinition('displayin')) {
-
-		switch($this->getPropertyDefinition('displayin')) {
-			case 'days':
-				$value /= 86400;
-				break;
-			case 'hours':
-				$value /= 3600;
-				break;
-			case 'minutes':
-				$value /= 60;
-				break;
-		}
-	}
-		
-}
-
 ?>
 <div class="string-type-<?php echo hsc($stringType);?><?php echo($this->getPropertyDefinition('unit')) ? ' input-group':'';?>">
 	<?php
@@ -69,7 +50,11 @@ if ($stringType == 'time') {
 	}
 	else {
 		?>
-		<input class="form-control" type="text" name="<?php echo $this->propertyName;?>" id="<?php echo $this->propertyName;?>" value="<?php echo hsc($value);?>" <?php echo $styleAttribute. ' '.$sizeAttribute;?> />
+		<input class="form-control"
+		       type="text"
+		       name="<?php echo $this->propertyName;?>"
+		       id="<?php echo $this->propertyName;?>"
+		       value="<?php echo hsc($value);?>" <?php echo $styleAttribute. ' '.$sizeAttribute;?> />
 		<?php
 	}
 

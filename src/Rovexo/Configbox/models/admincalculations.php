@@ -20,8 +20,8 @@ class ConfigboxModelAdmincalculations extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>1,
-			'order'=>100,
+			'canSortBy'=>true,
+			'positionList'=>1,
 			'positionForm'=>100,
 		);
 
@@ -29,15 +29,14 @@ class ConfigboxModelAdmincalculations extends KenedoModel {
 			'name'=>'name',
 			'label'=>KText::_('Name'),
 			'type'=>'string',
-			'allow'=>'[A-Za-z0-9_]',
 			'required'=>1,
-			'listing'=>10,
-			'listinglink'=>1,
+			'positionList'=>10,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'admincalculations',
-			'search'=>1,
-			'filter'=>1,
-			'order'=>1,
+			'addSearchBox'=>true,
+			'addDropdownFilter'=>true,
+			'canSortBy'=>true,
 			'positionForm'=>200,
 		);
 
@@ -57,10 +56,10 @@ class ConfigboxModelAdmincalculations extends KenedoModel {
 			'lockedAfterStore'=>true,
 			'parent'=>1,
 			'required'=>1,
-			'listing'=>20,
-			'order'=>2,
-			'filter'=>2,
-			'listingwidth'=>'200px',
+			'positionList'=>20,
+			'canSortBy'=>true,
+			'addDropdownFilter'=>true,
+			'listCellWidth'=>'200px',
 			'positionForm'=>300,
 		);
 
@@ -71,8 +70,8 @@ class ConfigboxModelAdmincalculations extends KenedoModel {
 			'default'=>'matrix',
 			'choices'=>array('matrix'=>KText::_('Matrix'), 'formula'=>KText::_('Formula'), 'code'=>KText::_('Code')),
 			'required'=>1,
-			'listing'=>30,
-			'order'=>3,
+			'positionList'=>30,
+			'canSortBy'=>true,
 			'positionForm'=>400,
 		);
 

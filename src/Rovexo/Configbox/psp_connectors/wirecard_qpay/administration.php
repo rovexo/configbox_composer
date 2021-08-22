@@ -4,11 +4,11 @@ function wirecard_qpay_get_setting_keys() {
 }
 
 function wirecard_qpay_get_title() {
-	return 'Wirecard QPAY';
+	return 'Wirecard Checkout Page';
 }
 
 function wirecard_qpay_get_product_url() {
-	return 'http://www.wirecard.at/en/products/qpay/';
+	return 'https://www.wirecard.at/en/solutions/products/checkout-page/';
 }
 
 function wirecard_qpay_has_instant_payment_notification() {

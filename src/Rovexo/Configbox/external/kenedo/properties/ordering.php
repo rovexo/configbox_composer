@@ -3,12 +3,6 @@ defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyOrdering extends KenedoProperty {
 
-	/**
-	 * @var string $group 	If records are grouped, tell the name of the property that groups them (e.g. pages are
-	 *						grouped by product_id)
-	 */
-	protected $group;
-
 	function getCellContentInListingTable($record) {
 		ob_start();
 		?>

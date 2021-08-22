@@ -1,11 +1,35 @@
 <?php
+if (interface_exists('\Joomla\CMS\Component\Router\RouterInterface')) {
+
+	class ConfigboxRouter implements Joomla\CMS\Component\Router\RouterInterface {
+
+		public function build(&$query) {
+			return ConfigboxBuildRoute($query);
+		}
+
+		public function parse(&$segments) {
+			return ConfigboxParseRoute($segments);
+		}
+
+		public function preprocess($query) {
+			// Since J4 one has to set the Itemid during preprocessing for getting menu item paths sorted
+			$copy = $query;
+			ConfigboxBuildRoute($copy);
+			if (!empty($copy['Itemid'])) {
+				$query['Itemid'] = $copy['Itemid'];
+			}
+			return $query;
+		}
+	}
+}
+
 /**
  * @param string[] $query
  * @return string[] $urlSegments
  */
 function ConfigboxBuildRoute(&$query) {
 
-	// In case the application files are somehow fucked up, let things be to avoid breaking the whole site
+	// In case the application files are somehow messed up, let things be to avoid breaking the whole site
 	if (!is_file(dirname(__FILE__).'/external/kenedo/helpers/init.php')) {
 		return array();
 	}
@@ -45,7 +69,7 @@ function ConfigboxBuildRoute(&$query) {
  * @return string[] $query
  * @throws Exception
  */
-function ConfigboxParseRoute($segments) {
+function ConfigboxParseRoute(&$segments) {
 
 	// In case the application files are somehow fucked up, let things be to avoid breaking the whole site
 	if (!is_file(dirname(__FILE__).'/external/kenedo/helpers/init.php')) {
@@ -215,6 +239,7 @@ function ConfigboxParseRoute($segments) {
 				// A few controllers add their view name as segment value if there is no specific menu item for them
 				if (in_array($segments[0], array('productlisting', 'cart', 'checkout', 'terms', 'refundpolicy', 'user', 'userorder'))) {
 					$viewName = $segments[0];
+					unset($segments[0]);
 					$segmentMatching = array();
 				}
 				// If it's not about those, then we must be dealing with a product (e.g. /component/configbox/car)
@@ -269,6 +294,7 @@ function ConfigboxParseRoute($segments) {
 					// See ConfigboxModelProduct::fixLabels()
 					$GLOBALS['productLabel'] = $segments[$segmentNumber];
 
+					unset($segments[$segmentNumber]);
 					continue;
 				}
 
@@ -288,6 +314,7 @@ function ConfigboxParseRoute($segments) {
 					// Store the used label, we may need it to recover from an outdated URL
 					// See ConfigboxModelProduct::fixLabels()
 					$GLOBALS['productLabel'] = $segments[$segmentNumber];
+					unset($segments[$segmentNumber]);
 
 				}
 
@@ -300,6 +327,7 @@ function ConfigboxParseRoute($segments) {
 					// See ConfigboxModelProduct::fixLabels()
 					$GLOBALS['pageLabel'] = $segments[$segmentNumber];
 
+					unset($segments[$segmentNumber]);
 				}
 
 			}
@@ -325,10 +353,11 @@ function ConfigboxParseRoute($segments) {
 					}
 
 					$vars[$queryParameterName] = call_user_func($segmentParsing[$segmentNumber], $segments[$segmentNumber]);
-
+					unset($segments[$segmentNumber]);
 				}
 				else {
 					$vars[$queryParameterName] = $segments[$segmentNumber];
+					unset($segments[$segmentNumber]);
 				}
 
 			}

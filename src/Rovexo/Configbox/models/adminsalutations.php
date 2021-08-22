@@ -26,7 +26,7 @@ class ConfigboxModelAdminsalutations extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>10,
+			'positionList'=>10,
 			'positionForm'=>100,
 		);
 
@@ -34,11 +34,10 @@ class ConfigboxModelAdminsalutations extends KenedoModel {
 			'name'=>'title',
 			'label'=>KText::_('Title'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>55,
 			'required'=>1,
-			'listing'=>20,
-			'listinglink'=>1,
+			'positionList'=>20,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'adminsalutations',
 			'positionForm'=>200,
@@ -51,8 +50,8 @@ class ConfigboxModelAdminsalutations extends KenedoModel {
 			'choices'=> array(0=>KText::_('Unspecified'), 1=>KText::_('Male'), 2=>KText::_('Female')),
 			'default'=>0,
 			'tooltip'=>KText::_('Use this to store whether the user is male or female.'),
-			'listing'=>30,
-			'listingwidth'=>'50px',
+			'positionList'=>30,
+			'listCellWidth'=>'50px',
 			'positionForm'=>300,
 		);
 

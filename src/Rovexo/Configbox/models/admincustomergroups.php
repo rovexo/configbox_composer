@@ -26,7 +26,7 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'label'=>KText::_('ID'),
 			'type'=>'id',
 			'default'=>0,
-			'listing'=>10,
+			'positionList'=>10,
 			'positionForm'=>100,
 		);
 
@@ -35,8 +35,8 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'label'=>KText::_('Name'),
 			'type'=>'string',
 			'required'=>1,
-			'listing'=> 20,
-			'listinglink'=>true,
+			'positionList'=> 20,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'admincustomergroups',
 			'positionForm'=>200,
@@ -49,6 +49,7 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 				'label'=>KText::_('Platform Group'),
 				'tooltip'=>KText::_('The user group of your platform CMS. Choose one to assign new customers to that group.'),
 				'type'=>'join',
+				'defaultlabel'=>KText::_('None selected'),
 				'isPseudoJoin'=>true,
 				'propNameKey'=>'id',
 				'propNameDisplay'=>'title',
@@ -205,7 +206,6 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'name'=>'title_discount_1',
 			'type'=>'translatable',
 			'label'=>KText::_('Title'),
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>80,
 			'positionForm'=>2200,
 		);
@@ -270,7 +270,6 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'name'=>'title_discount_2',
 			'type'=>'translatable',
 			'label'=>KText::_('Title'),
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>81,
 			'positionForm'=>2900,
 		);
@@ -329,7 +328,6 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'name'=>'title_discount_3',
 			'type'=>'translatable',
 			'label'=>KText::_('Title'),
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>82,
 			'positionForm'=>3600,
 		);
@@ -388,7 +386,6 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'name'=>'title_discount_4',
 			'type'=>'translatable',
 			'label'=>KText::_('Title'),
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>83,
 			'positionForm'=>4300,
 		);
@@ -447,7 +444,6 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'name'=>'title_discount_5',
 			'type'=>'translatable',
 			'label'=>KText::_('Title'),
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>84,
 			'positionForm'=>5000,
 		);
@@ -521,7 +517,6 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'name'=>'title_discount_recurring_1',
 			'type'=>'translatable',
 			'label'=>KText::_('Title'),
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>85,
 			'positionForm'=>5900,
 		);
@@ -580,7 +575,6 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'name'=>'title_discount_recurring_2',
 			'type'=>'translatable',
 			'label'=>KText::_('Title'),
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>86,
 			'positionForm'=>6600,
 		);
@@ -639,7 +633,6 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'name'=>'title_discount_recurring_3',
 			'type'=>'translatable',
 			'label'=>KText::_('Title'),
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>87,
 			'positionForm'=>7300,
 		);
@@ -698,7 +691,6 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'name'=>'title_discount_recurring_4',
 			'type'=>'translatable',
 			'label'=>KText::_('Title'),
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>88,
 			'positionForm'=>8000,
 		);
@@ -757,7 +749,6 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 			'name'=>'title_discount_recurring_5',
 			'type'=>'translatable',
 			'label'=>KText::_('Title'),
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>89,
 			'positionForm'=>8700,
 		);

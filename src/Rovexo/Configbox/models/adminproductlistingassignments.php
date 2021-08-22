@@ -20,7 +20,7 @@ class ConfigboxModelAdminproductlistingassignments extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>1,
+			'positionList'=>1,
 			'positionForm'=>100,
 		);
 
@@ -35,15 +35,13 @@ class ConfigboxModelAdminproductlistingassignments extends KenedoModel {
 			'modelMethod'=>'getFilterSelectData',
 
 			'required'=>1,
-			'listing'=>50,
+			'positionList'=>50,
 
-			'filter'=>20,
-			'parent'=>1,
-			'filterparents'=>0,
-
+			'addDropdownFilter'=>true,
 			'invisible'=>false,
 
-			'listinglink'=>0,
+			'makeEditLink'=>true,
+			'component'=>'com_configbox',
 			'controller'=>'adminproducts',
 			'positionForm'=>300,
 		);
@@ -59,15 +57,11 @@ class ConfigboxModelAdminproductlistingassignments extends KenedoModel {
 			'modelMethod'=>'getRecords',
 
 			'required'=>1,
-			'listing'=>0,
-			'order'=>20,
-
-			'filter'=>20,
-			'parent'=>0,
-			'filterparents'=>0,
-
+			'positionList'=>0,
+			'canSortBy'=>true,
+			'addDropdownFilter'=>true,
 			'invisible'=>false,
-			'listingwidth'=>'150px',
+			'listCellWidth'=>'150px',
 			'positionForm'=>400,
 
 		);
@@ -77,8 +71,8 @@ class ConfigboxModelAdminproductlistingassignments extends KenedoModel {
 			'label'=>KText::_('Ordering'),
 			'type'=>'ordering',
 			'group'=>'listing_id',
-			'order'=>15,
-			'listing'=>15,
+			'canSortBy'=>true,
+			'positionList'=>15,
 			'positionForm'=>500,
 		);
 

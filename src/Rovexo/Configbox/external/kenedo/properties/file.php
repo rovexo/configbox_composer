@@ -3,14 +3,6 @@ defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyFile extends KenedoProperty {
 
-	protected $dirBase;
-	protected $urlBase;
-	protected $size;
-	protected $allow;
-	protected $allowedExtensions;
-	protected $filename;
-	protected $appendSerial;
-
 	/**
 	 * Appends full URL and filesystem path to the file (if bases are defined in prop defs)
 	 * @param object $data
@@ -89,26 +81,26 @@ class KenedoPropertyFile extends KenedoProperty {
 		if ($file && !empty($file['tmp_name'])) {
 
 			// Check file size
-			if ($this->getPropertyDefinition('size')) {
+			if ($this->getPropertyDefinition('maxFileSizeKb')) {
 
 				$fileSizeInBytes = filesize($file['tmp_name']);
-				$allowedSizeInBytes = $this->getPropertyDefinition('size') * 1024;
+				$allowedSizeInBytes = $this->getPropertyDefinition('maxFileSizeKb') * 1024;
 
 				if ($fileSizeInBytes > $allowedSizeInBytes) {
-					$this->setError( KText::sprintf('The file for %s is not valid.',$this->getPropertyDefinition('label')). ' '.KText::sprintf('The file must not be bigger than %s KB.',$this->getPropertyDefinition('size')) );
+					$this->setError( KText::sprintf('The file for %s is not valid.',$this->getPropertyDefinition('label')). ' '.KText::sprintf('The file must not be bigger than %s KB.',$this->getPropertyDefinition('maxFileSizeKb')) );
 					return false;
 				}
 
 			}
 
 			// Check file mime-type
-			if ($this->getPropertyDefinition('allow')) {
+			if ($this->getPropertyDefinition('allowedMimeTypes')) {
 
 				$mimeType = KenedoFileHelper::getMimeType( $file['tmp_name'] );
 
 				// Mime type determination may not be available on the system, only check if possible
-				if ($mimeType && !in_array($mimeType,$this->getPropertyDefinition('allow', array()))) {
-					$this->setError( KText::sprintf('The file for %s is not valid.',$this->getPropertyDefinition('label')). ' '.KText::sprintf('The file has an invalid MIME-Type. MIME-Type is %s. Allowed are %s.',$mimeType, implode(', ',$this->getPropertyDefinition('allow', array()))) );
+				if ($mimeType && !in_array($mimeType, $this->getPropertyDefinition('allowedMimeTypes', array()))) {
+					$this->setError( KText::sprintf('The file for %s is not valid.',$this->getPropertyDefinition('label')). ' '.KText::sprintf('The file has an invalid MIME-Type. MIME-Type is %s. Allowed are %s.',$mimeType, implode(', ',$this->getPropertyDefinition('allowedMimeTypes', array()))) );
 					return false;
 				}
 

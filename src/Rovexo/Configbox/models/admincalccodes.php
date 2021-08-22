@@ -20,8 +20,8 @@ class ConfigboxModelAdmincalccodes extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>1,
-			'order'=>100,
+			'canSortBy'=>true,
+			'positionList'=>1,
 			'positionForm'=>10,
 		);
 

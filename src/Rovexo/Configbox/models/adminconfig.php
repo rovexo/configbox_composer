@@ -20,8 +20,8 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'type'=>'id',
 			'default'=>1,
 			'label'=>KText::_('ID'),
-			'listing'=>1,
-			'order'=>100,
+			'canSortBy'=>true,
+			'positionList'=>1,
 			'positionForm'=>1,
 		);
 
@@ -39,7 +39,6 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'label'=>KText::_('URL Segment for Cart Page'),
 				'tooltip'=>KText::_('Enter how the URL to your cart page should be like. Use only characters that can be in a URL'),
 				'type'=>'translatable',
-				'stringTable'=>'#__configbox_strings',
 				'langType'=>100,
 				'required'=>0,
 				'positionForm'=>3,
@@ -50,7 +49,6 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'label'=>KText::_('URL Segment for Account Page'),
 				'tooltip'=>KText::_('Enter how the URL to your account page should be like. Use only characters that can be in a URL'),
 				'type'=>'translatable',
-				'stringTable'=>'#__configbox_strings',
 				'langType'=>105,
 				'required'=>0,
 				'positionForm'=>3,
@@ -469,11 +467,11 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			$propDefs['defaultprodimage'] = array (
 				'name'=>'defaultprodimage',
 				'label'=>KText::_('Default Product Image'),
-				'type'=>'file',
+				'type'=>'image',
 				'appendSerial'=>1,
 				'allowedExtensions'=>array('jpg','jpeg','gif','tif','bmp','png'),
-				'allow'=>array('image/pjpeg','image/jpg','image/jpeg','image/gif','image/tif','image/bmp','image/png'),
-				'size'=>'500',
+				'allowedMimeTypes'=>array('image/pjpeg','image/jpg','image/jpeg','image/gif','image/tif','image/bmp','image/png'),
+				'maxFileSizeKb'=>'500',
 				'filetype'=>'image',
 				'dirBase'=>KenedoPlatform::p()->getDirDataStore().'/public/default_images',
 				'urlBase'=>KenedoPlatform::p()->getUrlDataStore().'/public/default_images',
@@ -534,7 +532,6 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'name' => 'blocktitle_cart',
 				'label' => KText::_('Cart Block'),
 				'type' => 'translatable',
-				'stringTable' => '#__configbox_strings',
 				'langType'=>70,
 				'positionForm'=>580,
 			);
@@ -543,7 +540,6 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'name' => 'blocktitle_currencies',
 				'label' => KText::_('Currencies Block'),
 				'type' => 'translatable',
-				'stringTable' => '#__configbox_strings',
 				'langType'=>71,
 				'positionForm'=>590,
 			);
@@ -552,7 +548,6 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'name' => 'blocktitle_navigation',
 				'label' => KText::_('Navigation Block'),
 				'type' => 'translatable',
-				'stringTable' => '#__configbox_strings',
 				'langType'=>72,
 				'positionForm'=>600,
 			);
@@ -561,7 +556,6 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'name' => 'blocktitle_pricing',
 				'label' => KText::_('Price Overview Block'),
 				'type' => 'translatable',
-				'stringTable' => '#__configbox_strings',
 				'langType'=>73,
 				'positionForm'=>610,
 			);
@@ -570,7 +564,6 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 				'name' => 'blocktitle_visualization',
 				'label' => KText::_('Visualization Block'),
 				'type' => 'translatable',
-				'stringTable' => '#__configbox_strings',
 				'langType'=>74,
 				'positionForm'=>620,
 			);

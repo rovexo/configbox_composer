@@ -139,6 +139,31 @@ class ConfigboxQuestion {
 	public $input_restriction;
 
 	/**
+	 * @var string For calendar type: Indicates if first weekday is Monday, Sunday or up to locale (values 'locale', 'monday' or 'sunday')
+	 */
+	public $calendar_first_day;
+
+	/**
+	 * @var string For calendar type: Tells if and which validation to use for minimum date (values 'none' or 'days')
+	 */
+	public $calendar_validation_type_min;
+
+	/**
+	 * @var string For calendar type: Tells if and which validation to use for maximum date (values 'none' or 'days')
+	 */
+	public $calendar_validation_type_max;
+
+	/**
+	 * @var int For calendar type: Tells how many days from today's date is the minimum date allowed
+	 */
+	public $calendar_days_min;
+
+	/**
+	 * @var int For calendar type: Tells how many days from today's date is the maximum date allowed
+	 */
+	public $calendar_days_max;
+
+	/**
 	 * @var ConfigboxQuestion[] Holds the instances for getQuestion
 	 * @see getQuestion
 	 */

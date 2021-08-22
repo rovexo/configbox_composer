@@ -28,8 +28,8 @@ class ConfigboxModelAdminpages extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>1,
-			'order'=>100,
+			'positionList'=>1,
+			'canSortBy'=>true,
 			'positionForm'=>100,
 		);
 
@@ -47,14 +47,13 @@ class ConfigboxModelAdminpages extends KenedoModel {
 			'name'=>'title',
 			'label'=>KText::_('Title'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>3,
 			'required'=>1,
-			'listing'=>10,
-			'listinglink'=>1,
+			'positionList'=>10,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'adminpages',
-			'order'=>3,
+			'canSortBy'=>true,
 			'positionForm'=>300,
 		);
 
@@ -63,10 +62,10 @@ class ConfigboxModelAdminpages extends KenedoModel {
 			'label'=>KText::_('LABEL_PAGE_ACTIVE'),
 			'default'=>1,
 			'type'=>'published',
-			'listing'=>40,
-			'order'=>30,
-			'filter'=>3,
-			'listingwidth'=>'60px',
+			'positionList'=>40,
+			'canSortBy'=>true,
+			'addDropdownFilter'=>true,
+			'listCellWidth'=>'60px',
 			'positionForm'=>500,
 		);
 
@@ -94,7 +93,6 @@ class ConfigboxModelAdminpages extends KenedoModel {
 				'tooltip'=>KText::_('TOOLTIP_PAGE_SEF_SEGMENT'),
 				'required'=>0,
 				'type'=>'translatable',
-				'stringTable'=>'#__configbox_strings',
 				'langType'=>18,
 				'positionForm'=>800,
 			);
@@ -151,10 +149,10 @@ class ConfigboxModelAdminpages extends KenedoModel {
 
 			'parent'=>1,
 			'required'=>1,
-			'listing'=>20,
-			'order'=>1,
-			'filter'=>1,
-			'listingwidth'=>'200px',
+			'positionList'=>20,
+			'canSortBy'=>true,
+			'addDropdownFilter'=>true,
+			'listCellWidth'=>'200px',
 			'positionForm'=>1150,
 		);
 
@@ -162,7 +160,6 @@ class ConfigboxModelAdminpages extends KenedoModel {
 			'name'=>'description',
 			'label'=>KText::_('LABEL_PAGE_DESCRIPTION'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>13,
 			'required'=>0,
 			'options'=>'USE_HTMLEDITOR ALLOW_HTML',
@@ -181,8 +178,8 @@ class ConfigboxModelAdminpages extends KenedoModel {
 			'label'=>KText::_('Ordering'),
 			'type'=>'ordering',
 			'group'=>'product_id',
-			'listing'=>5,
-			'order'=>20,
+			'positionList'=>5,
+			'canSortBy'=>true,
 			'positionForm'=>1800,
 		);
 

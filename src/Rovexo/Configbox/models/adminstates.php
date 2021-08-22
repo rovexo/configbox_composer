@@ -35,7 +35,7 @@ class ConfigboxModelAdminstates extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>10,
+			'positionList'=>10,
 			'positionForm'=>200,
 		);
 
@@ -44,11 +44,11 @@ class ConfigboxModelAdminstates extends KenedoModel {
 			'label'=>KText::_('Name'),
 			'type'=>'string',
 			'required'=>1,
-			'listing'=>20,
-			'listinglink'=>1,
-			'order'=>10,
-			'filter'=>1,
-			'search'=>1,
+			'positionList'=>20,
+			'canSortBy'=>true,
+			'addDropdownFilter'=>true,
+			'addSearchBox'=>true,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'adminstates',
 			'positionForm'=>300,
@@ -59,9 +59,9 @@ class ConfigboxModelAdminstates extends KenedoModel {
 			'label'=>KText::_('State code'),
 			'type'=>'string',
 			'required'=>0,
-			'listing'=>30,
-			'order'=>20,
-			'listingwidth'=>'50px',
+			'positionList'=>30,
+			'canSortBy'=>true,
+			'listCellWidth'=>'50px',
 			'positionForm'=>400,
 		);
 
@@ -70,9 +70,9 @@ class ConfigboxModelAdminstates extends KenedoModel {
 			'label'=>KText::_('FIPS Number'),
 			'type'=>'string',
 			'required'=>1,
-			'listing'=>35,
-			'order'=>30,
-			'listingwidth'=>'50px',
+			'positionList'=>35,
+			'canSortBy'=>true,
+			'listCellWidth'=>'50px',
 			'positionForm'=>500,
 		);
 
@@ -95,11 +95,10 @@ class ConfigboxModelAdminstates extends KenedoModel {
 			'required'=>1,
 			'parent'=>1,
 			'filterparents'=>1,
-			'filter'=>2,
-			'listing'=>40,
-			'order'=>40,
-
-			'listingwidth'=>'100px',
+			'addDropdownFilter'=>true,
+			'positionList'=>40,
+			'canSortBy'=>true,
+			'listCellWidth'=>'100px',
 			'positionForm'=>600,
 		);
 
@@ -139,8 +138,8 @@ class ConfigboxModelAdminstates extends KenedoModel {
 			'name'=>'ordering',
 			'label'=>KText::_('Ordering'),
 			'type'=>'ordering',
-			'order'=>6,
-			'listing'=>15,
+			'canSortBy'=>true,
+			'positionList'=>15,
 			'group'=>'country_id',
 			'positionForm'=>1100,
 		);
@@ -149,8 +148,8 @@ class ConfigboxModelAdminstates extends KenedoModel {
 			'name'=>'published',
 			'label'=>KText::_('Active'),
 			'type'=>'published',
-			'listing'=>100,
-			'listingwidth'=>'50px',
+			'positionList'=>100,
+			'listCellWidth'=>'50px',
 			'default'=>1,
 			'positionForm'=>1200,
 		);

@@ -4,22 +4,6 @@ defined('CB_VALID_ENTRY') or die();
 class KenedoPropertyCalculation extends KenedoProperty {
 
 	/**
-	 * @var boolean Means that this join does not actually join another DB table, but just lets you select some data
-	 * 				coming from $modelClass::$modelMethod
-	 */
-	protected $isPseudoJoin;
-	protected $modelClass;
-	protected $modelMethod;
-	protected $parent;
-	protected $propNameDisplay;
-	protected $propNameKey;
-	protected $joinAdditionalProps;
-	protected $selectAliasOverride;
-	protected $groupby;
-	protected $defaultlabel;
-	protected $showLinks;
-
-	/**
 	 * Joins that come in with 0 are regarded as NULL (and will be stored in the DB as such)
 	 * @param $data
 	 */
@@ -93,24 +77,36 @@ class KenedoPropertyCalculation extends KenedoProperty {
 
 	function getOutputValueFromRecordData($record) {
 
-		if (isset($record->{$this->propertyName . '_display_value'})) {
-			$value = $record->{$this->propertyName . '_display_value'};
+
+
+		if (empty($record->{$this->propertyName})) {
+			return '';
 		}
-		elseif(!empty($record->{$this->propertyName})) {
-			$value = $record->{$this->propertyName};
+
+		$calculations = $this->getCalculations();
+
+		if (isset($calculations[$record->{$this->propertyName}])) {
+			return $calculations[$record->{$this->propertyName}]->name;
 		}
 		else {
-			if ($this->getPropertyDefinition('defaultlabel')) {
-				$value = $this->getPropertyDefinition('defaultlabel');
-			}
-			else {
-				$value = KText::_('None selected');
-			}
-
+			return 'Calculation '.$record->{$this->propertyName}.' not found';
 		}
 
-		return $value;
+	}
 
+	protected $memoCalculations = null;
+
+	protected function getCalculations() {
+
+		if ($this->memoCalculations === null) {
+			$model = KenedoModel::getModel('ConfigboxModelAdmincalculations');
+			$calculations = $model->getRecords();
+			foreach ($calculations as $calculation) {
+				$this->memoCalculations[$calculation->id] = $calculation;
+			}
+		}
+
+		return $this->memoCalculations;
 	}
 
 	/**
@@ -168,38 +164,6 @@ class KenedoPropertyCalculation extends KenedoProperty {
 
 		}
 
-		// This is for the case when the prop defs say we want additional props from the joined model
-		if ($this->getPropertyDefinition('joinAdditionalProps')) {
-			$addProps = $this->getPropertyDefinition('joinAdditionalProps');
-			foreach ($addProps as $addProp) {
-				// If there is an alias defined
-				if (!empty($addProp['selectAliasOverride'])) {
-					$prefix = $selectAliasPrefix;
-					$override = $addProp['selectAliasOverride'];
-				}
-				else {
-					$prefix = $selectAliasPrefix .'joinedby_'.$this->propertyName.'_to_'.$parentModel->getModelName().'_';
-					$override = '';
-				}
-				$additionalSelects = $parentProps[$addProp['propertyName']]->getSelectsForGetRecord($prefix, $override);
-				$selects = array_merge($selects, $additionalSelects);
-			}
-		}
-
-		// If the prop states that we deal with a parent model, join it (will recurse as deep as it goes with parents)
-		if ($this->getPropertyDefinition('parent', 0) == 1) {
-
-			foreach ($parentProps as $parentProp) {
-
-				if ($parentProp->getPropertyDefinition('type') == 'join' && $parentProp->getPropertyDefinition('parent') == true) {
-					$prefix = $selectAliasPrefix . 'joinedby_'.$this->propertyName.'_to_'.$parentModel->getModelName().'_';
-					$parentSelects = $parentProp->getSelectsForGetRecord($prefix);
-					$selects = array_merge($selects, $parentSelects);
-				}
-			}
-
-		}
-
 		return $selects;
 
 
@@ -243,118 +207,9 @@ class KenedoPropertyCalculation extends KenedoProperty {
 			$parentPropJoins = $parentProps[$parentDisplayPropName]->getJoinsForGetRecord();
 			$joins = array_merge($joins, $parentPropJoins);
 
-			// Go through the additional props that shall be in the record
-			if ($this->getPropertyDefinition('joinAdditionalProps')) {
-				$addProps = $this->getPropertyDefinition('joinAdditionalProps');
-				foreach ($addProps as $addProp) {
-					$additionalJoins = $parentProps[$addProp['propertyName']]->getJoinsForGetRecord();
-					$joins = array_merge($joins, $additionalJoins);
-				}
-			}
-		}
-
-		if ($this->getPropertyDefinition('parent', 0) == 0) {
-			return $joins;
-		}
-
-		// Join any parent props that are joins (This will go all the way up recursively, the check for the parent def
-		// happens at the start of the method.
-		foreach ($parentProps as $parentProp) {
-			if ($parentProp->getPropertyDefinition('type') == 'join') {
-				$parentJoins = $parentProp->getJoinsForGetRecord();
-				$joins = array_merge($joins, $parentJoins);
-			}
-
-			if ($parentProp->getPropertyDefinition('type') == 'multiselect' && $parentProp->getPropertyDefinition('filter')) {
-				$parentJoins = $parentProp->getJoinsForGetRecord();
-				$joins = array_merge($joins, $parentJoins);
-			}
 		}
 
 		return $joins;
-
-	}
-
-	/**
-	 * @return string|string[]
-	 */
-	public function getFilterName() {
-
-		if ($this->getPropertyDefinition('filter', false) == false && $this->getPropertyDefinition('search', false) == false) {
-			return '';
-		}
-
-		$filterNames = array();
-
-		if ($this->getPropertyDefinition('filter')) {
-			$filterNames[] = parent::getFilterName();
-		}
-
-		if ($this->getPropertyDefinition('filterparents')) {
-			$parentModel = KenedoModel::getModel($this->getPropertyDefinition('modelClass'));
-			$parentModel->languageTag = $this->model->languageTag;
-
-			$parentProps = $parentModel->getProperties();
-			foreach ($parentProps as $parentProp) {
-				$parentFilterName = $parentProp->getFilterName();
-				if (is_array($parentFilterName)) {
-					$filterNames = array_merge($filterNames, $parentFilterName);
-				}
-				elseif(!empty($parentFilterName)) {
-					$filterNames[] = $parentFilterName;
-				}
-
-			}
-		}
-
-		return $filterNames;
-
-	}
-
-	public function getFilterInput(KenedoView $view, $filters) {
-
-		if (!$this->getPropertyDefinition('search') && !$this->getPropertyDefinition('filter')) {
-			return '';
-		}
-
-		$filterInputs = array();
-
-		$filterNames = $this->getFilterName();
-		$filterName = $filterNames[0];
-		$filterNameRequest = $this->getFilterNameRequest();
-		$filterHtmlName = str_replace('.', '_', $filterName);
-
-		if (is_array($filterNameRequest)) {
-			$filterNameRequest = $filterNameRequest[0];
-		}
-
-		$options = $this->getPossibleFilterValues();
-		$chosenValue = !empty($filters[$filterName]) ? $filters[$filterName] : NULL;
-
-		$html = KenedoHtml::getSelectField($filterNameRequest, $options, $chosenValue, 'all', false, 'listing-filter', $filterHtmlName);
-
-		$filterInputs[$this->getTableAlias().'.'.$this->getTableColumnName()] = $html;
-
-		if ($this->getPropertyDefinition('filterparents')) {
-
-			$parentModel = KenedoModel::getModel($this->getPropertyDefinition('modelClass'));
-			$parentModel->languageTag = $this->model->languageTag;
-
-			$parentProps = $parentModel->getProperties();
-			foreach ($parentProps as $parentProp) {
-				$parentFilterInputs = $parentProp->getFilterInput($view, $filters);
-				if (is_array($parentFilterInputs)) {
-					$filterInputs = array_merge($filterInputs, $parentFilterInputs);
-				}
-				elseif(!empty($parentFilterInputs)) {
-					$filterInputs[$parentProp->getTableAlias().'.'.$parentProp->getTableColumnName()] = $parentFilterInputs;
-				}
-
-			}
-
-		}
-
-		return $filterInputs;
 
 	}
 

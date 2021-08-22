@@ -37,11 +37,11 @@ class ConfigboxModelAdmincountries extends KenedoModel {
 			'label'=>KText::_('Country Name'),
 			'type'=>'string',
 			'required'=>1,
-			'listing'=>1,
-			'listinglink'=>1,
-			'filter'=>2,
-			'search'=>true,
-			'order'=>1,
+			'positionList'=>1,
+			'addDropdownFilter'=>true,
+			'addSearchBox'=>true,
+			'canSortBy'=>true,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'admincountries',
 			'positionForm'=>300,
@@ -67,7 +67,7 @@ class ConfigboxModelAdmincountries extends KenedoModel {
 			'displayColumnOther'=>'label',
 
 			'asCheckboxes' => true,
-			'filter'=>1,
+			'addDropdownFilter'=>true,
 			'positionForm'=>400,
 		);
 
@@ -76,9 +76,9 @@ class ConfigboxModelAdmincountries extends KenedoModel {
 			'label'=>KText::_('Country 3 Code'),
 			'type'=>'string',
 			'required'=>1,
-			'listing'=>2,
-			'listingwidth'=>'30px',
-			'order'=>2,
+			'positionList'=>2,
+			'listCellWidth'=>'30px',
+			'canSortBy'=>true,
 			'positionForm'=>500,
 		);
 
@@ -87,9 +87,9 @@ class ConfigboxModelAdmincountries extends KenedoModel {
 			'label'=>KText::_('Country 2 Code'),
 			'type'=>'string',
 			'required'=>1,
-			'listing'=>3,
-			'listingwidth'=>'30px',
-			'order'=>3,
+			'positionList'=>3,
+			'listCellWidth'=>'30px',
+			'canSortBy'=>true,
 			'positionForm'=>600,
 		);
 
@@ -99,8 +99,8 @@ class ConfigboxModelAdmincountries extends KenedoModel {
 			'type'=>'boolean',
 			'tooltip'=>KText::_('Send VAT free to this country.'),
 			'default'=>0,
-			'listing'=>4,
-			'order'=>4,
+			'positionList'=>4,
+			'canSortBy'=>true,
 			'positionForm'=>700,
 		);
 
@@ -110,8 +110,8 @@ class ConfigboxModelAdmincountries extends KenedoModel {
 			'tooltip'=>KText::_('TOOLTIP_COUNTRIES_IN_VAT_AREA'),
 			'type'=>'boolean',
 			'default'=>0,
-			'listing'=>4,
-			'order'=>4,
+			'positionList'=>4,
+			'canSortBy'=>true,
 			'positionForm'=>700,
 		);
 
@@ -120,9 +120,9 @@ class ConfigboxModelAdmincountries extends KenedoModel {
 			'label'=>KText::_('Active'),
 			'type'=>'published',
 			'default'=>1,
-			'listing'=>7,
-			'order'=>7,
-			'listingwidth'=>'50px',
+			'positionList'=>7,
+			'canSortBy'=>true,
+			'listCellWidth'=>'50px',
 			'positionForm'=>900,
 		);
 
@@ -199,7 +199,6 @@ class ConfigboxModelAdmincountries extends KenedoModel {
 			'name'=>'custom_translatable_1',
 			'label'=>KText::_('Custom Translatable 1'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>42,
 			'required'=>0,
 			'positionForm'=>1900,
@@ -209,7 +208,6 @@ class ConfigboxModelAdmincountries extends KenedoModel {
 			'name'=>'custom_translatable_2',
 			'label'=>KText::_('Custom Translatable 2'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>43,
 			'required'=>0,
 			'positionForm'=>2000,
@@ -225,9 +223,9 @@ class ConfigboxModelAdmincountries extends KenedoModel {
 			'name'=>'ordering',
 			'label'=>KText::_('Ordering'),
 			'type'=>'ordering',
-			'order'=>6,
-			'listing'=>6,
-			'listingwidth'=>'70px',
+			'canSortBy'=>true,
+			'positionList'=>6,
+			'listCellWidth'=>'70px',
 			'disableSortable'=>true,
 			'positionForm'=>2200,
 		);

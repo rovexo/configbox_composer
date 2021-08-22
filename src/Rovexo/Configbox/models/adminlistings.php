@@ -20,8 +20,8 @@ class ConfigboxModelAdminlistings extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>10000,
-			'order'=>10000,
+			'positionList'=>10000,
+			'canSortBy'=>true,
 			'positionForm'=>10000,
 		);
 
@@ -29,14 +29,13 @@ class ConfigboxModelAdminlistings extends KenedoModel {
 			'name'=>'title',
 			'label'=>KText::_('Title'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>20,
 			'required'=>1,
-			'listinglink'=>1,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'adminlistings',
-			'listing'=>20000,
-			'order'=>20000,
+			'positionList'=>20000,
+			'canSortBy'=>true,
 			'positionForm'=>20000,
 		);
 
@@ -56,10 +55,10 @@ class ConfigboxModelAdminlistings extends KenedoModel {
 			'tooltip'=>KText::_('If you created special templates for product overviews you can choose it here.'),
 			'required'=>0,
 			'options'=>'SKIPDEFAULTFIELD NOFILTERSAPPLY',
-			'listingwidth'=>'100px',
+			'listCellWidth'=>'100px',
 
-			'listing'=>30000,
-			'order'=>30000,
+			'canSortBy'=>true,
+			'positionList'=>30000,
 			'positionForm'=>30000,
 		);
 
@@ -68,10 +67,10 @@ class ConfigboxModelAdminlistings extends KenedoModel {
 			'label'=>KText::_('Active'),
 			'type'=>'published',
 			'default'=>1,
-			'filter'=>1,
-			'listingwidth'=>'50px',
-			'listing'=>40000,
-			'order'=>40000,
+			'addDropdownFilter'=>true,
+			'listCellWidth'=>'50px',
+			'positionList'=>40000,
+			'canSortBy'=>true,
 			'positionForm'=>40000,
 		);
 
@@ -88,7 +87,6 @@ class ConfigboxModelAdminlistings extends KenedoModel {
 			'name'=>'description',
 			'label'=>KText::_('Description'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>40,
 			'required'=>0,
 			'tooltip'=>KText::_('This text is shown on top of the product listing - above the listing of products.'),

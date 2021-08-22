@@ -26,7 +26,7 @@ class ConfigboxModelAdminshippingmethods extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>10,
+			'positionList'=>10,
 			'positionForm'=>100,
 		);
 
@@ -34,11 +34,10 @@ class ConfigboxModelAdminshippingmethods extends KenedoModel {
 			'name'=>'title',
 			'label'=>KText::_('Title'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>45,
 			'required'=>1,
-			'listing'=>30,
-			'listinglink'=>1,
+			'positionList'=>30,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'adminshippingmethods',
 			'positionForm'=>200,
@@ -61,10 +60,10 @@ class ConfigboxModelAdminshippingmethods extends KenedoModel {
 
 			'required'=>1,
 			'filterparents'=>1,
-			'filter'=>2,
+			'addDropdownFilter'=>true,
 			'parent'=>1,
-			'listing'=>40,
-			'listingwidth'=>'120px',
+			'positionList'=>40,
+			'listCellWidth'=>'120px',
 			'positionForm'=>300,
 		);
 
@@ -86,10 +85,10 @@ class ConfigboxModelAdminshippingmethods extends KenedoModel {
 
 			'parent'=>1,
 			'filterparents'=>1,
-			'filter'=>1,
+			'addDropdownFilter'=>true,
 			'required'=>1,
-			'listing'=>50,
-			'listingwidth'=>'120px',
+			'positionList'=>50,
+			'listCellWidth'=>'120px',
 			'positionForm'=>400,
 		);
 
@@ -100,9 +99,9 @@ class ConfigboxModelAdminshippingmethods extends KenedoModel {
 			'stringType'=>'number',
 			'unit'=>CbSettings::getInstance()->get('weightunits'),
 			'required'=>1,
-			'listing'=>60,
-			'listingwidth'=>'60px',
-			'order'=>14,
+			'positionList'=>60,
+			'listCellWidth'=>'60px',
+			'canSortBy'=>true,
 			'positionForm'=>500,
 		);
 
@@ -113,9 +112,9 @@ class ConfigboxModelAdminshippingmethods extends KenedoModel {
 			'stringType'=>'number',
 			'unit'=>CbSettings::getInstance()->get('weightunits'),
 			'required'=>1,
-			'listing'=>70,
-			'listingwidth'=>'60px',
-			'order'=>15,
+			'positionList'=>70,
+			'listCellWidth'=>'60px',
+			'canSortBy'=>true,
 			'positionForm'=>600,
 		);
 
@@ -136,9 +135,9 @@ class ConfigboxModelAdminshippingmethods extends KenedoModel {
 			'stringType'=>'price',
 			'unit'=>ConfigboxCurrencyHelper::getBaseCurrency()->symbol,
 			'required'=>0,
-			'listing'=>80,
-			'listingwidth'=>'60px',
-			'order'=>20,
+			'positionList'=>80,
+			'listCellWidth'=>'60px',
+			'canSortBy'=>true,
 			'positionForm'=>800,
 		);
 
@@ -173,9 +172,9 @@ class ConfigboxModelAdminshippingmethods extends KenedoModel {
 			'label'=>KText::_('Active'),
 			'type'=>'published',
 			'default'=>1,
-			'listing'=>100,
-			'listingwidth'=>'60px',
-			'order'=>50,
+			'positionList'=>100,
+			'listCellWidth'=>'60px',
+			'canSortBy'=>true,
 			'positionForm'=>1100,
 		);
 
@@ -183,8 +182,8 @@ class ConfigboxModelAdminshippingmethods extends KenedoModel {
 			'name'=>'ordering',
 			'label'=>KText::_('Ordering'),
 			'type'=>'ordering',
-			'order'=>60,
-			'listing'=>20,
+			'canSortBy'=>true,
+			'positionList'=>20,
 			'positionForm'=>1200,
 		);
 

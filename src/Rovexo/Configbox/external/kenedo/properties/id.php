@@ -3,6 +3,15 @@ defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyId extends KenedoProperty {
 
+	function getHeaderCellContentInListingTable($orderingInstructions) {
+		ob_start();
+		?>
+		<input type="checkbox" name="checkall" class="kenedo-check-all-items" />
+		<?php
+		echo parent::getHeaderCellContentInListingTable($orderingInstructions);
+		return ob_get_clean();
+	}
+
 	function getCellContentInListingTable($record) {
 		ob_start();
 		?>

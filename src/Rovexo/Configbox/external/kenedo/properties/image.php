@@ -3,16 +3,6 @@ defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyImage extends KenedoProperty {
 
-	protected $dirBase;
-	protected $urlBase;
-	protected $maxFileSizeKb;
-	protected $allowedMimeTypes;
-	protected $allowedExtensions;
-	protected $minimumDimensions;
-	protected $mutations;
-	protected $filename;
-	protected $appendSerial;
-
 	/**
 	 * Since the user can store data without supplying the image, we add the current file name info to the $data object.
 	 * @param object $data

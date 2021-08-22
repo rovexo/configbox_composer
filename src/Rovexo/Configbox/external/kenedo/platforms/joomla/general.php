@@ -17,16 +17,6 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 			define('_JEXEC',1);
 		}
 
-		// Joomla 4 no longer writes SEF-URL-derived parameters to REQUEST, so we add it here
-		$joomlaVersion = $this->getVersionShort();
-		if (strpos($joomlaVersion, '4') === 0) {
-			$input = $this->getJApplication()->getInput();
-			$all = $input->getArray();
-			foreach ($all as $key=>$value) {
-				KRequest::setVar($key, $value);
-			}
-		}
-
 		// Set the document base in frontend (since many templates neglect to do so)
 		if ($this->isAdminArea() == false) {
 			// Set the base URL
@@ -50,7 +40,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 
 		define('CONFIGBOX_DIR_CACHE',						KenedoPlatform::p()->getDirCache().'/configbox');
 		define('CONFIGBOX_DIR_SETTINGS',					KenedoPlatform::p()->getDirCustomizationSettings());
-
+		define('CONFIGBOX_DIR_MODEL_PROPERTY_CUSTOMIZATION',KenedoPlatform::p()->getDirCustomization().'/model_property_customization');
 		define('CONFIGBOX_URL_CONFIGURATOR_FILEUPLOADS',	KenedoPlatform::p()->getUrlDataCustomer().'/public/file_uploads' );
 		define('CONFIGBOX_URL_POSITION_IMAGES',				KenedoPlatform::p()->getUrlDataCustomer().'/public/position_images' );
 
@@ -492,8 +482,17 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 			if (!in_array($path, $this->styleSheetUrls)) {
 				$this->styleSheetUrls[] = $path;
 			}
-			/** @noinspection PhpDeprecationInspection */
-			$this->getJDocument()->addStyleSheet($path, $type, $media);
+
+			$joomlaVersion = KenedoPlatform::p()->getVersionShort();
+			if (strpos($joomlaVersion, '4') === 0) {
+				$wa  = $this->getJDocument()->getWebAssetManager();
+				$wa->registerAndUseStyle('cb-'.md5($path), $path);
+			}
+			else {
+				/** @noinspection PhpDeprecationInspection */
+				$this->getJDocument()->addStyleSheet($path, $type, $media);
+			}
+
 		}
 	}
 

@@ -18,25 +18,21 @@ class ConfigboxModelAdminexamples extends KenedoModel {
 		$propDefs['id'] = array(
 			'name'=>'id',
 			'type'=>'id',
-			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>100,
-			'order'=>100,
-			'positionForm'=>1000,
+			'canSortBy'=>true,
 		);
 
 		$propDefs['title'] = array(
 			'name'=>'title',
 			'label'=>KText::_('Title'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>120,
 			'required'=>1,
-			'listing'=>300,
-			'order'=>3,
-			'listinglink'=>1,
+			'canSortBy'=>true,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'adminexamples',
+			'positionList'=>300,
 			'positionForm'=>1100,
 		);
 
@@ -53,13 +49,12 @@ class ConfigboxModelAdminexamples extends KenedoModel {
 
 			'defaultlabel'=>KText::_('Select Product'),
 
-			'filter'=>1,
+			'addDropdownFilter'=>true,
 
 			'required'=>1,
-			'listing'=>400,
-			'order'=>1,
-
-			'listingwidth'=>'200px',
+			'positionList'=>400,
+			'canSortBy'=>true,
+			'listCellWidth'=>'200px',
 			'positionForm'=>1200,
 		);
 
@@ -68,10 +63,10 @@ class ConfigboxModelAdminexamples extends KenedoModel {
 			'label'=>KText::_('Active'),
 			'default'=>1,
 			'type'=>'published',
-			'listing'=>500,
-			'order'=>30,
-			'filter'=>3,
-			'listingwidth'=>'60px',
+			'positionList'=>500,
+			'canSortBy'=>true,
+			'addDropdownFilter'=>true,
+			'listCellWidth'=>'60px',
 			'positionForm'=>1300,
 		);
 
@@ -89,7 +84,6 @@ class ConfigboxModelAdminexamples extends KenedoModel {
 			'label'=>KText::_('Description'),
 			'tooltip'=>'Tooltip content',
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>121,
 			'required'=>0,
 			'options'=>'USE_HTMLEDITOR ALLOW_HTML',
@@ -107,8 +101,8 @@ class ConfigboxModelAdminexamples extends KenedoModel {
 			'label'=>KText::_('Ordering'),
 			'type'=>'ordering',
 			'group'=>'product_id',
-			'listing'=>200,
-			'order'=>20,
+			'positionList'=>200,
+			'canSortBy'=>true,
 			'positionForm'=>1700,
 		);
 

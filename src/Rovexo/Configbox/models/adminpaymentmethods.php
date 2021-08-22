@@ -20,7 +20,7 @@ class ConfigboxModelAdminpaymentmethods extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>10,
+			'positionList'=>10,
 			'positionForm'=>1000,
 		);
 
@@ -28,14 +28,13 @@ class ConfigboxModelAdminpaymentmethods extends KenedoModel {
 			'name'=>'title',
 			'label'=>KText::_('Title'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>46,
 			'required'=>1,
-			'listing'=>30,
-			'listinglink'=>1,
+			'positionList'=>30,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'adminpaymentmethods',
-			'order'=>10,
+			'canSortBy'=>true,
 			'positionForm'=>1100,
 		);
 
@@ -52,9 +51,9 @@ class ConfigboxModelAdminpaymentmethods extends KenedoModel {
 			'tooltip'=>KText::_('Choose from one of the installed payment classes. After saving you will see additional specific settings at the bottom of the form.'),
 			'required'=>1,
 			'options'=>'',
-			'listing'=>60,
-			'order'=>50,
-			'listingwidth'=>'150px',
+			'positionList'=>60,
+			'canSortBy'=>true,
+			'listCellWidth'=>'150px',
 			'positionForm'=>1200,
 		);
 
@@ -70,10 +69,10 @@ class ConfigboxModelAdminpaymentmethods extends KenedoModel {
 			'name'=>'published',
 			'label'=>KText::_('Active'),
 			'type'=>'published',
-			'listing'=>70,
-			'listingwidth'=>'60px',
+			'positionList'=>70,
+			'listCellWidth'=>'60px',
 			'default'=>1,
-			'order'=>60,
+			'canSortBy'=>true,
 			'positionForm'=>1300,
 		);
 
@@ -189,7 +188,6 @@ class ConfigboxModelAdminpaymentmethods extends KenedoModel {
 			'name'=>'desc',
 			'label'=>KText::_('Description'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>47,
 			'required'=>0,
 			'options'=>'USE_HTMLEDITOR ALLOW_HTML',
@@ -200,8 +198,8 @@ class ConfigboxModelAdminpaymentmethods extends KenedoModel {
 			'name'=>'ordering',
 			'label'=>KText::_('Ordering'),
 			'type'=>'ordering',
-			'order'=>20,
-			'listing'=>20,
+			'canSortBy'=>true,
+			'positionList'=>20,
 			'positionForm'=>2100,
 		);
 

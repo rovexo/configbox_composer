@@ -26,8 +26,8 @@ class ConfigboxModelAdmintaxclasses extends KenedoModel {
 			'label'=>KText::_('ID'),
 			'type'=>'id',
 			'default'=>0,
-			'listing'=>10,
-			'order'=>100,
+			'positionList'=>10,
+			'canSortBy'=>true,
 			'positionForm'=>100,
 		);
 
@@ -36,9 +36,9 @@ class ConfigboxModelAdmintaxclasses extends KenedoModel {
 			'label'=>KText::_('Name'),
 			'type'=>'string',
 			'required'=>1,
-			'listing'=>20,
-			'order'=>20,
-			'listinglink'=>1,
+			'positionList'=>20,
+			'canSortBy'=>true,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'admintaxclasses',
 			'positionForm'=>200,
@@ -51,9 +51,9 @@ class ConfigboxModelAdmintaxclasses extends KenedoModel {
 			'stringType'=>'number',
 			'required'=>1,
 			'unit'=>'%',
-			'listing'=>30,
-			'order'=>30,
-			'listingwidth'=>'120px',
+			'positionList'=>30,
+			'canSortBy'=>true,
+			'listCellWidth'=>'120px',
 			'positionForm'=>300,
 		);
 
@@ -63,9 +63,9 @@ class ConfigboxModelAdmintaxclasses extends KenedoModel {
 			'tooltip'=>KText::_('The tax class ID of your third party order management system. Leave empty if you use ConfigBox Order Management.'),
 			'type'=>'string',
 			'required'=>0,
-			'listing'=>40,
-			'order'=>40,
-			'listingwidth'=>'80px',
+			'positionList'=>40,
+			'canSortBy'=>true,
+			'listCellWidth'=>'80px',
 			'positionForm'=>400,
 		);
 

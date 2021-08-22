@@ -6,21 +6,8 @@ $appDir = KenedoPlatform::p()->getComponentDir('com_configbox');
 KenedoAutoload::registerClass('ConfigboxCacheHelper',		$appDir.'/helpers/cache.php');
 KenedoAutoload::registerClass('ConfigboxConfiguratorHelper',$appDir.'/helpers/configurator.php');
 KenedoAutoload::registerClass('ConfigboxUpdateHelper',		$appDir.'/helpers/update.php');
-
-if (is_file('/Users/martin/PhpstormProjects/configbox_non_encoded/encoded/helpers/rules.php')) {
-	KenedoAutoload::registerClass('ConfigboxRulesHelper',		'/Users/martin/PhpstormProjects/configbox_non_encoded/encoded/helpers/rules.php');
-}
-else {
-	KenedoAutoload::registerClass('ConfigboxRulesHelper',		$appDir.'/helpers/rules.php');
-}
-
-if (is_file('/Users/martin/PhpstormProjects/configbox_non_encoded/encoded/helpers/calculation.php')) {
-	KenedoAutoload::registerClass('ConfigboxCalculation',		'/Users/martin/PhpstormProjects/configbox_non_encoded/encoded/helpers/calculation.php');
-}
-else {
-	KenedoAutoload::registerClass('ConfigboxCalculation',		$appDir.'/helpers/calculation.php');
-}
-
+KenedoAutoload::registerClass('ConfigboxRulesHelper',		$appDir.'/helpers/rules.php');
+KenedoAutoload::registerClass('ConfigboxCalculation',		$appDir.'/helpers/calculation.php');
 KenedoAutoload::registerClass('ConfigboxProductImageHelper', $appDir.'/helpers/productimage.php');
 KenedoAutoload::registerClass('ConfigboxPrices',			$appDir.'/helpers/prices.php');
 KenedoAutoload::registerClass('ConfigboxPositionHelper',	$appDir.'/helpers/position.php');

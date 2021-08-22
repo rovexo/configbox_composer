@@ -4,21 +4,6 @@ defined('CB_VALID_ENTRY') or die();
 class KenedoPropertyJoin extends KenedoProperty {
 
 	/**
-	 * @var boolean Means that this join does not actually join another DB table, but just lets you select some data
-	 * 				coming from $modelClass::$modelMethod
-	 */
-	protected $isPseudoJoin;
-	protected $modelClass;
-	protected $modelMethod;
-	protected $parent;
-	protected $propNameDisplay;
-	protected $propNameKey;
-	protected $joinAdditionalProps;
-	protected $selectAliasOverride;
-	protected $groupby;
-	protected $defaultlabel;
-
-	/**
 	 * Joins that come in with 0 are regarded as NULL (and will be stored in the DB as such)
 	 * @param $data
 	 */
@@ -280,7 +265,7 @@ class KenedoPropertyJoin extends KenedoProperty {
 				$joins = array_merge($joins, $parentJoins);
 			}
 
-			if ($parentProp->getPropertyDefinition('type') == 'multiselect' && $parentProp->getPropertyDefinition('filter')) {
+			if ($parentProp->getPropertyDefinition('type') == 'multiselect' && $parentProp->getPropertyDefinition('addDropdownFilter')) {
 				$parentJoins = $parentProp->getJoinsForGetRecord();
 				$joins = array_merge($joins, $parentJoins);
 			}
@@ -295,13 +280,13 @@ class KenedoPropertyJoin extends KenedoProperty {
 	 */
 	public function getFilterName() {
 
-		if ($this->getPropertyDefinition('filter', false) == false && $this->getPropertyDefinition('search', false) == false) {
+		if ($this->getPropertyDefinition('addDropdownFilter', false) == false && $this->getPropertyDefinition('addSearchBox', false) == false) {
 			return '';
 		}
 
 		$filterNames = array();
 
-		if ($this->getPropertyDefinition('filter')) {
+		if ($this->getPropertyDefinition('addDropdownFilter')) {
 			$filterNames[] = parent::getFilterName();
 		}
 
@@ -328,7 +313,7 @@ class KenedoPropertyJoin extends KenedoProperty {
 
 	public function getFilterInput(KenedoView $view, $filters) {
 
-		if (!$this->getPropertyDefinition('search') && !$this->getPropertyDefinition('filter')) {
+		if (!$this->getPropertyDefinition('addSearchBox') && !$this->getPropertyDefinition('addDropdownFilter')) {
 			return '';
 		}
 

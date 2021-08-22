@@ -3,9 +3,6 @@ defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyTranslatable extends KenedoProperty {
 
-	protected $stringTable;
-	protected $langType;
-
 	function __construct($propertyDefinition, $model) {
 		parent::__construct($propertyDefinition, $model);
 		
@@ -86,12 +83,12 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 			$text = $data->$dataFieldKey;
 
 			if ($text) {
-				$query = "REPLACE INTO `".$this->propertyDefinition['stringTable']."` SET `type` = ".intval($type).", `key` = ".intval($key).", `language_tag` = '".$db->getEscaped($language->tag)."', `text` = '".$db->getEscaped($text)."'";
+				$query = "REPLACE INTO `#__configbox_strings` SET `type` = ".intval($type).", `key` = ".intval($key).", `language_tag` = '".$db->getEscaped($language->tag)."', `text` = '".$db->getEscaped($text)."'";
 				$db->setQuery($query);
 				$db->query();
 			}
 			else {
-				$query = "DELETE FROM `".$this->propertyDefinition['stringTable']."` WHERE `type` = ".intval($type)." AND `key` = ".intval($key)." AND `language_tag` = '".$db->getEscaped($language->tag)."'";
+				$query = "DELETE FROM `#__configbox_strings` WHERE `type` = ".intval($type)." AND `key` = ".intval($key)." AND `language_tag` = '".$db->getEscaped($language->tag)."'";
 				$db->setQuery($query);
 				$db->query();
 			}
@@ -139,12 +136,12 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 
 				try {
 					// update translatable in current language
-					$query = "REPLACE INTO `" . $this->propertyDefinition['stringTable'] . "` SET `type` = " . intval($type) . ", `key` = " . intval($key) . ", `language_tag` = '" . $db->getEscaped($language->tag) . "', `text` = '" . $db->getEscaped($text) . "'";
+					$query = "REPLACE INTO `#__configbox_strings` SET `type` = " . intval($type) . ", `key` = " . intval($key) . ", `language_tag` = '" . $db->getEscaped($language->tag) . "', `text` = '" . $db->getEscaped($text) . "'";
 					$db->setQuery($query);
 					$db->query();
 				}
 				catch (Exception $e) {
-					$logMsg = 'SQL error occured during copying. Error was "'.$db->getErrorMsg().'".';
+					$logMsg = 'SQL error occurred during copying. Error was "'.$db->getErrorMsg().'".';
 					KLog::log($logMsg, 'error');
 					KLog::log($logMsg, 'custom_copying');
 					throw new Exception($logMsg);
@@ -163,7 +160,7 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 	function delete($id, $tableName) {
 		
 		$db = KenedoPlatform::getDb();
-		$query = "DELETE FROM `".$this->propertyDefinition['stringTable']."` WHERE `type` = ".(int) $this->propertyDefinition['langType']." AND `key` = ".(int)$id;
+		$query = "DELETE FROM `#__configbox_strings` WHERE `type` = ".(int) $this->propertyDefinition['langType']." AND `key` = ".(int)$id;
 		$db->setQuery($query);
 		$succ = $db->query();
 		return $succ;
@@ -184,7 +181,7 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 		$tableAlias = $this->getTableAlias();
 
 		$joins = array();
-		$joins[$tableAlias] = "LEFT JOIN `".$this->getPropertyDefinition('stringTable')."` AS `".$tableAlias."` ON
+		$joins[$tableAlias] = "LEFT JOIN `#__configbox_strings` AS `".$tableAlias."` ON
 		`".$tableAlias."`.key = `".$this->model->getModelName()."`.`".$this->model->getTableKey()."` AND
 		`".$tableAlias."`.type = '".$this->getPropertyDefinition('langType')."' AND
 		`".$tableAlias."`.language_tag = '".$db->getEscaped($this->model->languageTag)."'";
@@ -201,7 +198,7 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 		$tags = KenedoLanguageHelper::getActiveLanguageTags();
 		foreach ($tags as $tag) {
 			$fieldName = $this->propertyName.'-'.$tag;
-			$data->$fieldName = ConfigboxCacheHelper::getTranslation($this->propertyDefinition['stringTable'], $this->propertyDefinition['langType'], $data->{$this->model->getTableKey()}, $tag);
+			$data->$fieldName = ConfigboxCacheHelper::getTranslation('', $this->propertyDefinition['langType'], $data->{$this->model->getTableKey()}, $tag);
 		}
 
 		parent::appendDataForGetRecord($data);
@@ -231,7 +228,7 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 	 */
 	public function getFilterName() {
 
-		if ($this->getPropertyDefinition('filter', false) == false && $this->getPropertyDefinition('search', false) == false) {
+		if ($this->getPropertyDefinition('addDropdownFilter', false) == false && $this->getPropertyDefinition('addSearchBox', false) == false) {
 			return '';
 		}
 

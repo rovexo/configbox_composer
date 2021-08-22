@@ -290,8 +290,7 @@ class ConfigboxControllerAdminorders extends KenedoController {
 	
 	function update_status() {
 		$orderId = KRequest::getInt('order_id');
-		KRequest::setVar('view','order');
-		
+
 		$orderModel = KenedoModel::getModel('ConfigboxModelOrderrecord');
 		$succ = $orderModel->setStatus(KRequest::getInt('status'), $orderId);
 		

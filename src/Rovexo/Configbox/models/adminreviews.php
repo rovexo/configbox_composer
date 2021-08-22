@@ -26,7 +26,7 @@ class ConfigboxModelAdminreviews extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>10,
+			'positionList'=>10,
 			'positionForm'=>100,
 		);
 
@@ -35,8 +35,8 @@ class ConfigboxModelAdminreviews extends KenedoModel {
 			'label'=>KText::_('Name'),
 			'type'=>'string',
 			'required'=>1,
-			'listing'=>20,
-			'listinglink'=>1,
+			'positionList'=>20,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'adminreviews',
 			'positionForm'=>200,
@@ -88,14 +88,10 @@ class ConfigboxModelAdminreviews extends KenedoModel {
 
 			'modelClass'=>'ConfigboxModelAdminproducts',
 			'modelMethod'=>'getFilterSelectData',
-
-			'parent'=>1,
-			'filterparents'=>0,
-
 			'required'=>0,
-			'listing'=>30,
-			'order'=>20,
-			'filter'=>1,
+			'positionList'=>30,
+			'canSortBy'=>true,
+			'addDropdownFilter'=>true,
 			'positionForm'=>600,
 		);
 
@@ -122,10 +118,10 @@ class ConfigboxModelAdminreviews extends KenedoModel {
 			'label'=>KText::_('Active'),
 			'default'=>1,
 			'type'=>'published',
-			'listing'=>140,
-			'order'=>130,
-			'filter'=>3,
-			'listingwidth'=>'60px',
+			'positionList'=>140,
+			'canSortBy'=>true,
+			'addDropdownFilter'=>true,
+			'listCellWidth'=>'60px',
 			'positionForm'=>000,
 		);
 

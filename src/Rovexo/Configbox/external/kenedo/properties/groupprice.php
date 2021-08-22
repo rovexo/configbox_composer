@@ -4,18 +4,6 @@ defined('CB_VALID_ENTRY') or die();
 class KenedoPropertyGroupPrice extends KenedoProperty {
 
 	/**
-	 * Careful, not actually used - it's just for documentation.
-	 * @var string Name of the property that gets overridden with this prop
-	 */
-	protected $overridePropertyName;
-
-	/**
-	 * Careful, not actually used - it's just for documentation.
-	 * @var string Used for showing the base currency
-	 */
-	protected $unit;
-
-	/**
 	 * In here we take apart the JSON we should receive and sanitize it (Force the structure we expect and normalize
 	 * the price number to english decimal symbols)
 	 * @param object $data

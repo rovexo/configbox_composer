@@ -3,12 +3,6 @@ defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyString extends KenedoProperty {
 
-	protected $stringType;
-	protected $displayin;
-	protected $unit;
-	protected $style;
-	protected $size;
-
 	function getDataFromRequest(&$data) {
 
 		parent::getDataFromRequest($data);
@@ -29,30 +23,10 @@ class KenedoPropertyString extends KenedoProperty {
 		}
 
 		// In case we got a number, we change the localized decimal symbol to the normalized dot
-		if ($stringType == 'number' or $stringType == 'price' or $stringType == 'time') {
+		if ($stringType == 'number' or $stringType == 'price') {
 			$data->{$this->propertyName} = str_replace(KText::_('DECIMAL_MARK', '.'), '.', $data->{$this->propertyName});
 		}
 
-		// Convert durations to seconds, depending on what's set in the field data
-		if ($stringType == 'time') {
-
-			switch($this->getPropertyDefinition('displayin', '')) {
-
-				case 'days':
-					$data->{$this->propertyName} *= 86400;
-					break;
-
-				case 'hours':
-					$data->{$this->propertyName} *= 3600;
-					break;
-
-				case 'minutes':
-					$data->{$this->propertyName} *= 60;
-					break;
-			}
-
-		}
-		
 		return true;
 	
 	}
@@ -62,26 +36,6 @@ class KenedoPropertyString extends KenedoProperty {
 		$value = $record->{$this->propertyName};
 
 		$stringType = $this->getPropertyDefinition('stringType', 'string');
-
-		// If it's a time, see if we got a displayin, data is stored in seconds, here we bring it to the unit we want
-		if ($stringType == 'time') {
-
-			switch($this->getPropertyDefinition('displayin', '')) {
-
-				case 'days':
-					$value /= 86400;
-					break;
-
-				case 'hours':
-					$value /= 3600;
-					break;
-
-				case 'minutes':
-					$value /= 60;
-					break;
-			}
-
-		}
 
 		// Numbers and times get the localized decimal symbol
 		if ($stringType == 'number' or $stringType == 'time') {

@@ -33,8 +33,8 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>1,
-			'order'=>100,
+			'positionList'=>1,
+			'canSortBy'=>true,
 			'positionForm'=>1000,
 		);
 
@@ -53,14 +53,13 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'tooltip'=>KText::_('TOOLTIP_ELEMENT_TITLE'),
 			'label'=>KText::_('Title'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>4,
 			'required'=>1,
-			'listing'=>10,
-			'listinglink'=>1,
+			'positionList'=>10,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'adminelements',
-			'order'=>30,
+			'canSortBy'=>true,
 			'positionForm'=>3000,
 		);
 
@@ -68,8 +67,8 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'name'=>'internal_name',
 			'label'=>KText::_('Internal Name'),
 			'type'=>'string',
-			'listing'=>15,
-			'order'=>40,
+			'positionList'=>15,
+			'canSortBy'=>true,
 			'positionForm'=>4000,
 		);
 
@@ -77,12 +76,12 @@ class ConfigboxModelAdminelements extends KenedoModel {
 		$goInternal = CbSettings::getInstance()->get('use_internal_question_names');
 
 		if ($goInternal) {
-			$propDefs['internal_name']['listing'] = 10;
-			$propDefs['internal_name']['listinglink'] = 1;
-			unset($propDefs['title']['listinglink']);
+			$propDefs['internal_name']['positionList'] = 10;
+			$propDefs['internal_name']['makeEditLink'] = true;
+			unset($propDefs['title']['makeEditLink']);
 		}
 		else {
-			$propDefs['internal_name']['invisible'] = 1;
+			$propDefs['internal_name']['invisible'] = true;
 		}
 
 		$propDefs['required'] = array(
@@ -117,6 +116,78 @@ class ConfigboxModelAdminelements extends KenedoModel {
 
 		$customTypes = $this->getCustomQuestionTypes();
 		$propDefs['question_type']['choices'] = array_merge($propDefs['question_type']['choices'], $customTypes);
+
+		$propDefs['calendar_first_day'] = array(
+			'name'=>'calendar_first_day',
+			'label'=>KText::_('FIELD_LABEL_QUESTION_CALENDAR_FIRST_DAY'),
+			'type'=>'dropdown',
+			'choices'=>array(
+				'locale' => KText::_('FIELD_LABEL_QUESTION_CALENDAR_FIRST_DAY_LOCALE'),
+				'monday' => KText::_('FIELD_LABEL_QUESTION_CALENDAR_FIRST_DAY_MON'),
+				'sunday' => KText::_('FIELD_LABEL_QUESTION_CALENDAR_FIRST_DAY_SUN'),
+			),
+			'default'=>'none',
+			'positionForm'=>6500,
+			'appliesWhen' => array(
+				'question_type'=>array('calendar'),
+			)
+		);
+
+		$propDefs['calendar_validation_type_min'] = array(
+			'name'=>'calendar_validation_type_min',
+			'label'=>KText::_('FIELD_LABEL_QUESTION_CALENDAR_VALIDATION_TYPE_MIN'),
+			'type'=>'dropdown',
+			'choices'=>array(
+				'none' => KText::_('KTEXT_NO'),
+				'days' => KText::_('KTEXT_YES'),
+			),
+			'default'=>'none',
+			'positionForm'=>6500,
+			'appliesWhen' => array(
+				'question_type'=>array('calendar'),
+			)
+		);
+
+		$propDefs['calendar_days_min'] = array (
+			'name'=>'calendar_days_min',
+			'label'=>KText::_('FIELD_LABEL_QUESTION_CALENDAR_DAYS_MIN'),
+			'tooltip'=>KText::_('TOOLTIP_CALENDAR_MIN_MAX_DAYS'),
+			'type'=>'string',
+			'stringType'=>'number',
+			'positionForm'=>6510,
+			'required'=>true,
+			'appliesWhen' => array(
+				'calendar_validation_type_min'=>'days',
+			)
+		);
+
+		$propDefs['calendar_validation_type_max'] = array(
+			'name'=>'calendar_validation_type_max',
+			'label'=>KText::_('FIELD_LABEL_QUESTION_CALENDAR_VALIDATION_TYPE_MAX'),
+			'type'=>'dropdown',
+			'choices'=>array(
+				'none' => KText::_('KTEXT_NO'),
+				'days' => KText::_('KTEXT_YES'),
+			),
+			'default'=>'none',
+			'positionForm'=>6520,
+			'appliesWhen' => array(
+				'question_type'=>array('calendar'),
+			)
+		);
+
+		$propDefs['calendar_days_max'] = array (
+			'name'=>'calendar_days_max',
+			'label'=>KText::_('FIELD_LABEL_QUESTION_CALENDAR_DAYS_MAX'),
+			'tooltip'=>KText::_('TOOLTIP_CALENDAR_MIN_MAX_DAYS'),
+			'type'=>'string',
+			'stringType'=>'number',
+			'positionForm'=>6530,
+			'required'=>true,
+			'appliesWhen' => array(
+				'calendar_validation_type_max'=>'days',
+			)
+		);
 
 		$propDefs['slider_steps'] = array (
 			'name'=>'slider_steps',
@@ -377,7 +448,6 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'name'=>'unit',
 			'label'=>KText::_('FIELD_LABEL_QUESTION_UNIT'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>54,
 			'positionForm'=>25000,
 			'required'=>true,
@@ -450,7 +520,7 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'textWhenNoRule'=>KText::_('Show the question in any case.'),
 			'required'=>0,
 			'options'=>'ALLOW_RAW',
-			'listing'=>70,
+			'positionList'=>70,
 			'positionForm'=>30000,
 		);
 
@@ -712,7 +782,6 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'name'=>'description',
 			'label'=>KText::_('Description'),
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>14,
 			'required'=>0,
 			'options'=>'USE_HTMLEDITOR ALLOW_HTML',
@@ -800,7 +869,6 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'name'=>'element_custom_translatable_1',
 			'label'=> $label,
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>50,
 			'required'=>0,
 			'positionForm'=>51000,
@@ -815,7 +883,6 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'name'=>'element_custom_translatable_2',
 			'label'=> $label,
 			'type'=>'translatable',
-			'stringTable'=>'#__configbox_strings',
 			'langType'=>51,
 			'required'=>0,
 			'positionForm'=>52000,
@@ -880,15 +947,14 @@ class ConfigboxModelAdminelements extends KenedoModel {
 
 		$propDefs['el_image'] = array (
 			'name'=>'el_image',
+			'type'=>'image',
 			'label'=>KText::_('Decoration Image'),
-			'type'=>'file',
+			'tooltip'=>KText::_('Image to show next to the answers.'),
 			'appendSerial'=>1,
 			'allowedExtensions'=>array('svg', 'jpg','jpeg','gif','tif','bmp','png'),
-			'filetype'=>'image',
-			'tooltip'=>KText::_('Image to show next to the answers.'),
-			'allow'=>array('image/svg+xml','image/pjpeg','image/jpg','image/jpeg','image/gif','image/tif','image/bmp','image/png','image/x-png'),
+			'allowedMimeTypes'=>array('image/svg+xml','image/pjpeg','image/jpg','image/jpeg','image/gif','image/tif','image/bmp','image/png','image/x-png'),
 			'required'=>0,
-			'size'=>'1000',
+			'maxFileSizeKb'=>'2000',
 			'dirBase'=>KenedoPlatform::p()->getDirDataStore().'/public/question_decorations',
 			'urlBase'=>KenedoPlatform::p()->getUrlDataStore().'/public/question_decorations',
 			'options'=>'FILENAME_TO_RECORD_ID PRESERVE_EXT SAVE_FILENAME',
@@ -914,9 +980,9 @@ class ConfigboxModelAdminelements extends KenedoModel {
 
 			'tooltip'=>KText::_('The configurator page in which the question is displayed.'),
 			'required'=>1,
-			'listing'=>30,
-			'order'=>20,
-			'filter'=>1,
+			'positionList'=>30,
+			'canSortBy'=>true,
+			'addDropdownFilter'=>true,
 			'positionForm'=>60000,
 		);
 
@@ -926,9 +992,9 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'tooltip'=>KText::_('TOOLTIP_QUESTION_PUBLISHED'),
 			'type'=>'published',
 			'default'=>1,
-			'listing'=>110,
-			'filter'=>2,
-			'listingwidth'=>'50px',
+			'positionList'=>110,
+			'addDropdownFilter'=>true,
+			'listCellWidth'=>'50px',
 			'positionForm'=>61000,
 		);
 
@@ -943,8 +1009,8 @@ class ConfigboxModelAdminelements extends KenedoModel {
 			'label'=>KText::_('Pos.'),
 			'type'=>'ordering',
 			'group'=>'page_id',
-			'order'=>25,
-			'listing'=>2,
+			'canSortBy'=>true,
+			'positionList'=>2,
 			'positionForm'=>63000,
 		);
 

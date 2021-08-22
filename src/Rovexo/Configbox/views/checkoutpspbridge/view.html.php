@@ -78,10 +78,10 @@ class ConfigboxViewCheckoutpspbridge extends KenedoView {
 			return;
 		}
 
-		$this->notificationUrl = KLink::getRoute('index.php?option=com_configbox&controller=ipn&task=processipn&Itemid=0&connector_name='.$this->orderRecord->payment->connector_name,false, true);
+		$this->notificationUrl = KLink::getRoute('index.php?option=com_configbox&controller=ipn&task=processipn&output_mode=view_only&Itemid=0&connector_name='.$this->orderRecord->payment->connector_name,false, true);
 		$this->successUrl = KLink::getRoute('index.php?option=com_configbox&view=userorder&order_id='.$this->orderRecord->id, false, true);
-		$this->failureUrl = KLink::getRoute('index.php?option=com_configbox&view=checkout', false, true);
-		$this->cancelUrl = KLink::getRoute('index.php?option=com_configbox&view=checkout', false, true);
+		$this->failureUrl = KLink::getRoute('index.php?option=com_configbox&view=cart&cart_id='.$this->orderRecord->cart_id, false, true);
+		$this->cancelUrl = KLink::getRoute('index.php?option=com_configbox&view=cart&cart_id='.$this->orderRecord->cart_id, false, true);
 
 		$this->pspBridgeFilePath = ConfigboxPspHelper::getPspConnectorFolder($this->orderRecord->payment->connector_name) . '/bridge.php';
 

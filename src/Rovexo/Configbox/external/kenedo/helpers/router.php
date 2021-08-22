@@ -215,6 +215,9 @@ class KenedoRouterHelper {
 		// Get the current URI (drop starting slash and the last item (conveniently removing any query string or SEF suffix in the process)
 		$segments = dirname($_SERVER['REQUEST_URI']);
 
+		// In case the soso-SEF mode is on
+		$segments = str_replace('/index.php', '', $segments);
+
 		$scheme = KenedoPlatform::p()->requestUsesHttps() ? 'https' : 'http';
 		$host = (substr(PHP_SAPI, 0, 3) == 'cli') ? '' : $_SERVER['HTTP_HOST'];
 
@@ -272,6 +275,9 @@ class KenedoRouterHelper {
 
 		// Get the current URI (drop starting slash and the last item (conveniently removing any query string or SEF suffix in the process)
 		$segments = dirname($_SERVER['REQUEST_URI']);
+
+		// In case the soso-SEF mode is on
+		$segments = str_replace('/index.php', '', $segments);
 
 		$scheme = KenedoPlatform::p()->requestUsesHttps() ? 'https' : 'http';
 		$host = (substr(PHP_SAPI, 0, 3) == 'cli') ? '' : $_SERVER['HTTP_HOST'];

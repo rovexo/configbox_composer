@@ -1511,7 +1511,7 @@ class KenedoModel {
 					$titleField = $propertyDefinitions[$propertyInfo['titleField']];
 					if ($titleField['type'] == 'translatable') {
 						$select = 'a.id, str_title.text AS title';
-						$join = "LEFT JOIN `".$titleField['stringTable']."` AS str_title ON str_title.key = a.id AND str_title.type = ".(int)$titleField['langType']." AND str_title.language_tag = '".$db->getEscaped(KText::getLanguageTag())."'";
+						$join = "LEFT JOIN `#__configbox_strings` AS str_title ON str_title.key = a.id AND str_title.type = ".(int)$titleField['langType']." AND str_title.language_tag = '".$db->getEscaped(KText::getLanguageTag())."'";
 					}
 					else {
 						$select = 'a.id, a.'.$propertyInfo['titleField'].' AS title';

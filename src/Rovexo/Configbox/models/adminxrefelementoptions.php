@@ -25,8 +25,8 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'name'=>'id',
 			'type'=>'id',
 			'default'=>0,
-			'listing'=>10,
-			'order'=>100,
+			'positionList'=>10,
+			'canSortBy'=>true,
 			'label'=>KText::_('ID'),
 			'positionForm'=>10000,
 		);
@@ -52,9 +52,8 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			),
 
 			'parent'=>1,
-			'order'=>10,
-			'filter'=>10,
-			'filterparents'=>0,
+			'canSortBy'=>true,
+			'addDropdownFilter'=>true,
 			'invisible'=>true,
 			'positionForm'=>20000,
 		);
@@ -70,11 +69,11 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'modelClass'=>'ConfigboxModelAdminoptions',
 			'modelMethod'=>'getFilterSelectData',
 			'required'=>0,
-			'listing'=>50,
-			'order'=>20,
+			'positionList'=>50,
+			'canSortBy'=>true,
 			'invisible'=>false,
-			'listingwidth'=>'150px',
-			'listinglink'=>1,
+			'listCellWidth'=>'150px',
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'adminoptionassignments',
 			'positionForm'=>30000,
@@ -83,10 +82,10 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 		$propDefs['default'] = array(
 			'name'=>'default',
 			'label'=>KText::_('FIELD_LABEL_ANSWER_DEFAULT'),
-			'listingLabel'=>KText::_('LISTING_LABEL_ANSWER_DEFAULT'),
+			'labelList'=>KText::_('LISTING_LABEL_ANSWER_DEFAULT'),
 			'tooltip'=>KText::_('TOOLTIP_ANSWER_DEFAULT'),
 			'type'=>'boolean',
-			'listing'=>77,
+			'positionList'=>77,
 			'positionForm'=>40000,
 		);
 
@@ -96,49 +95,48 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'label'=>KText::_('FIELD_LABEL_COMPONENT_INTERNAL_NAME'),
 			'type'=>'string',
 			'required'=>0,
-			'order'=>20,
+			'canSortBy'=>true,
 			'invisible'=>true,
-			'listingwidth'=>'150px',
+			'listCellWidth'=>'150px',
 			'positionForm'=>41000,
 		);
 
 		if (CbSettings::getInstance()->get('use_internal_answer_names')) {
 			$propDefs['internal_name']['invisible'] = false;
-			$propDefs['internal_name']['listing'] = $propDefs['option_id']['listing'];
-			$propDefs['internal_name']['listinglink'] = 1;
+			$propDefs['internal_name']['positionList'] = $propDefs['option_id']['positionList'];
+			$propDefs['internal_name']['makeEditLink'] = true;
 			$propDefs['internal_name']['component'] = $propDefs['option_id']['component'];
 			$propDefs['internal_name']['controller'] = $propDefs['option_id']['controller'];
-			unset($propDefs['option_id']['listinglink']);
-			$propDefs['option_id']['listing'] = 0;
+			unset($propDefs['option_id']['makeEditLink']);
+			$propDefs['option_id']['positionList'] = 0;
 		}
 
 
 		$propDefs['published'] = array(
 			'name'=>'published',
 			'label'=>KText::_('Enable this answer?'),
-			'listingLabel'=>KText::_('Active'),
+			'labelList'=>KText::_('Active'),
 			'type'=>'published',
 			'default'=>1,
-			'listing'=>80,
+			'positionList'=>80,
 			'tooltip'=>KText::_('You can disable this answer temporarily.'),
-			'listingwidth'=>'60px',
+			'listCellWidth'=>'60px',
 			'positionForm'=>45000,
 		);
 
 		$propDefs['option_picker_image'] = array(
 			'name'=>'option_picker_image',
 			'label'=>KText::_('Picker Image'),
-			'type'=>'file',
+			'type'=>'image',
 			'appendSerial'=>1,
 			'allowedExtensions'=>array('jpg','jpeg','gif','tif','bmp','png'),
-			'filetype'=>'image',
-			'allow'=>array('image/pjpeg','image/jpg','image/jpeg','image/gif','image/tif','image/bmp','image/png'),
-			'size'=>'1000',
+			'allowedMimeTypes'=>array('image/pjpeg','image/jpg','image/jpeg','image/gif','image/tif','image/bmp','image/png'),
+			'maxFileSizeKb'=>'2000',
 			'dirBase'=>KenedoPlatform::p()->getDirDataStore().'/public/answer_picker_images',
 			'urlBase'=>KenedoPlatform::p()->getUrlDataStore().'/public/answer_picker_images',
 			'required'=>0,
 			'tooltip'=>KText::_('Upload an image here and it will be shown instead of the radio button/checkbox. No effect on drop-down fields.'),
-			'options'=>'FILENAME_TO_RECORD_ID PRESERVE_EXT SAVE_FILENAME',
+			'options'=>'FILENAME_TO_RECORD_ID SAVE_FILENAME',
 			'positionForm'=>45500,
 			'appliesWhen'=>array(
 				'question_type' => 'images',
@@ -158,13 +156,13 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 		$propDefs['rules'] = array(
 			'name'=>'rules',
 			'label'=>KText::_('FIELD_LABEL_ANSWER_RULE'),
-			'listingLabel'=>KText::_('Rule'),
+			'labelList'=>KText::_('Rule'),
 			'tooltip'=>KText::_('TOOLTIP_ANSWER_RULE'),
 			'type'=>'rule',
 			'textWhenNoRule'=>KText::_('Show the answer in any case.'),
 			'required'=>0,
 			'options'=>'ALLOW_RAW',
-			'listing'=>70,
+			'positionList'=>70,
 			'positionForm'=>60000,
 		);
 
@@ -202,7 +200,7 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 
 		$propDefs['calcmodel'] = array(
 			'name'=>'calcmodel',
-			'listingLabel'=>KText::_('Calculation'),
+			'labelList'=>KText::_('Calculation'),
 			'label'=>KText::_('Price Calculation'),
 			'tooltip'=>KText::_('If you choose a price calculation, it will override the component price.'),
 			'type'=>'calculation',
@@ -215,7 +213,7 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'modelClass'=>'ConfigboxModelAdmincalculations',
 			'modelMethod'=>'getRecords',
 
-			'listing'=>75,
+			'positionList'=>75,
 			'positionForm'=>100000,
 		);
 
@@ -308,12 +306,11 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 		$propDefs['visualization_image'] = array(
 			'name'=>'visualization_image',
 			'label'=>KText::_('Visualization Image'),
-			'type'=>'file',
+			'type'=>'image',
 			'appendSerial'=>1,
 			'allowedExtensions'=>array('jpg','jpeg','gif','tif','bmp','png'),
-			'filetype'=>'image',
-			'allow'=>array('image/pjpeg','image/jpg','image/jpeg','image/gif','image/tif','image/bmp','image/png'),
-			'size'=>'1000',
+			'allowedMimeTypes'=>array('image/pjpeg','image/jpg','image/jpeg','image/gif','image/tif','image/bmp','image/png'),
+			'maxFileSizeKb'=>'2000',
 			'dirBase'=>KenedoPlatform::p()->getDirDataStore().'/public/vis_answer_images',
 			'urlBase'=>KenedoPlatform::p()->getUrlDataStore().'/public/vis_answer_images',
 			'required'=>0,
@@ -330,7 +327,6 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'label'=>KText::_('Visualization Stacking Order'),
 			'type'=>'string',
 			'size'=>'50',
-			'allow'=>'[-0-9]',
 			'default'=>'1',
 			'required'=>0,
 			'tooltip'=>KText::_('Here you specify, where the image will be positioned in the stack. Higher numbers are layered higher.'),
@@ -439,8 +435,8 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 			'label'=>KText::_('Ordering'),
 			'type'=>'ordering',
 			'group'=>'element_id',
-			'order'=>15,
-			'listing'=>15,
+			'canSortBy'=>true,
+			'positionList'=>15,
 			'positionForm'=>260000,
 		);
 

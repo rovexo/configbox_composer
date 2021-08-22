@@ -210,6 +210,7 @@ class KRequest {
 				'src' => 'Text',
 				'controls' => 'Text',
 				'type' => 'Text',
+				'track' => 'Text',
 				'poster' => 'Text',
 			));
 
@@ -219,6 +220,7 @@ class KRequest {
 				'src' => 'Text',
 				'controls' => 'Text',
 				'type' => 'Text',
+				'track' => 'Text',
 				'poster' => 'Text',
 			));
 

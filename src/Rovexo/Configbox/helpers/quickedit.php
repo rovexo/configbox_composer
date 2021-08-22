@@ -28,7 +28,7 @@ class ConfigboxQuickeditHelper {
 	static function getQuestionEditButtons(ConfigboxQuestion $question) {
 		ob_start();
 		?>
-		<div class="quick-edit-buttons quick-edit-buttons-element">
+		<div class="quick-edit-buttons quick-edit-buttons-question">
 			<a title="<?php echo KText::_('Delete Question');?>" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminelements&task=delete&quickedit=1&ids=' . $question->id);?>">
 				<i class="fa fa-trash" aria-hidden="true"></i>
 			</a>			
@@ -49,7 +49,7 @@ class ConfigboxQuickeditHelper {
 	static function getAnswerEditButtons(ConfigboxAnswer $answer) {
 		ob_start();
 		?>
-		<div class="quick-edit-buttons quick-edit-buttons-option">
+		<div class="quick-edit-buttons quick-edit-buttons-answer">
 			<a class="quick-edit-button-edit" title="<?php echo KText::_('Delete Answer');?>" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminoptionassignments&task=delete&quickedit=1&ids=' . $answer->id);?>">
 				<i class="fa fa-trash" aria-hidden="true"></i>
 			</a>			

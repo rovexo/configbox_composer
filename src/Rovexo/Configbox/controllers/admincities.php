@@ -7,7 +7,7 @@ class ConfigboxControllerAdmincities extends KenedoController {
 	 * @return NULL
 	 */
 	protected function getDefaultModel() {
-		return NULL;
+		return KenedoModel::getModel('ConfigboxModelAdmincities');
 	}
 
 	/**

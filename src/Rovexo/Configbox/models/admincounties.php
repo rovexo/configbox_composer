@@ -29,7 +29,7 @@ class ConfigboxModelAdmincounties extends KenedoModel {
 			'type'=>'id',
 			'default'=>0,
 			'label'=>KText::_('ID'),
-			'listing'=>10,
+			'positionList'=>10,
 			'positionForm'=>200,
 		);
 
@@ -38,11 +38,11 @@ class ConfigboxModelAdmincounties extends KenedoModel {
 			'label'=>KText::_('Name'),
 			'type'=>'string',
 			'required'=>1,
-			'listing'=>20,
-			'listinglink'=>1,
-			'order'=>10,
-			'filter'=>1,
-			'search'=>1,
+			'positionList'=>20,
+			'canSortBy'=>true,
+			'addDropdownFilter'=>true,
+			'addSearchBox'=>true,
+			'makeEditLink'=>true,
 			'component'=>'com_configbox',
 			'controller'=>'admincounties',
 			'positionForm'=>300,
@@ -72,11 +72,10 @@ class ConfigboxModelAdmincounties extends KenedoModel {
 			'required'=>1,
 			'parent'=>1,
 			'filterparents'=>1,
-			'filter'=>2,
-			'listing'=>40,
-			'order'=>40,
-
-			'listingwidth'=>'100px',
+			'addDropdownFilter'=>true,
+			'positionList'=>40,
+			'canSortBy'=>true,
+			'listCellWidth'=>'100px',
 			'positionForm'=>400,
 		);
 
@@ -85,8 +84,8 @@ class ConfigboxModelAdmincounties extends KenedoModel {
 			'name'=>'published',
 			'label'=>KText::_('Active'),
 			'type'=>'published',
-			'listing'=>100,
-			'listingwidth'=>'50px',
+			'positionList'=>100,
+			'listCellWidth'=>'50px',
 			'default'=>1,
 			'positionForm'=>500,
 		);
@@ -142,8 +141,8 @@ class ConfigboxModelAdmincounties extends KenedoModel {
 			'name'=>'ordering',
 			'label'=>KText::_('Ordering'),
 			'type'=>'ordering',
-			'order'=>6,
-			'listing'=>15,
+			'canSortBy'=>true,
+			'positionList'=>15,
 			'group'=>'state_id',
 			'positionForm'=>1200,
 		);

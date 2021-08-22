@@ -23,4 +23,4 @@ elseif($this->getPropertyDefinition('default')) {
 else {
 	$value = NULL;
 }
-echo KenedoHtml::getSelectField($this->propertyName, $options, $value );
+echo KenedoHtml::getSelectField($this->propertyName, $options, $value);

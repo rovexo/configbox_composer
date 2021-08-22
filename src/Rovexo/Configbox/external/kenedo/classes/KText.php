@@ -54,6 +54,17 @@ class KText {
 			$languageTag = CbSettings::getInstance()->get('language_tag');
 		}
 
+		// Load language files if not loaded already
+		if (empty(self::$strings[$languageTag])) {
+
+			$files = self::getLanguageFiles($languageTag);
+
+			foreach ($files as $file) {
+				self::load($file, $languageTag);
+			}
+
+		}
+
 		self::$languageTag = $languageTag;
 
 	}
@@ -173,7 +184,7 @@ class KText {
 		$files[] = $appDir.'/language/'.$languageTag.'/frontend.ini';
 
 		// Figure if we deal with an admin page (careful, this means that an admin related page - like a record edit screen)
-		$onAdminPage = ( ( KRequest::getString('controller') == NULL && KRequest::getString('view') == NULL) || strpos(KRequest::getString('controller'), 'admin') === 0 || strpos(KRequest::getString('view'), 'admin') === 0 );
+		$onAdminPage = ( ( KRequest::getString('controller') == NULL && KRequest::getString('view') == NULL) || strpos(KRequest::getString('controller', ''), 'admin') === 0 || strpos(KRequest::getString('view', ''), 'admin') === 0 );
 
 		if ($onAdminPage) {
 			$files[] = $appDir.'/language/'.$fallbackTag.'/backend.ini';
@@ -202,8 +213,6 @@ class KText {
 	 */
 	static function load($path, $languageTag) {
 
-		self::initIfNeeded();
-		
 		if (is_file($path) == false) {
 			KLog::log('Could not find language file in "'.$path.'".', 'error');
 			return false;
