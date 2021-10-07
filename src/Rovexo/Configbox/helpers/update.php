@@ -47,6 +47,10 @@ class ConfigboxUpdateHelper {
 
 		if ($bool == true) {
 			if (is_file($markerPath) == false) {
+				$dir = dirname($markerPath);
+				if (!is_dir($dir)) {
+					mkdir($dir);
+				}
 				touch($markerPath);
 			}
 		}

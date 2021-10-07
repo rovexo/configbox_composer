@@ -25,7 +25,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>1,
 		);
 
-		if (KenedoPlatform::getName() == 'wordpress') {
+		if (KenedoPlatform::getName() == 'wordpress' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['wp_urls_start'] = array(
 				'name'=>'wp_urls_start',
@@ -86,7 +86,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>30,
 		);
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (KenedoPlatform::getName() == 'magento2') {
 			$propDefs['language_tag']['invisible'] = true;
 		}
 
@@ -116,13 +116,17 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>40,
 		);
 
+		if (KenedoPlatform::getName() == 'wordpress' && KenedoPlatform::p()->hasWpml() == false) {
+			$propDefs['active_languages']['invisible'] = true;
+		}
+
 		$propDefs['lang_end'] = array(
 			'name'=>'lang_end',
 			'type'=>'groupend',
 			'positionForm'=>50,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['currencies'] = array(
 				'name' => 'currencies',
@@ -208,11 +212,11 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>120,
 		);
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (KenedoPlatform::getName() == 'magento2' || ConfigboxWordpressHelper::isWcIntegration()) {
 			$propDefs['default_customer_group_id']['invisible'] = true;
 		}
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['default_country_id'] = array(
 				'name'=>'default_country_id',
@@ -450,7 +454,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>500,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['show_conversion_table'] = array(
 				'name'=>'show_conversion_table',
@@ -462,7 +466,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			);
 		}
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['defaultprodimage'] = array (
 				'name'=>'defaultprodimage',
@@ -516,7 +520,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>560,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['blocktitles_start'] = array(
 				'name' => 'blocktitles_start',
@@ -596,7 +600,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>650,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['pm_show_delivery_options'] = array(
 				'name' => 'pm_show_delivery_options',
@@ -690,7 +694,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>760,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['pm_regular_show_cart_button'] = array(
 				'name' => 'pm_regular_show_cart_button',
@@ -772,7 +776,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>860,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['pm_recurring_show_cart_button'] = array(
 				'name' => 'pm_recurring_show_cart_button',
@@ -796,7 +800,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>900,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['geolocation_start'] = array(
 				'name' => 'geolocation_start',
@@ -1138,7 +1142,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>1310,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['connectors_start'] = array(
 				'name'=>'connectors_start',
@@ -1169,7 +1173,7 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 
 		}
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['structureddata_start'] = array(
 				'name' => 'structureddata_start',

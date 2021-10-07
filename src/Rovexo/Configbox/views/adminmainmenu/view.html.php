@@ -6,6 +6,7 @@ class ConfigboxViewAdminmainmenu extends KenedoView {
 	public $component = 'com_configbox';
 	public $controllerName = '';
 
+	public $showEcommerceItems = true;
 	/**
 	 * @return NULL
 	 * @throws Exception
@@ -15,6 +16,15 @@ class ConfigboxViewAdminmainmenu extends KenedoView {
 	}
 
 	function prepareTemplateVars() {
+
+		if (KenedoPlatform::getName() == 'magento2') {
+			$this->showEcommerceItems = false;
+		}
+
+		if (KenedoPlatform::getName() == 'wordpress' && KenedoPlatform::p()->usesWcIntegration()) {
+			$this->showEcommerceItems = false;
+		}
+
 		$this->addViewCssClasses();
 	}
 	

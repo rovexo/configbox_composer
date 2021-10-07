@@ -369,8 +369,8 @@ class ConfigboxControllerCart extends KenedoController {
 		$cartDetails = $cartModel->getCartDetails($cartId);
 		KenedoObserver::triggerEvent('onConfigBoxAddToCart',array(&$cartDetails));
 
-		$this->setRedirect( KLink::getRoute($cartDetails->redirectURL,false) );
-		return;
+		$url = KLink::getRoute($cartDetails->redirectURL,false);
+		$this->setRedirect($url);
 
 	}
 

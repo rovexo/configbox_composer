@@ -85,7 +85,7 @@ class ConfigboxModelAdminpages extends KenedoModel {
 			'positionForm'=>700,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['label'] = array(
 				'name'=>'label',
@@ -277,7 +277,7 @@ class ConfigboxModelAdminpages extends KenedoModel {
 	 */
 	protected function fillEmptyUrlSegments(&$data) {
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (KenedoPlatform::getName() == 'magento2' || ConfigboxWordpressHelper::isWcIntegration()) {
 			return;
 		}
 
@@ -319,7 +319,7 @@ class ConfigboxModelAdminpages extends KenedoModel {
 	 */
 	protected function checkForDuplicateUrlSegment($data) {
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (KenedoPlatform::getName() == 'magento2' || ConfigboxWordpressHelper::isWcIntegration()) {
 			return true;
 		}
 
@@ -360,7 +360,7 @@ class ConfigboxModelAdminpages extends KenedoModel {
 	 */
 	protected function storeOldUrlSegments($data) {
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (KenedoPlatform::getName() == 'magento2' || ConfigboxWordpressHelper::isWcIntegration()) {
 			return;
 		}
 

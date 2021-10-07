@@ -5,7 +5,7 @@ defined('CB_VALID_ENTRY') or die('Restricted access');
 
 <?php if (count($this->visualizationSlots) > 0 || $this->urlBaseImage) { ?>
 
-	<div class="<?php echo hsc($this->wrapperClasses);?>">
+	<div <?php echo $this->getViewAttributes();?>>
 		
 		<?php if ($this->showBlockTitle) { ?>
 			<h2 class="block-title"><?php echo hsc($this->blockTitle);?></h2>

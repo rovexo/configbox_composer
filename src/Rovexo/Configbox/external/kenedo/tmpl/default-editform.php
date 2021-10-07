@@ -60,7 +60,7 @@ defined('CB_VALID_ENTRY') or die();
 		<input type="hidden" id="task" 			name="task" 			value="" />
 		<input type="hidden" id="id"			name="id" 				value="<?php echo intval($this->record->id); ?>" />
 		<input type="hidden" id="lang"			name="lang" 			value="<?php echo hsc(KenedoPlatform::p()->getLanguageUrlCode());?>" />
-		<!-- unencoded return url "<?php echo $this->returnUrl;?>" -->
+		<!-- unencoded return url "<?php echo hsc($this->returnUrl);?>" -->
 		<input type="hidden" id="return" 		name="return" 			value="<?php echo KLink::base64UrlEncode($this->returnUrl);?>" />
 		<input type="hidden" id="form_custom_1" name="form_custom_1" 	value="<?php echo hsc(KRequest::getString('form_custom_1'));?>" />
 		<input type="hidden" id="form_custom_2" name="form_custom_2" 	value="<?php echo hsc(KRequest::getString('form_custom_2'));?>" />

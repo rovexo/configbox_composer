@@ -77,10 +77,7 @@ class KenedoPropertyTaxclassrates extends KenedoProperty {
 			
 			$codeFieldName = 'tax_code_tcr_'.$tax_class['id'];
 			$codeValue = $data->$codeFieldName;
-			
-			unset($data->$codeFieldName);
-			unset($data->$fieldName);
-			
+
 			if ($value !== '' || $codeValue !== '') {
 				$tag = KenedoPlatform::p()->getLanguageTag();
 				if ($tag == 'de-DE' || $tag == 'de-AT' || $tag == 'de-CH') {

@@ -98,9 +98,6 @@ class KenedoPropertyMultiselect extends KenedoProperty {
 		// Get the xref values for convenience
 		$fieldValues = $data->{$this->propertyName};
 
-		// Remove the xrefs from the data object, they won't get stored by the model's method
-		unset($data->{$this->propertyName});
-
 		$db = KenedoPlatform::getDb();
 
 		// No fkOwn means that we don't have a true xref table, just a table that stores a bunch of values just for that record

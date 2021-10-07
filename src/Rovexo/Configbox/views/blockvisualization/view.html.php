@@ -53,6 +53,13 @@ class ConfigboxViewBlockvisualization extends KenedoView {
 	 */
 	public $wrapperClasses;
 
+	function getViewCssClasses() {
+		$classes = parent::getViewCssClasses();
+		$classes[] = 'configbox-block';
+		$classes[] = 'block-visualization';
+		return $classes;
+	}
+
 	function prepareTemplateVars() {
 
 		if (empty($this->cartPositionId)) {
@@ -84,6 +91,8 @@ class ConfigboxViewBlockvisualization extends KenedoView {
 
 		$wrapperClasses = array(
 			'cb-content',
+			'kenedo-view',
+			'view-blockvisualisation',
 			'configbox-block',
 			'block-visualization',
 			$this->params->get('moduleclass_sfx', ''),

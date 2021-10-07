@@ -34,5 +34,18 @@ class ConfigboxControllerAdminconfig extends KenedoController {
 	function display() {
 		$this->edit();
 	}
+
+	function renewWordpressPages() {
+		try {
+			ConfigboxWordpressHelper::renewPages();
+		}
+		catch (Exception $e) {
+			echo ConfigboxJsonResponse::makeOne()->setSuccess(false)->setErrors([$e->getMessage()])->toJson();
+			return;
+		}
+
+		echo ConfigboxJsonResponse::makeOne()->setSuccess(true)->toJson();
+
+	}
 	
 }

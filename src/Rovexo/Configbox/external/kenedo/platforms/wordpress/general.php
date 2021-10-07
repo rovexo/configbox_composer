@@ -328,16 +328,86 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		return get_bloginfo('admin_email');
 	}
 
+	protected function getWpmlLangs() {
+
+		$args = ['skip_missing'=>0];
+		$wpmlLangs = apply_filters( 'wpml_active_languages', null, $args);
+
+		if (empty($wpmlLangs)) {
+			$wpmlLangs = icl_get_languages();
+		}
+
+		return $wpmlLangs;
+	}
+
+	public function getLanguages() {
+
+		$languages = [];
+
+		if ($this->hasWpml()) {
+
+			$wpmlLangs = $this->getWpmlLangs();
+
+			foreach ($wpmlLangs as $wpmlLang) {
+				$language = new stdClass();
+				$language->tag = str_replace('_', '-', $wpmlLang['default_locale']);
+				$language->label = $wpmlLang['native_name'];
+				$languages[] = $language;
+				unset($language);
+			}
+		}
+		else {
+			$locale = str_replace('_', '-', get_locale());
+
+			$language = new stdClass();
+			$language->tag = $locale;
+			$language->label = $locale;
+			$languages[] = $language;
+		}
+
+		return $languages;
+
+	}
+
 	public function getLanguageTag() {
-		$tag = get_locale();
-		return str_replace('_', '-', $tag);
+
+		if ($this->hasWpml()) {
+
+			$currentLang = apply_filters( 'wpml_current_language', NULL );
+
+			$wpmlLangs = $this->getWpmlLangs();
+
+			$language = $wpmlLangs[$currentLang];
+			$tag = str_replace('_', '-', $language['default_locale']);
+			return $tag;
+		}
+		else {
+			$tag = get_locale();
+			return str_replace('_', '-', $tag);
+		}
+
 	}
 
 	public function getLanguageUrlCode($languageTag = NULL) {
-		return $this->getLanguageTag();
+
+		if ($this->hasWpml()) {
+			$currentLang = apply_filters( 'wpml_current_language', NULL );
+			return $currentLang;
+		}
+		else {
+			return $this->getLanguageTag();
+		}
+
 	}
 
-	//TODO: Check if good enough
+	public function hasWpml() {
+		return is_plugin_active('sitepress-multilingual-cms/sitepress.php');
+	}
+
+	public function usesWcIntegration() {
+		return is_plugin_active('wccb/wccb.php');
+	}
+
 	public function getDocumentType() {
 		return KRequest::getKeyword('format','html');
 	}
@@ -523,12 +593,10 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		return $this->getUrlBase();
 	}
 
-	//TODO: Implement
 	public function setDocumentBase($string) {
 		return true;
 	}
 
-	//TODO: Implement
 	public function setDocumentMimeType($mime) {
 		header('Content-Type: '.$mime);
 	}
@@ -619,7 +687,10 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		return $wpUser->ID;
 	}
 
-	//TODO: Test
+	/**
+	 * @param null $userId
+	 * @return string UTC is the fallback
+	 */
 	public function getUserTimezoneName($userId = NULL) {
 
 		$string = get_option('timezone_string');
@@ -641,7 +712,6 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	 */
 	public function registerUser($data, $groupIds = array()) {
 
-		//TODO: Set WP user first and last name if possible
 		$user['email'] = $data->email;
 		$user['name'] = $data->name;
 		$user['username'] = $data->username;
@@ -694,7 +764,6 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		}
 	}
 
-	//TODO: Test
 	public function isAuthorized($task,$userId = NULL, $minGroupId = NULL) {
 		return current_user_can('edit_pages');
 	}
@@ -704,7 +773,6 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		return true;
 	}
 
-	//TODO: Test
 	public function passwordsMatch($passwordClear, $passwordEncrypted) {
 		return wp_check_password( $passwordClear, $passwordEncrypted);
 	}
@@ -763,155 +831,87 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 
 	}
 
-	//TODO: Test
 	public function getPasswordResetLink() {
 		return wp_lostpassword_url();
 	}
 
-	//TODO: Test
 	public function getPlatformLoginLink() {
 		return wp_login_url();
 	}
 
-	public function getRoute($url, $encode = true, $secure = NULL) {
+	public function getRoute($url, $encode = true, $secure = null) {
 
 		if (function_exists('getRouteOverride')) {
 			return getRouteOverride($url, $encode, $secure);
 		}
 
 		$parsed = parse_url($url);
-
+		$query = array();
 		if (isset($parsed['query'])) {
-
-			$query = array();
-
 			parse_str($parsed['query'], $query);
-
-			if (!empty($query['view'])) {
-
-				if ($query['view'] == 'cart') {
-
-					$postId = $this->getCartPostId();
-
-					if ($postId) {
-
-						$url = get_post_permalink($postId);
-
-						unset($query['view'], $query['option']);
-
-						if (count($query)) {
-							$url .= (strstr($url, '?')) ? '&':'?';
-							$url .= http_build_query($query);
-						}
-
-						return $url;
-
-					}
-
-				}
-
-				if ($query['view'] == 'user') {
-
-					$postId = $this->getUserPostId();
-
-					if ($postId) {
-
-						$url = get_post_permalink($postId);
-
-						unset($query['view'], $query['option']);
-
-						if (count($query)) {
-							$url .= (strstr($url, '?')) ? '&':'?';
-							$url .= http_build_query($query);
-						}
-
-						return $url;
-
-					}
-
-				}
-
-				$postViews = [
-
-					'productlisting' => [
-						'meta_key' => 'cb_listing_id',
-						'name_id_param' => 'listing_id',
-						'unset'=> array(),
-						],
-
-					'product' => [
-						'meta_key' => 'cb_product_id',
-						'name_id_param' => 'prod_id',
-						'unset'=> array(),
-					],
-
-					'configuratorpage' => [
-						'meta_key' => 'cb_page_id',
-						'name_id_param' => 'page_id',
-						'unset'=> array('prod_id'),
-					],
-
-				];
-
-				if (isset($postViews[$query['view']])) {
-					$idParamName = $postViews[$query['view']]['name_id_param'];
-					if (empty($query[$idParamName])) {
-						KLog::log('Got a view parameter "'.$query['view'].'" in URL, but record ID parameter "'.$idParamName.'" is missing. Whole URL was '.$url, 'custom_wp_requests');
-						return $url;
-					}
-
-					$db = KenedoPlatform::getDb();
-					$dbQuery = "SELECT `post_id` FROM `#__postmeta` WHERE `meta_key` = '".$db->getEscaped($postViews[$query['view']]['meta_key'])."' and `meta_value` = ".intval($query[$idParamName]);
-					$db->setQuery($dbQuery);
-					$postId = $db->loadResult();
-
-					$url = get_post_permalink($postId);
-
-					foreach ($postViews[$query['view']]['unset'] as $var) {
-						unset($query[$var]);
-					}
-					unset($query['view'], $query['option'], $query[$idParamName]);
-
-					if (count($query)) {
-						$url .= (strstr($url, '?')) ? '&':'?';
-						$url .= http_build_query($query);
-					}
-
-					return $url;
-
-				}
-			}
-
-
-			// Since WP wants page to be set and CB works with controller (or view), we set 'page' here (see lower for one more thing)
-			if (!empty($query['view'])) {
-				$query['page'] = $query['view'];
-			}
-			elseif (!empty($query['controller'])) {
-				$query['page'] = $query['controller'];
-			}
-
-			if (!empty($query['task'])) {
-				$action = '';
-				if (!empty($query['controller'])) {
-					$action = $query['controller'].'.';
-				}
-				$action .= $query['task'];
-				$query['action'] = $action;
-			}
-
-			$queryString = http_build_query($query);
-
-		}
-		else {
-			// And in case we got no query string, then we add our wildcard 'configbox' as page (will be dealt with in static::initialize)
-			$queryString = 'page=configbox';
 		}
 
+		$view = (!empty($query['view'])) ? $query['view'] : null;
+		$languageTag = (!empty($query['lang'])) ? $query['lang'] : $this->getLanguageTag();
 
+		switch ($view) {
+
+			case 'cart':
+				$postId = ConfigboxWordpressHelper::getPostId('cb_internal', 'type', 'cart', $languageTag);
+				$url = get_post_permalink($postId);
+				return $url;
+
+			case 'user':
+				$postId = ConfigboxWordpressHelper::getPostId('cb_internal', 'type', 'user', $languageTag);
+				$url = get_post_permalink($postId);
+				// Needed for the layout param to get to the delivery edit address
+				unset($query['view'], $query['option']);
+				if (count($query)) {
+					$url .= '?'.build_query($query);
+				}
+				return $url;
+
+			case 'configuratorpage':
+				$postId = ConfigboxWordpressHelper::getPostId('cb_page', 'cb_page_id', $query['page_id'], $languageTag);
+				$url = get_post_permalink($postId);
+				return $url;
+
+			case 'productlisting':
+				$postId = ConfigboxWordpressHelper::getPostId('cb_product_listing', 'cb_listing_id', $query['listing_id'], $languageTag);
+				$url = get_post_permalink($postId);
+				return $url;
+
+			case 'product':
+				$postId = ConfigboxWordpressHelper::getPostId('cb_product', 'cb_product_id', $query['prod_id'], $languageTag);
+				$url = get_post_permalink($postId);
+				return $url;
+
+		}
+
+		// At this point it is clear that we have no SEF-URL to make. It can be just AJAX links in backend or frontend
+
+		// Transform CB's 'view' or 'controller' query param to WP's 'page' param
+		if (!empty($query['view'])) {
+			$query['page'] = $query['view'];
+		}
+		elseif (!empty($query['controller'])) {
+			$query['page'] = $query['controller'];
+		}
+
+		// Transform CB's 'task' param to WP's 'action' param
+		if (!empty($query['task'])) {
+			$action = '';
+			if (!empty($query['controller'])) {
+				$action = $query['controller'].'.';
+			}
+			$action .= $query['task'];
+			$query['action'] = $action;
+		}
+
+		$queryString = http_build_query($query);
 
 		if ($this->isAdminArea()) {
-
+			// In the admin area, we need to use admin-ajax.php to render a view-only response
 			if (strstr($url, 'output_mode=view_only') || strstr($url, 'format=raw') || strstr($url, 'format=json')) {
 				$frontController = 'admin-ajax.php';
 			}
@@ -919,72 +919,19 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 				$frontController = 'admin.php';
 			}
 
-			return admin_url( $frontController.'?'.$queryString );
+			$url = admin_url( $frontController.'?'.$queryString );
+			return $url;
 		}
 		else {
-			return site_url( 'index.php?'.$queryString );
+			$home = rtrim(get_home_url(), '/');
+			$sep = strstr($home, '?') ? '&':'?';
+			$url = $home.$sep.$queryString;
+			return $url;
 		}
-
-	}
-
-	protected function getCartPostId() {
-
-		$db = KenedoPlatform::getDb();
-
-		$query = "
-				SELECT `type`.`post_id`
-				FROM `#__postmeta` AS `type`
-				LEFT JOIN `#__postmeta` AS `lang` ON `lang`.`post_id` = `type`.`post_id`
-				
-				WHERE 
-					(`type`.`meta_key` = 'type' and `type`.`meta_value` = 'cart')
-					AND
-					(`lang`.`meta_key` = 'language_tag' and `lang`.`meta_value` = '".$db->getEscaped(KText::getLanguageTag())."')
-					
-				";
-		$db->setQuery($query);
-		$postId = $db->loadResult();
-
-		return $postId;
-
-	}
-
-	protected function getUserPostId() {
-
-		$db = KenedoPlatform::getDb();
-
-		$query = "
-				SELECT `type`.`post_id`
-				FROM `#__postmeta` AS `type`
-				LEFT JOIN `#__postmeta` AS `lang` ON `lang`.`post_id` = `type`.`post_id`
-				
-				WHERE 
-					(`type`.`meta_key` = 'type' and `type`.`meta_value` = 'user')
-					AND
-					(`lang`.`meta_key` = 'language_tag' and `lang`.`meta_value` = '".$db->getEscaped(KText::getLanguageTag())."')
-					
-				";
-		$db->setQuery($query);
-		$postId = $db->loadResult();
-
-		return $postId;
-
 	}
 
 	public function getActiveMenuItemId() {
 		return 0;
-	}
-
-	//TODO: Test
-	public function getLanguages() {
-
-		$locale = str_replace('_', '-', get_locale());
-
-		$language = new stdClass();
-		$language->tag = $locale;
-		$language->label = $locale;
-		return array($language);
-
 	}
 
 	public function platformUserEditFormIsReachable() {

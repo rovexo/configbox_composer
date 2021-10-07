@@ -307,6 +307,10 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 			$templates['defaultTemplate'] 	= KenedoPlatform::p()->getComponentDir('com_configbox').'/views/configuratorpage/tmpl/magento.php';
 		}
 
+        if (KenedoPlatform::getName() == 'wordpress' && KenedoPlatform::p()->usesWcIntegration()) {
+			$templates['defaultTemplate'] 	= KenedoPlatform::p()->getComponentDir('com_configbox').'/views/configuratorpage/tmpl/woocommerce.php';
+		}
+
 		// Loop through and see which exists, use the first one we find
 		foreach ($templates as $template) {
 			if (file_exists($template)) {
@@ -408,6 +412,9 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 
 		// On Magento, we do not show CB's finish button in any case (platform makes it's own one)
         if ((KenedoPlatform::getName() == 'magento') || (KenedoPlatform::getName() == 'magento2')) {
+			$this->showFinishButton = false;
+		}
+		elseif (ConfigboxWordpressHelper::isWcIntegration()) {
 			$this->showFinishButton = false;
 		}
         else {
@@ -540,6 +547,11 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 
 		$this->showNetPrices = (ConfigboxPermissionHelper::canGetB2BMode());
 
+		$changePageUrls = true;
+		if (KenedoPlatform::getName() == 'wordpress' && KenedoPlatform::p()->usesWcIntegration()) {
+			$changePageUrls = false;
+		}
+
 		$configuratorData = array(
 			'missingProductSelections'	=> $this->missingProductSelections,
 			'cartPositionId'			=> $this->cartPositionId,
@@ -550,7 +562,8 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 			'questions'					=> $this->questions,
 			'dateFormat'				=> KText::_('CALENDAR_DATEFORMAT_JS', 'M d, yy'),
 			'blockNavigationOnMissing'  => (bool) $this->blockNavigationOnMissing,
-			'pageSequence'				=> $this->pageSequence
+			'pageSequence'				=> $this->pageSequence,
+			'changeUrlsOnNav'			=> $changePageUrls,
 		);
 
 		$this->configuratorDataJson = json_encode($configuratorData);

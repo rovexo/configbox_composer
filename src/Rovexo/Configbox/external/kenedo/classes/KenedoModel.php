@@ -292,7 +292,7 @@ class KenedoModel {
 		$finalResponse = true;
 		foreach ($properties as $property) {
 
-			if ($property->applies($data)) {
+			if ($property->applies($data) == false) {
 				continue;
 			}
 			$response = $property->check($data);

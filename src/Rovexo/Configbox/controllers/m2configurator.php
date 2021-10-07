@@ -31,6 +31,18 @@ class ConfigboxControllerM2configurator extends KenedoController {
 		return NULL;
 	}
 
+	function getPricing() {
+
+		$positionId = KRequest::getInt('cartPositionId');
+
+		$positionModel = KenedoModel::getModel('ConfigboxModelCartposition');
+		$positionModel->setId($positionId, false);
+		$response = $positionModel->getPricing();
+
+		echo json_encode($response);
+
+	}
+
 	function getConfiguratorHtml() {
 
 		$configInfo = KRequest::getArray('configInfo');

@@ -75,7 +75,7 @@ class ConfigboxModelAdminoptions extends KenedoModel {
 			'positionForm'=>1420,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['price_overrides'] = array(
 				'name' => 'price_overrides',
@@ -112,7 +112,7 @@ class ConfigboxModelAdminoptions extends KenedoModel {
 			'positionForm'=>1600,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if (KenedoPlatform::getName() != 'magento2' && ConfigboxWordpressHelper::isWcIntegration() == false) {
 
 			$propDefs['price_recurring_overrides'] = array(
 				'name' => 'price_recurring_overrides',

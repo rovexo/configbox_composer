@@ -35,8 +35,11 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 			}
 			
 		}
-		
-		if (isset($data->{$this->propertyName})) unset( $data->{$this->propertyName} );
+
+		// If for any reason we get e.g. a 'title' without a language tag, then remove it.
+		if (isset($data->{$this->propertyName})) {
+			unset( $data->{$this->propertyName} );
+		}
 		
 	}
 
@@ -93,7 +96,7 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 				$db->query();
 			}
 
-			unset($data->$dataFieldKey);
+//			unset($data->$dataFieldKey);
 		}
 		
 		return true;
@@ -148,7 +151,7 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 				}
 			}
 
-			unset($data->$dataFieldKey);
+//			unset($data->$dataFieldKey);
 		}
 
 		KLog::log($logPrefix.'Copied '.$count.' translatable texts (Rest was empty). Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');

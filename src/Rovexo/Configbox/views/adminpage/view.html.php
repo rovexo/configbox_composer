@@ -28,6 +28,12 @@ class ConfigboxViewAdminpage extends KenedoView {
 			if ($this->record->id) {
 				$this->contentAfterTitle = KText::_('WORDPRESS_RECORD_SHORTCODES_PAGE_HINT').'<br /><br />';
 				$this->contentAfterTitle .= '[configbox view="configuratorpage" id="'.$this->record->id.'"]';
+
+				$this->contentAfterTitle .= '<br /><br />';
+				$this->contentAfterTitle .= KText::_('WORDPRESS_PAGE_URL_HINT').'<br /><br />';
+				$url = KLink::getRoute('index.php?option=com_configbox&view=configuratorpage&page_id='.$this->record->id);
+				$this->contentAfterTitle .= '<a target="_blank" href="'.hsc($url).'">'.hsc($url).'</a><br />';
+
 			}
 		}
 

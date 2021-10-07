@@ -153,15 +153,17 @@ class ConfigboxViewBlockpricing extends KenedoView {
 	public $addToCartLink;
 
 	/**
-	 * @var string CSS classes for the block's wrapper
-	 */
-	public $wrapperClasses;
-
-	/**
 	 * @return NULL
 	 */
 	function getDefaultModel() {
 		return NULL;
+	}
+
+	function getViewCssClasses() {
+		$classes = parent::getViewCssClasses();
+		$classes[] = 'configbox-block';
+		$classes[] = 'block-pricing';
+		return $classes;
 	}
 
 	function display() {
@@ -179,15 +181,6 @@ class ConfigboxViewBlockpricing extends KenedoView {
 		else {
 			$this->showBlockTitle = false;
 		}
-
-		$wrapperClasses = array(
-			'cb-content',
-			'configbox-block',
-			'block-pricing',
-			$this->params->get('moduleclass_sfx', ''),
-		);
-
-		$this->wrapperClasses = trim(implode(' ', $wrapperClasses));
 
 		$positionModel = KenedoModel::getModel('ConfigboxModelCartposition');
 		
@@ -253,7 +246,9 @@ class ConfigboxViewBlockpricing extends KenedoView {
 			if (KenedoPlatform::getName() == 'magento2') {
             	$this->showCartButton = false;
             }
-
+			if (KenedoPlatform::getName() == 'wordpress' && KenedoPlatform::p()->usesWcIntegration()) {
+				$this->showCartButton = false;
+			}
 
             $regularTree = $this->getViewOutput();
 			
@@ -294,7 +289,12 @@ class ConfigboxViewBlockpricing extends KenedoView {
 				$this->showCartButton = false;
             }
 
-            $recurringTree = $this->getViewOutput();
+			if (ConfigboxWordpressHelper::isWcIntegration()) {
+				$this->showCartButton = false;
+			}
+
+
+			$recurringTree = $this->getViewOutput();
 		
 		}
 		else {
@@ -304,7 +304,7 @@ class ConfigboxViewBlockpricing extends KenedoView {
 		$this->priceKey = (ConfigboxPrices::showNetPrices()) ? 'priceNet' : 'priceGross';
 
 		?>
-		<div class="<?php echo hsc($this->wrapperClasses);?>">
+		<div <?php echo $this->getViewAttributes();?>>
 
 			<?php if ($this->showBlockTitle) { ?>
 				<h2 class="block-title"><?php echo hsc($this->blockTitle);?></h2>
@@ -318,7 +318,7 @@ class ConfigboxViewBlockpricing extends KenedoView {
 				echo $recurringTree."\n".$regularTree;
 			}
 			$this->renderView('footer');
-			
+
 			?>
 		</div>
 		<?php

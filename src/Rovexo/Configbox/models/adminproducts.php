@@ -27,6 +27,9 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 
 	function getPropertyDefinitions() {
 
+		$isNotMagento = KenedoPlatform::getName() != 'magento2';
+		$isNotWooCommerce = ConfigboxWordpressHelper::isWcIntegration() == false;
+
 		$propDefs['id'] = array(
 			'name'=>'id',
 			'type'=>'id',
@@ -47,7 +50,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 20000,
 		);
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if ($isNotMagento && $isNotWooCommerce) {
 			$propDefs['generalStart']['notes'] = '';
 		}
 
@@ -67,7 +70,22 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 40000,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if ($isNotMagento && $isNotWooCommerce) {
+
+			$propDefs['label'] = array(
+				'name' => 'label',
+				'label' => KText::_('LABEL_SEF_SEGMENT'),
+				'tooltip' => KText::_('TOOLTIP_SEF_SEGMENT'),
+				'required' => true,
+				'type' => 'translatable',
+				'langType' => 17,
+				'positionForm' => 40100,
+			);
+
+			if (KenedoPlatform::getName() == 'wordpress') {
+				$propDefs['label']['label'] = KText::_('WORDPRESS_LABEL_SEF_SEGMENT_PRODUCT');
+				$propDefs['label']['tooltip'] = KText::_('WORDPRESS_TOOLTIP_SEF_SEGMENT_PRODUCT');
+			}
 
 			$propDefs['product_listing_ids'] = array(
 				'name' => 'product_listing_ids',
@@ -126,7 +144,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 99000,
 		);
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (ConfigboxWordpressHelper::isWcIntegration() || KenedoPlatform::getName() == 'magento2') {
 			$propDefs['published']['invisible'] = true;
 		}
 
@@ -145,7 +163,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 110100,
 		);
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if ($isNotMagento && $isNotWooCommerce) {
 			$propDefs['visualization_start']['defaultState'] = 'opened';
 		}
 
@@ -199,7 +217,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 110500,
 		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if ($isNotMagento && $isNotWooCommerce) {
 
 			$propDefs['baseprice_start'] = array(
 				'name' => 'baseprice_start',
@@ -461,7 +479,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 
 		}
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if ($isNotMagento && $isNotWooCommerce) {
 
 			$propDefs['display_listing_start'] = array(
 				'name' => 'display_listing_start',
@@ -529,18 +547,14 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 
 		}
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
-
-			$propDefs['displayStart'] = array(
-				'name' => 'displayStart',
-				'type' => 'groupstart',
-				'title' => KText::_('Display in configurator'),
-				'toggle' => true,
-				'defaultState' => 'closed',
-				'positionForm' => 368500,
-			);
-
-		}
+		$propDefs['displayStart'] = array(
+			'name' => 'displayStart',
+			'type' => 'groupstart',
+			'title' => KText::_('Display in configurator'),
+			'toggle' => true,
+			'defaultState' => 'closed',
+			'positionForm' => 368500,
+		);
 
 		$propDefs['product_detail_panes_in_configurator_pages'] = array(
 			'name'=>'product_detail_panes_in_configurator_steps',
@@ -594,7 +608,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			)
 		);
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (ConfigboxWordpressHelper::isWcIntegration() || KenedoPlatform::getName() == 'magento2') {
 
 			$propDefs['product_detail_panes_in_configurator_pages']['invisible'] = true;
 			$propDefs['product_detail_panes_in_configurator_pages']['default'] = 0;
@@ -609,15 +623,13 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			$propDefs['page_nav_cart_button_last_page_only']['default'] = 0;
 		}
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
-			$propDefs['display_end'] = array(
-				'name' => 'display_end',
-				'type' => 'groupend',
-				'positionForm' => 369000,
-			);
-		}
+		$propDefs['display_end'] = array(
+			'name' => 'display_end',
+			'type' => 'groupend',
+			'positionForm' => 369000,
+		);
 
-		if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') {
+		if ($isNotMagento && $isNotWooCommerce) {
 
 			$propDefs['detail_panes_start'] = array(
 				'name' => 'detail_panes_start',
@@ -801,14 +813,6 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 630000,
 		);
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
-			$propDefs['pm_show_delivery_options']['invisible'] = true;
-			$propDefs['pm_show_delivery_options']['default'] = 0;
-
-			$propDefs['pm_show_payment_options']['invisible'] = true;
-			$propDefs['pm_show_payment_options']['default'] = 0;
-		}
-
 		$propDefs['pm_show_net_in_b2c'] = array(
 			'name'=>'pm_show_net_in_b2c',
 			'label'=>KText::_('Show net in B2C mode'),
@@ -898,7 +902,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 730000,
 		);
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (KenedoPlatform::getName() == 'magento2' || ConfigboxWordpressHelper::isWcIntegration()) {
 			$propDefs['pm_regular_show_cart_button']['invisible'] = true;
 			$propDefs['pm_regular_show_cart_button']['default'] = 0;
 		}
@@ -991,7 +995,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 830000,
 		);
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (KenedoPlatform::getName() == 'magento2' || ConfigboxWordpressHelper::isWcIntegration()) {
 			$propDefs['pm_recurring_show_cart_button']['invisible'] = true;
 			$propDefs['pm_recurring_show_cart_button']['default'] = 0;
 		}
@@ -1041,16 +1045,6 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 1002000,
 		);
 
-		$propDefs['label'] = array(
-			'name' => 'label',
-			'label' => KText::_('LABEL_SEF_SEGMENT'),
-			'tooltip' => KText::_('TOOLTIP_SEF_SEGMENT'),
-			'required' => 0,
-			'type' => 'translatable',
-			'langType' => 17,
-			'positionForm' => 1003000,
-		);
-
 		$propDefs['dispatch_time'] = array(
 			'name' => 'dispatch_time',
 			'label' => KText::_('Dispatch Time'),
@@ -1078,15 +1072,15 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 			'positionForm' => 1200000,
 		);
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (KenedoPlatform::getName() == 'magento2' || ConfigboxWordpressHelper::isWcIntegration()) {
 
 			unset($propDefs['misc_start'], $propDefs['misc_end']);
 
 			$propDefs['sku']['invisible'] = true;
 			$propDefs['sku']['default'] = 0;
 
-			$propDefs['label']['invisible'] = true;
-			$propDefs['label']['default'] = 0;
+//			$propDefs['label']['invisible'] = true;
+//			$propDefs['label']['default'] = 0;
 
 			$propDefs['dispatch_time']['invisible'] = true;
 			$propDefs['dispatch_time']['default'] = 0;
@@ -1231,7 +1225,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 	 */
 	protected function fillEmptyUrlSegments(&$data) {
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (ConfigboxWordpressHelper::isWcIntegration() || KenedoPlatform::getName() == 'magento2') {
 			return;
 		}
 
@@ -1274,7 +1268,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 	 */
 	protected function checkForDuplicateUrlSegment($data) {
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (ConfigboxWordpressHelper::isWcIntegration() || KenedoPlatform::getName() == 'magento2') {
 			return true;
 		}
 
@@ -1315,7 +1309,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 	 */
 	protected function storeOldUrlSegments($data) {
 
-		if (KenedoPlatform::getName() == 'magento' || KenedoPlatform::getName() == 'magento2') {
+		if (ConfigboxWordpressHelper::isWcIntegration() || KenedoPlatform::getName() == 'magento2') {
 			return;
 		}
 

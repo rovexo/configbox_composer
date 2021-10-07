@@ -42,10 +42,19 @@ class ConfigboxViewAdminproduct extends KenedoView {
 
 		parent::prepareTemplateVarsForm();
 
-		if (KenedoPlatform::getName() == 'wordpress') {
+		if (ConfigboxWordpressHelper::isWcIntegration()) {
+			$this->contentAfterTitle = KText::_('WOOCOMMERCE_HINT_PRODUCT_ASSIGNMENT');
+		}
+		elseif (KenedoPlatform::getName() == 'wordpress') {
 			if ($this->record->id) {
 				$this->contentAfterTitle = KText::_('WORDPRESS_RECORD_SHORTCODES_PRODUCT_HINT').'<br /><br />';
 				$this->contentAfterTitle .= '[configbox view="product" id="'.$this->record->id.'"]';
+
+				$this->contentAfterTitle .= '<br /><br />';
+				$this->contentAfterTitle .= KText::_('WORDPRESS_PRODUCT_URL_HINT').'<br /><br />';
+				$url = KLink::getRoute('index.php?option=com_configbox&view=product&prod_id='.$this->record->id);
+				$this->contentAfterTitle .= '<a target="_blank" href="'.hsc($url).'">'.hsc($url).'</a><br />';
+
 			}
 		}
 

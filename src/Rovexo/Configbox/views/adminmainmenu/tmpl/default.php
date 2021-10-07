@@ -15,7 +15,7 @@ defined('CB_VALID_ENTRY') or die();
 			</div>
 		</li>
 
-		<?php if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') { ?>
+		<?php if ($this->showEcommerceItems) { ?>
 			<li class="menu-list-item item-adminlistings"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminlistings');?>"><?php echo KText::_('Product Listings');?></a></li>
 		<?php } ?>
 
@@ -24,7 +24,7 @@ defined('CB_VALID_ENTRY') or die();
 
 	</ul>
 
-	<?php if (KenedoPlatform::getName() != 'magento' && KenedoPlatform::getName() != 'magento2') { ?>
+	<?php if ($this->showEcommerceItems) { ?>
 
 		<ul class="menu-list">
 			<li class="menu-list-item item-adminorders"><a class="menu-link ajax-target-link" href="<?php echo KLink::getRoute('index.php?option=com_configbox&controller=adminorders');?>"><?php echo KText::_('Orders');?></a></li>

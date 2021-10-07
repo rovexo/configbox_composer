@@ -25,6 +25,7 @@ KenedoAutoload::registerClass('ConfigboxCurrencyHelper',	$appDir.'/helpers/curre
 KenedoAutoload::registerClass('ConfigboxViewHelper',		$appDir.'/helpers/view.php');
 KenedoAutoload::registerClass('ConfigboxVersionHelper',		$appDir.'/helpers/version.php');
 KenedoAutoload::registerClass('ConfigboxAddonHelper',		$appDir.'/helpers/addon.php');
+KenedoAutoload::registerClass('ConfigboxWordpressHelper',		$appDir.'/helpers/wordpress.php');
 
 KenedoAutoload::registerClass('ConfigboxCountryHelper',	    $appDir.'/helpers/country.php');
 KenedoAutoload::registerClass('ConfigboxPermissionHelper',	$appDir.'/helpers/permission.php');
