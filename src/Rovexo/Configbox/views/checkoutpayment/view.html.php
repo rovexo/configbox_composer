@@ -45,7 +45,7 @@ class ConfigboxViewCheckoutpayment extends KenedoView {
 
 		$this->selected = $orderRecord->payment_id;
 		
-		if ($this->selected == 0) {
+		if (empty($this->selected)) {
 			if (count($this->options)) {
 				$this->selected = $this->options[0]->id;
 			}

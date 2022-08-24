@@ -26,7 +26,7 @@ class KenedoPropertyOrdering extends KenedoProperty {
 		$key = $this->model->getTableKey();
 
 		// In case of an insert, we bump up the ordering number
-		if ($data->$key == 0) {
+		if (empty($data->{$key})) {
 
 			$db = KenedoPlatform::getDb();
 

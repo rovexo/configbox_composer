@@ -290,15 +290,15 @@ class KenedoPropertyImage extends KenedoProperty {
 		}
 
 		// Check if any of the mutation images are missing
-		foreach($mutationFilenames as $mutationKey => $mutationFilename) {
-
-			if (is_file($pathFilesystem.'/'.$mutationFilename) == false) {
-				KLog::log('Mutation file "'.$mutationKey.'" to copy not found in location "'.$pathFilesystem.'/'.$originalFilename.'"', 'error');
-				throw new Exception('Mutation image "'.$mutationKey.'" not found for property '.$this->getPropertyDefinition('label').' in model "'.get_class($this->model).'", record ID '.$oldId.'.');
-
-			}
-
-		}
+//		foreach($mutationFilenames as $mutationKey => $mutationFilename) {
+//
+//			if (is_file($pathFilesystem.'/'.$mutationFilename) == false) {
+//				KLog::log('Mutation file "'.$mutationKey.'" to copy not found in location "'.$pathFilesystem.'/'.$originalFilename.'"', 'error');
+//				throw new Exception('Mutation image "'.$mutationKey.'" not found for property '.$this->getPropertyDefinition('label').' in model "'.get_class($this->model).'", record ID '.$oldId.'.');
+//
+//			}
+//
+//		}
 
 		// Create the image folder if it does not exist yet
 		if (!is_dir($pathFilesystem)) {
@@ -321,11 +321,13 @@ class KenedoPropertyImage extends KenedoProperty {
 		// Copy each mutation image
 		foreach($mutationFilenames as $mutationKey => $mutationFilename) {
 
-			$result = copy($pathFilesystem.'/'.$mutationFilename, $pathFilesystem.'/'.$newMutationFilenames[$mutationKey]);
+			if (is_file($pathFilesystem.'/'.$mutationFilename) == true) {
+				$result = copy($pathFilesystem.'/'.$mutationFilename, $pathFilesystem.'/'.$newMutationFilenames[$mutationKey]);
 
-			if ($result === false) {
-				KLog::log('Could not copy mutation image for property '.$this->propertyName.' in model "'.get_class($this->model).'". Last PHP message was '.error_get_last(), 'error');
-				throw new Exception('Could not copy file for property '.$this->getPropertyDefinition('label').' in model "'.get_class($this->model).'".');
+				if ($result === false) {
+					KLog::log('Could not copy mutation image for property '.$this->propertyName.' in model "'.get_class($this->model).'". Last PHP message was '.error_get_last(), 'error');
+					throw new Exception('Could not copy file for property '.$this->getPropertyDefinition('label').' in model "'.get_class($this->model).'".');
+				}
 			}
 
 		}
@@ -531,9 +533,9 @@ class KenedoPropertyImage extends KenedoProperty {
 
 		$db = KenedoPlatform::getDb();
 		$query = "
-				INSERT INTO `".$table."` 
-				SET `".$keyColumn."` = '".$db->getEscaped($id)."', `".$this->propertyName."` = '".$db->getEscaped($filename)."' 
-				ON DUPLICATE KEY UPDATE `".$this->propertyName."` = '".$db->getEscaped($filename)."' ";
+				UPDATE `".$table."` 
+				SET `".$this->propertyName."` = '".$db->getEscaped($filename)."' 
+				WHERE `".$keyColumn."` = '".$db->getEscaped($id)."'";
 		$db->setQuery($query);
 		$db->query();
 

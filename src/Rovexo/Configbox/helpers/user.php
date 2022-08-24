@@ -534,9 +534,13 @@ class ConfigboxUserHelper {
 			self::storeOrderSalutationData($record->salutation_id, $record->order_id);
 		}
 
-
-		// Check if there is an entry already
+		// I've seen multiple order address rows at times, removing them
 		$db = KenedoPlatform::getDb();
+		$query = "DELETE FROM #__cbcheckout_order_users WHERE `id` != ".intval($record->id)." AND `order_id` = ".intval($orderId);
+		$db->setQuery($query);
+		$db->query();
+
+		// Store the record
 		$baseDataStored = $db->insertObject('#__cbcheckout_order_users', $record, 'id');
 
 		// Bounce on failure
@@ -1029,14 +1033,15 @@ class ConfigboxUserHelper {
 	/**
 	 * @param int $userId ConfigBox user id
 	 * @param string $password Clear text password
+	 * @param string $secretKey 2FA secret key (optional)
 	 * @return bool $success
 	 */
-	static function authenticateUser($userId, $password) {
+	static function authenticateUser($userId, $password, $secretKey = '') {
 		$user = self::getUser($userId, NULL, false);
 		if (!$user) {
 			return false;
 		}
-		$response = KenedoPlatform::p()->authenticate($user->billingemail, $password, array());
+		$response = KenedoPlatform::p()->authenticate($user->billingemail, $password, $secretKey);
 		return $response;
 	}
 
@@ -1133,7 +1138,7 @@ class ConfigboxUserHelper {
 				continue;
 			}
 
-			if ($property->getType() == 'join') {
+			if ($property->propertyName == 'platform_user_id' || in_array($property->getType(), ['join', 'countryselect', 'countyselect', 'stateselect'])) {
 				$info->{$property->propertyName} = NULL;
 			}
 			else {

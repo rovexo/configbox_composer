@@ -205,7 +205,7 @@ class KenedoViewHelper {
 				<label><?php echo KText::_('Items per page');?></label>
 				<select class="kenedo-limit-select">
 					<?php foreach ($items as $item) { ?>
-						<option value="<?php echo (int)$item;?>" <?php echo ($item == $selected) ? 'selected="selected"' : '';?>><?php echo ($item == 0) ? KText::_('All') : (int)$item;?></option>
+						<option value="<?php echo (int)$item;?>" <?php echo ($item == $selected) ? 'selected="selected"' : '';?>><?php echo (empty($item)) ? KText::_('All') : (int)$item;?></option>
 					<?php } ?>
 				</select>
 			</div>

@@ -10,7 +10,7 @@ foreach ($choices as &$choice) {
 }
 unset($choice);
 
-$choiceMade = trim($this->selection);
+$choiceMade = trim((string)$this->selection);
 
 $customValue = '';
 

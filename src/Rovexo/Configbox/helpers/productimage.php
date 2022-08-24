@@ -102,122 +102,129 @@ class ConfigboxProductImageHelper {
 
 	/**
 	 * @param ConfigboxCartPositionData $cartPositionDetails
-	 * @param string $destination full filesystem path to where it should be saved
-	 * @return bool|string|NULL false on failure, NULL if no product image, path to image on success
+	 * @param string $destinationPath Path of the image to create
+	 * @return bool True on success, false in case there is no image data to merge
+	 * @throws Exception in case of problems with images or merging
 	 */
-	static function getMergedProductImage($cartPositionDetails, $destination = '') {
-		
-		if (empty($destination)) {
-			$destinationFile = KenedoPlatform::p()->getTmpPath().'/'.uniqid().'.png';
-		}
-		elseif (is_dir($destination)) {
-			$destinationFile = $destination.'/'.uniqid().'.png';
-		}
-		elseif (is_dir(dirname($destination))) {
-			$destinationFile = $destination;
-		}
-		else {
-			$destinationFile = KenedoPlatform::p()->getTmpPath().'/'.uniqid().'.png';
+	static function createMergedVisualizationImage($cartPositionDetails, $destinationPath) {
+
+		if (!is_writable(dirname($destinationPath))) {
+			KLog::log('Cannot write visualization image because of missing write permission. Directory was '.dirname($destinationPath).'.', 'error');
+			throw new Exception('Cannot write visualization image to directory due to missing write permissions.');
 		}
 
-		$images = self::getVisualizationData($cartPositionDetails->id);
-
-		if (empty($cartPositionDetails->productData->baseimage) && count($images) == 0) {
-			return NULL;
-		}
+		$imagePaths = [];
 
 		if (!empty($cartPositionDetails->productData->baseimage)) {
-
-			$path = KenedoPlatform::p()->getDirDataStore().'/public/vis_product_images/'. $cartPositionDetails->productData->baseimage;
-
-			$dim = KenedoFileHelper::getImageDimensions($path);
-
-			if (KenedoFileHelper::getExtension($path) == 'png') {
-				$base = imagecreatefrompng($path);
-			}
-			elseif (KenedoFileHelper::getExtension($path) == 'jpg' or KenedoFileHelper::getExtension($path) == 'jpeg') {
-				$base = imagecreatefromjpeg($path);
+			$path = KenedoPlatform::p()->getDirDataStore() . '/public/vis_product_images/' . $cartPositionDetails->productData->baseimage;
+			if (is_file($path)) {
+				$imagePaths[] = $path;
 			}
 			else {
-				$base = imagecreate($dim['width'], $dim['height']);
-			}
-
-			imagealphablending($base, true);
-			imagesavealpha($base, true);
-		}
-
-		// Shortcut for the case if just one image is there (and no base image) - this helps because imagealphablending and imagesavealpha goes wrong otherwise
-		if (count($images) == 1 && !isset($base)) {
-			$sourceFile = KenedoPlatform::p()->getDirDataStore().'/public/vis_answer_images/'. $images[key($images)]->visualization_image;
-			$success = copy($sourceFile, $destinationFile);
-			if ($success) {
-				return $destinationFile;
-			}
-			else {
-				return false;
+				KLog::log('Product base image in "'.$path.'" is missing. Skipping it for visualisation image merge.', 'warning');
 			}
 		}
 
-		foreach ($images as $image) {
+		$answerImages = self::getVisualizationData($cartPositionDetails->id);
 
-			if (!isset($base)) {
-
-				$path = KenedoPlatform::p()->getDirDataStore().'/public/vis_answer_images/'. $image->visualization_image;
-
-				$dim = KenedoFileHelper::getImageDimensions($path);
-
-				if (KenedoFileHelper::getExtension($path) == 'png') {
-					$base = imagecreatefrompng($path);
-				}
-				elseif (KenedoFileHelper::getExtension($path) == 'jpg' or KenedoFileHelper::getExtension($path) == 'jpeg') {
-					$base = imagecreatefromjpeg($path);
-				}
-				else {
-					$base = imagecreate($dim['width'], $dim['height']);
-				}
-
-				if ($base === false) {
-					KLog::log('PHP error during processing of visualization image "'.$image->visualization_image.'"','error','Error processing visualization image. Only PNG images are fully supported, please transcode the image to PNG 24 format.');
-					return false;
-				}
-
+		foreach ($answerImages as $answerImage) {
+			$path = KenedoPlatform::p()->getDirDataStore().'/public/vis_answer_images/'.$answerImage->visualization_image;
+			if (is_file($path)) {
+				$imagePaths[] = $path;
 			}
 			else {
-
-				$path = KenedoPlatform::p()->getDirDataStore().'/public/vis_answer_images/'. $image->visualization_image;
-
-				$dim = KenedoFileHelper::getImageDimensions($path);
-
-				if (KenedoFileHelper::getExtension($path) == 'png') {
-					$visImage = imagecreatefrompng($path);
-				}
-				elseif (KenedoFileHelper::getExtension($path) == 'jpg' or KenedoFileHelper::getExtension($path) == 'jpeg') {
-					$visImage = imagecreatefromjpeg($path);
-				}
-				else {
-					$visImage = imagecreate($dim['width'], $dim['height']);
-				}
-
-				if ($visImage === false) {
-					KLog::log('PHP error during processing of visualization image "'.$image->visualization_image.'"','error','Error processing visualization image. Only PNG images are fully supported, please transcode the image to PNG 24 format.');
-					return false;
-				}
-
-				imagealphablending($base, true);
-				imagesavealpha($base, true);
-
-				self::mergeImages($base, $visImage, 0, 0, 0, 0, $dim['width'], $dim['height']);
-				imagedestroy($visImage);
+				KLog::log('Visualization image in "'.$path.'" is missing. Skipping it for visualisation image merge.', 'warning');
 			}
 		}
 
-		$success = imagepng($base, $destinationFile);
+		if (count($imagePaths) == 0) {
+			return false;
+		}
 
-		if ($success) {
-			return $destinationFile;
+		$maxWidth = 0;
+		$maxHeight = 0;
+
+		foreach ($imagePaths as $imagePath) {
+			$dims = KenedoFileHelper::getImageDimensions($imagePath);
+			if ($dims['width'] > $maxWidth) {
+				$maxWidth = $dims['width'];
+			}
+			if ($dims['height'] > $maxHeight) {
+				$maxHeight = $dims['height'];
+			}
+		}
+
+		// Create an empty base image
+		$base = imagecreatetruecolor($maxWidth, $maxHeight);
+		imagesavealpha($base, true);
+		$color = imagecolorallocatealpha($base, 0, 0, 0, 127);
+		imagefill($base, 0, 0, $color);
+
+		foreach ($imagePaths as $imagePath) {
+
+			$ext = KenedoFileHelper::getExtension($imagePath);
+
+			if ($ext == 'png') {
+				$visImage = imagecreatefrompng($imagePath);
+			}
+			elseif ($ext == 'jpg' or $ext == 'jpeg') {
+				$visImage = imagecreatefromjpeg($imagePath);
+			}
+			else {
+				KLog::log('Visualization image in "'.$imagePath.'" is neither a png, jpg or jpeg image. Skipping it for visualisation image merge.', 'warning');
+				continue;
+			}
+
+			imagealphablending($visImage, true);
+			imagesavealpha($visImage, true);
+
+			self::mergeImages($base, $visImage, 0, 0, 0, 0, $maxWidth, $maxHeight);
+			imagedestroy($visImage);
+
+		}
+
+		$success = imagepng($base, $destinationPath);
+
+		if ($success === false) {
+			KLog::log('Could not create visualization image.', 'error');
+			throw new Exception('Could not create visualization image');
 		}
 		else {
+			return true;
+		}
+
+	}
+
+	/**
+	 * @param ConfigboxCartPositionData $cartPositionDetails
+	 * @param string $destination full filesystem path to where it should be saved
+	 * @return bool|string|NULL false on failure, NULL if no product image, path to image on success
+	 * @depecated Use createMergedVisualizationImage instead
+	 */
+	static function getMergedProductImage($cartPositionDetails, $destination = '') {
+
+		if (empty($destination)) {
+			$destinationPath = KenedoPlatform::p()->getTmpPath().'/'.uniqid().'.png';
+		}
+		elseif (is_dir($destination)) {
+			$destinationPath = $destination.'/'.uniqid().'.png';
+		}
+		else {
+			$destinationPath = $destination;
+		}
+
+		try {
+			$success = self::createMergedVisualizationImage($cartPositionDetails, $destinationPath);
+		}
+		catch (Exception $e) {
 			return false;
+		}
+
+		if ($success === false) {
+			return null;
+		}
+		else {
+			return $destinationPath;
 		}
 
 	}
@@ -243,7 +250,7 @@ class ConfigboxProductImageHelper {
 		$configuration = ConfigboxConfiguration::getInstance($cartPositionId);
 		$productId = $configuration->getProductId();
 
-		if ($productId == 0) return array();
+		if (empty($productId)) return array();
 	
 		$db = KenedoPlatform::getDb();
 

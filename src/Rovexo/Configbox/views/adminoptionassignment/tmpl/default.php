@@ -36,7 +36,7 @@ defined('CB_VALID_ENTRY') or die();
 					foreach($this->optionProperties as $propertyName=>$property) {
 
 						// Hide recurring price fields if product does not use recurring pricing
-						if ($this->record->joinedby_element_id_to_adminelements_joinedby_page_id_to_adminpages_joinedby_product_id_to_adminproducts_use_recurring_pricing = "0" == 0) {
+						if ($this->record->joinedby_element_id_to_adminelements_joinedby_page_id_to_adminpages_joinedby_product_id_to_adminproducts_use_recurring_pricing == "0") {
 							if (in_array($propertyName, array('price_recurring', 'price_recurring_overrides', 'was_price_recurring'))) {
 								continue;
 							}

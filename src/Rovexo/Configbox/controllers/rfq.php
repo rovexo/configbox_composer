@@ -49,10 +49,14 @@ class ConfigboxControllerRfq extends KenedoController {
 		$userId = ConfigboxUserHelper::getUserId();
 
 		if ($userId != $customerData->id) {
-			$response = new stdClass();
-			$response->success = false;
-			$response->errors = array('User ID from the customer form does not match your user ID.');
-			echo json_encode($response);
+
+			$response = ConfigboxJsonResponse::makeOne()
+				->setSuccess(false)
+				->setErrors(array('User ID from the customer form does not match your user ID.'))
+				->toJson();
+
+			echo $response;
+
 			return;
 		}
 
@@ -68,11 +72,13 @@ class ConfigboxControllerRfq extends KenedoController {
 		// Abort and send feedback if validation fails
 		if ($checkResult === false) {
 
-			$response = new stdClass();
-			$response->success = false;
-			$response->errors = $model->getErrors();
-			$response->validationIssues = $model->getValidationIssues();
-			echo json_encode($response);
+			$response = ConfigboxJsonResponse::makeOne()
+				->setSuccess(false)
+				->setErrors($model->getErrors())
+				->setValidationIssues($model->getValidationIssues())
+				->toJson();
+
+			echo $response;
 			return;
 
 		}
@@ -82,11 +88,15 @@ class ConfigboxControllerRfq extends KenedoController {
 
 		// Abort and send feedback if storing fails
 		if ($storeResult === false) {
-			$response = new stdClass();
-			$response->success = false;
-			$response->errors = $model->getErrors();
-			echo json_encode($response);
+
+			$response = ConfigboxJsonResponse::makeOne()
+				->setSuccess(false)
+				->setErrors($model->getErrors())
+				->toJson();
+
+			echo $response;
 			return;
+
 		}
 
 		ConfigboxUserHelper::resetUserCache($userId);
@@ -100,21 +110,29 @@ class ConfigboxControllerRfq extends KenedoController {
 			$registerResponse = $model->registerPlatformUser($customerData->id);
 
 			if ($registerResponse === false) {
-				$response = new stdClass();
-				$response->success = false;
-				$response->errors = $model->getErrors();
-				echo json_encode($response);
+
+				$response = ConfigboxJsonResponse::makeOne()
+					->setSuccess(false)
+					->setErrors($model->getErrors())
+					->toJson();
+
+				echo $response;
 				return;
+
 			}
 
 			$loginResponse = ConfigboxUserHelper::loginUser($customerData->id);
 
 			if ($loginResponse === false) {
-				$response = new stdClass();
-				$response->success = false;
-				$response->errors = array(KText::_('Login failed.'));
-				echo json_encode($response);
+
+				$response = ConfigboxJsonResponse::makeOne()
+					->setSuccess(false)
+					->setErrors(array(KText::_('Login failed.')))
+					->toJson();
+
+				echo $response;
 				return;
+
 			}
 
 		}
@@ -125,19 +143,20 @@ class ConfigboxControllerRfq extends KenedoController {
 		// Get the models
 		$cartModel = KenedoModel::getModel('ConfigboxModelCart');
 		$orderModel = KenedoModel::getModel('ConfigboxModelOrderrecord');
-		$quotationModel = KenedoModel::getModel('ConfigboxModelQuotation');
 
 		// Check if the cart actually belongs to the user
 		$cartBelongs = $cartModel->cartBelongsToUser($cartId);
 
 		// If not, cancel and say the cart cannot be found
 		if ($cartBelongs == false) {
-			$platformUserId = KenedoPlatform::p()->getUserId();
-			KLog::log('Platform user ID "'.$platformUserId.'" tried to request another customer\'s (customer with ID "'.ConfigboxUserHelper::getUserId().'") quotation.','permissions',KText::_('Quotation not found.'));
-			$response = new stdClass();
-			$response->success = false;
-			$response->errors = array(KText::_('Cart data not found.'));
-			echo json_encode($response);
+			KLog::log('Customer ID "'.ConfigboxUserHelper::getUserId().'" tried to request another customer\'s quotation.','permissions');
+
+			$response = ConfigboxJsonResponse::makeOne()
+				->setSuccess(false)
+				->setErrors(array(KText::_('Cart data not found.')))
+				->toJson();
+
+			echo $response;
 			return;
 		}
 
@@ -170,11 +189,14 @@ class ConfigboxControllerRfq extends KenedoController {
 		$orderModel->setStatus(11, $orderId);
 
 		// Respond with the right URL
-		$response = new stdClass();
-		$response->success = true;
-		$response->errors = array();
-		$response->redirectUrl = KLink::getRoute('index.php?option=com_configbox&view=rfqthankyou&order_id='.intval($orderId), false);
-		echo json_encode($response);
+		$urlThanksPage = KLink::getRoute('index.php?option=com_configbox&view=rfqthankyou&order_id='.intval($orderId), false);
+
+		$response = ConfigboxJsonResponse::makeOne()
+			->setSuccess(true)
+			->setCustomData('redirectUrl', $urlThanksPage)
+			->toJson();
+
+		echo $response;
 
 	}
 

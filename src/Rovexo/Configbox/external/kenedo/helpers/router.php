@@ -31,7 +31,7 @@ class KenedoRouterHelper {
 
 				// Push language specific items in grouped array, collect independent ones for mixing them in later
 				foreach ($menuItems as $key=>$menuItem) {
-					if ($menuItem['language'] == '*') {
+					if ($menuItem['language'] == '*' || $menuItem['language'] == '') {
 						$languageIndependentItems[$menuItem['link']] = $menuItem;
 					}
 					else {

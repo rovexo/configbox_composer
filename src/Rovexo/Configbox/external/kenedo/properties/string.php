@@ -6,14 +6,14 @@ class KenedoPropertyString extends KenedoProperty {
 	function getDataFromRequest(&$data) {
 
 		parent::getDataFromRequest($data);
-	
+
 		$stringType = $this->getPropertyDefinition('stringType', 'string');
 
 		// In case we got a special string type 'stringOrNumber'
-		if ($stringType == 'stringOrNumber') {
+		if (!empty($data->{$this->propertyName}) && $stringType == 'stringOrNumber') {
 			$tempNumber = str_replace(KText::_('DECIMAL_MARK', '.'), '.', $data->{$this->propertyName});
 			// If is a number
-			if(is_numeric($data->{$this->propertyName}) || is_numeric($tempNumber)){
+			if (is_numeric($data->{$this->propertyName}) || is_numeric($tempNumber)){
 				$data->{$this->propertyName} = str_replace(KText::_('DECIMAL_MARK', '.'), '.', $data->{$this->propertyName});
 			}
 		}
@@ -23,12 +23,25 @@ class KenedoPropertyString extends KenedoProperty {
 		}
 
 		// In case we got a number, we change the localized decimal symbol to the normalized dot
-		if ($stringType == 'number' or $stringType == 'price') {
+		if (!empty($data->{$this->propertyName}) and ($stringType == 'number' or $stringType == 'price')) {
 			$data->{$this->propertyName} = str_replace(KText::_('DECIMAL_MARK', '.'), '.', $data->{$this->propertyName});
 		}
 
 		return true;
 	
+	}
+
+	function prepareForStorage( &$data ) {
+
+		$stringType = $this->getPropertyDefinition('stringType', 'string');
+
+		// Be sure empty numbers/prices get stored as zero
+		if ($stringType === 'number' || $stringType === 'price') {
+			if (empty($data->{$this->propertyName})) {
+				$data->{$this->propertyName} = 0;
+			}
+		}
+
 	}
 
 	function getOutputValueFromRecordData($record) {

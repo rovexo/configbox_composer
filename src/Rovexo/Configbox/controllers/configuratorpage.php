@@ -189,6 +189,7 @@ class ConfigboxControllerConfiguratorpage extends KenedoController {
 			echo ConfigboxJsonResponse::makeOne()->setSuccess(true)->setCustomData('redirectUrl', $url)->toJson();
 		}
 		catch (Exception $e) {
+			KLog::logException($e);
 			$msg = KText::_('FEEDBACK_ADD_TO_CART_FAILED');
 			echo ConfigboxJsonResponse::makeOne()->setSuccess(false)->setFeedback($msg)->toJson();
 		}

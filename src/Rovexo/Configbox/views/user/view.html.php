@@ -84,7 +84,7 @@ class ConfigboxViewUser extends KenedoView {
 
 		$customer = ConfigboxUserHelper::getUser();
 		$this->customer = $customer;
-		$this->isTemporaryAccount = $customer->id == 0 || $customer->is_temporary == 1;
+		$this->isTemporaryAccount = (empty($customer->id) || $customer->is_temporary == 1);
 
 		$orderModel  	= KenedoModel::getModel('ConfigboxModelOrderrecord');
 		$ordersModel  	= KenedoModel::getModel('ConfigboxModelAdminorders');

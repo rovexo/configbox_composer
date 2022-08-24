@@ -152,7 +152,7 @@ class ConfigboxViewProductlisting extends KenedoView {
 		$this->listing = $this->getDefaultModel()->getProductListing($this->listingId);
 
 		// Stop if the listing isn't there
-		if (empty($this->listing) || $this->listing->published == 0) {
+		if (empty($this->listing) || empty($this->listing->published)) {
 			return;
 		}
 

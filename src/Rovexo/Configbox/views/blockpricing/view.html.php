@@ -214,7 +214,7 @@ class ConfigboxViewBlockpricing extends KenedoView {
 		$this->productId = $product->id;
 
 		$this->addToCartLink = '';
-		$this->addToCartLinkClasses = 'trigger-add-to-cart wait-for-xhr';
+		$this->addToCartLinkClasses = 'trigger-add-to-cart';
 
 		if ($product->pm_regular_show_overview) {
 

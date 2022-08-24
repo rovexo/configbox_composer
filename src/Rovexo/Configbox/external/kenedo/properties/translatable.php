@@ -185,8 +185,8 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 
 		$joins = array();
 		$joins[$tableAlias] = "LEFT JOIN `#__configbox_strings` AS `".$tableAlias."` ON
-		`".$tableAlias."`.key = `".$this->model->getModelName()."`.`".$this->model->getTableKey()."` AND
 		`".$tableAlias."`.type = '".$this->getPropertyDefinition('langType')."' AND
+		`".$tableAlias."`.key = `".$this->model->getModelName()."`.`".$this->model->getTableKey()."` AND
 		`".$tableAlias."`.language_tag = '".$db->getEscaped($this->model->languageTag)."'";
 
 		return $joins;

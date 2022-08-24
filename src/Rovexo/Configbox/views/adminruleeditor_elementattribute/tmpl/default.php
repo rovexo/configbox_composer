@@ -22,7 +22,7 @@ defined('CB_VALID_ENTRY') or die();
 			<ul class="question-list">
 				<?php
 				foreach ($this->questions as $questionId => $question) {
-					$displayCssClass = ($this->showQuestionFilters == false || $this->selectedPageId == 0 || $question->page_id == $this->selectedPageId) ? 'shown':'';
+					$displayCssClass = ($this->showQuestionFilters == false || empty($this->selectedPageId) || $question->page_id == $this->selectedPageId) ? 'shown':'';
 					?>
 					<li class="page-<?php echo $question->page_id;?> <?php echo $displayCssClass;?>" data-question-id="<?php echo intval($question->id);?>"><span><?php echo hsc($question->title);?></span></li>
 					<?php

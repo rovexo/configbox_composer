@@ -214,7 +214,7 @@ $taxPlusInc = ($b2b) ? 'Plus':'Incl.';
 		<div class="position-modals">
 			<?php foreach ($this->positionHtml as $positionId=>$positionHtml) { ?>
 				<div class="modal position-id-<?php echo intval($positionId);?>" role="document">
-					<div class="modal-dialog" role="document">
+					<div class="modal-dialog modal-lg" role="document">
 						<div class="modal-content">
 
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

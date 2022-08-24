@@ -20,7 +20,7 @@ class KRequest {
 
 	static function getKeyword($key, $default = NULL, $from = 'METHOD') {
 		$value = self::getValue($key, $default, $from, 'string');
-		$value = str_replace(' ', '', $value);
+		$value = str_replace(' ', '', (string)$value);
 		return $value;
 	}
 
@@ -89,7 +89,7 @@ class KRequest {
 				break;
 
 			case 'string':
-				$sanitized = filter_var ( $value, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES );
+				$sanitized = htmlspecialchars($value, ENT_NOQUOTES);
 				break;
 
 			case 'html':

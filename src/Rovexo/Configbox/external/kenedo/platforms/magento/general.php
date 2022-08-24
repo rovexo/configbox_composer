@@ -135,7 +135,7 @@ class KenedoPlatformMagento implements InterfaceKenedoPlatform {
 	}
 
 	//TODO: Implement
-	public function authenticate($username, $passwordClear) {
+	public function authenticate($username, $passwordClear, $secretKey = '') {
 		return true;
 	}
 

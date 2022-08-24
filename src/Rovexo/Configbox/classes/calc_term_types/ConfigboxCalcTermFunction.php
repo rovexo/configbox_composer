@@ -47,8 +47,7 @@ class ConfigboxCalcTermFunction extends ConfigboxCalcTerm {
 
 					$code = trim(ConfigboxCalculation::getTermsCode($parameterData, $selections, $regardingQuestionId, $regardingAnswerId, $allowNonNumericForParameter));
 					$code = 'return '.$code.';';
-					$function = @create_function('', $code);
-					$parameters[] = $function();
+					$parameters[] = @eval($code);
 				}
 			}
 		}

@@ -109,7 +109,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 				'usesOrdering' => true,
 				'asCheckboxes' => true,
 				'required' => 0,
-
+				'positionList' => 200,
 				'positionForm' => 50000,
 			);
 
@@ -1212,6 +1212,9 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 	 */
 	function copy($data) {
 		$id = parent::copy($data);
+		if ($id === false) {
+			return false;
+		}
 		$copyIds = self::$copyIds;
 		$this->copyRulesAndCalculations($id, $copyIds);
 		return $id;

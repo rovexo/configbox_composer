@@ -44,7 +44,7 @@ class ConfigboxViewCheckoutdelivery extends KenedoView {
 		$shippingOptions = $orderModel->getOrderRecordDeliveryOptions($orderRecord);
 		$selected = $orderRecord->delivery_id;
 		
-		if ($selected == 0) {
+		if (empty($selected)) {
 			$selected = (isset($shippingOptions[0]->id)) ? $shippingOptions[0]->id : 0;
 		}
 		

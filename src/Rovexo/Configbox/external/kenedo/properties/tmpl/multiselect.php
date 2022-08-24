@@ -5,7 +5,8 @@ defined('CB_VALID_ENTRY') or die();
  */
 
 $options = $this->getSelectableValues();
-$selectedValues = $this->data->{$this->propertyName};
+$keyBase = $this->getPropertyDefinition('keyOwn');
+$selectedValues = $this->getAssignments($this->data->{$keyBase});
 
 // Output either checkboxes or a select with multi selection
 if ($this->getPropertyDefinition('asCheckboxes')) {

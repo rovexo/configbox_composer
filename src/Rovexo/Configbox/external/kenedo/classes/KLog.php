@@ -8,7 +8,7 @@ class KLog {
 
 	static $counts = array();
 
-	static $ignoredErrorNumbers = array(2048);
+	static $ignoredErrorNumbers = array(E_STRICT, E_USER_DEPRECATED);
 
 	static $errorCodes = array(
 		1	=> 'E_ERROR',
@@ -50,6 +50,9 @@ class KLog {
 	 * @return int Time in ms
 	 */
 	static function time($task = 'default') {
+		if (!isset(self::$starttime[$task])) {
+			return 0;
+		}
 		$time =  (int) ((microtime(true)*1000) - self::$starttime[$task]);
 		self::$takes[$task][] = $time;
 		return $time;
@@ -332,6 +335,9 @@ class KLog {
 		$appDir = str_replace(DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $appDir);
 
 		if (!strstr($file, $appDir)) {
+			if ($number == E_DEPRECATED) {
+				return;
+			}
 			$logLevel = 'php_platform_errors';
 		}
 		else {
@@ -374,7 +380,8 @@ class KLog {
 			E_WARNING,
 			E_NOTICE,
 			E_STRICT,
-			E_DEPRECATED
+			E_DEPRECATED,
+			E_USER_DEPRECATED,
 		);
 
 		if (in_array($error['type'], $typesNotLogged)) {

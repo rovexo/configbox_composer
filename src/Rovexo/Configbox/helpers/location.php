@@ -191,7 +191,7 @@ class ConfigboxLocationHelper {
 	 */
 	static protected function getMaxMindLocationGeoIpCity($ipAddress) {
 
-		require_once KenedoPlatform::p()->getComponentDir('com_configbox').'/external/geoip2/vendor/autoload.php';
+		require_once KenedoPlatform::p()->getComponentDir('com_configbox').'/external/geoip2-2.13.0/autoload.php';
 
 		$databaseFolder = KenedoPlatform::p()->getDirDataStore().'/private/maxmind';
 
@@ -231,7 +231,10 @@ class ConfigboxLocationHelper {
 		require_once KenedoPlatform::p()->getComponentDir('com_configbox').'/external/geoip2/vendor/autoload.php';
 
 		try {
-			$client = new GeoIp2\WebService\Client(CbSettings::getInstance()->get('maxmind_user_id'), CbSettings::getInstance()->get('maxmind_license_key'));
+			$userId = CbSettings::getInstance()->get('maxmind_user_id');
+			$licenseKey = CbSettings::getInstance()->get('maxmind_license_key');
+
+			$client = new GeoIp2\WebService\Client($userId, $licenseKey);
 			$record = $client->city($ipAddress);
 		}
 		catch (Exception $e) {

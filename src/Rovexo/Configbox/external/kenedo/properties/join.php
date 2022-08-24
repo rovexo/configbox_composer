@@ -253,7 +253,8 @@ class KenedoPropertyJoin extends KenedoProperty {
 			}
 		}
 
-		if ($this->getPropertyDefinition('parent', 0) == 0) {
+		$parentDef = $this->getPropertyDefinition('parent');
+		if (empty($parentDef)) {
 			return $joins;
 		}
 
@@ -272,6 +273,26 @@ class KenedoPropertyJoin extends KenedoProperty {
 		}
 
 		return $joins;
+
+	}
+
+	public function getWheres($filters) {
+		$wheres = parent::getWheres($filters);
+
+		$parentDef = $this->getPropertyDefinition('parent');
+		if (empty($parentDef)) {
+			return $wheres;
+		}
+
+		$parentModel = KenedoModel::getModel($this->getPropertyDefinition('modelClass'));
+		$parentModel->languageTag = $this->model->languageTag;
+		$parentProps = $parentModel->getProperties();
+		foreach ($parentProps as $parentProp) {
+			$parentWheres = $parentProp->getWheres($filters);
+			$wheres = array_merge($wheres, $parentWheres);
+		}
+
+		return $wheres;
 
 	}
 

@@ -95,7 +95,7 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 	}
 
 	//TODO: Implement
-	public function authenticate($username, $passwordClear) {
+	public function authenticate($username, $passwordClear, $secretKey = '') {
 		return true;
 	}
 	//TODO: Implement

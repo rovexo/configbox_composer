@@ -48,8 +48,8 @@ class ConfigboxModelProduct extends KenedoModelLight{
 		KLog::log('Page id is "'.$pageId.'"');
 		KLog::log('Page label is "'.$pageLabel.'"');
 
-		$noProdId = ($prodId == 0 && !empty($prodLabel));
-		$noPageId = ($pageId == 0 && !empty($pageLabel));
+		$noProdId = (empty($prodId) && !empty($prodLabel));
+		$noPageId = (empty($pageId) && !empty($pageLabel));
 
 		$prodFixed = false;
 		$pageFixed = false;

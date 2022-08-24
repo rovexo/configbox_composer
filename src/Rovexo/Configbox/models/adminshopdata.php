@@ -298,14 +298,14 @@ class ConfigboxModelAdminshopdata extends KenedoModel {
 	/**
 	 * @param array $filters
 	 * @param array $pagination
-	 * @param array $ordering
+	 * @param array $sortSpecs
 	 * @param string $languageTag
 	 * @param bool $countOnly
 	 * @return int|object[]|ConfigboxShopData[]
 	 * @throws Exception
 	 */
-	function getRecords($filters = array(), $pagination = array(), $ordering = array(), $languageTag = '', $countOnly = false) {
-		return parent::getRecords($filters, $pagination, $ordering, $languageTag, $countOnly);
+	function getRecords($filters = array(), $pagination = array(), $sortSpecs = array(), $languageTag = '', $countOnly = false) {
+		return parent::getRecords($filters, $pagination, $sortSpecs, $languageTag, $countOnly);
 	}
 
 	protected function getInvoicePlaceholderInfo() {
@@ -359,7 +359,6 @@ class ConfigboxModelAdminshopdata extends KenedoModel {
 				'shopphonesupport',
 				'shopemailsales',
 				'shopemailsupport',
-				'shoplinktotc',
 				'shopfax',
 				'shopbankname',
 				'shopbankaccountholder',

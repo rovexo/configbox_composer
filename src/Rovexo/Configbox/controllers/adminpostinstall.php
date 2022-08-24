@@ -311,8 +311,9 @@ class ConfigboxControllerAdminpostinstall extends KenedoController {
 
 		}
 		catch (Exception $e) {
+			KLog::logException($e);
 			$db->rollbackTransaction();
-			$msg = KText::_('A system error occured during storing language data. Please contact Rovexo to resolve this issue.');
+			$msg = KText::_('A system error occurred during storing language data. Please contact Rovexo to resolve this issue.');
 			echo ConfigboxJsonResponse::makeOne()->setSuccess(false)->setErrors(array($msg))->toJson();
 			return;
 		}

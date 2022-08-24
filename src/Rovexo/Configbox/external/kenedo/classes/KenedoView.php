@@ -317,7 +317,7 @@ class KenedoView {
 		$this->records = $model->getRecords($this->filters, $this->paginationInfo, $this->orderingInfo);
 
 		// If we got no records and pagination says to show a deep page, reset the page thing
-		if (count($this->records) == 0 && $this->paginationInfo['start'] != 0) {
+		if (count($this->records) == 0 && !empty($this->paginationInfo['start'])) {
 			$this->paginationInfo['start'] = 0;
 			$this->records = $model->getRecords($this->filters, $this->paginationInfo, $this->orderingInfo);
 		}
@@ -327,7 +327,7 @@ class KenedoView {
 		// Add pagination HTML
 		$totalCount = $model->getRecords($this->filters, array(), array(), NULL, true);
 
-		if ($totalCount < 5) {
+		if ($totalCount <= $this->paginationInfo['limit']) {
 			$this->paginationInfo['limit'] = 0;
 		}
 

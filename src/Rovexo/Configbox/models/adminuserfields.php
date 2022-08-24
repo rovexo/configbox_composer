@@ -66,7 +66,7 @@ class ConfigboxModelAdminuserfields extends KenedoModel {
 		}
 
 		// Terminate if there were no records to insert
-		if (!isset($inserts) || count($inserts) == 0) {
+		if (empty($inserts)) {
 			$this->setError(KText::_('No userfield data was received.'));
 			return false;
 		}

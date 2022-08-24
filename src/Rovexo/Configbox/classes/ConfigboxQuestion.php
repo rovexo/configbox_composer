@@ -249,10 +249,7 @@ class ConfigboxQuestion {
 				if ($prevSelection) {
 					$oldData = json_decode($prevSelection, true);
 
-					KLog::log('Prev selection was: '. var_export($oldData, true), 'custom_uploads');
-
 					if (isset($oldData['path']) && is_file($oldData['path'])) {
-						KLog::log('Deleting old file', 'custom_uploads');
 						unlink($oldData['path']);
 					}
 				}
@@ -262,10 +259,7 @@ class ConfigboxQuestion {
 				if ($prevSelection) {
 					$oldData = json_decode($prevSelection, true);
 
-					KLog::log('Prev selection was: '. var_export($oldData, true), 'custom_uploads');
-
 					if (isset($oldData['path']) && is_file($oldData['path'])) {
-						KLog::log('Deleting old file', 'custom_uploads');
 						unlink($oldData['path']);
 					}
 				}
@@ -281,12 +275,9 @@ class ConfigboxQuestion {
 					mkdir(KenedoPlatform::p()->getDirDataCustomer().'/public/file_uploads', 0777, true);
 				}
 
-				KLog::log('Storing uploaded file', 'custom_uploads');
 				move_uploaded_file($_FILES['file']['tmp_name'], $data['path']);
 
 				$selection = json_encode($data);
-
-				KLog::log('New selection selection data will be: '. var_export($data, true), 'custom_uploads');
 
 			}
 

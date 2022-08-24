@@ -258,7 +258,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	 *
 	 * @return bool
 	 */
-	public function authenticate($username, $passwordClear) {
+	public function authenticate($username, $passwordClear, $secretKey = '') {
 		$platformUserId = $this->getUserIdByUsername($username);
 		$user = get_user_by('id', $platformUserId);
 		$response = wp_authenticate($user->user_login, $passwordClear);
@@ -401,7 +401,8 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 	}
 
 	public function hasWpml() {
-		return is_plugin_active('sitepress-multilingual-cms/sitepress.php');
+		return false;
+//		return is_plugin_active('sitepress-multilingual-cms/sitepress.php');
 	}
 
 	public function usesWcIntegration() {

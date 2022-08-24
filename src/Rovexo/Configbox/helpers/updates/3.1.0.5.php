@@ -15,7 +15,7 @@ if (ConfigboxUpdateHelper::tableFieldExists('#__configbox_products', 'page_nav_c
 
 	$settings = array();
 	foreach ($pageData as $page) {
-		if ($page['finish_last_page_only'] == 1 || $page['finish_last_page_only'] == 0) {
+		if ($page['finish_last_page_only'] == 1 || empty($page['finish_last_page_only'])) {
 			$settings[$page['product_id']] = $page['finish_last_page_only'];
 		}
 	}

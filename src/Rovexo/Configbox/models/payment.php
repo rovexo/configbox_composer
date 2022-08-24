@@ -51,7 +51,10 @@ class ConfigboxModelPayment extends KenedoModel {
 		$sortFunction = function($a, $b) {
 			$sortHelperA = number_format($a->basePriceGross,3).$a->ordering;
 			$sortHelperB = number_format($b->basePriceGross,3).$b->ordering;
-			return $sortHelperA > $sortHelperB;
+			if ($sortHelperA == $sortHelperB) {
+				return 0;
+			}
+			return ($sortHelperA < $sortHelperB) ? -1 : 1;
 		};
 
 		usort($methods, $sortFunction);

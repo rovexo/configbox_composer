@@ -28,7 +28,7 @@ defined('CB_VALID_ENTRY') or die();
 		<ul class="element-list">
 			<?php
 			foreach ($this->questions as $question) {
-				if ($question->product_id == $this->selectedProductId && ($this->selectedPageId == 0 || $question->page_id == $this->selectedPageId)) $displayCssClass = 'shown';
+				if ($question->product_id == $this->selectedProductId && (empty($this->selectedPageId) || $question->page_id == $this->selectedPageId)) $displayCssClass = 'shown';
 				else $displayCssClass = '';
 				?>
 				<li class="product-<?php echo $question->product_id;?> page-<?php echo $question->page_id;?> <?php echo $displayCssClass;?>" id="element-<?php echo $question->id;?>"><span><?php echo hsc($question->title);?></span></li>

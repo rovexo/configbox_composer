@@ -805,6 +805,111 @@ class KenedoProperty {
 		return $joins;
 	}
 
+
+	/**
+	 * @param array $filters As they do come in to KenedoModel getRecords
+	 * @return string[] WHERE conditions
+	 * @throws Exception
+	 */
+	public function getWheres($filters) {
+
+		$db = KenedoPlatform::getDb();
+		$a = $this->propertyName;
+		$propTableAlias = $this->getTableAlias();
+		$propColAlias   = $this->getTableColumnName();
+
+		$wheres = [];
+		foreach ($filters as $filterName=>$value) {
+
+			if ($this->filterNameApplies($filterName) == false) {
+				continue;
+			}
+
+			$colRef = '`'.$propTableAlias.'`.`'.$propColAlias.'`';
+
+			if (is_numeric($value)) {
+				$wheres[] = $colRef." = '".$db->getEscaped($value)."'";
+			}
+			elseif (is_array($value)) {
+
+				if (empty($value)) {
+					$wheres[] = $colRef." IN (NULL)";
+				}
+				else {
+					$values = array();
+					foreach ($value as $val) {
+						$values[] = (is_numeric($val)) ? $val : "'".$db->getEscaped($val)."'";
+					}
+					$wheres[] = $colRef." IN (".implode(',', $values).")";
+				}
+
+			}
+			else {
+				$wheres[] = $colRef." LIKE '%".$db->getEscaped($value)."%'";
+			}
+
+		}
+
+		return $wheres;
+
+	}
+
+	function getFilterColRef($filterName) {
+
+		$propTableAlias = $this->getTableAlias();
+		$propColAlias   = $this->getTableColumnName();
+
+		$searchTable = null;
+		$searchCol = null;
+
+		// If the filter name is a property name
+		if (strpos($filterName, '.') === false) {
+
+			if ($filterName == $this->propertyName) {
+				$searchTable = $propTableAlias;
+				$searchCol = $propColAlias;
+			}
+
+		}
+		else {
+
+			$parts = explode('.', $filterName);
+			$searchTable = $parts[0];
+			$searchCol = $parts[1];
+
+		}
+
+		return [
+			'tableRef'=>$searchTable,
+			'colRef'=>$searchCol,
+		];
+
+	}
+
+	protected function filterNameApplies($filterName) {
+
+		$searchRef = $this->getFilterColRef($filterName);
+
+		$filterIsForProp = false;
+		// Filter name can be table alias, then dot, then column alias
+		if ($searchRef['tableRef'] == $this->getTableAlias()) {
+			$filterIsForProp = true;
+			if ($searchRef['colRef'] != $this->getTableColumnName()) {
+				$filterIsForProp = false;
+			}
+		}
+		// Or model name and property name
+		elseif ($searchRef['tableRef'] == $this->model->getModelName()) {
+			$filterIsForProp = true;
+			if ($searchRef['colRef'] != $this->propertyName) {
+				$filterIsForProp = false;
+			}
+		}
+
+		return $filterIsForProp;
+
+	}
+
 	/**
 	 * Returns an array of strings with columns to group by. They will be used in building the getRecord(s) query in
 	 * KenedoModel::getRecord() and KenedoModel::getRecords().

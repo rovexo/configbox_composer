@@ -24,7 +24,17 @@ foreach ($cols as $col) {
 		$settings[] = 'NULL';
 	}
 
-	if ($col->COLUMN_DEFAULT !== NULL) {
+	// MariaDB quotes col default, MySQL doesn't
+	if ($col->COLUMN_DEFAULT === NULL) {
+		$a = 1;
+	}
+	elseif ($col->COLUMN_DEFAULT === 'NULL') {
+		$settings[] = 'DEFAULT NULL';
+	}
+	elseif(strpos($col->COLUMN_DEFAULT, "'") === 0) {
+		$settings[] = 'DEFAULT '. $col->COLUMN_DEFAULT;
+	}
+	else {
 		$settings[] = "DEFAULT '".$col->COLUMN_DEFAULT."'";
 	}
 

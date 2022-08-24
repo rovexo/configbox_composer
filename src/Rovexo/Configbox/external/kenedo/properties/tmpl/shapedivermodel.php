@@ -8,7 +8,7 @@ $productId    = $this->data->{$this->model->getTableKey()};
 $valueJson    = $this->data->{$this->propertyName};
 
 // Make an array of the model JSON
-$data = json_decode($valueJson, true);
+$data = json_decode((string)$valueJson, true);
 
 // Set defaults if items are missing
 if (empty($data['iframeUrl'])) {

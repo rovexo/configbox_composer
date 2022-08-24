@@ -63,13 +63,6 @@ class KenedoPropertyMultiselect extends KenedoProperty {
 	protected $activeLanguageHack;
 
 	/**
-	 * Used as separator for group-concatenating xref fks in getRecord and getRecords and
-	 * in appendDataForGetRecord for making a PHP array of the prop value
-	 * @var string
-	 */
-	protected $groupConcatenationSeparator = '-*-';
-
-	/**
 	 * This method takes in the selected records from the request (the prop's store method will remove it again after
 	 * storing)
 	 * @see KenedoPropertyMultiselect::store()
@@ -310,20 +303,63 @@ class KenedoPropertyMultiselect extends KenedoProperty {
 	}
 
 	/**
-	 * This beauty makes a select item that concatenates all primary key values of the rows that are connected via xref.
+	 * Values for this prop instead come from appendDataForGetRecord
+	 * @see appendDataForGetRecord
 	 * @param string $selectAliasPrefix
 	 * @param string $selectAliasOverride
 	 *
 	 * @return string[]
 	 */
 	public function getSelectsForGetRecord($selectAliasPrefix = '', $selectAliasOverride = '') {
+		return [];
+	}
 
-		$selects = array();
+	/**
+	 * @inheritDoc
+	 */
+	public function getWheres($filters) {
 
-		$selects[] = "GROUP_CONCAT(DISTINCT " . $this->getTableAlias() . '.' . $this->getPropertyDefinition( 'fkOther' ) . " SEPARATOR '".$this->groupConcatenationSeparator."') AS " . $this->getSelectAlias();
+		$a = $this->propertyName;
+		$db = KenedoPlatform::getDb();
+		$wheres = [];
+		foreach ($filters as $filterName=>$searchValues) {
 
-		return $selects;
+			if ($this->filterNameApplies($filterName) == false) {
+				continue;
+			}
 
+			// Normalize search values to an array
+			if (!is_array($searchValues)) {
+				$searchValues = [$searchValues];
+			}
+
+			// Escape and quote the search values
+			foreach ($searchValues as &$searchValue) {
+				$searchValue = (is_numeric($searchValue)) ? $searchValue : "'".$db->getEscaped($searchValue)."'";
+			}
+
+			// Prepare the IN() part as string
+			if (count($searchValues) != 0) {
+				$inPart = implode(',', $searchValues);
+			}
+			else {
+				$inPart = 'NULL';
+			}
+
+			$subQuery = "
+			SELECT `".$this->getPropertyDefinition('fkOwn')."` 
+			FROM `".$this->getPropertyDefinition('xrefTable')."` 
+			WHERE `".$this->getPropertyDefinition('fkOther')."` IN (".$inPart.")";
+
+			$keyPropName = $this->model->getTableKey();
+			$props = $this->model->getProperties();
+			$aliasBase = $props[$keyPropName]->getTableAlias();
+
+			$wheres[] = "`".$aliasBase."`.`".$this->getPropertyDefinition('keyOwn')."` IN (".$subQuery.")";
+
+		}
+
+		return $wheres;
 	}
 
 	/**
@@ -331,21 +367,17 @@ class KenedoPropertyMultiselect extends KenedoProperty {
 	 * @param $data
 	 */
 	public function appendDataForGetRecord(&$data) {
-		// Safeguard, just in case there is a chance for having the method run twice
-		if (!is_array($data->{$this->getSelectAlias()})) {
-			if ($data->{$this->getSelectAlias()} !== NULL) {
-				$data->{$this->getSelectAlias()} = explode($this->groupConcatenationSeparator, $data->{$this->getSelectAlias()});
-			}
-			else {
-				$data->{$this->getSelectAlias()} = array();
-			}
 
+		// Safeguard, just in case there is a chance for having the method run twice
+		if (empty($data->{$this->propertyName})) {
+			$colKey = $this->getPropertyDefinition('keyOwn');
+			$recordId = $data->{$colKey};
+			$data->{$this->getSelectAlias()} = $this->getAssignments($recordId);
 		}
 		parent::appendDataForGetRecord($data);
 	}
 
 	/**
-	 * This one joins the xref table on xref table's fkOwn matching the base table's primary key
 	 * @return string[]
 	 */
 	public function getJoinsForGetRecord() {
@@ -360,24 +392,7 @@ class KenedoPropertyMultiselect extends KenedoProperty {
 			return $joins;
 		}
 
-		$joins[$this->getTableAlias()] = "LEFT JOIN `".$this->getPropertyDefinition('xrefTable')."` AS ".$this->getTableAlias()." ON ".$this->getTableAlias().".".$this->getPropertyDefinition('fkOwn')." = `".$this->model->getModelName()."`.`".$this->model->getTableKey()."`";
-
 		return $joins;
-	}
-
-	/**
-	 * This one adds a group by column of the base table's primary key. It is there to avoid duplicate
-	 * rows from the xref join in getJoinsForGetRecord
-	 * @return string[]
-	 */
-	public function getGroupingColumnsForGetRecord() {
-
-		$groupingColumns = array();
-
-		$groupingColumns[] = "`" . $this->model->getModelName() . "`.`" . $this->model->getTableKey() . "`";
-
-		return $groupingColumns;
-
 	}
 
 	/**
@@ -439,6 +454,37 @@ class KenedoPropertyMultiselect extends KenedoProperty {
 	}
 
 	/**
+	 * Returns the assignments for given record
+	 * @param int $id record ID
+	 * @return int[]
+	 */
+	function getAssignments($id) {
+
+		if ($this->getPropertyDefinition('activeLanguageHack', false) == true) {
+
+			$db = KenedoPlatform::getDb();
+			$query = "
+			SELECT `".$this->getPropertyDefinition('fkOther')."` 
+			FROM `".$this->getPropertyDefinition('xrefTable')."`
+			";
+			$db->setQuery($query);
+			return $db->loadResultList();
+
+		}
+		else {
+			$db = KenedoPlatform::getDb();
+			$query = "
+			SELECT `".$this->getPropertyDefinition('fkOther')."` 
+			FROM `".$this->getPropertyDefinition('xrefTable')."`
+			WHERE `".$this->getPropertyDefinition('fkOwn')."` = ".intval($id)."
+			";
+			$db->setQuery($query);
+			return $db->loadResultList();
+		}
+
+	}
+
+	/**
 	 * Helper function for the admin template. Returns all possible selectable values, formatted for KenedoHtml.
 	 * @return string[]|int[]
 	 */
@@ -480,8 +526,8 @@ class KenedoPropertyMultiselect extends KenedoProperty {
 	 */
 	function getOutputValueFromRecordData($record) {
 
-		// Will be an array of assigned record ids (see self::appendDataForGetRecord())
 		$assignmentIds = $record->{$this->propertyName};
+
 		// Prepare the array for titles to show
 		$titles = array();
 		// Define max amount to show

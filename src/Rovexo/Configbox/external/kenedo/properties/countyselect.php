@@ -9,9 +9,9 @@ class KenedoPropertyCountyselect extends KenedoProperty {
 	 */
 	function getDataFromRequest( &$data ) {
 
-		$requestVar = KRequest::getString($this->propertyName, NULL);
+		$requestVar = KRequest::getInt($this->propertyName, NULL);
 
-		if ($requestVar === '0') {
+		if (empty($requestVar)) {
 			$data->{$this->propertyName} = NULL;
 		}
 		else {

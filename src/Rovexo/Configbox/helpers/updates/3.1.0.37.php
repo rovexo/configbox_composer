@@ -10,15 +10,23 @@ $tables = array(
 );
 
 foreach ($tables as $tableName => $columnNames) {
+
+	$alterPart = "ALTER TABLE `".$tableName."` ";
+
+	$modifies = [];
+
 	foreach ($columnNames as $columnName) {
 
 		if (ConfigboxUpdateHelper::tableFieldExists($tableName, $columnName) == true) {
+			$modifies[] = "MODIFY `".$columnName."` MEDIUMINT(8) UNSIGNED NULL DEFAULT NULL";
+		}
 
-			$query = "ALTER TABLE `".$tableName."` MODIFY `".$columnName."` MEDIUMINT(8) UNSIGNED NULL DEFAULT NULL";
+		if (count($modifies)) {
+			$query = $alterPart . ' '.implode(', ', $modifies);
 			$db->setQuery($query);
 			$db->query();
-
 		}
+
 
 	}
 }

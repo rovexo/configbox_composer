@@ -501,6 +501,16 @@ class ConfigboxModelAdmincustomers extends KenedoModel {
 			'positionForm'=>4800,
 		);
 
+		$propDefs['created'] = array(
+			'name'=>'created',
+			'label'=>KText::_('Creation Date'),
+			'type'=>'string',
+			'default'=>null,
+			'required'=>0,
+			'positionForm'=>10000,
+			'visible'=>false,
+		);
+
 		return $propDefs;
 	}
 
@@ -574,11 +584,15 @@ class ConfigboxModelAdmincustomers extends KenedoModel {
 			}
 		}
 
-		// Keep up the created date
-		if ($data->id && empty($data->created)) {
-			$user = ConfigboxUserHelper::getUser($data->id, false, false);
-			if ($user && !empty($user->created)) {
-				$data->created = $user->created;
+		if (empty($data->created)) {
+			if ($data->id) {
+				$user = ConfigboxUserHelper::getUser($data->id, false, false);
+				if ($user && !empty($user->created)) {
+					$data->created = $user->created;
+				}
+			}
+			else {
+				$data->created = KenedoTimeHelper::getFormattedOnly('now', 'datetime');
 			}
 		}
 

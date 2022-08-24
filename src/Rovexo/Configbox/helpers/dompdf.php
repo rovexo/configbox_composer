@@ -17,7 +17,7 @@ class ConfigboxDomPdfHelper {
 	 */
 	static function getDomPdfObject() {
 
-		require_once(KenedoPlatform::p()->getComponentDir('com_configbox').'/external/dompdf/autoload.inc.php');
+		require_once(KenedoPlatform::p()->getComponentDir('com_configbox').'/external/dompdf-1.2.2/autoload.inc.php');
 
 		$domPdf = new Dompdf\Dompdf();
 
@@ -45,6 +45,7 @@ class ConfigboxDomPdfHelper {
 		$options->setFontDir($customFontDir);
 		$options->setIsRemoteEnabled(true);
 		$options->setIsPhpEnabled(true);
+		$options->setChroot('/');
 
 		$domPdf->setOptions($options);
 

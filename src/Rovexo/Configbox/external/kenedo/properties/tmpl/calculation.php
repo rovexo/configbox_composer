@@ -64,7 +64,7 @@ if ($showLinks) {
 			   data-link-text-new="<?php echo KText::_('New');?>"
 			   data-link-text-open="<?php echo KText::_('Open');?>"
 			   data-request-data="<?php echo hsc(json_encode(['prefill_product_id'=>intval($productId)]));?>">
-					<?php echo ($selectedId == 0) ? KText::_('New') : KText::_('Open');?>
+					<?php echo (empty($selectedId)) ? KText::_('New') : KText::_('Open');?>
 				</a>
 		</span>
 

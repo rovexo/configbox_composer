@@ -48,7 +48,7 @@ KenedoAutoload::registerClass('CbSettings',		    		$appDir.'/classes/CbSettings.
 
 if (function_exists('hsc') == false) {
 	function hsc($string) {
-		return htmlspecialchars($string,ENT_QUOTES);
+		return htmlspecialchars((string)$string,ENT_QUOTES);
 	}
 }
 

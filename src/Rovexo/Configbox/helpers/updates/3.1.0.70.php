@@ -41,8 +41,21 @@ foreach ($cols as $col) {
 		$usedLength = $length;
 	}
 
-	$defaultThing = ($col->COLUMN_DEFAULT !== NULL) ? "NOT NULL DEFAULT '".$col->COLUMN_DEFAULT."'" : 'NULL';
-	$query = "ALTER TABLE `".$col->TABLE_NAME."` MODIFY `".$col->COLUMN_NAME."` VARCHAR(".$usedLength.") ".$defaultThing;
+	// MariaDB quotes col default, MySQL doesn't
+	if ($col->COLUMN_DEFAULT === NULL) {
+		$defaultPart = '';
+	}
+	elseif ($col->COLUMN_DEFAULT === 'NULL') {
+		$defaultPart = "DEFAULT 'NULL'";
+	}
+	elseif(strpos($col->COLUMN_DEFAULT, "'") === 0) {
+		$defaultPart = 'DEFAULT '. $col->COLUMN_DEFAULT;
+	}
+	else {
+		$defaultPart = "DEFAULT '".$col->COLUMN_DEFAULT."'";
+	}
+
+	$query = "ALTER TABLE `".$col->TABLE_NAME."` MODIFY `".$col->COLUMN_NAME."` VARCHAR(".$usedLength.") ".$defaultPart;
 	$db->setQuery($query);
 	$db->query();
 
@@ -113,7 +126,17 @@ foreach ($cols as $col) {
 		$settings[] = 'UNSIGNED';
 	}
 
-	if ($col->COLUMN_DEFAULT !== NULL) {
+	// MariaDB quotes col default, MySQL doesn't
+	if ($col->COLUMN_DEFAULT === NULL) {
+		$a = 1;
+	}
+	elseif ($col->COLUMN_DEFAULT === 'NULL') {
+		$settings[] = 'DEFAULT NULL';
+	}
+	elseif(strpos($col->COLUMN_DEFAULT, "'") === 0) {
+		$settings[] = 'DEFAULT '. $col->COLUMN_DEFAULT;
+	}
+	else {
 		$settings[] = "DEFAULT '".$col->COLUMN_DEFAULT."'";
 	}
 

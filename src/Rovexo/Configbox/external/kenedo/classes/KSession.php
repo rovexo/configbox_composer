@@ -97,6 +97,11 @@ class KSession {
 		$sessionName = self::getSessionName();
 		$sessionId = self::$sessionId;
 
+		if (!$sessionId) {
+			self::onStartup();
+			$sessionId = self::$sessionId;
+		}
+
 		unset($_COOKIE[$sessionName]);
 
 		// Make the cookie expire

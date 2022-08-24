@@ -302,7 +302,7 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 		return $this->memoGetApplicationVersion;
 	}
 
-	public function authenticate($username, $passwordClear) {
+	public function authenticate($username, $passwordClear, $secretKey = '') {
 		return false;
 	}
 
@@ -624,6 +624,17 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
             require(__DIR__.'/tmpl/raw.php');
 	    }
 
+	}
+
+	/**
+	 * M2 discourages ob_start, we love it though. Moving call to lib
+	 * @param string $output
+	 * @return string
+	 */
+	public function getRenderedOutput(&$output) {
+		ob_start();
+		$this->renderOutput($output);
+		return ob_get_clean();
 	}
 
 	public function getPasswordResetLink() {

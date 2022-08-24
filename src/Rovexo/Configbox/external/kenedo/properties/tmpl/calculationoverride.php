@@ -65,7 +65,7 @@ $dropDownOptions = $this->getCalculationsDropdownOptions($productId);
 					   data-link-text-new="<?php echo KText::_('New');?>"
 					   data-link-text-open="<?php echo KText::_('Open');?>"
 					   data-request-data="<?php echo hsc(json_encode(['prefill_product_id'=>intval($productId)]));?>">
-							<?php echo ($override['calculation_id'] == 0) ? KText::_('New') : KText::_('Open');?>
+							<?php echo (empty($override['calculation_id'])) ? KText::_('New') : KText::_('Open');?>
 						</a>
 				</span>
 
@@ -78,7 +78,7 @@ $dropDownOptions = $this->getCalculationsDropdownOptions($productId);
 				<?php if (false) { ?>
 				<span class="join-links">
 
-					<span class="join-link join-link-0" style="display: <?php echo ($override['calculation_id'] == 0) ? 'inline':'none'; ?>">
+					<span class="join-link join-link-0" style="display: <?php echo (empty($override['calculation_id'])) ? 'inline':'none'; ?>">
 
 						<a class="trigger-open-join-link-modal btn btn-default"
 						   data-controller="admincalculations"

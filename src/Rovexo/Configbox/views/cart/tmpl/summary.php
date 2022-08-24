@@ -185,7 +185,17 @@ defined('CB_VALID_ENTRY') or die();
 					<td class="item-quantity"></td>
 					<td class="item-name">
 						<span class="tax-rate-name"><?php echo KText::sprintf((($this->cart->groupData->b2b_mode) ? 'Plus':'Incl.').' %s tax', cbtaxrate($taxRate));?></span>
-						<span class="tax-rate-tooltip"><a class="fa fa-info-circle" data-toggle="popover" data-placement="top" data-content="<?php echo hsc( KText::_('The tax rate may change when you enter your billing and delivery address.'));?>"></a></span>
+						<span class="tax-rate-tooltip">
+							<a class="fa fa-info-circle cb-popover"
+							   aria-label="<?php echo KText::_('Details');?>"
+							   role="button"
+							   tabindex="0"
+							   data-toggle="popover"
+							   data-placement="top"
+							   data-html="true"
+							   data-content="<?php echo hsc( KText::_('The tax rate may change when you enter your billing and delivery address.'));?>">
+							</a>
+						</span>
 					</td>
 
 					<?php if ($this->displayPricing) { ?>

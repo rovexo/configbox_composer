@@ -56,7 +56,7 @@ class IpnPostfinance {
 		$usedParams = file(__DIR__.'/misc/sha-out-parameters.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
 		foreach ($usedParams as &$param) {
-			trim($param);
+			$param = trim($param);
 		}
 
 		usort($usedParams, 'strnatcasecmp');

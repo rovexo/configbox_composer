@@ -73,7 +73,7 @@ class KenedoPropertyFile extends KenedoProperty {
 
 		$file = KRequest::getFile($this->propertyName);
 
-		if (!$file && $this->isRequired() && $this->applies($data) && $data->id == 0) {
+		if (!$file && $this->isRequired() && $this->applies($data) && empty($data->id)) {
 			$this->setError( KText::sprintf('You need to upload a file for field %s.',$this->getPropertyDefinition('label')) );
 			return false;
 		}

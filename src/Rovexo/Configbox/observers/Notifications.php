@@ -451,7 +451,7 @@ class ObserverNotifications {
 			// Replace order_id and the legacy placeholder cb_order_id right away to save ourselves some trouble
 			$textToAlter = str_replace('{order_id}', $orderRecord->id, $textToAlter);
 			$textToAlter = str_replace('{cb_order_id}', $orderRecord->id, $textToAlter);
-			$textToAlter = str_replace('{comment}', $orderRecord->comment, $textToAlter);
+			$textToAlter = str_replace('{comment}', (string)$orderRecord->comment, $textToAlter);
 
 			// Process all orderAddress related placeholders
 			if ($orderRecord->orderAddress) {

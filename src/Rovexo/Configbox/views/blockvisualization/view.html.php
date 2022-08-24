@@ -85,7 +85,7 @@ class ConfigboxViewBlockvisualization extends KenedoView {
 
 		$product = KenedoModel::getModel('ConfigboxModelProduct')->getProduct($this->productId);
 
-		$this->urlBaseImage = ($product->baseimage_href) ? $product->baseimage_href : '';
+		$this->urlBaseImage = (!empty($product->baseimage_href)) ? $product->baseimage_href : '';
 		$this->visualizationSlots = ConfigboxProductImageHelper::getVisualizationImageSlots($this->cartPositionId);
 		$this->urlBlankImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 

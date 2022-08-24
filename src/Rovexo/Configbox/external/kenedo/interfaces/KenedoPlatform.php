@@ -36,9 +36,10 @@ interface InterfaceKenedoPlatform {
 	 * Authenticate a user (basically check if username and password is valid) - mind it does not log the user in
 	 * @param string $username
 	 * @param string $passwordClear
+	 * @param string $secretKey
 	 * @return bool Success or failure
 	 */
-	public function authenticate($username, $passwordClear);
+	public function authenticate($username, $passwordClear, $secretKey = '');
 
 	/**
 	 * Login in a user with given user name

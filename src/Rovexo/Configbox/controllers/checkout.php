@@ -120,6 +120,7 @@ class ConfigboxControllerCheckout extends KenedoController {
 		$currentUser = ConfigboxUserHelper::getUser();
 		$data->id = $currentUser->id;
 		$data->platform_user_id = $currentUser->platform_user_id;
+		$data->created = $currentUser->created;
 
 		// Prepare the data (auto-fill data like empty URL segment fields and similar)
 		$model->prepareForStorage($data);
@@ -172,7 +173,7 @@ class ConfigboxControllerCheckout extends KenedoController {
 		}
 
 		// Register the user if not done already
-		if ($user->platform_user_id == 0) {
+		if (empty($user->platform_user_id)) {
 			$model = KenedoModel::getModel('ConfigboxModelAdmincustomers');
 			$model->registerPlatformUser($user->id);
 		}
@@ -186,7 +187,7 @@ class ConfigboxControllerCheckout extends KenedoController {
 		$orderModel->unsetOrderRecord($orderId);
 		$orderRecord = $orderModel->getOrderRecord($orderId);
 
-		$noneSelected = ($orderRecord->delivery_id == 0);
+		$noneSelected = empty($orderRecord->delivery_id);
 		$nowInvalid = ($orderRecord->delivery_id && $orderModel->isValidDeliveryOption($orderRecord, $orderRecord->delivery_id) == false);
 
 		if ($noneSelected || $nowInvalid) {
@@ -202,7 +203,7 @@ class ConfigboxControllerCheckout extends KenedoController {
 		}
 
 		// Now the same for the payment method
-		$noneSelected = ($orderRecord->payment_id == 0);
+		$noneSelected = empty($orderRecord->payment_id);
 		$nowInvalid = ($orderRecord->payment_id && $orderModel->isValidPaymentOption($orderRecord, $orderRecord->payment_id) == false);
 
 		if ($noneSelected || $nowInvalid) {
@@ -231,9 +232,9 @@ class ConfigboxControllerCheckout extends KenedoController {
 		
 		$model = KenedoModel::getModel('ConfigboxModelOrderrecord');
 		$orderId = $model->getId();
-		$deliveryId = KRequest::getInt('id');
+		$deliveryId = KRequest::getInt('id', null);
 		
-		if ($deliveryId == 0) {
+		if (empty($deliveryId)) {
 			$response = new stdClass();
 			$response->success = false;
 			$response->errors = array(KText::_('Please choose a delivery method.'));
@@ -266,7 +267,7 @@ class ConfigboxControllerCheckout extends KenedoController {
 		$orderId = $model->getId();
 		$paymentId = KRequest::getInt('id');
 		
-		if ($paymentId == 0) {
+		if (empty($paymentId)) {
 			$response = new stdClass();
 			$response->success = false;
 			$response->errors = array(KText::_('Please choose a payment method.'));
@@ -308,11 +309,11 @@ class ConfigboxControllerCheckout extends KenedoController {
 			$response->errors[] = KText::_('Please complete your order address.');
 		}
 		
-		if ($orderRecord->payment_id == 0) {
+		if (empty($orderRecord->payment_id)) {
 			$response->errors[] = KText::_('Please choose a payment method.');
 		}
 		
-		if (CbSettings::getInstance()->get('disable_delivery') == 0 && $orderRecord->delivery_id == 0) {
+		if (CbSettings::getInstance()->get('disable_delivery') == 0 && empty($orderRecord->delivery_id)) {
 			$response->errors[] = KText::_('Please choose a delivery method.');
 		}
 		

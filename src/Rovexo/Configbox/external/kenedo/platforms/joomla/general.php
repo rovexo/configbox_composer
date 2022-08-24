@@ -143,17 +143,22 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 
 
 		/* LEGACY VIEW NAMES - START */
-		if (KRequest::getVar('view') == 'category') {
-			KRequest::setVar('view', 'configuratorpage');
+		if (KRequest::getKeyword('option') == 'com_configbox') {
+
+			if (KRequest::getVar('view') == 'category') {
+				KRequest::setVar('view', 'configuratorpage');
+			}
+
+			if (KRequest::getVar('view') == 'products') {
+				KRequest::setVar('view', 'productlisting');
+			}
+
+			if (KRequest::getVar('view') == 'grandorder') {
+				KRequest::setVar('view', 'cart');
+			}
+
 		}
 
-		if (KRequest::getVar('view') == 'products') {
-			KRequest::setVar('view', 'productlisting');
-		}
-
-		if (KRequest::getVar('view') == 'grandorder') {
-			KRequest::setVar('view', 'cart');
-		}
 		/* LEGACY VIEW NAMES - END */
 
 		// Legacy, remove with CB 4.0
@@ -265,54 +270,27 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	/**
 	 * @inheritDoc
 	 */
-	public function authenticate($username, $password) {
+	public function authenticate($username, $password, $secretKey = '') {
 
-		if ($this->getVersionShort() == '1.5') {
+		$credentials = array(
+			'username'=>$username,
+			'password'=>$password,
+			'secretkey'=>$secretKey,
+		);
 
-			$credentials = array(
-				'username'=>$username,
-				'password'=>$password,
-			);
+		$options = array();
 
-			$options = array();
+		jimport('joomla.user.authentication');
 
-			jimport( 'joomla.user.authentication');
+		$authenticate = JAuthentication::getInstance();
+		$response = $authenticate->authenticate($credentials, $options);
 
-			$authenticate = JAuthentication::getInstance();
-			$response	  = $authenticate->authenticate($credentials, $options);
-
-			/** @noinspection PhpUndefinedConstantInspection */
-			if ($response->status === JAUTHENTICATE_STATUS_SUCCESS) {
-				return true;
-			}
-			else {
-				return false;
-			}
-
+		if ($response->status === JAuthentication::STATUS_SUCCESS) {
+			return true;
 		}
-		// For Joomla version starting with 2.5
 		else {
-
-			$credentials = array(
-				'username'=>$username,
-				'password'=>$password,
-			);
-
-			$options = array();
-
-			jimport('joomla.user.authentication');
-
-			$authenticate = JAuthentication::getInstance();
-			$response = $authenticate->authenticate($credentials, $options);
-
-			if ($response->status === JAuthentication::STATUS_SUCCESS) {
-				return true;
-			}
-			else {
-				$this->getJApplication()->triggerEvent('onUserLoginFailure', array((array)$response));
-				return false;
-			}
-
+			$this->getJApplication()->triggerEvent('onUserLoginFailure', array((array)$response));
+			return false;
 		}
 
 	}
@@ -916,14 +894,6 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 			return false;
 		}
 
-		/*
-		if (mb_strlen($password) < 8) {
-			return false;
-		}
-		if ( preg_match("/[0-9]/", $password) == 0 || preg_match("/[a-zA-Z]/", $password) == 0) {
-			return false;
-		}
-		*/
 		return true;
 	}
 

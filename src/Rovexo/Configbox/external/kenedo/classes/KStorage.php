@@ -151,11 +151,6 @@ class KStorage {
 			if (isset($pair[1])) {
 				
 				$value = trim( $pair[1], '"');
-				
-// 				$value = $pair[1];
-// 				if (strpos($value,'"') === 0 && strrpos($value,'"') === mb_strlen($value)) {
-// 					$value = substr($value,1,-1);
-// 				}
 				$array[trim($pair[0])] = trim($value);
 			}
 			else {

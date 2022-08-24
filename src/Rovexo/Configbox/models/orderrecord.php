@@ -201,7 +201,7 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 
 				// Tax rate for the position
 				$position->taxRate 			= ($record->isVatFree) ? 0 : $this->getOrderRecordTaxRate($record->id, $position->taxclass_id, $record->orderAddress, false);
-				$position->taxRateRecurring = ($record->isVatFree || $position->taxclass_recurring_id == 0) ? 0 : $this->getOrderRecordTaxRate($record->id, $position->taxclass_recurring_id, $record->orderAddress, false);
+				$position->taxRateRecurring = ($record->isVatFree || empty($position->taxclass_recurring_id)) ? 0 : $this->getOrderRecordTaxRate($record->id, $position->taxclass_recurring_id, $record->orderAddress, false);
 
 				// Tax code (it is a concatenation of all codes set in country down to city tax rate overrides)
 				$position->taxCode 			= $this->getOrderRecordTaxCode($orderId, $position->taxclass_id, 			$record->orderAddress, true);
@@ -361,7 +361,7 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 
 				// Set position's tax rate
 				$position->taxRate 			= ($record->isVatFree) ? 0 : $this->getOrderRecordTaxRate($record->id, $position->taxclass_id, $record->orderAddress, false);
-				$position->taxRateRecurring = ($record->isVatFree || $position->taxclass_recurring_id == 0) ? 0 : $this->getOrderRecordTaxRate($record->id, $position->taxclass_recurring_id, $record->orderAddress, false);
+				$position->taxRateRecurring = ($record->isVatFree || empty($position->taxclass_recurring_id)) ? 0 : $this->getOrderRecordTaxRate($record->id, $position->taxclass_recurring_id, $record->orderAddress, false);
 
 				// Finally add the position to the record
 				$record->positions[] = $position;
@@ -700,9 +700,9 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 		}
 
 		$sortFunction = function($a, $b) {
-			$sortA = round($a->basePriceGross, 3).$a->ordering;
-			$sortB = round($b->basePriceGross, 3).$b->ordering;
-			return $sortA > $sortB;
+			$sortA = number_format($a->basePriceGross, 3, '.', '').$a->ordering;
+			$sortB = number_format($b->basePriceGross, 3, '.', '').$b->ordering;
+			return strnatcmp($sortA, $sortB);
 		};
 
 		// Sort by price
@@ -1197,6 +1197,7 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 			$orderRecord->paid 			= '0';
 			$orderRecord->paid_on 		= NULL;
 			$orderRecord->status 		= ($status !== NULL) ? $status : $cartDetails->status;
+			$orderRecord->comment		= NULL;
 
 			$orderRecord->custom_1 		= empty($cartDetails->custom_1) ? '' : $cartDetails->custom_1;
 			$orderRecord->custom_2	 	= empty($cartDetails->custom_2) ? '' : $cartDetails->custom_2;
@@ -1382,109 +1383,24 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 				// Insert the position
 				$db->insertObject('#__cbcheckout_order_positions', $position, 'id');
 
-
-
-				$dirPositionImages = KenedoPlatform::p()->getDirDataCustomer().'/public/position_images';
-
-				/* COPY THE PRODUCT IMAGE - START */
-
-				// Create the position images folder if necessary
-				if (is_dir($dirPositionImages) == false) {
-					$success = mkdir($dirPositionImages, 0755, true);
-					if ($success == false) {
-						KLog::log('Error copying product image. Could not create folder "'.$dirPositionImages.'". Make sure the containing folder is writable.', 'error');
-						throw new Exception('Cannot create order, because the system cannot create the missing position image folder. See ConfigBox error log file for details.');
-					}
+				/* CREATE AND SET THE PRODUCT IMAGE - START */
+				$fileName = '';
+				try {
+					$fileName = $this->createPositionImage($orderRecord->id, $position->id, $cartPosition);
+				}
+				catch(Exception $e) {
+					KLog::log('Position image creation failed, see other error log messages for details.', 'error');
 				}
 
-				$fileNamePosition = '';
-
-				switch ($cartPosition->productData->visualization_type) {
-
-					case 'none':
-
-						$fileName = $orderRecord->id.'-'.$position->id.'.'.pathinfo($cartPosition->productData->prod_image_path, PATHINFO_EXTENSION);
-
-						$source = $cartPosition->productData->prod_image_path;
-						$destination = $dirPositionImages.'/'.$fileName;
-
-						$success = copy($source, $destination);
-
-						if ($success == false) {
-							KLog::log('Error copying product image to order position image folder ("'.$source.'" to "'.$destination.'".', 'error');
-							throw new Exception('Could not copy product image for use as position image. See ConfigBox error log file for details.');
-						}
-
-						$fileNamePosition = $fileName;
-
-						break;
-
-					case 'composite':
-
-						$fileName = $orderRecord->id.'-'.$position->id.'.png';
-
-						$destination = $dirPositionImages.'/'.$fileName;
-						$success = ConfigboxProductImageHelper::getMergedProductImage($cartPosition, $destination);
-
-						// Go all crazy if creating it failed
-						if ($success === false) {
-							KLog::log('Could not create merged visualization image. Make sure the folder "'.$dirPositionImages.'" is writable','error');
-							throw new Exception('Could not create merged visualization image. See ConfigBox error log file for details.');
-						}
-
-						elseif ($success !== null) {
-							$fileNamePosition = $fileName;
-						}
-						elseif ($success === null) {
-
-							$fileName = $orderRecord->id.'-'.$position->id.'.'.pathinfo($cartPosition->productData->prod_image_path, PATHINFO_EXTENSION);
-
-							$source = $cartPosition->productData->prod_image_path;
-							$destination = $dirPositionImages.'/'.$fileName;
-
-							$success = copy($source, $destination);
-
-							if ($success == false) {
-								KLog::log('Error copying product image to order position image folder ("'.$source.'" to "'.$destination.'".', 'error');
-								throw new Exception('Could not copy product image for use as position image. See ConfigBox error log file for details.');
-							}
-
-							$fileNamePosition = $fileName;
-
-						}
-
-						break;
-
-					case 'shapediver':
-
-						$fileName = $orderRecord->id.'-'.$position->id.'.'.pathinfo($cartPosition->productData->prod_image_path, PATHINFO_EXTENSION);
-
-						$source = $cartPosition->productData->prod_image_path;
-						$destination = $dirPositionImages.'/'.$fileName;
-
-						$success = copy($source, $destination);
-
-						if ($success == false) {
-							KLog::log('Error copying product image to order position image folder ("'.$source.'" to "'.$destination.'".', 'error');
-							throw new Exception('Could not copy product image for use as position image. See ConfigBox error log file for details.');
-						}
-
-						$fileNamePosition = $fileName;
-
-						break;
-
-				}
-
-				if ($fileNamePosition != '') {
-					$position->product_image = $fileNamePosition;
-					// Save it again with the right product_image set.
+				if ($fileName) {
+					$position->product_image = $fileName;
 					$success = $db->updateObject('#__cbcheckout_order_positions', $position, 'id');
 					if ($success == false) {
 						throw new Exception('Error on updating product image URL in order position record. See log for more info');
 					}
 				}
 
-				/* COPY THE PRODUCT IMAGE - END */
+				/* CREATE AND SET THE PRODUCT IMAGE - END */
 
 
 
@@ -1822,6 +1738,7 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 
 		}
 		catch(Exception $e) {
+			KLog::logException($e);
 			$db->rollbackTransaction();
 			$this->setError($e->getMessage());
 			return false;
@@ -1829,6 +1746,70 @@ class ConfigboxModelOrderrecord extends KenedoModel {
 
 		$db->commitTransaction();
 		return $orderRecord->id;
+	}
+
+	/**
+	 * Writes (or overwrites) the position image and returns the file name (no full path).
+	 * @param int $orderRecordId
+	 * @param int $orderPositionId
+	 * @param ConfigboxCartPositionData $cartPosition
+	 * @return string $fileName File name (no full path)
+	 * @throws Exception
+	 */
+	protected function createPositionImage($orderRecordId, $orderPositionId, $cartPosition) {
+
+		$dirPositionImages = KenedoPlatform::p()->getDirDataCustomer().'/public/position_images';
+
+		// Create the position images folder if necessary
+		if (is_dir($dirPositionImages) == false) {
+			$success = mkdir($dirPositionImages, 0755, true);
+			if ($success == false) {
+				KLog::log('Error copying product image. Could not create folder "'.$dirPositionImages.'". Make sure the containing folder is writable.', 'error');
+				throw new Exception('Cannot create order, because the system cannot create the missing position image folder. See ConfigBox error log file for details.');
+			}
+		}
+
+		switch ($cartPosition->productData->visualization_type) {
+
+			case 'none':
+			case 'shapediver':
+
+				$sourcePath = $cartPosition->productData->prod_image_path;
+				$ext = KenedoFileHelper::getExtension($sourcePath);
+				$destFileName = $orderRecordId.'-'.$orderPositionId.'.'.$ext;
+				$destPath = $dirPositionImages.'/'.$destFileName;
+				$success = copy($sourcePath, $destPath);
+
+				if ($success == false) {
+					KLog::log('Error copying product image to order position image folder ("'.$sourcePath.'" to "'.$destPath.'".', 'error');
+					throw new Exception('Could not copy product image for use as position image. See ConfigBox error log file for details.');
+				}
+				return $destFileName;
+
+			case 'composite':
+
+				$ext = 'png';
+				$destFileName = $orderRecordId.'-'.$orderPositionId.'.'.$ext;
+				$destPath = $dirPositionImages.'/'.$destFileName;
+
+				$success = ConfigboxProductImageHelper::createMergedVisualizationImage($cartPosition, $destPath);
+
+				// Use the product image as fallback if no image could be created
+				if ($success === false) {
+					$sourcePath = $cartPosition->productData->prod_image_path;
+					$success = copy($sourcePath, $destPath);
+
+					if ($success == false) {
+						KLog::log('Error copying product image to order position image folder ("'.$sourcePath.'" to "'.$destPath.'".', 'error');
+						throw new Exception('Could not copy product image for use as position image. See ConfigBox error log file for details.');
+					}
+				}
+				return $destFileName;
+
+		}
+
+		return '';
+
 	}
 
 	/**

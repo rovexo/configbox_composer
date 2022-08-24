@@ -200,18 +200,9 @@ class ConfigboxControllerUser extends KenedoController {
 			
 			// Move the orders
 			ConfigboxUserHelper::moveUserOrders($oldUserId, $newUserId);
-			
-			// Get the success redirection URL
-			$url = urldecode(KRequest::getString('return_success'));
-				
+
 		}
-		else {
-			
-			// Get the failure redirection URL
-			$url = urldecode(KRequest::getString('return_failure'));
-			
-		}
-		
+
 		if (in_array(KRequest::getString('output_mode', ''), array('view_only'))) {
 			$jsonResponse = new stdClass();
 			$jsonResponse->success = $response;
@@ -225,9 +216,11 @@ class ConfigboxControllerUser extends KenedoController {
 			// Send feedback
 			if ($response == true) {
 				$message = 'You have been successfully logged in.';
+				$url = urldecode(KRequest::getString('return_success', ''));
 			}
 			else {
 				$message = 'Login failed. Please check your email address and password.';
+				$url = urldecode(KRequest::getString('return_failure', ''));
 			}
 
 			KenedoPlatform::p()->sendSystemMessage(KText::_($message));

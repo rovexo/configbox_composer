@@ -222,7 +222,7 @@ class ConfigboxUpdateHelper {
 	 */
 	protected static function installFresh() {
 
-		$file = __DIR__ . '/updates/complete/3.1.0.70_ddl.sql';
+		$file = __DIR__ . '/updates/complete/3.3.3.10_ddl.sql';
 
 		// Get the complete SQL DDL queries
 		$contents = str_replace('sltxh_', '#__', file_get_contents($file));
@@ -242,12 +242,12 @@ class ConfigboxUpdateHelper {
 		}
 
 		// Run the dynamic DML stuff
-		require(__DIR__.'/updates/complete/3.1.0.70_dml.php');
+		require(__DIR__.'/updates/complete/3.3.3.10_dml.php');
 
 		// Run the file updates
-		require(__DIR__.'/updates/complete/3.1.0.70_files.php');
+		require(__DIR__.'/updates/complete/3.3.3.10_files.php');
 
-		ConfigboxSystemVars::setVar('latest_update_version', '3.1.0.70');
+		ConfigboxSystemVars::setVar('latest_update_version', '3.3.3.10');
 
 		return '3.1.0.70';
 

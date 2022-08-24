@@ -73,7 +73,11 @@ class KenedoDatabase {
 			return false;
 		}
 
-		$query = "SET SESSION sql_mode = '', group_concat_max_len = 20000;";
+		// Setting standard SQL modes For development
+		//$query = "SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';";
+
+		// Remove all SQL modes
+		$query = "SET SESSION sql_mode = '';";
 		$this->setQuery($query);
 		$this->query();
 
@@ -122,7 +126,7 @@ class KenedoDatabase {
 	}
 
 	public function getEscaped($text) {
-		return mysqli_real_escape_string($this->link, $text);
+		return mysqli_real_escape_string($this->link, (string)$text);
 	}
 
 	public function getQuoted($text) {

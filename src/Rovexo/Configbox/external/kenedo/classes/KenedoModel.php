@@ -321,7 +321,6 @@ class KenedoModel {
 	 * Stores the base record of the model and its properties. It will set $data's primary key value if it was an insert
 	 * @param object $data
 	 * @return bool true on success, false otherwise
-	 * @throws Exception on SQL errors
 	 */
 	function store($data) {
 
@@ -377,10 +376,11 @@ class KenedoModel {
 			return true;
 
 		}
-		catch (Exception $exception) {
+		catch (Exception $e) {
+			KLog::logException($e);
 			$db = KenedoPlatform::getDb();
 			$db->rollbackTransaction();
-			$this->setError($exception->getMessage());
+			$this->setError($e->getMessage());
 			return false;
 		}
 
@@ -638,21 +638,22 @@ class KenedoModel {
 			}
 			elseif(is_a($property, 'KenedoPropertyChildentries')) {
 				$record = $this->getRecord($recordId);
+				if ($record) {
+					$view = KenedoView::getView($property->getPropertyDefinition('viewClass'));
+					$childEntriesModel = $view->getDefaultModel();
+					$viewFilters = $property->getPropertyDefinition('viewFilters');
 
-				$view = KenedoView::getView($property->getPropertyDefinition('viewClass'));
-				$childEntriesModel = $view->getDefaultModel();
-				$viewFilters = $property->getPropertyDefinition('viewFilters');
+					// Prepare the filter array for loading the child records
+					$filters = array();
+					foreach ($viewFilters as $viewFilter) {
+						$filters[$viewFilter['filterName']] = $record->{$viewFilter['filterValueKey']};
+					}
 
-				// Prepare the filter array for loading the child records
-				$filters = array();
-				foreach ($viewFilters as $viewFilter) {
-					$filters[$viewFilter['filterName']] = $record->{$viewFilter['filterValueKey']};
-				}
-
-				// This should give you all the child records to copy
-				$childEntriesRecords = $childEntriesModel->getRecords($filters);
-				foreach ($childEntriesRecords as $childEntriesRecord) {
-					$childEntriesModel->copyRulesAndCalculations($childEntriesRecord->{$childEntriesModel->getTableKey()}, $copyIds);
+					// This should give you all the child records to copy
+					$childEntriesRecords = $childEntriesModel->getRecords($filters);
+					foreach ($childEntriesRecords as $childEntriesRecord) {
+						$childEntriesModel->copyRulesAndCalculations($childEntriesRecord->{$childEntriesModel->getTableKey()}, $copyIds);
+					}
 				}
 
 			}
@@ -993,6 +994,8 @@ class KenedoModel {
 				$joins = array_merge($joins, $prop->getJoinsForGetRecord());
 			}
 
+			asort($selects);
+
 			$db = KenedoPlatform::getDb();
 
 			$query = "SELECT
@@ -1026,18 +1029,18 @@ class KenedoModel {
 
 	/**
 	 * Returns records of the model's type.
-	 * @see KenedoView::getFiltersFromUpdatedState(), KenedoView::getPaginationFromUpdatedState(), KenedoView::getOrderingFromUpdatedState()
-	 *
 	 * @param string[] 	$filters 		See KenedoView::getFiltersFromUpdatedState()
 	 * @param string[] 	$pagination 	See KenedoView::getPaginationFromUpdatedState()
-	 * @param array[] 	$ordering 		See KenedoView::getOrderingFromUpdatedState()
+	 * @param array[] 	$sortSpecs 		See KenedoView::getOrderingFromUpdatedState()
 	 * @param string   	$languageTag 	Language for translatable fields (format de-DE), leave empty to use current system language
 	 * @param boolean 	$countOnly 		If you simply want to get the count of records for the given $filters
 	 *
 	 * @return object[]|int Array with objects or the number of records if $countOnly == true
 	 * @throws Exception
+	 * @see KenedoView::getFiltersFromUpdatedState(), KenedoView::getPaginationFromUpdatedState(), KenedoView::getOrderingFromUpdatedState()
+	 *
 	 */
-	function getRecords($filters = array(), $pagination = array(), $ordering = array(), $languageTag = '', $countOnly = false) {
+	function getRecords($filters = array(), $pagination = array(), $sortSpecs = array(), $languageTag = '', $countOnly = false) {
 
 		// If we got an empty $languageTag parameter, fall back to current system language
 		if ($languageTag == '') {
@@ -1069,80 +1072,50 @@ class KenedoModel {
 				$selects = array_merge($selects, $prop->getSelectsForGetRecord());
 				$joins = array_merge($joins, $prop->getJoinsForGetRecord());
 				$groupByCols = array_merge($groupByCols, $prop->getGroupingColumnsForGetRecord());
+				$wheres = array_merge($wheres, $prop->getWheres($filters));
 			}
+			unset($prop);
+
+			asort($selects);
 
 			$db = KenedoPlatform::getDb();
-
-			// Prepare wheres
-			if (count($filters)) {
-
-				foreach ($filters as $filterName=>$value) {
-
-					// If the filter name is just a property name, make it the full table reference (table alias plus column)
-					if (strpos($filterName, '.') === false) {
-						$filterName = $this->getTableReferenceForProperty($filterName);
-					}
-
-					if (is_numeric($value)) {
-						$wheres[] = $db->getEscaped($filterName)." = '".$db->getEscaped($value)."'";
-					}
-					elseif(is_array($value)) {
-
-						if (count($value)) {
-							$values = array();
-							foreach ($value as $val) {
-								$values[] = (is_numeric($val)) ? $val : "'".$db->getEscaped($val)."'";
-							}
-							$wheres[] = $db->getEscaped($filterName)." IN (".implode(',', $values).")";
-						}
-						else {
-							$wheres[] = '1 = 2';
-						}
-
-					}
-					else {
-						$wheres[] = $db->getEscaped($filterName)." LIKE '%".$db->getEscaped($value)."%'";
-					}
-				}
-
-			}
 
 			// Prepare ORDER BYs
 			// Will be a array of strings with col reference and direction (e.g. array('column_1 ASC', 'column_2 DESC)
 			$orderBys = array();
-			if (!empty($ordering)) {
+			if (!empty($sortSpecs)) {
 
 				// We used to have $ordering as flat array with a single ordering instruction, now it's an array of
 				// ordering instructions. Here we 'upgrade' any legacy flat ones.
-				if ( isset( $ordering['propertyName'] ) ) {
-					$ordering = array(
-						$ordering,
+				if ( isset( $sortSpecs['propertyName'] ) ) {
+					$sortSpecs = array(
+						$sortSpecs,
 					);
 				}
 
-				foreach ( $ordering as $orderingDataItem ) {
+				foreach ($sortSpecs as $sortSpec ) {
 
-					if (is_array($orderingDataItem) == false || empty($orderingDataItem['propertyName'])) {
-						KLog::log('Misconfigured ordering instructions found. Model is '.get_class($this).'. Ordering instructions were '.var_export($ordering, true), 'error');
+					if (is_array($sortSpec) == false || empty($sortSpec['propertyName'])) {
+						KLog::log('Misconfigured ordering instructions found. Model is '.get_class($this).'. Ordering instructions were '.var_export($sortSpecs, true), 'error');
 					}
 
-					$direction = strtoupper( (!empty($orderingDataItem['direction'])) ? $orderingDataItem['direction'] : 'ASC' );
+					$direction = strtoupper( (!empty($sortSpec['direction'])) ? $sortSpec['direction'] : 'ASC' );
 
 					// property name is either a base model's property name or a reference to a joined model's property
 					// table alias and column name
 					// This is the joined model's reference. We trust the caller that he writes it right
 					// Structure is prop_table_alias.prop_table_column_name
-					if ( strstr( $orderingDataItem['propertyName'], '.' ) ) {
+					if ( strstr( $sortSpec['propertyName'], '.' ) ) {
 						// Put table and column name/aliases in quotes
-						$split = explode('.', $orderingDataItem['propertyName']);
+						$split = explode('.', $sortSpec['propertyName']);
 						$columnReference = $db->getQuoted($db->getEscaped($split[0])).'.'.$db->getQuoted($db->getEscaped($split[1]));
 					} else {
 
-						if (empty($props[ $orderingDataItem['propertyName'] ])) {
+						if (empty($props[ $sortSpec['propertyName'] ])) {
 							continue;
 						}
 
-						$prop = $props[ $orderingDataItem['propertyName'] ];
+						$prop = $props[ $sortSpec['propertyName'] ];
 
 						// Join props get special treatment, if you use a join, it will sort by the joined model's prop
 						// defined in propNameDisplay
@@ -1496,7 +1469,7 @@ class KenedoModel {
 
 		$usageInfo = $this->getRecordUsageInfo();
 
-		if ($recordId == 0 || count($usageInfo) == 0) {
+		if (empty($recordId) || count($usageInfo) == 0) {
 			return $return;
 		}
 

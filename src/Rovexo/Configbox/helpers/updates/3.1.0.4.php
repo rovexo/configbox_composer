@@ -15,7 +15,7 @@ if (ConfigboxUpdateHelper::tableFieldExists('#__configbox_products', 'page_nav_b
 
 	$settings = array();
 	foreach ($pageData as $page) {
-		if ($page['lock_on_required'] == 1 || $page['lock_on_required'] == 0) {
+		if ($page['lock_on_required'] == 1 || empty($page['lock_on_required'])) {
 			$settings[$pageData['product_id']] = $page['lock_on_required'];
 		}
 	}

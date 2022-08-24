@@ -129,6 +129,7 @@ function ConfigboxParseRoute(&$segments) {
 					if ($segments[0] == 'edit') {
 						$viewName = 'user';
 						$vars['layout'] = 'editprofile';
+						unset($segments[0]);
 						$segmentMatching = array();
 					}
 				}

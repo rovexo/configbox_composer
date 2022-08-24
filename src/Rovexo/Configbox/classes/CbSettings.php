@@ -178,7 +178,7 @@ class CbSettings {
 	 * @param string $key
 	 * @param mixed  $fallBackValue Optional - Fallback value in case the field is empty
 	 *
-	 * @return null
+	 * @return string
 	 * @throws Exception If $key is empty or setting does not exist
 	 */
 	public function get($key, $fallBackValue = NULL) {

@@ -837,14 +837,14 @@ class ConfigboxModelAdmincustomergroups extends KenedoModel {
 	/**
 	 * @param array $filters
 	 * @param array $pagination
-	 * @param array $ordering
+	 * @param array $sortSpecs
 	 * @param string $languageTag
 	 * @param bool $countOnly
 	 * @return int|ConfigboxCustomerGroupData[]
 	 * @throws Exception
 	 */
-	function getRecords($filters = array(), $pagination = array(), $ordering = array(), $languageTag = '', $countOnly = false) {
-		return parent::getRecords($filters, $pagination, $ordering, $languageTag, $countOnly);
+	function getRecords($filters = array(), $pagination = array(), $sortSpecs = array(), $languageTag = '', $countOnly = false) {
+		return parent::getRecords($filters, $pagination, $sortSpecs, $languageTag, $countOnly);
 	}
 
 	function getRecordUsageInfo() {

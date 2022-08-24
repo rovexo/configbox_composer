@@ -86,11 +86,23 @@ class ConfigboxConditionElementAttribute extends ConfigboxCondition {
 			case 'selected':
 			case 'selection':
 				$selection = (isset($selections[$questionId])) ? $selections[$questionId] : null;
-				$isValue = ConfigboxQuestion::getQuestion($questionId)->getComparableValue($selection);
+				if (ConfigboxQuestion::questionExists($questionId) == false) {
+					$isValue = null;
+				}
+				else {
+					$isValue = ConfigboxQuestion::getQuestion($questionId)->getComparableValue($selection);
+				}
 				break;
 
 			default:
-				$isValue = ConfigboxQuestion::getQuestion($questionId)->getField($conditionData['field']);
+
+				if (ConfigboxQuestion::questionExists($questionId) == false) {
+					$isValue = null;
+				}
+				else {
+					$isValue = ConfigboxQuestion::getQuestion($questionId)->getField($conditionData['field']);
+				}
+
 				break;
 
 		}
@@ -149,18 +161,6 @@ class ConfigboxConditionElementAttribute extends ConfigboxCondition {
 	 */
 	function getConditionHtml($conditionData, $forEditing = true) {
 
-		$isXrefCondition = ($conditionData['field'] == 'selectedOption.id');
-
-		$answerTitle = '';
-		if ($isXrefCondition) {
-			if ($conditionData['value'] == 0) {
-				$answerTitle = KText::_('not answered');
-			}
-			else {
-				$answerTitle = ConfigboxRulesHelper::getAnswerTitle($conditionData['value']);
-			}
-		}
-
 		$questionTitle = ConfigboxRulesHelper::getQuestionTitle($conditionData['elementId']);
 		$attributes = $this->getElementAttributes();
 
@@ -168,9 +168,31 @@ class ConfigboxConditionElementAttribute extends ConfigboxCondition {
 
 		$operatorHtml = $this->getOperatorText($conditionData['operator']);
 
-		$conditionValue = $conditionData['value'];
-		if (is_numeric($conditionValue)) {
-			$conditionValue = str_replace('.', KText::_('DECIMAL_MARK','.'), $conditionValue);
+		// We prep shouldValue (what we use for processing)..
+		$shouldValue = $conditionData['value'];
+		$outputValue = $shouldValue;
+
+		// .. and outputValue (more expressive value for users)
+		switch ($conditionData['field']) {
+			case 'selected':
+			case 'selection':
+				if ($shouldValue === '') {
+					$outputValue = 'empty';
+				}
+				elseif(is_numeric($shouldValue)) {
+					$outputValue = str_replace('.', KText::_('DECIMAL_MARK','.'), $shouldValue);
+				}
+				break;
+
+			case 'selectedOption.id':
+				if ($shouldValue === '') {
+					$outputValue = KText::_('not answered');
+				}
+				else {
+					$outputValue = ConfigboxRulesHelper::getAnswerTitle($conditionData['value']);
+				}
+				break;
+
 		}
 
 		ob_start();
@@ -178,25 +200,25 @@ class ConfigboxConditionElementAttribute extends ConfigboxCondition {
 		?>
 		<span
 			class="item condition elementattribute"
-			data-type="<?php echo $conditionData['type'];?>"
-			data-element-id="<?php echo $conditionData['elementId'];?>"
-			data-field="<?php echo $conditionData['field'];?>"
-			data-operator="<?php echo $conditionData['operator'];?>"
-			data-value="<?php echo $conditionData['value'];?>"
+			data-type="<?php echo hsc($conditionData['type']);?>"
+			data-element-id="<?php echo hsc($conditionData['elementId']);?>"
+			data-field="<?php echo hsc($conditionData['field']);?>"
+			data-operator="<?php echo hsc($conditionData['operator']);?>"
+			data-value="<?php echo hsc($conditionData['value']);?>"
 			>
 
 			<span class="condition-name"><?php echo hsc($conditionName);?></span>
 
 			<span class="condition-operator"><?php echo $operatorHtml;?></span>
 
-			<?php if ($isXrefCondition) { ?>
-				<span class="condition-value"><?php echo hsc($answerTitle);?></span>
+			<?php if ($conditionData['field'] == 'selectedOption.id') { ?>
+				<span class="condition-value"><?php echo hsc($outputValue);?></span>
 			<?php } else { ?>
 
 				<?php if ($forEditing) { ?>
-					<input class="input" data-data-key="value" type="text" value="<?php echo hsc($conditionValue);?>" />
+					<input class="input" data-data-key="value" type="text" value="<?php echo hsc($shouldValue);?>" />
 				<?php } else { ?>
-					<span class="condition-value"><?php echo hsc($conditionValue);?></span>
+					<span class="condition-value"><?php echo hsc($outputValue);?></span>
 				<?php } ?>
 
 			<?php } ?>
@@ -236,7 +258,7 @@ class ConfigboxConditionElementAttribute extends ConfigboxCondition {
 			$fieldPath = 'selectedOption.assignment_custom_'.$i;
 
 			$label = CbSettings::getInstance()->get('label_assignment_custom_'.$i);
-			if (trim($label) == '') {
+			if (trim((string)$label) == '') {
 				$label = KText::sprintf('Field %s', $i);
 			}
 
@@ -251,7 +273,7 @@ class ConfigboxConditionElementAttribute extends ConfigboxCondition {
 			$fieldPath = 'selectedOption.option_custom_'.$i;
 
 			$label = CbSettings::getInstance()->get('label_option_custom_'.$i);
-			if (trim($label) == '') {
+			if (trim((string)$label) == '') {
 				$label = KText::sprintf('Field %s', $i);
 			}
 

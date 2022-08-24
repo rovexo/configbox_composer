@@ -213,6 +213,13 @@ class ConfigboxControllerCart extends KenedoController {
 		// Get the position model
 		$positionModel = KenedoModel::getModel('ConfigboxModelCartposition');
 
+		// Check if the position exists
+		if ($positionModel->getPosition($positionId) == null) {
+			KenedoPlatform::p()->sendSystemMessage(KText::_('Position does not exist.'));
+			$this->setRedirect(KLink::getRoute('index.php?option=com_configbox&view=cart', false));
+			return;
+		}
+
 		// Check if the user owns this position
 		if ($positionModel->userOwnsPosition($positionId) == false) {
 			KenedoPlatform::p()->sendSystemMessage(KText::_('You cannot remove this position.'));

@@ -116,8 +116,8 @@ class KenedoPropertyTaxclassrates extends KenedoProperty {
 
 			$taxRateAlias = 'tcr_'.intval($taxClass['id']);
 
-			$response[] = $taxRateAlias.".tax_rate AS ".$selectAliasPrefix."tax_rate_".$taxRateAlias;
-			$response[] = $taxRateAlias.".tax_code AS ".$selectAliasPrefix."tax_code_".$taxRateAlias;
+			$response[] = 'ANY_VALUE('. $taxRateAlias.".tax_rate) AS ".$selectAliasPrefix."tax_rate_".$taxRateAlias;
+			$response[] = 'ANY_VALUE('. $taxRateAlias.".tax_code) AS ".$selectAliasPrefix."tax_code_".$taxRateAlias;
 
 		}
 
