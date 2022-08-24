@@ -355,8 +355,25 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
     public function getLanguageTag() {
 		$objectManager = $this->getM2ObjectManager();
 		$store = $objectManager->get('Magento\Store\Api\Data\StoreInterface');
-		$locale = str_replace('_', '-', $store->getLocaleCode());
-		return $locale;
+		$locale = $store->getLocaleCode();
+
+		if (!$locale) {
+			$store = $objectManager->get('Magento\Framework\Locale\Resolver');
+			$locale = $store->getLocale();
+		}
+
+		if (!$locale) {
+			$store = $objectManager->get('Magento\Framework\Locale\Resolver');
+			$locale = $store->getDefaultLocale();
+		}
+
+		if ($locale) {
+			$locale = str_replace('_', '-', $locale);
+			return $locale;
+		}
+		else {
+			return null;
+		}
     }
 	
 	public function getLanguageUrlCode($languageTag = NULL) {

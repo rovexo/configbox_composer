@@ -142,7 +142,9 @@ class ConfigboxUpdateHelper {
 		}
 
 		self::$latestUpdateVersion = ConfigboxSystemVars::getVar('latest_update_version');
-
+		if (!self::$latestUpdateVersion) {
+			self::$latestUpdateVersion = '0.0.0';
+		}
 
 		// Get the folder with update scripts and get all files there
 		$configboxUpdateFileFolder 	= KenedoPlatform::p()->getComponentDir('com_configbox').'/helpers/updates';
@@ -249,7 +251,7 @@ class ConfigboxUpdateHelper {
 
 		ConfigboxSystemVars::setVar('latest_update_version', '3.3.3.10');
 
-		return '3.1.0.70';
+		return '3.3.3.10';
 
 	}
 
