@@ -16,7 +16,7 @@ if (isset($optionTags['USE_TEXTAREA']) || isset($optionTags['USE_HTMLEDITOR'])) 
 				foreach ($languages as $language) {
 					$dataFieldKey = $this->propertyName.'-'.$language->tag;
 					?>
-					<label class="language-switcher <?php echo ($language->tag == KText::getLanguageTag()) ? 'active':'';?>" for="<?php echo $dataFieldKey;?>"><span><?php echo hsc($language->label);?></span></label>
+					<button class="language-switcher <?php echo ($language->tag == KText::getLanguageTag()) ? 'active':'';?>" data-target="<?php echo $dataFieldKey;?>"><?php echo hsc($language->label);?></button>
 					<?php
 				}
 				?>

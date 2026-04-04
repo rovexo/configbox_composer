@@ -4,9 +4,7 @@ class ConfigboxLocationHelper {
 
 	protected static $maxMindGeoLiteCityFilename = 'GeoLite2-City.mmdb';
 	protected static $maxMindCache = array();
-
 	protected static $isoCodeFipsMap;
-	protected static $defaultIpV4Address = '173.194.35.37';
 
 	static public function getCoordsByIp($ipAddress = NULL) {
 
@@ -151,6 +149,10 @@ class ConfigboxLocationHelper {
 	 */
 	static protected function getMaxMindLocation($ipAddress) {
 
+		if (empty($ipAddress)) {
+			return null;
+		}
+
 		if (!isset(self::$maxMindCache[$ipAddress])) {
 
 			$maxMindGeoLiteCityPathFile = KenedoPlatform::p()->getDirDataStore().'/private/maxmind/'. self::$maxMindGeoLiteCityFilename;
@@ -191,13 +193,13 @@ class ConfigboxLocationHelper {
 	 */
 	static protected function getMaxMindLocationGeoIpCity($ipAddress) {
 
-		require_once KenedoPlatform::p()->getComponentDir('com_configbox').'/external/geoip2-2.13.0/autoload.php';
-
 		$databaseFolder = KenedoPlatform::p()->getDirDataStore().'/private/maxmind';
 
 		try {
 			$databaseFile = $databaseFolder .'/'. self::$maxMindGeoLiteCityFilename;
-			if(!is_file($databaseFile)) throw new Exception('Could not find MaxMind Database file in '.$databaseFile);
+			if (!is_file($databaseFile)) {
+				throw new Exception('Could not find MaxMind Database file in '.$databaseFile);
+			}
 			$reader = new GeoIp2\Database\Reader($databaseFile);
 		}
 		catch (Exception $e) {
@@ -274,16 +276,12 @@ class ConfigboxLocationHelper {
 		else if(!empty($_SERVER['REMOTE_ADDR']))
 			$ipAddress = $_SERVER['REMOTE_ADDR'];
 		else
-			$ipAddress = self::$defaultIpV4Address;
+			return null;
 
 		// Load balancers and CDNs may put multiple IPs comma separated
 		if (strstr($ipAddress, ', ')) {
 			$addresses = explode(', ', $ipAddress);
-			$ipAddress = trim(end($addresses));
-		}
-
-		if ($ipAddress == '127.0.0.1' || $ipAddress == '::1') {
-			$ipAddress = self::$defaultIpV4Address;
+			$ipAddress = trim($addresses[0]);
 		}
 
 		return $ipAddress;

@@ -102,9 +102,16 @@ class CbSettings {
 	protected $structureddata;
 	protected $structureddata_in;
 	protected $use_ga_enhanced_ecommerce;
+	protected $use_ga_ecommerce;
 	protected $use_minified_js;
 	protected $use_minified_css;
 	protected $use_assets_cache_buster;
+	protected $ga_tracking_id;
+	protected $ga_property_id;
+	protected $geolocation_type;
+	protected $maxmind_user_id;
+	protected $add_requirejs_onload;
+	protected $lastcleanup;
 
 	/**
 	 * How tracking should work for offline payments (like bank transaction or cash on delivery)

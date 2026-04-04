@@ -7,6 +7,8 @@ class ConfigboxCartPositionData {
 	public $prod_id;
 	public $weight;
 	public $quantity;
+	public $created;
+
 	/**
 	 * @var int $finished Tells if the user actuall added the position to the cart (or if he started configuring and left it unfinished)
 	 */

@@ -82,9 +82,71 @@ class KenedoPropertyChildentries extends KenedoProperty {
             // set it to the new parent id
             $recordToCopy->{$fkPropName} = $newId;
             // and finally copy it
-            $model->copy($recordToCopy);
+			$success = $model->copy($recordToCopy);
+
+			if ($success === false) {
+				$modelErrors = $model->getErrors();
+				if (count($modelErrors)) {
+					foreach ($modelErrors as $errorMsg) {
+						$this->setError($errorMsg);
+					}
+				}
+				else {
+					$this->setError('Model '.get_class($model).' encountered an error during copying.');
+				}
+
+				return false;
+			}
+
         }
 
     }
-    
+
+	function getPropertyChildTransferItems($record) {
+
+		if ($this->getType() != 'childentries') {
+			return [];
+		}
+
+		// $recordId will be the childentries' parent record ID
+		$recordId = $record->{$this->model->getTableKey()};
+
+		// Get the child view..
+		$view = KenedoView::getView($this->getPropertyDefinition('viewClass'));
+		// ..and it's model
+		$model = $view->getDefaultModel();
+
+		// Get the filter information (this is filtering the items to show in the form)
+		$viewFilters = $this->getPropertyDefinition('viewFilters');
+
+		// Prepare the filter array for loading the child records
+		$filters = array();
+
+		// filterName is the column you filter for
+		// filterValueKey is the property in $data that has the value to search for (e.g. for gallery images it would be the product's ID)
+		foreach ($viewFilters as $viewFilter) {
+			if ($viewFilter['filterValueKey'] == 'id') {
+				$filters[$viewFilter['filterName']] = $recordId;
+			}
+			else {
+				$filters[$viewFilter['filterName']] = $record->{$viewFilter['filterValueKey']};
+			}
+		}
+
+		// This should give you all the child records to copy
+		$childRecords = $model->getRecords($filters);
+
+		$childKeyName = $model->getTableKey();
+
+		$childEntryDataItems = [];
+
+		// Loop through them..
+		foreach ($childRecords as $childRecord) {
+			$childEntryDataItems[] = $model->getExportData($childRecord->{$childKeyName});
+		}
+
+		return $childEntryDataItems;
+
+	}
+
 }

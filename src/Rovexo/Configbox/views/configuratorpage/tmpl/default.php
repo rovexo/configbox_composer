@@ -31,7 +31,7 @@ defined('CB_VALID_ENTRY') or die();
 					<p><?php echo KText::_('There are no elements on this page.');?></p>
 				</div>
 			<?php } else { ?>
-				<div class="configurator-page-questions clearfix">
+				<div class="configurator-page-questions">
 					<?php echo implode('', $this->questionsHtml); ?>
 				</div>
 			<?php } ?>

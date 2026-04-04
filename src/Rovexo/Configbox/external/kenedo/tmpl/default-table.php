@@ -5,31 +5,26 @@ defined('CB_VALID_ENTRY') or die();
  */
 ?>
 
-<?php if (!empty($this->pageTitle)) { ?>
-	<h1 class="kenedo-page-title"><?php echo hsc($this->pageTitle);?></h1>
-<?php } ?>
+<div class="kenedo-title-and-tasks">
+    <?php if (!empty($this->pageTitle)) { ?>
+        <h1 class="kenedo-page-title"><?php echo hsc($this->pageTitle);?></h1>
+    <?php } ?>
+
+    <?php echo (count($this->pageTasks)) ? KenedoViewHelper::renderTaskItems($this->pageTasks, 'list') : ''; ?>
+
+</div>
 
 <?php if ($this->contentAfterTitle) { ?>
 	<div class="kenedo-after-title"><?php echo $this->contentAfterTitle;?></div>
 <?php } ?>
 
-<div class="tasks-and-filters">
-
-	<?php echo (count($this->pageTasks)) ? KenedoViewHelper::renderTaskItems($this->pageTasks, 'list') : ''; ?>
-	
-	<?php if (isset($this->filterInputs) && count($this->filterInputs)) { ?>
-		<div class="kenedo-filters">
-			<div class="kenedo-filter-list form-inline">
-				<?php foreach ($this->filterInputs as $key=>$filterInput) { ?>
-					<div class="kenedo-filter input-group <?php echo hsc(str_replace('.', '_', $key));?>"><?php echo $filterInput;?></div>
-				<?php } ?>
-			</div>
-		</div>
-	<?php } ?>
-
-</div>
-
-<div class="clear"></div>
+<?php if (isset($this->filterInputs) && count($this->filterInputs)) { ?>
+    <div class="kenedo-filters">
+        <?php foreach ($this->filterInputs as $key=>$filterInput) { ?>
+            <div class="kenedo-filter input-group <?php echo hsc(str_replace('.', '_', $key));?>"><?php echo $filterInput;?></div>
+        <?php } ?>
+    </div>
+<?php } ?>
 
 <div class="kenedo-messages">
 

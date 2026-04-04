@@ -1138,6 +1138,11 @@ class ConfigboxUserHelper {
 				continue;
 			}
 
+			if (count($property->getDataKeysForBaseTable($info)) == 0) {
+				continue;
+			}
+
+
 			if ($property->propertyName == 'platform_user_id' || in_array($property->getType(), ['join', 'countryselect', 'countyselect', 'stateselect'])) {
 				$info->{$property->propertyName} = NULL;
 			}
@@ -1147,6 +1152,7 @@ class ConfigboxUserHelper {
 
 		}
 
+		$info->id = null;
 		$info->is_temporary = 1;
 		$info->group_id = CbSettings::getInstance()->get('default_customer_group_id');
 		$info->language_tag = KText::getLanguageTag();

@@ -38,8 +38,8 @@ defined('CB_VALID_ENTRY') or die();
 					<span class="fa fa-info-circle question-modal-icon"
 					      aria-label="<?php echo KText::_('Details');?>"
 					      role="button"
-					      data-toggle="modal"
-					      data-target="#question-description-<?php echo intval($this->question->id);?>"></span>
+					      data-bs-toggle="modal"
+					      data-bs-target="#question-description-<?php echo intval($this->question->id);?>"></span>
 					<?php echo $this->getViewOutput('question_desc_modal');?>
 				<?php } ?>
 

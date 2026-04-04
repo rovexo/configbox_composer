@@ -53,7 +53,21 @@ class KenedoPlatformStandalone implements InterfaceKenedoPlatform {
 		$connection->database 	= $platformConfig->db;
 		$connection->hostname 	= $platformConfig->host;
 		$connection->prefix 	= $platformConfig->dbprefix;
-				
+
+		$connection->port       = null;
+		$connection->socket     = null;
+
+		if (strpos($connection->hostname,':') !== false) {
+			$ex = explode(':',$connection->hostname);
+			$connection->hostname = $ex[0];
+			if (is_numeric($ex[1])) {
+				$connection->port = $ex[1];
+			}
+			else {
+				$connection->socket = $ex[1];
+			}
+		}
+
 		return $connection;
 	
 	}

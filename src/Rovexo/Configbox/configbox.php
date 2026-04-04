@@ -20,14 +20,26 @@ try {
 
 		$className = KenedoController::getControllerClass($component, $controllerName, $viewName);
 
-		if (KenedoController::controllerExists($className) == false) {
+		if (!KenedoController::controllerExists($className)) {
 			if ($controllerName) {
-				KLog::log('Controller "' . $controllerName . '" requested, but does not exist.', 'warning');
-				throw new Exception('The requested controller does not exist', 404);
+				$countryCode = ConfigboxLocationHelper::getCountryCodeByIp();
+				$ipAddress = ConfigboxLocationHelper::getClientIpV4Address();
+
+				$msg = 'Controller "' . $controllerName . '" requested, but does not exist. Request came from country code "'.$countryCode.'". IPv4 address was "'.$ipAddress.'".';
+				$msg .= "\nComplete request data was:\n".var_export($_REQUEST, true);
+				KLog::log($msg, 'warning');
+
+				throw new Exception('The requested controller does not exist.', 404);
 			}
 			if ($viewName) {
-				KLog::log('View "' . $viewName . '" requested, but does not exist.', 'warning');
-				throw new Exception('The requested view does not exist', 404);
+				$countryCode = ConfigboxLocationHelper::getCountryCodeByIp();
+				$ipAddress = ConfigboxLocationHelper::getClientIpV4Address();
+
+				$msg = 'View "' . $viewName . '" requested, but does not exist. Request came from country code "'.$countryCode.'". IPv4 address was "'.$ipAddress.'".';
+				$msg .= "\nComplete request data was:\n".var_export($_REQUEST, true);
+				KLog::log($msg, 'warning');
+
+				throw new Exception('The requested view does not exist.', 404);
 			}
 		}
 
@@ -61,6 +73,8 @@ try {
 	}
 }
 catch (Exception $e) {
-	KLog::logException($e);
+	if ($e->getCode() != '404' || strpos($e->getMessage(), 'Task not found.') !== 0) {
+		KLog::logException($e);
+	}
 	throw $e;
 }

@@ -89,7 +89,7 @@ class ConfigboxViewHelper {
 			'urlSystemAssets'   => KenedoPlatform::p()->getUrlAssets(),
 			'urlCustomAssets'   => KenedoPlatform::p()->getUrlCustomizationAssets(),
 			'urlBase'           => KenedoPlatform::p()->getUrlBase(),
-			'urlTinyMceBase'    => KenedoPlatform::p()->getUrlAssets().'/kenedo/external/tinymce-5.7.1/',
+			'urlTinyMceBase'    => KenedoPlatform::p()->getUrlAssets().'/kenedo/external/tinymce-6.8.6/',
 			'languageCode'      => KText::getLanguageCode(),
 			'languageTag'      	=> KText::getLanguageTag(),
 			'decimalSymbol'     => KText::_('DECIMAL_MARK', '.'),
@@ -113,12 +113,18 @@ class ConfigboxViewHelper {
 			$appConfig['customShims'] = cbGetCustomRequireShims();
 		}
 
+		if (KenedoPlatform::p()->isAdminArea()) {
+			$addOnload = true;
+		}
+		else {
+			$addOnload = (bool) CbSettings::getInstance()->get('add_requirejs_onload');
+		}
+
 		// Prepare JS that will add our requireJS script tag to the HTML docs head (including our settings JS)
 		$js = "
-		(function (urlRequireJs, urlMainJs, appConfig) {
+		(function (urlRequireJs, urlMainJs, appConfig, addOnload) {
 			
-			// Let any other JS load first to avoid non-AMD-style loaded JS that uses define (avoiding anon mod mismatches)
-			window.addEventListener('load', function() {
+			let fn = function() {
 				
 				// In case requireJS is already loaded by another, then just add our own main.js file
 				if (typeof(require) !== 'undefined') {
@@ -139,9 +145,17 @@ class ConfigboxViewHelper {
 					document.getElementsByTagName('head')[0].appendChild(requireJsScript);
 				}
 				
-			});
+			}
+			
+			// See setting add_requirejs_onload. Load either immediately or onload (avoiding anon mod mismatch problems)
+			if (addOnload == true) {
+				window.addEventListener('load', fn);
+			}
+			else {
+				fn();
+			}
 							
-		})('".$urlRequireJs."', '".$urlMainJs."', '".json_encode($appConfig)."');
+		})('".$urlRequireJs."', '".$urlMainJs."', '".json_encode($appConfig)."', ".json_encode($addOnload).");
 		";
 
 		return $js;

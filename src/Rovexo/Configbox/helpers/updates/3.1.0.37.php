@@ -5,7 +5,7 @@ $db = KenedoPlatform::getDb();
 
 // Changing all country/state/county/city_id/salutation fields to allow NULL and making the default NULL
 $tables = array(
-	'#__configbox_users' => array('country', 'billingcountry', 'state', 'billingstate', 'county_id', 'billingcounty_id', 'city_id', 'billingcity_id', 'salutation_id', 'billingsalutation_id'),
+	'#__configbox_users' => array('country', 'billingcountry', 'state', 'billingstate', 'county_id', 'billingcounty_id', 'city_id', 'billingcity_id', 'salutation_id', 'billingsalutation_id', 'platform_user_id'),
 	'#__cbcheckout_order_users' => array('country', 'billingcountry', 'state', 'billingstate', 'county_id', 'billingcounty_id', 'city_id', 'billingcity_id', 'salutation_id', 'billingsalutation_id'),
 );
 

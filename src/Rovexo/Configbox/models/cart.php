@@ -538,32 +538,37 @@ class ConfigboxModelCart extends KenedoModelLight {
 		$db->setQuery($query);
 		$orderRecordData = $db->loadAssoc();
 
-		// Get possible delivery methods for the cart contents
-		$deliveryOptions = KenedoObserver::triggerEvent('onConfigboxGetDeliveryOptions', array($cartDetails->id, $cartDetails->userInfo, $cartDetails->weight, array()), true);
+		if (CbSettings::getInstance()->get('disable_delivery') == 0) {
+			// Get possible delivery methods for the cart contents
+			$deliveryOptions = KenedoObserver::triggerEvent('onConfigboxGetDeliveryOptions', array($cartDetails->id, $cartDetails->userInfo, $cartDetails->weight, array()), true);
 
-		// If preferredDeliveryId is set, prepare the right one to be the chosen one
-		if (!empty($cartDetails->preferredDeliveryId)) {
-			foreach ($deliveryOptions as $deliveryOption) {
-				if ($cartDetails->preferredDeliveryId == $deliveryOption->id) {
-					$cartDetails->delivery = $deliveryOption;
-					break;
+			// If preferredDeliveryId is set, prepare the right one to be the chosen one
+			if (!empty($cartDetails->preferredDeliveryId)) {
+				foreach ($deliveryOptions as $deliveryOption) {
+					if ($cartDetails->preferredDeliveryId == $deliveryOption->id) {
+						$cartDetails->delivery = $deliveryOption;
+						break;
+					}
 				}
 			}
-		}
-		elseif (!empty($orderRecordData['delivery_id'])) {
-			foreach ($deliveryOptions as $deliveryOption) {
-				if ($orderRecordData['delivery_id'] == $deliveryOption->id) {
-					$cartDetails->delivery = $deliveryOption;
-					break;
+			elseif (!empty($orderRecordData['delivery_id'])) {
+				foreach ($deliveryOptions as $deliveryOption) {
+					if ($orderRecordData['delivery_id'] == $deliveryOption->id) {
+						$cartDetails->delivery = $deliveryOption;
+						break;
+					}
 				}
 			}
+
+			// If preferred delivery id was no option, then go for the first one (which is the cheapest since the array items
+			// are sorted by price)
+			if (empty($cartDetails->delivery) && !empty($deliveryOptions[0])) {
+				$cartDetails->delivery = $deliveryOptions[0];
+			}
+
 		}
 
-		// If preferred delivery id was no option, then go for the first one (which is the cheapest since the array items
-		// are sorted by price)
-		if (empty($cartDetails->delivery) && !empty($deliveryOptions[0])) {
-			$cartDetails->delivery = $deliveryOptions[0];
-		}
+
 
 		// Now for payment method
 

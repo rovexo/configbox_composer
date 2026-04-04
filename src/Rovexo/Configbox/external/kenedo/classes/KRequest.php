@@ -90,6 +90,9 @@ class KRequest {
 
 			case 'string':
 				$sanitized = htmlspecialchars($value, ENT_NOQUOTES);
+				$sanitized = str_replace('&amp;', '&', $sanitized);
+				$sanitized = str_replace('&lt;', '<', $sanitized);
+				$sanitized = str_replace('&gt;', '>', $sanitized);
 				break;
 
 			case 'html':
@@ -173,8 +176,6 @@ class KRequest {
 		}
 
 		if (!self::$purifierConfig) {
-
-			require_once (dirname(__FILE__).'/../external/htmlpurifier/HTMLPurifier.auto.php');
 
 			$config = HTMLPurifier_Config::createDefault();
 			$config->set('Cache.SerializerPath', KenedoPlatform::p()->getDirDataStore().'/private/htmlpurifier/');

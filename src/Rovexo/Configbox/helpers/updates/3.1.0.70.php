@@ -112,7 +112,7 @@ foreach ($fks as $fk) {
 // Get all TINY, SMALL AND MEDIUMINTs
 $query = "
 SELECT * FROM information_schema.COLUMNS 
-WHERE TABLE_SCHEMA=DATABASE() and DATA_TYPE IN('TINYINT', 'SMALLINT', 'MEDIUMINT') and (TABLE_NAME LIKE '%configbox%' OR TABLE_NAME LIKE '%cbcheckout%')
+WHERE TABLE_SCHEMA=DATABASE() and DATA_TYPE IN('TINYINT', 'SMALLINT', 'MEDIUMINT', 'tinyint', 'smallint', 'mediumint') and (TABLE_NAME LIKE '%configbox%' OR TABLE_NAME LIKE '%cbcheckout%')
 ";
 $db->setQuery($query);
 $cols = $db->loadObjectList();

@@ -221,7 +221,7 @@ class KenedoHtml {
 		// Make attribute pairs as strings..
 		$attributeStrings = array();
 		foreach ($attributes as $key=>$value) {
-			$attributeStrings[] = hsc(trim((string)$key)) . ' = "'.hsc(trim((string)$value)).'"';
+			$attributeStrings[] = hsc(trim((string)$key)) . '="'.hsc(trim((string)$value)).'"';
 		}
 		// .. then make one long string with all.
 		$attributeString = implode(' ', $attributeStrings);

@@ -3223,7 +3223,7 @@ if (!is_dir($maxMindGeoIpFolder)) {
 
 $maxMindGeoIpFolderInfoFile = KenedoPlatform::p()->getComponentDir('com_configbox').'/data/maxmind_geoip/readme.txt';
 if (!is_file($maxMindGeoIpFolderInfoFile)) {
-	$text = 'Copy the uncompressed MaxMind binary database files in this folder. Filename for GeoIp City is "GeoIpCity.dat", for GeoLite City is "GeoLiteCity.dat"';
+	$text = 'Copy the uncompressed MaxMind binary database files in this folder. Filename for GeoIp City is "GeoLite2-City.mmdb".';
 	file_put_contents($maxMindGeoIpFolderInfoFile,$text);
 }
 

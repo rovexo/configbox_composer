@@ -148,7 +148,7 @@ defined('CB_VALID_ENTRY') or die();
 
 			<div class="<?php echo $this->fieldCssClasses['newsletter'];?>">
 				<div class="form-field">
-					<label><?php echo KText::_('Newsletter');?></label>
+					<label for="newsletter-yes"><?php echo KText::_('Newsletter');?></label>
 					<input type="radio" <?php echo ($this->customerData->newsletter == 1)? 'checked="checked"':'';?> id="newsletter-yes" name="newsletter" value="1" />
 					<label class="radio-button-label" for="newsletter-yes"><?php echo KText::_('CBYES');?></label>
 					<input type="radio" <?php echo ($this->customerData->newsletter != 1)? 'checked="checked"':'';?> id="newsletter-no" name="newsletter" value="0" />
@@ -166,11 +166,12 @@ defined('CB_VALID_ENTRY') or die();
 							   aria-label="<?php echo KText::_('Details');?>"
 							   role="button"
 							   tabindex="0"
-							   data-toggle="popover"
-							   data-trigger="hover"
-							   data-placement="top"
-							   data-html="true"
-							   data-content="<?php echo KText::_('TOOLTIP_TEXT_CUSTOMER_FORM_REGISTER');?>"></a>
+                               data-bs-transition="false"
+							   data-bs-toggle="popover"
+							   data-bs-trigger="focus"
+							   data-bs-placement="top"
+							   data-bs-html="true"
+							   data-bs-content="<?php echo KText::_('TOOLTIP_TEXT_CUSTOMER_FORM_REGISTER');?>"></a>
 						</label>
 						<input type="radio" checked="checked" id="register-yes" name="register" value="1" />
 						<label class="radio-button-label" for="register-yes"><?php echo KText::_('CBYES');?></label>

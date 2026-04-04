@@ -12,8 +12,10 @@ defined('CB_VALID_ENTRY') or die();
 class ConfigboxModelAdminoptionassignments extends KenedoModel {
 
 	function getPropertyDefinitions() {
-		$xrefsModel = KenedoModel::getModel('ConfigboxModelAdminxrefelementoptions');
-		return $xrefsModel->getPropertyDefinitions();
+		$xrefsModel = KenedoModel::getModel(ConfigboxModelAdminxrefelementoptions::class);
+		$regular = $xrefsModel->getPropertyDefinitions();
+		$custom = $xrefsModel->getCustomPropertyDefinitions();
+		return array_merge($regular, $custom);
 	}
 
 	function getTableName() {
@@ -53,6 +55,21 @@ class ConfigboxModelAdminoptionassignments extends KenedoModel {
 		$data['option']->id = $data['xref']->option_id;
 
 		return $data;
+	}
+
+	function getExportData(int $id) {
+
+		$record = $this->getRecord($id);
+
+		$optionsModel = KenedoModel::getModel('ConfigboxModelAdminoptions');
+		$optionExportData = $optionsModel->getExportData($record->option_id);
+
+		$xrefsModel = KenedoModel::getModel('ConfigboxModelAdminxrefelementoptions');
+		$xrefExportData = $xrefsModel->getExportData($id);
+
+		$optionExportData->childRecords[] = $xrefExportData;
+		return $optionExportData;
+
 	}
 
 	function isInsert($data) {

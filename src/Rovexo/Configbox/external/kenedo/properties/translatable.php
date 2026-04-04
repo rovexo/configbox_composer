@@ -10,7 +10,18 @@ class KenedoPropertyTranslatable extends KenedoProperty {
 			$this->cssClasses[] = 'using-editors';
 		}
 	}
-	
+
+	function getDataFromTransferRecord(&$data, $transferRecord, $propertyFilePaths, $filesBaseDir) {
+
+		$languages = KenedoLanguageHelper::getActiveLanguages();
+
+		foreach ($languages as $language) {
+			$key = $this->propertyName .'-'.$language->tag;
+			$data->$key = $transferRecord[$key] ?? null;
+		}
+
+	}
+
 	function getDataFromRequest( &$data ) {
 		
 		$languages = KenedoLanguageHelper::getActiveLanguages();

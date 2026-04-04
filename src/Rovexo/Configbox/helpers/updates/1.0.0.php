@@ -1,6 +1,6 @@
 <?php
 defined('CB_VALID_ENTRY') or die();
-
+$db = KenedoPlatform::getDb();
 if (ConfigboxUpdateHelper::tableExists('#__configbox_strings') == false) {
 	$query = "
 	CREATE TABLE `#__configbox_strings` (

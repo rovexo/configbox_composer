@@ -89,5 +89,14 @@ class ConfigboxViewEmailtemplate extends KenedoView {
 		}
 		
 	}
+
+	/**
+	 * @param string $emailContent
+	 * @return $this
+	 */
+	function setEmailContent($emailContent) {
+		$this->emailContent = $emailContent;
+		return $this;
+	}
 	
 }

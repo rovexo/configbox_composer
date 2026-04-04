@@ -3,23 +3,6 @@ defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyShapedivermodel extends KenedoProperty {
 
-	/**
-	 * Should make the Shapediver JSON data into nice array or similar
-	 * @param object $data
-	 */
-	function appendDataForGetRecord( &$data ) {
-
-	}
-
-	/**
-	 * @see KenedoPropertyShapedivermodel::appendDataForGetRecord()
-	 *
-	 * @param object $data
-	 */
-	public function appendDataForPostCaching(&$data) {
-		$this->appendDataForGetRecord($data);
-	}
-
 	function getDataFromRequest(&$data) {
 		$data->{$this->propertyName} = KRequest::getVar($this->propertyName, '');
 	}

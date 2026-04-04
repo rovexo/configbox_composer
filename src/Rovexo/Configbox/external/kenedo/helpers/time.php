@@ -126,7 +126,7 @@ class KenedoTimeHelper {
 	 * @param string $format
 	 * @return string
 	 */
-	public static function getFormattedOnly($timeString = 'NOW', $format = '') {
+	public static function getFormattedOnly($timeString = 'now', $format = '') {
 
 		// Set the output time zone if wasn't set already
 		if (!self::$outputTimeZone) {

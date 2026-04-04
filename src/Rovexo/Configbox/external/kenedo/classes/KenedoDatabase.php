@@ -45,24 +45,12 @@ class KenedoDatabase {
 		$connectionData = KenedoPlatform::p()->getDbConnectionData();
 
 		$this->hostname = $connectionData->hostname;
+		$this->port     = $connectionData->port;
+		$this->socket   = $connectionData->socket;
 		$this->username = $connectionData->username;
 		$this->password = $connectionData->password;
 		$this->database = $connectionData->database;
 		$this->prefix 	= $connectionData->prefix;
-
-		$this->port = 3306;
-		$this->socket = NULL;
-
-		if (strpos($this->hostname,':') !== false) {
-			$ex = explode(':',$this->hostname);
-			$this->hostname = $ex[0];
-			if (is_numeric($ex[1])) {
-				$this->port = $ex[1];
-			}
-			else {
-				$this->socket = $ex[1];
-			}
-		}
 
 		$this->link = mysqli_connect( $this->hostname, $this->username, $this->password, $this->database, $this->port, $this->socket );
 
@@ -76,12 +64,38 @@ class KenedoDatabase {
 		// Setting standard SQL modes For development
 		//$query = "SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';";
 
-		// Remove all SQL modes
-		$query = "SET SESSION sql_mode = '';";
-		$this->setQuery($query);
-		$this->query();
+		$isolationVar = NULL;
+		$result = $this->link->query("SHOW VARIABLES LIKE 'tx_isolation'");
+		if ($result && $result->num_rows > 0) {
+			$isolationVar = 'tx_isolation';
+		}
+		else {
+			$result = $this->link->query("SHOW VARIABLES LIKE 'transaction_isolation'");
+			if ($result && $result->num_rows > 0) {
+				$isolationVar = 'transaction_isolation';
+			}
+		}
+
+		$this->link->query("SET SESSION $isolationVar = 'REPEATABLE-READ', sql_mode = '', group_concat_max_len = 20000");
 
 		mysqli_set_charset($this->link, "utf8");
+
+		// Custom init queries
+		try {
+			$path = KenedoPlatform::p()->getDirCustomization() .'/system_overrides/getInitQueries.php';
+			if (is_file($path)) {
+				include_once($path);
+			}
+			if (function_exists('getPostDbConnectQueries')) {
+				$queries = getPostDbConnectQueries();
+				foreach ($queries as $query) {
+					$this->link->query($query);
+				}
+			}
+		}
+		catch (Throwable $e) {
+			KLog::logException($e);
+		}
 
 		return true;
 
@@ -287,9 +301,7 @@ class KenedoDatabase {
 
 		$start = microtime(true);
 
-		if (!($res = $this->query())) {
-			return null;
-		}
+		$res = $this->query();
 
 		$ret = null;
 		if ($row = mysqli_fetch_row( $res )) {
@@ -303,7 +315,7 @@ class KenedoDatabase {
 	}
 
 	/**
-	 * @return null|string
+	 * @return int
 	 */
 	public function getCount() {
 
@@ -327,15 +339,13 @@ class KenedoDatabase {
 	 * You can omit both params, then you get a flat array with the first field coming out of the query
 	 * @param string $indexField The column for writing the list's array keys. No key field gets you a numeric array.
 	 * @param string $valueField The column for the list's values. No value field gets you the first column.
-	 * @return null|string[]|int[]|float[]
+	 * @return string[]|int[]|float[]
 	 */
 	public function loadResultList($indexField = NULL, $valueField = NULL) {
 
 		$start = microtime(true);
 
-		if (!($res = $this->query())) {
-			return null;
-		}
+		$res = $this->query();
 		$array = array();
 
 		if (!empty($indexField)) {
@@ -364,15 +374,13 @@ class KenedoDatabase {
 	}
 
 	/**
-	 * @return null|string[]
+	 * @return string[]
 	 */
 	public function loadAssoc() {
 
 		$start = microtime(true);
 
-		if (!($res = $this->query())) {
-			return null;
-		}
+		$res = $this->query();
 		$ret = null;
 
 		if ($array = mysqli_fetch_assoc( $res )) {
@@ -386,15 +394,13 @@ class KenedoDatabase {
 
 	/**
 	 * @param string $indexField The column for writing the list's array keys. No key field gets you a numeric array.
-	 * @return null|string[][]
+	 * @return string[][]
 	 */
 	public function loadAssocList($indexField = '') {
 
 		$start = microtime(true);
 
-		if (!($res = $this->query())) {
-			return null;
-		}
+		$res = $this->query();
 		$array = array();
 
 		while ($row = mysqli_fetch_assoc( $res )) {
@@ -411,18 +417,17 @@ class KenedoDatabase {
 	}
 
 	/**
-	 * @return null|object
+	 * @param class-string $class
+	 * @return object
 	 */
-	public function loadObject() {
+	public function loadObject($class = 'KenedoObject') {
 
 		$start = microtime(true);
 
-		if (!($res = $this->query())) {
-			return null;
-		}
+		$res = $this->query();
 		$ret = null;
 
-		if ($object = mysqli_fetch_object( $res, 'KenedoObject' )) {
+		if ($object = mysqli_fetch_object( $res, $class )) {
 			$ret = $object;
 		}
 		mysqli_free_result( $res );
@@ -433,18 +438,17 @@ class KenedoDatabase {
 
 	/**
 	 * @param string $indexField The column for writing the list's array keys. No key field gets you a numeric array.
-	 * @return null|object[]
+	 * @param class-string $class Defaults to KenedoObject
+	 * @return object[]
 	 */
-	public function loadObjectList($indexField = '') {
+	public function loadObjectList($indexField = '', $class = 'KenedoObject') {
 
 		$start = microtime(true);
 
-		if (!($res = $this->query())) {
-			return null;
-		}
+		$res = $this->query();
 		$array = array();
 
-		while ($row = mysqli_fetch_object( $res , 'KenedoObject')) {
+		while ($row = mysqli_fetch_object( $res , $class)) {
 			if ($indexField) {
 				$array[$row->$indexField] = $row;
 			} else {
@@ -458,7 +462,7 @@ class KenedoDatabase {
 	}
 
 	/**
-	 * @return null|string[]
+	 * @return string[]
 	 */
 	public function loadRow() {
 
@@ -480,7 +484,7 @@ class KenedoDatabase {
 
 	/**
 	 * @param string $indexField The column for writing the list's array keys. No key field gets you a numeric array.
-	 * @return null|string[]
+	 * @return string[]
 	 */
 	public function loadRowList($indexField = '') {
 
@@ -488,9 +492,8 @@ class KenedoDatabase {
 
 		if ($indexField == '') $indexField = NULL;
 
-		if (!($res = $this->query())) {
-			return null;
-		}
+		$res = $this->query();
+
 		$array = array();
 
 		while ($row = mysqli_fetch_row( $res )) {
@@ -580,6 +583,74 @@ class KenedoDatabase {
 		}
 
 		return true;
+
+	}
+
+	/**
+	 * @param string $table Using #__ as prefix placeholder
+	 * @param object[] $objects Objects can't have properties that don't match table columns
+	 * @param string $keyName Primary key of the table (optional)
+	 * @param int|null $batchSize Number of objects to store at once (optional)
+	 * @return void
+	 * @throws Exception
+	 */
+	public function insertObjects($table, &$objects, $keyName = NULL, $batchSize = NULL) {
+
+		$columns = [];
+
+		// Get the columns
+		foreach ($objects as $object) {
+			foreach ($object as $col=>$value) {
+				if (!isset($columns[$col])) {
+					$columns[$col] = $this->getQuoted($col);
+				}
+			}
+		}
+		unset($object);
+
+		if ($keyName and !in_array($keyName, $columns)) {
+			$columns[$keyName] = $this->getQuoted($keyName);
+		}
+
+		$inserts = [];
+
+		$colDef = '('.implode(',', $columns).')';
+
+		foreach ($objects as $object) {
+			$values = [];
+			foreach ($columns as $column=>$columnQuoted) {
+				if (isset($object->{$column})) {
+					$value = "'".$this->getEscaped($object->{$column})."'";
+				}
+				else {
+					$value = 'NULL';
+				}
+				$values[] = $value;
+			}
+
+			$inserts[] = '('.implode(',', $values).')';
+
+		}
+
+		if ($batchSize) {
+			$insertBatches = array_chunk($inserts, $batchSize);
+		}
+		else {
+			$insertBatches = [$inserts];
+		}
+
+		foreach ($insertBatches as $insertBatch) {
+
+			$query = "
+			INSERT INTO `$table`
+			$colDef
+			VALUES 
+			".implode(",\n", $insertBatch)."
+			";
+			$this->setQuery($query);
+			$this->query();
+
+		}
 
 	}
 

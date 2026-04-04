@@ -15,8 +15,16 @@ class KenedoPropertyId extends KenedoProperty {
 	function getCellContentInListingTable($record) {
 		ob_start();
 		?>
-		<input type="checkbox" name="cid[]" class="kenedo-item-checkbox" value="<?php echo intval($record->{$this->propertyName});?>" />
-		<span><?php echo intval($record->{$this->propertyName}); ?></span>
+        <input type="checkbox" name="cid[]" class="kenedo-item-checkbox" value="<?php echo intval($record->{$this->propertyName});?>" />
+        <span>
+            <?php
+			$content = intval($record->{$this->propertyName});
+			if ($this->getPropertyDefinition('makeEditLink')) {
+				$content = $this->wrapWithEditLink($content, $record);
+			}
+			echo $content;
+			?>
+        </span>
 		<?php
 		return ob_get_clean();
 	}

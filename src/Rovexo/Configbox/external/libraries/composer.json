@@ -1,0 +1,19 @@
+{
+    "require": {
+        "intervention/image": "^3.9",
+        "phpoffice/phpspreadsheet": "~1.0",
+        "geoip2/geoip2": "^2.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "metasyntactical/composer-plugin-license-check": true
+        }
+    },
+    "extra": {
+        "metasyntactical/composer-plugin-license-check": {
+            "allow-list": ["OSL-3.0", "MIT", "Apache-2.0", "BSD-3-Clause", "BSD-2-Clause", "LGPL-2.1", "LGPL-3.0", "LGPL-2.1-or-later"],
+            "deny-list": [],
+            "allowed-packages": {}
+        }
+    }
+}

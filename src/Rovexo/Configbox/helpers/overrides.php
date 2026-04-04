@@ -10,17 +10,27 @@ class ConfigboxOverridesHelper {
 		$files = (is_dir($folder)) ? KenedoFileHelper::getFiles( $folder, '.php$', false, true) : array();
 
 		if (count($files)) {
-			$settingDisplayErrors = ini_set('display_errors',1);
+			usort($files, function($a, $b) {
+				// Bring strings starting with underscore first
+				if ($a[0] === '_' && $b[0] !== '_') return -1;
+				if ($b[0] === '_' && $a[0] !== '_') return 1;
+				return strcasecmp($a, $b); // case-insensitive sort otherwise
+			});
 			foreach ($files as $file) {
 				require_once($file);
 			}
-			ini_set('display_errors',$settingDisplayErrors);
 		}
 
 		$folder = KenedoPlatform::p()->getDirCustomization() .'/system_overrides';
 		$files = (is_dir($folder)) ? KenedoFileHelper::getFiles( $folder, '.php$', false, true) : array();
 
 		if (count($files)) {
+			usort($files, function($a, $b) {
+				// Bring strings starting with underscore first
+				if ($a[0] === '_' && $b[0] !== '_') return -1;
+				if ($b[0] === '_' && $a[0] !== '_') return 1;
+				return strcasecmp($a, $b); // case-insensitive sort otherwise
+			});
 			$settingDisplayErrors = ini_set('display_errors',1);
 			foreach ($files as $file) {
 				require_once($file);

@@ -151,8 +151,12 @@ class ConfigboxViewBlockpricing extends KenedoView {
 	 * @var string $addToCartLink URL for adding the product to the cart
 	 */
 	public $addToCartLink;
+    public string $pricePerItemTaxKey;
+    public string $totalTaxKey;
+    public string $taxRateKey;
+    public string $totalKey;
 
-	/**
+    /**
 	 * @return NULL
 	 */
 	function getDefaultModel() {

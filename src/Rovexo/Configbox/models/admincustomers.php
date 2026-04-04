@@ -528,6 +528,11 @@ class ConfigboxModelAdmincustomers extends KenedoModel {
 			$properties[$fieldName]->getDataFromRequest($data);
 		}
 
+		$customPropDefs = $this->getCustomPropertyDefinitions();
+		foreach ($customPropDefs as $fieldName=>$customPropDef) {
+			$properties[$fieldName]->getDataFromRequest($data);
+		}
+
 		$properties['custom_1']->getDataFromRequest($data);
 		$properties['custom_2']->getDataFromRequest($data);
 		$properties['custom_3']->getDataFromRequest($data);
@@ -598,6 +603,8 @@ class ConfigboxModelAdmincustomers extends KenedoModel {
 
 		// Remove the flag to make the customer non-temporary
 		$data->is_temporary = 0;
+
+		parent::prepareForStorage($data);
 
 		return true;
 

@@ -12,7 +12,7 @@ if (interface_exists('\Joomla\CMS\Component\Router\RouterInterface')) {
 		}
 
 		public function preprocess($query) {
-			// Since J4 one has to set the Itemid during preprocessing for getting menu item paths sorted
+			// In Joomla 4, the Itemid isn't there in build, so we gotta add it for our building to work
 			$copy = $query;
 			ConfigboxBuildRoute($copy);
 			if (!empty($copy['Itemid'])) {
@@ -338,10 +338,13 @@ function ConfigboxParseRoute(&$segments) {
 		// Here is our default for any other view (including custom views)
 		default:
 
+			$segmentsToRemove = [];
+
 			foreach ($segmentMatching as $segmentNumber => $queryParameterName) {
 
 				// A parameter name can be empty, which means the segment value can be ignored
 				if (empty($queryParameterName)) {
+					$segmentsToRemove[] = $segmentNumber;
 					continue;
 				}
 
@@ -363,18 +366,12 @@ function ConfigboxParseRoute(&$segments) {
 
 			}
 
+			foreach ($segmentsToRemove as $segmentNumber) {
+				unset($segments[$segmentNumber]);
+			}
+
 			break;
 
-	}
-
-	// Deal with the module assignment trick
-	if ($viewName == 'configuratorpage') {
-		$id = KenedoRouterHelper::getFakedConfigurationItemId($vars['prod_id'],$vars['page_id']);
-		if ($id) {
-			/** @noinspection PhpDeprecationInspection */
-			JRequest::setVar('Itemid',$id);
-			KRequest::setVar('Itemid',$id);
-		}
 	}
 
 	// Last but not least, add the view name

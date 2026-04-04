@@ -97,8 +97,6 @@ class ConfigboxControllerConfiguratorpage extends KenedoController {
 		KLog::start('01 prepare');
 
 		// Set input variables
-
-		// The element that gets a new selection
 		$questionId = KRequest::getInt('questionId', false);
 		$selection = KRequest::getString('selection', false);
 		$pageId = KRequest::getInt('pageId', 0);

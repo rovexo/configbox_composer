@@ -681,6 +681,90 @@ class KenedoModel {
 
 	}
 
+
+	function getDataFromTransferRecord($transferRecord, $propertyFilePaths, $filesBaseDir) {
+
+		$data = new stdClass();
+
+		$properties = $this->getProperties();
+
+		foreach ($properties as $property) {
+			$property->getDataFromTransferRecord($data, $transferRecord, $propertyFilePaths, $filesBaseDir);
+		}
+
+		return $data;
+
+	}
+
+	function getExportData(int $id) {
+
+		$exportData = new stdClass();
+
+		$record = $this->getRecord($id);
+		$exportData->modelName = get_class($this);
+		$exportData->record = $record;
+
+		// Get child records
+		$childModelName = $this->getChildModel();
+
+		if ($childModelName) {
+
+			// Get the child model and foreign key property name
+			$childModel = KenedoModel::getModel($childModelName);
+			$fkPropName = $this->getChildModelForeignKey();
+			$childModelKey = $childModel->getTableKey();
+
+			// Make sure the foreign key property name is set in child model
+			if (empty($fkPropName)) {
+				throw new Exception('Copying child model data for model '.get_class($this). ' failed due to a model misconfiguration. It has a child model class "'.$childModelName.'", but no child model foreign key. Check method getChildModelForeignKey');
+			}
+
+			// Make sure the foreign key property exists child model
+			$childProperties = $childModel->getProperties();
+			if (!isset($childProperties[$fkPropName])) {
+				throw new Exception('Copying child model data for model '.get_class($this). ' failed due to a model misconfiguration. child model foreign key "'.$fkPropName.'" does not exist. Available property names are "'.implode(',', array_keys($childProperties)).'" Check method getChildModelForeignKey');
+			}
+
+			// We are about to search for child records using the child model's getRecords method. We prepare the filter name of the child model's fk property
+			$fkProperty = $childProperties[$fkPropName];
+			$filterName = $fkProperty->getFilterName();
+			if (is_array($filterName)) {
+				$filterName = $filterName[0];
+			}
+
+			// Now we get the child records
+			$childRecords = $childModel->getRecords(array($filterName => $id));
+
+			foreach ($childRecords as $childRecord) {
+				$exportData->childRecords[] = $childModel->getExportData($childRecord->{$childModelKey});
+			}
+
+		}
+
+		$properties = $this->getProperties();
+
+		$exportData->propertyChildEntries = [];
+		$exportData->propertyFilePaths = [];
+
+		foreach ($properties as $property) {
+
+			$propertyChildEntries = $property->getPropertyChildTransferItems($record);
+
+			if (!empty($propertyChildEntries)) {
+				$exportData->propertyChildEntries[$property->propertyName] = $propertyChildEntries;
+			}
+
+			$propertyFiles = $property->getPropertyFilePaths($record);
+			if (!empty($propertyFiles)) {
+				$exportData->propertyFilePaths[$property->propertyName] = $propertyFiles;
+			}
+
+		}
+
+		return $exportData;
+
+	}
+
 	/**
 	 * Remove memo-cache entries of records for the given id (removes all memoizations of getRecords)
 	 * @see getRecord, getRecords

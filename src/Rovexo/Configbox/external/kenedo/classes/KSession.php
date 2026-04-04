@@ -151,6 +151,9 @@ class KSession {
 
 		// Get or create the session id
 		if (!empty($_COOKIE[self::$sessionName])) {
+			if (self::$sessionId == '1') {
+				throw new Exception('Session ID is invalid. Please delete the session cookie and try again.', 1);
+			}
 			self::$sessionId = $_COOKIE[self::$sessionName];
 		}
 		else {

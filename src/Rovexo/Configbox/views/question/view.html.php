@@ -186,19 +186,17 @@ class ConfigboxViewQuestion extends KenedoView {
 			ConfigboxViewHelper::processRelativeUrls($question->description);
 		}
 
-		// Set pre-loading and delayed loading classes and attributes
+		// Set preloading and delayed loading classes and attributes
 		if ($question->el_image) {
 
-			if ($question->applies == false && $question->display_while_disabled == 'hide') {
+			if (!$question->applies && $question->display_while_disabled == 'hide') {
 				$question->elementImageCssClasses = 'question-decoration preload-image';
 				$question->elementImagePreloadAttributes = ' data-src="'.$question->el_image_href.'"';
-				$question->elementImageSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII=';
 
 			}
 			else {
 				$question->elementImageCssClasses = 'question-decoration';
 				$question->elementImagePreloadAttributes = '';
-				$question->elementImageSrc = ($question->el_image) ? $question->el_image_href : '';
 			}
 
 		}
@@ -218,6 +216,7 @@ class ConfigboxViewQuestion extends KenedoView {
 		foreach ($question->answers as $answer) {
 
 			$answer->cssId = 'answer-'.$answer->id;
+			$answer->disableControl = false;
 
 			$answer->applies = $question->applies && $answer->applies();
 
@@ -229,10 +228,8 @@ class ConfigboxViewQuestion extends KenedoView {
 			$answer->showAvailibilityInfo = ($answer->available == 0);
 			$answer->availibility_date = (!empty($answer->availibility_date) && $answer->availibility_date != '0000 00:00:00') ? KText::sprintf('Available on %s', $answer->availibility_date) : KText::_('Not available');
 
-			$answer->showToolTip = !empty($answer->description);
-
 			// Disable answer if question or answer does not apply
-			if ($question->applies == false || $answer->applies == false) {
+			if (!$question->applies || !$answer->applies) {
 				$answer->disableControl = true;
 			}
 

@@ -5,63 +5,57 @@ defined('CB_VALID_ENTRY') or die();
 <div <?php echo $this->getViewAttributes();?>>
 <div class="kenedo-listing-form" data-view="<?php echo hsc($this->view);?>">
 
-	<?php if (!empty($this->pageTitle)) { ?>
-		<h1 class="kenedo-page-title"><?php echo hsc($this->pageTitle);?></h1>
-	<?php } ?>
-	<?php echo (count($this->pageTasks)) ? KenedoViewHelper::renderTaskItems($this->pageTasks, 'list') : ''; ?>
-	
-	<div class="tasks-and-filters">
+    <div class="kenedo-title-and-tasks">
+        <?php if (!empty($this->pageTitle)) { ?>
+            <h1 class="kenedo-page-title"><?php echo hsc($this->pageTitle);?></h1>
+        <?php } ?>
 
-		<div class="kenedo-filters">
-			<div class="kenedo-filter-list form-inline">
-				<div class="kenedo-filter input-group"><input class="listing-filter form-control"
-				                                              placeholder="<?php echo KText::_('Search for Customer');?>"
-				                                              type="text"
-				                                              value="<?php echo hsc($this->filters['filter_nameorder']);?>"
-				                                              name="filter_nameorder"
-				                                              id="filter_nameorder" />
+        <?php echo (count($this->pageTasks)) ? KenedoViewHelper::renderTaskItems($this->pageTasks, 'list') : ''; ?>
 
-					<a class="kenedo-search input-group-append">
-						<span class="input-group-text"><?php echo KText::_('Search');?></span>
-					</a>
-				</div>
+    </div>
 
-				<div class="kenedo-filter input-group"><input class="listing-filter form-control datepicker"
-				                                              placeholder="<?php echo KText::_('Date from');?>"
-				                                              type="text"
-				                                              value="<?php echo hsc($this->filters['filter_startdate']);?>"
-				                                              name="filter_startdate"
-				                                              id="filter_startdate" />
+    <?php if ($this->contentAfterTitle) { ?>
+        <div class="kenedo-after-title"><?php echo $this->contentAfterTitle;?></div>
+    <?php } ?>
 
-					<a class="kenedo-search input-group-append">
-						<span class="input-group-text"><?php echo KText::_('Search');?></span>
-					</a>
-				</div>
 
-				<div class="kenedo-filter input-group"><input class="listing-filter form-control datepicker"
-				                                              placeholder="<?php echo KText::_('Date until');?>"
-				                                              type="text"
-				                                              value="<?php echo hsc($this->filters['filter_enddate']);?>"
-				                                              name="filter_enddate"
-				                                              id="filter_enddate" />
+    <div class="kenedo-filters">
+        <div class="kenedo-filter input-group"><input class="listing-filter form-control"
+                                                      placeholder="<?php echo KText::_('Search for Customer');?>"
+                                                      type="text"
+                                                      value="<?php echo hsc($this->filters['filter_nameorder']);?>"
+                                                      name="filter_nameorder"
+                                                      id="filter_nameorder" />
 
-					<a class="kenedo-search input-group-append">
-						<span class="input-group-text"><?php echo KText::_('Search');?></span>
-					</a>
-				</div>
+            <button class="kenedo-search btn btn-light"><?php echo KText::_('Filter');?></button>
+        </div>
 
-				<div class="kenedo-filter input-group">
-					<?php echo $this->statusDropdown;?>
-				</div>
+        <div class="kenedo-filter input-group"><input class="listing-filter form-control datepicker"
+                                                      placeholder="<?php echo KText::_('Date from');?>"
+                                                      type="text"
+                                                      value="<?php echo hsc($this->filters['filter_startdate']);?>"
+                                                      name="filter_startdate"
+                                                      id="filter_startdate" />
 
-			</div>
-		</div>
+            <button class="kenedo-search btn btn-light"><?php echo KText::_('Filter');?></button>
+        </div>
 
-		
-		
-	</div>
-	
-	<div class="clear"></div>
+        <div class="kenedo-filter input-group"><input class="listing-filter form-control datepicker"
+                                                      placeholder="<?php echo KText::_('Date until');?>"
+                                                      type="text"
+                                                      value="<?php echo hsc($this->filters['filter_enddate']);?>"
+                                                      name="filter_enddate"
+                                                      id="filter_enddate" />
+
+            <button class="kenedo-search btn btn-light"><?php echo KText::_('Filter');?></button>
+        </div>
+
+        <div class="kenedo-filter input-group">
+            <?php echo $this->statusDropdown;?>
+        </div>
+
+    </div>
+
 
 	<div class="kenedo-messages">
 		<div class="kenedo-messages-error">

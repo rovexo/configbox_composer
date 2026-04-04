@@ -665,18 +665,18 @@ class ConfigboxModelAdminDashboard extends KenedoModel {
 
 			foreach ($subDirs as $item) {
 				$writable = is_writable($item);
-				if ($writable == false)	{
+				if (!$writable)	{
 					$allWritable = false;
 				}
 			}
 
-			$files = KenedoFileHelper::getFiles($dir, '', true, true, $ignoredSubDirs);
-			foreach ($files as $item) {
-				$writable = is_writable($item);
-				if ($writable == false)	{
-					$allWritable = false;
-				}
-			}
+//			$files = KenedoFileHelper::getFiles($dir, '', true, true, $ignoredSubDirs);
+//			foreach ($files as $item) {
+//				$writable = is_writable($item);
+//				if ($writable == false)	{
+//					$allWritable = false;
+//				}
+//			}
 
 		}
 

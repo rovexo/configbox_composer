@@ -1,9 +1,6 @@
 <?php
 class ConfigboxUpdateHelper {
 
-	protected static $latestUpdateVersion = '';
-	protected static $currentlyProcessedVersion = '';
-
 	protected static function canInstallFresh() {
 
 		$latestVersion = ConfigboxSystemVars::getVar('latest_update_version');
@@ -36,6 +33,7 @@ class ConfigboxUpdateHelper {
 
 	static function areUpdatesProcessing() {
 		$markerPath = self::getMarkerFilePath();
+		clearstatcache(true, $markerPath);
 		return is_file($markerPath);
 	}
 
@@ -52,6 +50,10 @@ class ConfigboxUpdateHelper {
 					mkdir($dir);
 				}
 				touch($markerPath);
+
+				register_shutdown_function(function() {
+					self::setUpdatesProcessing(false);
+				});
 			}
 		}
 		else {
@@ -60,16 +62,24 @@ class ConfigboxUpdateHelper {
 			}
 		}
 
-		clearstatcache(true, $markerPath);
-
-	}
-
-	static function onShutdown() {
-		self::setUpdatesProcessing(false);
 	}
 
 	protected static function getMarkerFilePath() {
 		return KenedoPlatform::p()->getTmpPath().'/cb_update_in_progress';
+	}
+
+	static function ensureSysVarsTableExistence() {
+		if (self::tableExists('#__configbox_system_vars') == false) {
+			$db = KenedoPlatform::getDb();
+			$query = "
+			CREATE TABLE IF NOT EXISTS `#__configbox_system_vars` (
+			  `key` varchar(128) NOT NULL,
+			  `value` text NOT NULL,
+			  PRIMARY KEY (`key`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+			$db->setQuery($query);
+			$db->query();
+		}
 	}
 
 	/**
@@ -79,22 +89,10 @@ class ConfigboxUpdateHelper {
 	 */
 	static function applyUpdates() {
 
-		$db = KenedoPlatform::getDb();
-
-		// Create the system vars table here, we do not do any table creation outside the update process and can't have it within the files
-		$query = "
-		CREATE TABLE IF NOT EXISTS `#__configbox_system_vars` (
-		  `key` varchar(128) NOT NULL,
-		  `value` text NOT NULL,
-		  PRIMARY KEY (`key`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-		$db->setQuery($query);
-		$db->query();
-
-		$hadFailedUpdate = ConfigboxSystemVars::getVar('failed_update_detected');
+		self::ensureSysVarsTableExistence();
 
 		// In case we had a failed update, we won't go in again until an admin sorted out the mess and removed the flag
-		if ($hadFailedUpdate) {
+		if (ConfigboxSystemVars::getVar('failed_update_detected') === '1') {
 			return;
 		}
 
@@ -103,117 +101,33 @@ class ConfigboxUpdateHelper {
 			return;
 		}
 
-		// Mark that we're upgrading
-		self::setUpdatesProcessing(true);
+		try {
 
-		// Failsafe to remove the race-condition safeguard
-		register_shutdown_function(array('ConfigboxUpdateHelper', 'onShutdown'));
-
-		if (self::canInstallFresh()) {
-
-			try {
-				self::$latestUpdateVersion = self::installFresh();
+			if (self::canInstallFresh()) {
+				self::setUpdatesProcessing(true);
+				self::installFresh();
 			}
-			catch (Exception $e) {
 
-				KLog::log('Fresh install failed. Error messages follow.', 'upgrade_errors');
+			$regularDir = KenedoPlatform::p()->getComponentDir('com_configbox').'/helpers/updates';
+			$customDir = KenedoPlatform::p()->getDirCustomization().'/updates';
 
-				// Note that upgrade script failed (will make a note appear in the dashboard)
-				ConfigboxSystemVars::setVar('failed_update_detected', '1');
+			$regularScripts = self::getUnprocessedUpdateScripts($regularDir, 'latest_update_version');
+			$customScripts = self::getUnprocessedUpdateScripts($customDir, 'latest_customization_update_version');
 
+			if (count($regularScripts) || count($customScripts)) {
+				self::setUpdatesProcessing(true);
+				self::runUpdateScripts($regularScripts, 'latest_update_version');
+				self::runUpdateScripts($customScripts, 'latest_customization_update_version');
 				self::setUpdatesProcessing(false);
-
-				KLog::log($e->getMessage(), 'upgrade_errors');
-
-				// Log each failed query just in case
-				foreach ($db->getFailedQueryLog() as $data) {
-					$logEntry = $data['caller_class'].'::'.$data['caller_function'].'(), File '.$data['caller_file'].' on line: '.$data['caller_line'].', Error num: "'.$data['error_num'].'", error msg: "'.$data['error_msg'].'", query: "'.$data['query'].'"';
-					KLog::log($logEntry, 'upgrade_errors');
-				}
-
 			}
 
-			self::applyCustomizationUpdates();
-			sleep(2);
+		}
+		catch (Throwable $e) {
+			ConfigboxSystemVars::setVar('failed_update_detected', '1');
+			KLog::log($e->getMessage().' in file '.$e->getFile().':'.$e->getLine()."\n\nTrace:\n".$e->getTraceAsString(), 'upgrade_errors');
 			self::setUpdatesProcessing(false);
-
-			return;
-
+			throw $e;
 		}
-
-		self::$latestUpdateVersion = ConfigboxSystemVars::getVar('latest_update_version');
-		if (!self::$latestUpdateVersion) {
-			self::$latestUpdateVersion = '0.0.0';
-		}
-
-		// Get the folder with update scripts and get all files there
-		$configboxUpdateFileFolder 	= KenedoPlatform::p()->getComponentDir('com_configbox').'/helpers/updates';
-		$configboxUpdateFiles 		= KenedoFileHelper::getFiles($configboxUpdateFileFolder, '.php$', false, false);
-
-		// Sort the files by version
-		usort($configboxUpdateFiles, 'version_compare');
-
-		// We'll count the actually processed files for later
-		$countProcessedFiles = 0;
-
-		// We will also count failed queries to enable us to react better on failures
-		$db->resetFailedQueryCount();
-
-		foreach ($configboxUpdateFiles as $configboxUpdateFile) {
-
-			// Note down the version of that file
-			self::$currentlyProcessedVersion = basename($configboxUpdateFile,'.php');
-
-			// Figure out if we should run that file
-			$doProcessFile = version_compare(self::$currentlyProcessedVersion, self::$latestUpdateVersion,'gt');
-
-			// Skip to next otherwise
-			if ($doProcessFile == false) {
-				continue;
-			}
-
-			$countProcessedFiles++;
-
-			// Include the file
-			try {
-				require($configboxUpdateFileFolder . '/' . $configboxUpdateFile);
-			}
-			catch(Exception $e) {
-
-				// Note that upgrade script failed (will make a note appear in the dashboard)
-				ConfigboxSystemVars::setVar('failed_update_detected', '1');
-
-				// Log the errors on both upgrade_errors and error log
-				KLog::log($e->getMessage(), 'upgrade_errors');
-
-				// Log the failed DB queries (because the exception message might be about a different issue)
-				foreach ($db->getFailedQueryLog() as $data) {
-					$logEntry = $data['caller_class'].'::'.$data['caller_function'].'(), File '.$data['caller_file'].' on line: '.$data['caller_line'].', Error num: "'.$data['error_num'].'", error msg: "'.$data['error_msg'].'", query: "'.$data['query'].'"';
-					KLog::log($logEntry, 'upgrade_errors');
-				}
-
-				// Stop processing files, at this point an admin needs to step in and sort things out.
-				break;
-
-			}
-
-			// Store the version each time in the loop so we see what was the last successful file
-			if ($db->getFailedQueryCount() == 0) {
-				ConfigboxSystemVars::setVar('latest_update_version', self::$currentlyProcessedVersion);
-			}
-
-		}
-
-		// Purge the case in case we actually did process any upgrade scripts
-		if ($countProcessedFiles != 0) {
-			ConfigboxCacheHelper::purgeCache();
-			sleep(2);
-		}
-
-		// Run the customization updates
-		self::applyCustomizationUpdates();
-
-		self::setUpdatesProcessing(false);
 
 	}
 
@@ -255,78 +169,35 @@ class ConfigboxUpdateHelper {
 
 	}
 
-	/**
-	 * Same as applyUpdates, but for customizations. System var key is 'latest_customization_update_version'.
-	 */
-	protected static function applyCustomizationUpdates() {
+	protected static function getUnprocessedUpdateScripts($pathUpdateFilesDir, $keyLatestInstalledVersion) {
 
-		$db = KenedoPlatform::getDb();
-
-		self::$latestUpdateVersion = ConfigboxSystemVars::getVar('latest_customization_update_version');
-
-		if (!self::$latestUpdateVersion) {
-			self::$latestUpdateVersion = '0.0.0';
+		$lastestInstalledVersion = ConfigboxSystemVars::getVar($keyLatestInstalledVersion);
+		if ($lastestInstalledVersion === null) {
+			$lastestInstalledVersion = '0.0.0';
 		}
 
-		$configboxUpdateFileFolder 	= KenedoPlatform::p()->getDirCustomization().'/updates';
-		$configboxUpdateFiles 		= KenedoFileHelper::getFiles($configboxUpdateFileFolder, '.php$', false, false);
+		// Get all update files and sort by version
+		$updateFiles = KenedoFileHelper::getFiles($pathUpdateFilesDir, '.php$', false, true);
+		usort($updateFiles, 'version_compare');
 
-		// Sort the files by version
-		usort($configboxUpdateFiles, 'version_compare');
-
-		$countProcessedFiles = 0;
-
-		foreach ($configboxUpdateFiles as $configboxUpdateFile) {
-
-			// Note down the version of that file
-			self::$currentlyProcessedVersion = basename($configboxUpdateFile,'.php');
-
-			// Figure out if we should run that file
-			$doProcessFile = version_compare(self::$currentlyProcessedVersion, self::$latestUpdateVersion,'gt');
-
-			if ($doProcessFile) {
-
-				$countProcessedFiles++;
-
-				$db->resetFailedQueryCount();
-
-				try {
-					require( $configboxUpdateFileFolder.'/'.$configboxUpdateFile );
-				}
-				catch(Exception $e) {
-
-					KLog::log($e->getMessage(), 'upgrade_errors');
-
-					try {
-						ConfigboxSystemVars::setVar('failed_update_detected', '1');
-					}
-					catch(Exception $e) {
-						KLog::log('Could not set system var value "failed_update_detected". Exception message was '.$e->getMessage(), 'error');
-					}
-
-					// Log the issues (use getFailedQueryLog instead of the Exception message, because the Exception
-					// may not be thrown by a query failure)
-					foreach ($db->getFailedQueryLog() as $data) {
-						$logEntry = $data['caller_class'].'::'.$data['caller_function'].'(), File '.$data['caller_file'].' on line: '.$data['caller_line'].', Error num: "'.$data['error_num'].'", error msg: "'.$data['error_msg'].'", query: "'.$data['query'].'"';
-						KLog::log($logEntry, 'upgrade_errors');
-					}
-
-					break;
-
-				}
-
-				if ($db->getFailedQueryCount() == 0) {
-					ConfigboxSystemVars::setVar('latest_customization_update_version', self::$currentlyProcessedVersion);
-				}
-
+		// Collect the files that haven't run yet
+		$filesToProcess = [];
+		foreach ($updateFiles as $updateFile) {
+			$version = basename($updateFile,'.php');
+			if (version_compare($version, $lastestInstalledVersion,'gt') === true) {
+				$filesToProcess[] = $updateFile;
 			}
-
 		}
 
-		// Purge the case in case we actually did process any upgrade scripts
-		if ($countProcessedFiles != 0) {
-			ConfigboxCacheHelper::purgeCache();
-			sleep(1);
+		return $filesToProcess;
+
+	}
+
+	protected static function runUpdateScripts($filesToProcess, $keyLatestInstalledVersion) {
+
+		foreach ($filesToProcess as $fileToProcess) {
+			require($fileToProcess);
+			ConfigboxSystemVars::setVar($keyLatestInstalledVersion, basename($fileToProcess,'.php'));
 		}
 
 	}

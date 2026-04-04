@@ -499,6 +499,8 @@ class ConfigboxViewConfiguratorpage extends KenedoView {
 		// That just makes the 'base' question view load (currently views are not auto-loaded)
 		KenedoView::getView('ConfigboxViewQuestion');
 
+		$this->questionsHtml = [];
+
 		// Get the HTML for the page's elements into the view
 		foreach ($questionIds as $questionId) {
 

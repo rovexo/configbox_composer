@@ -460,6 +460,20 @@ class ConfigboxModelAdminxrefelementoptions extends KenedoModel {
 		return $propDefs;
 	}
 
+	function getDataFromTransferRecord($transferRecord, $propertyFilePaths, $filesBaseDir) {
+
+		$data = new stdClass();
+
+		$properties = $this->getProperties();
+
+		foreach ($properties as $property) {
+			$property->getDataFromTransferRecord($data, $transferRecord, $propertyFilePaths, $filesBaseDir);
+		}
+
+		return $data;
+
+	}
+
 	function canDelete($id) {
 
 		$db = KenedoPlatform::getDb();

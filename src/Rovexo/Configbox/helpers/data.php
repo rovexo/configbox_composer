@@ -12,22 +12,7 @@ class ConfigboxDataHelper {
 				continue;
 			}
 
-			$memberDefault = var_export($value, true);
-
-			if (is_numeric($value)) {
-				$memberDefault = var_export(floatval($value), true);
-			}
-			elseif(is_object($value)) {
-				$memberDefault = 'NULL';
-			}
-			elseif(is_resource($value)) {
-				$memberDefault = 'NULL';
-			}
-			elseif(is_array($value)) {
-				$memberDefault = 'array()';
-			}
-
-			$dec .= "\tvar \$$key = $memberDefault;\n";
+			$dec .= "\tpublic \$$key;\n";
 		}
 		$dec .= "}";
 
@@ -35,9 +20,12 @@ class ConfigboxDataHelper {
 
 	}
 
-	static function writeClassDeclaration($className, $object) {
+	static function writeClassDeclaration($className, $object, $dir = null) {
 
-		$filename = KenedoPlatform::p()->getComponentDir('com_configbox').'/classes/datahelpers/'.$className.'.php';
+		if ($dir === null) {
+			$dir = KenedoPlatform::p()->getComponentDir('com_configbox').'/classes/datahelpers';
+		}
+		$filename = $dir.'/'.$className.'.php';
 
 		file_put_contents($filename, self::getClassDeclaration($className, $object));
 	}

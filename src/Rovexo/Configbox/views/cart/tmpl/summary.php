@@ -35,7 +35,8 @@ defined('CB_VALID_ENTRY') or die();
 						<a class="trigger-edit-quantity fa fa-edit" title="<?php echo KText::_('Change Quantity');?>"></a>
 						<a class="trigger-remove-position fa fa-times trigger-ga-track-remove-position"  data-position-id="<?php echo intval($position->id);?>" title="<?php echo KText::_('Remove');?>" href="<?php echo $this->positionUrls[$positionId]['urlRemove'];?>"></a>
 						<span class="quantity-edit-wrapper">
-							<input class="quantity-edit-box" type="text" value="<?php echo intval($position->quantity);?>" />
+                            <label for="qty-<?php echo intval($position->id);?>">
+							<input class="quantity-edit-box" id="qty-<?php echo intval($position->id);?>" type="text" value="<?php echo intval($position->quantity);?>" />
 							<a class="trigger-store-quantity fa fa-check"></a>
 							<a class="trigger-cancel-quantity-edit fa fa-times"></a>
 						</span>
@@ -43,7 +44,7 @@ defined('CB_VALID_ENTRY') or die();
 				</td>
 				<td class="item-name">
 					<span class="product-title"><?php echo hsc($position->productTitle);?></span>
-					<a class="trigger-show-position-details fa fa-info-circle"></a>
+					<a class="trigger-show-position-details fa fa-info-circle" tabindex="0"></a>
 				</td>
 
 				<?php if ($this->displayPricing) { ?>

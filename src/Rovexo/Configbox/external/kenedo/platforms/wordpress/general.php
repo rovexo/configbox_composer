@@ -204,6 +204,19 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 		$connection->password 	= DB_PASSWORD;
 		$connection->database 	= DB_NAME;
 		$connection->prefix 	= $GLOBALS['table_prefix'];
+		$connection->port       = null;
+		$connection->socket     = null;
+
+		if (strpos($connection->hostname,':') !== false) {
+			$ex = explode(':',$connection->hostname);
+			$connection->hostname = $ex[0];
+			if (is_numeric($ex[1])) {
+				$connection->port = $ex[1];
+			}
+			else {
+				$connection->socket = $ex[1];
+			}
+		}
 
 		return $connection;
 
@@ -360,7 +373,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 			$locale = str_replace('_', '-', get_locale());
 
 			$language = new stdClass();
-			$language->tag = $locale;
+			$language->tag = substr($locale, 0, 5);
 			$language->label = $locale;
 			$languages[] = $language;
 		}
@@ -382,7 +395,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
 			return $tag;
 		}
 		else {
-			$tag = get_locale();
+			$tag = substr(get_locale(), 0, 5);
 			return str_replace('_', '-', $tag);
 		}
 
@@ -811,7 +824,7 @@ class KenedoPlatformWordpress implements InterfaceKenedoPlatform {
             $level = ob_get_level();
 
             for ($i = 0; $i < $level; $i++) {
-                ob_clean();
+				ob_end_clean();
             }
 
             echo $output;

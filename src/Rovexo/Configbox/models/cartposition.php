@@ -62,13 +62,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 			}
 			else {
 				$msg = 'Determined cart_position_id "'.$requestId.'" by request, but user check not passed. User ID was "'.$userId.'"';
-				if ($userId != 0) {
-					KLog::log($msg, 'warning');
-				}
-				else {
-					KLog::log($msg, 'debug');
-				}
-
+				KLog::log($msg, 'debug');
 			}
 		}
 
@@ -149,7 +143,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 			$db->query();
 		}
 		catch (Exception $e) {
-			throw new Exception('Could not create cart position row');
+			throw new Exception('Could not create cart position row. Error was '.$e->getMessage());
 		}
 
 		$positionId = $db->insertid();
@@ -195,9 +189,17 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 
 			}
 
+			unset($question);
+
 		}
 
 		$configuration->unsetSimSelections();
+
+		$autoSelects = ConfigboxRulesHelper::getAutoSelectItems(true, []);
+
+		foreach ($autoSelects as $questionId => $autoSelect) {
+			$configuration->setSelection($questionId, $autoSelect['selection']);
+		}
 
 		return $positionId;
 
@@ -215,6 +217,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 			if ($question->getInitialValue() !== null) {
 				$selections[$question->id] = $question->getInitialValue();
 			}
+			unset($question);
 		}
 
 		return $selections;
@@ -243,6 +246,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 					$selections[$questionId] = $selection;
 				}
 			}
+			unset($question);
 		}
 
 		return $selections;
@@ -265,6 +269,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 				else {
 					$selections[$questionId] = $selection;
 				}
+				unset($question);
 			}
 		}
 
@@ -423,6 +428,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 
 			// Workaround for any no-longer-selected checkbox questions that are still selected with '' value
 			if ($selection->type == 'checkbox' && $selection->selection == '') {
+				unset($question);
 				continue;
 			}
 
@@ -464,6 +470,8 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 			// Add the selection to the position's selections
 			$position->selections[] = $selection;
 
+			unset($question);
+
 		}
 
 		// Add selection's price and weight to the cart position
@@ -486,8 +494,10 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 			// Set the position's product title if the question setting is there
 			if (!empty($question->asproducttitle) && $question->getOutputValue($selection->selection)) {
 				$position->productTitle = $question->getOutputValue($selection->selection);
+				unset($question);
 				break;
 			}
+			unset($question);
 		}
 
 		// Multiply position prices with quantity now
@@ -551,24 +561,33 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 	}
 
 	/**
-	 * Get's you the element ids that apply given the current selections in ConfigboxConfiguration
+	 * Gets you the element ids that apply given the current selections in ConfigboxConfiguration
 	 * Takes the elements of the ConfigboxConfiguration's product
 	 * @return int[]
+	 * @throws Exception
 	 */
 	function getCurrentlyApplyingQuestionIds() {
 
+		KLog::start('getProduct');
 		$configuration = ConfigboxConfiguration::getInstance();
 		$productId = $configuration->getProductId();
+		KLog::stop('getProduct');
 
+		KLog::start('getAssignments');
 		$ass = ConfigboxCacheHelper::getAssignments();
 		$questionIds = $ass['product_to_element'][$productId];
+		KLog::stop('getAssignments');
 
+		KLog::start('findApplyingQuestions');
 		$applyingQuestionIds = array();
 
 		foreach ($questionIds as &$elementId) {
 
-			$question = ConfigboxQuestion::getQuestion($elementId);
+			if (isset($question)) {
+				unset($question);
+			}
 
+			$question = ConfigboxQuestion::getQuestion($elementId);
 			if ($question && $question->applies()) {
 
 				if (count($question->answers) == 0) {
@@ -591,6 +610,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 			}
 		}
 
+		KLog::stop('findApplyingQuestions');
 		return $applyingQuestionIds;
 
 	}
@@ -657,6 +677,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 					$pageAnswers[$questionId][$answer->id] = $answer->applies();
 				}
 			}
+			unset($question);
 		}
 		return array('questions'=>$pageQuestions, 'answers'=>$pageAnswers);
 
@@ -678,12 +699,14 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 		$elementIds = $ass['page_to_element'][$pageId];
 		$values = array();
 		foreach ($elementIds as $elementId) {
-			$element = ConfigboxQuestion::getQuestion($elementId);
-			if (!$element->calcmodel_id_min_val && !$element->calcmodel_id_max_val) {
+			$question = ConfigboxQuestion::getQuestion($elementId);
+			if (!$question->calcmodel_id_min_val && !$question->calcmodel_id_max_val) {
+				unset($question);
 				continue;
 			}
-			$values[$elementId]['minval'] = $element->getMinimumValue();
-			$values[$elementId]['maxval'] = $element->getMaximumValue();
+			$values[$elementId]['minval'] = $question->getMinimumValue();
+			$values[$elementId]['maxval'] = $question->getMaximumValue();
+			unset($question);
 		}
 
 		return $values;
@@ -775,10 +798,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 		$configuration = ConfigboxConfiguration::getInstance($positionId);
 		$selections = $configuration->getSelections();
 
-		$pricing['questions'] = array();
-		$pricing['answers'] = array();
-
-		// Set product price (see product base price)
+		// Set the product price (see product base price)
 		$pricing['total']['productPrice'] 			= ConfigboxPrices::getProductPrice($productId, NULL, false);
 		$pricing['total']['productPriceNet'] 			= ConfigboxPrices::getProductPrice($productId, true, false);
 		$pricing['total']['productPriceGross'] 			= ConfigboxPrices::getProductPrice($productId, false, false);
@@ -864,9 +884,8 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 				$pricing['total']['priceRecurringNet']		+= $priceRecurringNet;
 
 			}
-
-		} // End of question loop
-		unset($question);
+			unset($question);
+		}
 
 		$pricing['total']['priceGross'] 			= ConfigboxPrices::getPositionPriceGross($pricing['total']['priceNet'], $productId);
 		$pricing['total']['priceTax'] 				= $pricing['total']['priceGross'] - $pricing['total']['priceNet'];
@@ -1167,6 +1186,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 					$missingQuestions[] = $missingQuestion;
 				}
 			}
+			unset($question);
 		}
 
 		return $missingQuestions;
@@ -1218,7 +1238,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 	 * @return object $position Basic position data
 	 * @deprecated 2.7 Use self::getPosition instead
 	 */
-	function &getOrder() {
+	function getOrder() {
 		KLog::logLegacyCall('getOrder is now called getPosition');
 		return $this->getPosition($this->getId());
 	}
@@ -1251,7 +1271,7 @@ class ConfigboxModelCartposition extends KenedoModelLight {
 	 * @return object $positionDetails Object holding detailed position data
 	 * @deprecated 2.7 Use self::getPositionDetails instead
 	 */
-	function &getOrderDetails($baseData = NULL) {
+	function getOrderDetails($baseData = NULL) {
 		KLog::logLegacyCall('getOrderDetails is now called getPositionDetails');
 		return $this->getPositionDetails($baseData);
 	}

@@ -77,4 +77,65 @@ class KenedoPropertyString extends KenedoProperty {
 
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	public function getWheres($filters) {
+
+		$wheres = [];
+
+		foreach ($filters as $filterName=>$value) {
+
+			if ($this->filterNameApplies($filterName) == false) {
+				continue;
+			}
+
+			$stringType = $this->getPropertyDefinition('stringType', 'string');
+			$propTableAlias = $this->getTableAlias();
+			$propColAlias   = $this->getTableColumnName();
+			$colRef = '`'.$propTableAlias.'`.`'.$propColAlias.'`';
+			$db = KenedoPlatform::getDb();
+
+			switch ($stringType) {
+				case 'stringOrNumber':
+				case 'time':
+				case 'string':
+					if (is_array($value) && count($value)) {
+						$sanitizedSearchValues = [];
+						foreach ($value as $val) {
+							$sanitizedSearchValues[] = "'".$db->getEscaped($val)."'";
+						}
+						$wheres[] = $colRef." IN(".implode(',', $sanitizedSearchValues).")";
+					}
+					else {
+						$wheres[] = $colRef." LIKE '%".$db->getEscaped($value)."%'";
+					}
+					break;
+
+				case 'price':
+				case 'number':
+
+					if (is_array($value) && count($value)) {
+						$searchValues = [];
+						foreach ($value as $val) {
+							$normalizedNumber = str_replace(KText::_('DECIMAL_MARK', '.'), '.', (string) $val);
+							$sanitizedNumber = floatval($normalizedNumber);
+							$searchValues[] = $sanitizedNumber;
+						}
+						$wheres[] = $colRef." IN(".implode(',', $searchValues).")";
+					}
+					else {
+						$normalizedNumber = str_replace(KText::_('DECIMAL_MARK', '.'), '.', (string) $value);
+						$sanitizedNumber = floatval($normalizedNumber);
+						$wheres[] = $colRef." = ".$sanitizedNumber;
+					}
+
+					break;
+			}
+
+		}
+
+		return $wheres;
+	}
+
 }

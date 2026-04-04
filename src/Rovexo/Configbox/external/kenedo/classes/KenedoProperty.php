@@ -285,7 +285,7 @@ class KenedoProperty {
 
 		if ($this->isRequired() && $this->applies($data)) {
 
-			if (empty($data->{$this->propertyName}) && $data->{$this->propertyName} !== '0') {
+			if (empty($data->{$this->propertyName}) && $data->{$this->propertyName} !== '0' && $data->{$this->propertyName} !== 0) {
 				$this->setError(KText::sprintf('Field %s cannot be empty.', $this->propertyDefinition['label']));
 				return false;
 			}
@@ -391,7 +391,33 @@ class KenedoProperty {
 
             // Make sure that NULL values are in fact stored as NULL
             if (!isset($data->{$this->propertyName})) {
-                $value = 'NULL';
+				$query = "
+                SELECT IS_NULLABLE, COLUMN_DEFAULT
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = '".$db->getEscaped($foreignTableName)."'
+                  AND COLUMN_NAME = '".$db->getEscaped($this->propertyName)."'
+                  ";
+				$db->setQuery($query);
+				$info = $db->loadAssoc();
+				if ($info['IS_NULLABLE'] == 'NO' OR $info['IS_NULLABLE'] === false) {
+					if (isset($this->propertyDefinition['default'])) {
+						$value = "'".$this->propertyDefinition['default']."'";
+					}
+                    elseif($info['COLUMN_DEFAULT'] !== NULL) {
+						$value = "'".$db->getEscaped($info['COLUMN_DEFAULT'])."'";
+					}
+					else {
+						$msg = 'Tried to copy value for property "'.$this->propertyName.'" of model "'.get_class($this->model).'. ';
+						$msg .= 'But there is no value and no default value is defined in property definition or column default in DB column. Skipping the copy.';
+						KLog::log($msg, 'custom_copying');
+						KLog::log($msg, 'warning');
+						return true;
+					}
+				}
+				else {
+					$value = 'NULL';
+				}
             }
             else {
                 $value = "'".$db->getEscaped($data->{$this->propertyName})."'";
@@ -405,23 +431,39 @@ class KenedoProperty {
 					`".$foreignTableKey."`      = '".$db->getEscaped($newId)."' 
 				ON DUPLICATE KEY UPDATE `".$this->propertyName."` = ".$value;
 				$db->setQuery($query);
-				$response = $db->query();
+				$db->query();
             }
             catch(Exception $e) {
             	$msg = 'Property '.get_class($this).'\\'.$this->propertyName.' encountered an SQL error during insert in external table.';
             	KLog::log($msg, 'db_error');
 				KLog::log($msg, 'error');
 				KLog::log($msg, 'custom_copying');
-            	$this->setError('A system error occured during copying property "'.$this->getPropertyDefinition('label'));
+            	$this->setError('A system error occurred during copying property "'.$this->getPropertyDefinition('label'));
             	return false;
             }
 
-			return ($response !== false) ? true : false;
+			return true;
 
         }
 
         return true;
     }
+
+	function getDataFromTransferRecord(&$data, $transferRecord, $propertyFilePaths, $filesBaseDir) {
+		$data->{$this->propertyName} = $transferRecord[$this->propertyName] ?? null;
+	}
+
+	function getPropertyChildTransferItems($record) {
+		return [];
+	}
+
+	/**
+	 * @param object $record
+	 * @return string[] Property file paths (relative to store's data dir)
+	 */
+	function getPropertyFilePaths($record) {
+		return [];
+	}
 
 	/**
 	 * Tells if the record can be deleted (as far as the prop is concerned)
@@ -1060,9 +1102,7 @@ class KenedoProperty {
 				name="<?php echo hsc($filterNameRequest);?>"
 				id="<?php echo hsc($filterNameHtml);?>" />
 
-			<a class="kenedo-search input-group-append">
-				<span class="input-group-text"><?php echo KText::_('Filter');?></span>
-			</a>
+			<button class="kenedo-search btn btn-light"><?php echo KText::_('Filter');?></button>
 			<?php
 			$html = ob_get_clean();
 		}
@@ -1116,10 +1156,17 @@ class KenedoProperty {
 					$value = $record->{$this->propertyName.'_display_value'};
 				}
 
-				$id = $record->{$this->model->getTableKey()};
+				// String props use the actual value as thing to search for, rest uses the record's ID
+				if (in_array($this->getType(), array('string') ) ) {
+					$key = (string)$value;
+				}
+				else {
+					$key = $record->{$this->model->getTableKey()};
+				}
 
+				// Add the filter options, ensuring each is unique
 				if (!in_array($value, $options)) {
-					$options[$id] = $value;
+					$options[$key] = $value;
 				}
 
 			}
@@ -1143,10 +1190,17 @@ class KenedoProperty {
 						$value = $record->{$this->propertyName.'_display_value'};
 					}
 
-					$id = $groupedRecord->{$this->model->getTableKey()};
+					// String props use the actual value as thing to search for, rest uses the record's ID
+					if (in_array($this->getType(), array('string') ) ) {
+						$key = (string)$value;
+					}
+					else {
+						$key = $record->{$this->model->getTableKey()};
+					}
 
+					// Add the filter options, ensuring each is unique
 					if (!in_array($value, $options[$groupedRecord->{$groupKey}])) {
-						$options[$groupedRecord->{$groupKey}][$id] = $value;
+						$options[$groupedRecord->{$groupKey}][$key] = $value;
 					}
 
 				}

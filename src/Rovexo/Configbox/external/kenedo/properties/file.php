@@ -3,6 +3,49 @@ defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyFile extends KenedoProperty {
 
+	public $file = null;
+
+	function getFile() {
+		return $this->file;
+	}
+
+	/**
+	 * Like the parent method, but it also looks for an uploaded file and keeps a record of it in ->file
+	 * @param $data
+	 * @return void
+	 */
+	function getDataFromRequest( &$data ) {
+		parent::getDataFromRequest( $data );
+		$fileUpload = KRequest::getFile($this->propertyName);
+		if ($fileUpload) {
+			$this->file = $fileUpload;
+		}
+	}
+
+	/**
+	 * Like parent, but also looks for a provided image to be used just as it was uploaded
+	 * @param $data
+	 * @param $transferRecord
+	 * @param $propertyFilePaths
+	 * @param $filesBaseDir
+	 * @return void
+	 */
+	function getDataFromTransferRecord(&$data, $transferRecord, $propertyFilePaths, $filesBaseDir) {
+		$data->{$this->propertyName} = $transferRecord[$this->propertyName] ?? null;
+
+		if ($data->{$this->propertyName} && isset($propertyFilePaths[$this->propertyName])) {
+			$srcFile = $filesBaseDir .'/'. $propertyFilePaths[$this->propertyName][0];
+			if (is_file($srcFile)) {
+				$this->file = [
+					'tmp_name' => $srcFile,
+					'name' => basename($srcFile),
+					'size' => filesize($srcFile),
+					'error' => null,
+				];
+			}
+		}
+	}
+
 	/**
 	 * Appends full URL and filesystem path to the file (if bases are defined in prop defs)
 	 * @param object $data
@@ -20,17 +63,6 @@ class KenedoPropertyFile extends KenedoProperty {
 		}
 
 		parent::appendDataForGetRecord( $data );
-	}
-
-	/**
-	 * This updates the paths and URLs (just in case the request scheme changed or similar). Runs the
-	 * appendDataForGetRecord again.
-	 * @see KenedoPropertyFile::appendDataForGetRecord()
-	 *
-	 * @param object $data
-	 */
-	public function appendDataForPostCaching(&$data) {
-		$this->appendDataForGetRecord($data);
 	}
 
 	/**
@@ -71,7 +103,7 @@ class KenedoPropertyFile extends KenedoProperty {
 
 		$this->resetErrors();
 
-		$file = KRequest::getFile($this->propertyName);
+		$file = $this->getFile();
 
 		if (!$file && $this->isRequired() && $this->applies($data) && empty($data->id)) {
 			$this->setError( KText::sprintf('You need to upload a file for field %s.',$this->getPropertyDefinition('label')) );
@@ -152,7 +184,7 @@ class KenedoPropertyFile extends KenedoProperty {
 		}
 
 		// Get the uploaded file's info (This is the typical array you'd get from $_FILES['your_file'])
-		$file = KRequest::getFile($this->propertyName);
+		$file = $this->getFile();
 
 		// If the user checked the 'delete' checkbox, delete the item
 		if ($shouldDelete) {
@@ -248,30 +280,30 @@ class KenedoPropertyFile extends KenedoProperty {
 
 	}
 
-    /**
-     * @param object $data
-     * @param int $newId
-     * @param int $oldId
-     * @return bool
-     */
-    public function copy($data, $newId, $oldId) {
+	/**
+	 * @param object $data
+	 * @param int $newId
+	 * @param int $oldId
+	 * @return bool
+	 */
+	public function copy($data, $newId, $oldId) {
 
-    	$data = clone $data;
+		$data = clone $data;
 
 		$logPrefix = get_class($this->model).'\\'.$this->propertyName.'. Type "'.$this->getType().'": ';
 
 		KLog::log($logPrefix.'Checking if there is a file. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
-        $filename = $data->{$this->propertyName};
+		$filename = $data->{$this->propertyName};
 
-        // If there is no filename, there is nothing to copy
-        if(empty($filename)) {
+		// If there is no filename, there is nothing to copy
+		if(empty($filename)) {
 			KLog::log($logPrefix.'No file, moving on. Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 			return true;
 		}
 
-        // get newFilename
-        $newFilename = $this->_getNewFileNameForCopy($data, $newId); // method rewrite without FILES array use
+		// get newFilename
+		$newFilename = $this->_getNewFileNameForCopy($data, $newId); // method rewrite without FILES array use
 		$logPrefix = get_class($this->model).'\\'.$this->propertyName.'. Type "'.$this->getType().'": ';
 		KLog::log($logPrefix.'Got a file, new filename will be "'.$newFilename.'". Elapsed time: '.KLog::time('ModelCopyMethod').'ms', 'custom_copying');
 
@@ -330,7 +362,7 @@ class KenedoPropertyFile extends KenedoProperty {
 		// This method handles setting an error if needed
 		return $this->copyFilenameInTable($data, $newId, $oldId);
 
-    }
+	}
 
 	/**
 	 * Helper function for copy to avoid code duplication
@@ -339,9 +371,9 @@ class KenedoPropertyFile extends KenedoProperty {
 	 * @param int $oldId
 	 * @return bool
 	 */
-    protected function copyFilenameInTable($data, $newId, $oldId) {
+	protected function copyFilenameInTable($data, $newId, $oldId) {
 
-    	// If it's an externally stored prop, just let the parent handle storing
+		// If it's an externally stored prop, just let the parent handle storing
 		if ($this->getPropertyDefinition('storeExternally') == true) {
 			return parent::copy($data, $newId, $oldId);
 		}
@@ -383,41 +415,50 @@ class KenedoPropertyFile extends KenedoProperty {
 		return true;
 	}
 
-    /**
-     * Method gets filename for new file object copy
-     * @param $data
-     * @param $newId
-     * @return string
-     */
-    protected function _getNewFileNameForCopy($data, $newId) {
+	/**
+	 * Method gets filename for new file object copy
+	 * @param $data
+	 * @param $newId
+	 * @return string
+	 */
+	protected function _getNewFileNameForCopy($data, $newId) {
 
-        $file = $data->{$this->propertyName};
+		$file = $data->{$this->propertyName};
 
-        // Prepare file's filename and extension
-        $filenameRaw = mb_strtolower($file);
-        $fileExtension = KenedoFileHelper::getExtension($filenameRaw);
+		// Prepare file's filename and extension
+		$filenameRaw = mb_strtolower($file);
+		$fileExtension = KenedoFileHelper::getExtension($filenameRaw);
 
-        // If option FILENAME_TO_RECORD_ID is set, prepare the full path with new filename
-        $optionTags = $this->getPropertyDefinition('optionTags', array());
-        if (isset($optionTags['FILENAME_TO_RECORD_ID'])) {
-            $newFilename = $newId;
-        }
-        // Else use the sanitized filename
-        elseif ($this->getPropertyDefinition('filename')) {
-            $newFilename = $this->getPropertyDefinition('filename');
-        }
-        else {
-            $newFilename = preg_replace('#\.[^.]*$#', '', $filenameRaw);
-        }
+		// If option FILENAME_TO_RECORD_ID is set, prepare the full path with new filename
+		$optionTags = $this->getPropertyDefinition('optionTags', array());
+		if (isset($optionTags['FILENAME_TO_RECORD_ID'])) {
+			$newFilename = $newId;
+		}
+		// Else use the sanitized filename
+		elseif ($this->getPropertyDefinition('filename')) {
+			$newFilename = $this->getPropertyDefinition('filename');
+		}
+		else {
+			$newFilename = preg_replace('#\.[^.]*$#', '', $filenameRaw);
+		}
 
-        if ($this->getPropertyDefinition('appendSerial')) {
-            // Append a number to circumvent outdated cache data
-            $newFilename .= '-'.str_pad(rand(1,1000),4,0);
-        }
+		if ($this->getPropertyDefinition('appendSerial')) {
+			// Append a number to circumvent outdated cache data
+			$newFilename .= '-'.str_pad(rand(1,1000),4,0);
+		}
+		else {
+			$basedir = $this->getPropertyDefinition('dirBase');
+			$originalFileBase = $newFilename;
+			$i = 1;
+			while (file_exists($basedir.'/'.$newFilename.'.'.$fileExtension)) {
+				$newFilename = $originalFileBase.'-'.$i;
+				$i++;
+			}
+		}
 
-        return $newFilename.'.'.$fileExtension;
+		return $newFilename.'.'.$fileExtension;
 
-    }
+	}
 
 	/**
 	 * Checks settings and current file upload and figures out the right file name to store.
@@ -426,7 +467,7 @@ class KenedoPropertyFile extends KenedoProperty {
 	 */
 	protected function getNewFileName( $data ) {
 
-		$file = KRequest::getFile($this->propertyName);
+		$file = $this->getFile();
 
 		if (!$file || empty($file['tmp_name'])) {
 			return '';

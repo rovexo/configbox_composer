@@ -5,169 +5,89 @@ class ConfigboxQuestion {
 	 * @var ConfigboxAnswer[] $answers
 	 */
 	public $answers = array();
-
-	/**
-	 * @var string $question_type Tells what type of question this is
-	 */
-	public $question_type;
-	public $id;
-	public $page_id;
-	public $el_image;
-	public $el_image_href;
-	public $el_image_path;
-	public $required;
-
-	/**
-	 * @var string hide|grey_out
-	 */
-	public $display_while_disabled;
-
-	/**
-	 * @var string none|select_default|select_any
-	 */
-	public $behavior_on_activation;
-
-	/**
-	 * @var string silent|confirm
-	 */
-	public $behavior_on_changes;
-
-	/**
-	 * @var string deselect|replace_with_default|replace_with_any
-	 */
-	public $behavior_on_inconsistency;
-	public $validate;
-	public $minval;
-	public $maxval;
-	public $calcmodel;
-	public $calcmodel_recurring;
-	public $multiplicator;
-	public $published;
-	public $ordering;
+	public $calcmodel_display_value;
+	public $calcmodel_id_max_val_display_value;
+	public $calcmodel_id_min_val_display_value;
+	public $calcmodel_recurring_display_value;
+	public $calcmodel_weight_display_value;
 	public $asproducttitle;
+	public $behavior_on_activation;
+	public $behavior_on_changes;
+	public $behavior_on_inconsistency;
+	public $calcmodel;
+	public $calcmodel_id_max_val;
+	public $calcmodel_id_min_val;
+	public $calcmodel_recurring;
+	public $calcmodel_weight;
+	public $calendar_days_max;
+	public $calendar_days_min;
+	public $calendar_first_day;
+	public $calendar_validation_type_max;
+	public $calendar_validation_type_min;
+	public $choices;
 	public $default_value;
-	public $show_in_overview;
-	public $text_calcmodel;
+	public $desc_display_method;
+	public $display_while_disabled;
+	public $el_image;
+	public $element_css_classes;
 	public $element_custom_1;
 	public $element_custom_2;
 	public $element_custom_3;
 	public $element_custom_4;
-	public $element_custom_translatable_1;
-	public $element_custom_translatable_2;
-	public $rules;
+	public $id;
+	public $input_restriction;
 	public $internal_name;
-	public $element_css_classes;
-	public $calcmodel_id_min_val;
-	public $calcmodel_id_max_val;
+	public $is_shapediver_control;
+	public $maxval;
+	public $minval;
+	public $multiplicator;
+	public $ordering;
+	public $page_id;
+	public $prefill_on_init;
+	public $published;
+	public $question_type;
+	public $required;
+	public $rules;
+	public $set_max_value;
+	public $set_min_value;
+	public $shapediver_parameter_id;
+	public $show_in_overview;
+	public $show_unit;
+	public $slider_steps;
+	public $text_calcmodel;
+	public $title_display;
 	public $upload_extensions;
 	public $upload_mime_types;
 	public $upload_size_mb;
-	public $slider_steps;
-	public $unit;
-	public $calcmodel_weight;
-	public $choices;
-
-	public $applies;
-	public $cssClasses;
-	public $extraAttributes;
-	public $type;
-	public $option;
-	public $title;
+	public $validate;
+	public $joinedby_page_id_to_adminpages_product_id;
+	public $joinedby_page_id_to_adminpages_product_published;
+	public $joinedby_page_id_to_adminpages_joinedby_product_id_to_adminproducts_use_recurring_pricing;
+	public $joinedby_page_id_to_adminpages_visualization_type;
+	public $answer_cols_desktop;
+	public $answer_cols_mobile;
+	public $answer_cols_tablet;
 	public $description;
-	public $picker_table;
-	public $prefill_on_init;
-	/**
-	 * @var int 0|1 If question controls a shapediver parameter
-	 */
-	public $is_shapediver_control;
-	/**
-	 * @var string Shapediver parameter ID. Can be set when question is not of type upload and user has set a parameter ID
-	 */
-	public $shapediver_parameter_id;
-
-	/**
-	 * @var string heading|label|none
-	 */
-	public $title_display;
-
-	/**
-	 * @var int $desc_display_method See setting in element for description.
-	 */
-	public $desc_display_method;
-
-	/**
-	 * @var string $elementImageCssClasses CSS classes to be set to the element image (see GUI for what that is).
-	 * Set in ConfigboxViewConfiguratorpage::display()
-	 * @see ConfigboxViewConfiguratorpage::display
-	 */
+	public $element_custom_translatable_1;
+	public $element_custom_translatable_2;
+	public $title;
+	public $unit;
+	public $page_id_display_value;
+	public $joinedby_page_id_to_adminpages_product_id_display_value;
+	public $joinedby_page_id_to_adminpages_product_title;
 	public $elementImageCssClasses;
-
-	/**
-	 * @var string $elementImagePreloadAttributes HTML attributes for the element image (used for smart preloading/delayed loading)
-	 * ConfigboxViewConfiguratorpage::display()
-	 * @see ConfigboxViewConfiguratorpage::display
-	 */
 	public $elementImagePreloadAttributes;
-
-	/**
-	 * @var string $elementImageSrc Full URL of the element image. Set in ConfigboxViewConfiguratorpage::display()
-	 * @see ConfigboxViewConfiguratorpage::display
-	 */
-	public $elementImageSrc;
-
-	/**
-	 * @var string $disabled HTML attribute, used in input elements. Set in ConfigboxViewConfiguratorpage::prepareTemplateVars()
-	 * @see ConfigboxViewConfiguratorpage::prepareTemplateVars
-	 */
-	public $disabled;
-
-	/**
-	 * @var string $templateFile Full path to the template file. Depends on element's settings and existing overrides.
-	 * Figured out in ConfigboxViewConfiguratorpage::display()
-	 * @see ConfigboxViewConfiguratorpage::display
-	 */
-	public $templateFile;
-
-	/**
-	 * @var bool $disableControl Indicates if the form control should be disabled
-	 */
-	public $disableControl;
-
-	/**
-	 * @var string $input_restriction Says what kind of selection you can make ('plaintext', 'integer', 'decimal')
-	 */
-	public $input_restriction;
-
-	/**
-	 * @var string For calendar type: Indicates if first weekday is Monday, Sunday or up to locale (values 'locale', 'monday' or 'sunday')
-	 */
-	public $calendar_first_day;
-
-	/**
-	 * @var string For calendar type: Tells if and which validation to use for minimum date (values 'none' or 'days')
-	 */
-	public $calendar_validation_type_min;
-
-	/**
-	 * @var string For calendar type: Tells if and which validation to use for maximum date (values 'none' or 'days')
-	 */
-	public $calendar_validation_type_max;
-
-	/**
-	 * @var int For calendar type: Tells how many days from today's date is the minimum date allowed
-	 */
-	public $calendar_days_min;
-
-	/**
-	 * @var int For calendar type: Tells how many days from today's date is the maximum date allowed
-	 */
-	public $calendar_days_max;
+	public $cssClasses;
 
 	/**
 	 * @var ConfigboxQuestion[] Holds the instances for getQuestion
 	 * @see getQuestion
 	 */
 	static $questions;
+	public $elementImageSrc;
+	public $el_image_href;
+	public bool $disableControl;
+	public bool $applies;
 
 	/**
 	 * Factory pattern method to get the right question object
@@ -212,7 +132,7 @@ class ConfigboxQuestion {
 
 		}
 
-		return self::$questions[$questionId];
+		return clone self::$questions[$questionId];
 
 	}
 
@@ -406,7 +326,6 @@ class ConfigboxQuestion {
 				else {
 					return KText::_('No date selected');
 				}
-				break;
 
 			case 'upload':
 
@@ -417,8 +336,6 @@ class ConfigboxQuestion {
 				else {
 					return KText::_('No file uploaded');
 				}
-				break;
-
 
 			default:
 
@@ -555,19 +472,26 @@ class ConfigboxQuestion {
 	 */
 	function getMinimumValue() {
 
-		if ($this->calcmodel_id_min_val) {
-			$selections = ConfigboxConfiguration::getInstance()->getSelections();
-			$minVal = ConfigboxCalculation::calculate($this->calcmodel_id_min_val, $this->id, NULL, $selections);
+		$minVal = null;
 
-			if ($minVal === NULL or $minVal === '') {
-				$minVal = NULL;
-			}
-		}
-		else {
-			$minVal = $this->minval;
-			if ($minVal === NULL or $minVal === '') {
-				$minVal = NULL;
-			}
+		switch ($this->set_min_value) {
+			case 'none':
+				break;
+			case 'static':
+				if ($this->minval !== '') {
+					$minVal = $this->minval;
+				}
+				break;
+			case 'calculated':
+				if ($this->calcmodel_id_min_val) {
+					$selections = ConfigboxConfiguration::getInstance()->getSelections();
+					$minVal = ConfigboxCalculation::calculate($this->calcmodel_id_min_val, $this->id, NULL, $selections);
+
+					if ($minVal === NULL or $minVal === '') {
+						$minVal = NULL;
+					}
+				}
+				break;
 		}
 
 		return $minVal;
@@ -579,18 +503,26 @@ class ConfigboxQuestion {
 	 */
 	function getMaximumValue() {
 
-		if ($this->calcmodel_id_max_val) {
-			$selections = ConfigboxConfiguration::getInstance()->getSelections();
-			$maxVal = ConfigboxCalculation::calculate($this->calcmodel_id_max_val, $this->id, NULL, $selections);
-			if ($maxVal === NULL or $maxVal === '') {
-				$maxVal = NULL;
-			}
-		}
-		else {
-			$maxVal = $this->maxval;
-			if ($maxVal === NULL or $maxVal === '') {
-				$maxVal = NULL;
-			}
+		$maxVal = null;
+
+		switch ($this->set_max_value) {
+			case 'none':
+				break;
+			case 'static':
+				if ($this->maxval !== '') {
+					$maxVal = $this->maxval;
+				}
+				break;
+			case 'calculated':
+				if ($this->calcmodel_id_max_val) {
+					$selections = ConfigboxConfiguration::getInstance()->getSelections();
+					$maxVal = ConfigboxCalculation::calculate($this->calcmodel_id_max_val, $this->id, NULL, $selections);
+
+					if ($maxVal === NULL or $maxVal === '') {
+						$maxVal = NULL;
+					}
+				}
+				break;
 		}
 
 		return $maxVal;
@@ -676,23 +608,27 @@ class ConfigboxQuestion {
 		}
 
 		foreach ($data as $k => &$v) {
-			$this->$k = $v;
+			@$this->$k = $v;
 		}
 		return true;
 
 	}
 
 	function loadAnswers() {
+		static $productAnswers;
 
-		// Get answer ids that belong to the question
-		$assignments = ConfigboxCacheHelper::getAssignments();
-		$answerIds = isset($assignments['element_to_xref'][$this->id]) ? $assignments['element_to_xref'][$this->id] : array();
-
-		// Put the anwser objects in the answers var
 		$this->answers = array();
+
+		$assignments = ConfigboxCacheHelper::getAssignments();
+		$productId = $assignments['element_to_product'][$this->id];
+		$answerIds = $assignments['element_to_xref'][$this->id] ?? array();
+
+		if (empty($productAnswers[$productId])) {
+			$productAnswers[$productId] = ConfigboxCacheHelper::getAnswersForProduct($productId);
+		}
+
 		foreach ($answerIds as $answerId) {
-			$answerData = ConfigboxCacheHelper::getAnswerData($answerId);
-			$this->answers[$answerId] = new ConfigboxAnswer($answerData);
+			$this->answers[$answerId] = new ConfigboxAnswer($productAnswers[$productId][$answerId]);;
 		}
 
 	}

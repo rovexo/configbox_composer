@@ -80,16 +80,25 @@ if (ConfigboxUpdateHelper::tableExists('#__configbox_customers')) {
 
 $constraintName = ConfigboxUpdateHelper::getFkConstraintName('#__configbox_config', 'default_country_id');
 if ($constraintName) {
-	$query = "
-	ALTER TABLE `#__configbox_config` DROP FOREIGN KEY `".$constraintName."`
-	";
+
+	$query = "ALTER TABLE `#__configbox_config` DROP FOREIGN KEY `".$constraintName."`";
 	$db->setQuery($query);
 	$db->query();
+
+	$keyNames = ConfigboxUpdateHelper::getKeyNames('#__configbox_config', 'default_country_id');
+	foreach ($keyNames as $keyName) {
+		$query = "DROP INDEX `".$keyName."` ON `#__configbox_config`";
+		$db->setQuery($query);
+		$db->query();
+	}
+
 }
+
+
 
 $query = "
 	ALTER TABLE `#__configbox_config`
-	    ADD CONSTRAINT `".$constraintName."` 
+	    ADD CONSTRAINT 
 	    FOREIGN KEY (default_country_id) 
 	    REFERENCES #__configbox_countries (id)
             ON UPDATE CASCADE 
@@ -127,7 +136,7 @@ if ($constraintName) {
 
 $query = "
 	ALTER TABLE `#__configbox_calculations`
-	    ADD CONSTRAINT `".$constraintName."`
+	    ADD CONSTRAINT
 	    FOREIGN KEY (product_id) REFERENCES #__configbox_products (id)
             ON UPDATE CASCADE 
             ON DELETE SET NULL

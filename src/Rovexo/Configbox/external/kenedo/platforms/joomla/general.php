@@ -216,6 +216,19 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		$connection->password   = $this->getJoomlaConfig('password');
 		$connection->database   = $this->getJoomlaConfig('db');
 		$connection->prefix     = $this->getJoomlaConfig('dbprefix');
+		$connection->port       = null;
+		$connection->socket     = null;
+
+		if (strpos($connection->hostname,':') !== false) {
+			$ex = explode(':',$connection->hostname);
+			$connection->hostname = $ex[0];
+			if (is_numeric($ex[1])) {
+				$connection->port = $ex[1];
+			}
+			else {
+				$connection->socket = $ex[1];
+			}
+		}
 
 		return $connection;
 
@@ -334,7 +347,13 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	}
 
 	public function getTemplateName() {
-		return $this->getJApplication()->getTemplate();
+		$app = $this->getJApplication();
+		if (method_exists($app, 'getTemplate')) {
+			return $app->getTemplate();
+		}
+		else {
+			return '';
+		}
 	}
 
 	public function sendSystemMessage($text, $type = NULL) {
@@ -342,9 +361,13 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 	}
 
 	public function getVersionShort() {
-		jimport('joomla.version');
-		$version = new JVersion();
-		return substr($version->getShortVersion(),0,3);
+		static $memo = null;
+		if ($memo === null) {
+			jimport('joomla.version');
+			$version = new JVersion();
+			$memo = $version::MAJOR_VERSION.'.'.$version::MINOR_VERSION;
+		}
+		return $memo;
 	}
 
 	public function getDebug() {
@@ -462,9 +485,13 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 			}
 
 			$joomlaVersion = KenedoPlatform::p()->getVersionShort();
-			if (strpos($joomlaVersion, '4') === 0) {
+			if (version_compare($joomlaVersion, '4.0', '>=')) {
 				$wa  = $this->getJDocument()->getWebAssetManager();
 				$wa->registerAndUseStyle('cb-'.md5($path), $path);
+			}
+			elseif (version_compare($joomlaVersion, '3.7.0', '>=')) {
+				/** @noinspection PhpDeprecationInspection */
+				$this->getJDocument()->addStyleSheet($path, ['type'=>$type, 'media'=>$media]);
 			}
 			else {
 				/** @noinspection PhpDeprecationInspection */
@@ -556,7 +583,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 
 	}
 
-	public function sendEmail($fromEmail, $fromName, $recipient, $subject, $body, $isHtml = false, $cc = NULL, $bcc = NULL, $attachment = NULL) {
+	public function sendEmail($from, $fromName, $recipient, $subject, $body, $isHtml = false, $cc = NULL, $bcc = NULL, $attachment = NULL) {
 
 		$mailer = $this->getJMailer();
 
@@ -564,10 +591,14 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 
 		// At some point Joomla must have introduced that sendMail function. Seems more best-practice-like
 		if ($reflect->hasMethod('sendMail')) {
-			$response = $mailer->sendMail($fromEmail, $fromName, $recipient, $subject, $body, $isHtml, $cc, $bcc, $attachment, $fromEmail, $fromName);
+			$response = $mailer->sendMail($from, $fromName, $recipient, $subject, $body, $isHtml, $cc, $bcc, $attachment, $from, $fromName);
 
 			if ($response == false) {
-				KLog::log('Sending email failed. Error message from JMailer is "'.$mailer->ErrorInfo.'". Function arguments were '.var_export(func_get_args(), true), 'error');
+				$args = func_get_args();
+				if (is_string($args[4]) && mb_strlen($args[4]) > 200) {
+					$args[4] = mb_substr($args[4], 0, 200) . ' (shortened to 100 chars).';
+				}
+				KLog::log('Sending email failed. Error message from JMailer is "'.$mailer->ErrorInfo.'". Function arguments were '.var_export($args, true), 'error');
 				return false;
 			}
 			elseif(is_a($response, 'Exception') == true) {
@@ -581,12 +612,12 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 
 		}
 
-		$mailer->setSender(array($fromEmail, $fromName));
+		$mailer->setSender(array($from, $fromName));
 		$mailer->addRecipient($recipient);
 		$mailer->setSubject($subject);
 		$mailer->setBody($body);
-		$mailer->setFrom($fromEmail, $fromName);
-		$mailer->addReplyTo($fromEmail, $fromName);
+		$mailer->setFrom($from, $fromName);
+		$mailer->addReplyTo($from, $fromName);
 		$mailer->isHtml( $isHtml );
 
 		$mailer->addCc($cc);
@@ -595,7 +626,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		$reflect = new ReflectionObject($mailer);
 
 		if ($reflect->hasProperty('Sender') && $reflect->getProperty('Sender')->isPublic() ) {
-			$mailer->Sender = $fromEmail;
+			$mailer->Sender = $from;
 		}
 
 		if (!empty($attachment)) {
@@ -641,6 +672,7 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		}
 
 		$base = rtrim($base, '/');
+		$base = rtrim($base, '.');
 
 		return $base;
 
@@ -912,6 +944,13 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		$data['password'] = $passwordClear;
 		$data['password2'] = $passwordClear;
 
+		if (strpos($this->getVersionShort(), '3') !== 0) {
+			$data['params'] = json_decode($data['params'], true);
+			if (isset($data['params'][0])) {
+				unset($data['params'][0]);
+			}
+		}
+
 		$user->bind($data);
 		$success = $user->save(true);
 
@@ -952,30 +991,33 @@ class KenedoPlatformJoomla implements InterfaceKenedoPlatform {
 		return $params;
 	}
 
-	public function renderOutput(&$output) {
+    public function renderOutput(&$output) {
+        static $cssDone = false;
 
-		echo $output;
+        echo $output;
 
-		if (count($this->scriptDeclarations)) {
-			?>
-			<script type="text/javascript">
+        if (count($this->scriptDeclarations)) {
+            ?>
+            <script type="text/javascript">
 				'use strict';
-				<?php
-				foreach ($this->scriptDeclarations as $js) {
-					echo $js."\n";
-				}
-				?>
-			</script>
-			<?php
-		}
+                <?php
+                foreach ($this->scriptDeclarations as $js) {
+                    echo $js."\n";
+                }
+                ?>
+            </script>
+            <?php
+            $this->scriptDeclarations = [];
+        }
 
-		if ($this->getDocumentType() == 'html') {
-			?>
-			<script id="cb-stylesheets" type="application/json"><?php echo json_encode($this->styleSheetUrls);?></script>
-			<?php
-		}
+        if (!$cssDone && $this->getDocumentType() == 'html') {
+            $cssDone = true;
+            ?>
+            <script id="cb-stylesheets" type="application/json"><?php echo json_encode($this->styleSheetUrls);?></script>
+            <?php
+        }
 
-	}
+    }
 
 	public function getPasswordResetLink() {
 		if ($this->getVersionShort() == 1.5) {

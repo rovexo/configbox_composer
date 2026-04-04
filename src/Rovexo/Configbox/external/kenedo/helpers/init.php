@@ -62,7 +62,13 @@ function initKenedo($component = 'com_configbox') {
 	KenedoPlatform::p()->setErrorHandler(array('KLog', 'handleError'));
 	KenedoPlatform::p()->registerShutdownFunction(array('KLog', 'handleShutdown'));
 
-	// Do application autoloads (does some initialization too now)
+	// Composer auto load
+	$composerAutoLoad = KenedoPlatform::p()->getComponentDir($component).'/external/libraries/vendor/autoload.php';
+	if (is_file($composerAutoLoad)) {
+		require_once $composerAutoLoad;
+	}
+
+	// Do application auto load (does some initialization too now)
 	$componentAutoLoadFile = KenedoPlatform::p()->getComponentDir($component).'/helpers/init.php';
 
 	if (is_file($componentAutoLoadFile)) {

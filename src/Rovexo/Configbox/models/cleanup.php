@@ -53,7 +53,13 @@ class ConfigboxModelCleanup extends KenedoModelLight {
 	private function isTimeForCleanup() {
 
 		$lastCleanup = $this->getLastCleanupTs();
-		$tsNextCleanup = $lastCleanup + (CbSettings::getInstance()->get('intervals', 0) * 3600);
+		if ($lastCleanup === null) {
+			$logMessage = 'No previous cleanups recorded, assuming it is time for cleanup.';
+			KLog::log($logMessage, 'cleanup');
+			return true;
+		}
+
+		$tsNextCleanup = intval($lastCleanup) + (CbSettings::getInstance()->get('intervals', 0) * 3600);
 		if ($this->tsNow > $tsNextCleanup) {
 			$logMessage  = 'Time for cleanup. ';
 			$logMessage .= 'Last cleanup was '.KenedoTimeHelper::getFormattedOnly($lastCleanup, 'datetime').'. ';

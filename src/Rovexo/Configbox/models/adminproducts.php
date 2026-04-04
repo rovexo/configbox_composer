@@ -1109,6 +1109,7 @@ class ConfigboxModelAdminproducts extends KenedoModel {
 		    t.key = p.id AND 
 		    t.type = '1' AND 
 		    t.language_tag = '".$db->getEscaped($languageTag)."'
+		ORDER BY t.text
 		";
 		$db->setQuery($query);
 		$records = $db->loadObjectList();

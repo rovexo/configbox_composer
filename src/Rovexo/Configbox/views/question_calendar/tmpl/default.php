@@ -15,24 +15,34 @@ defined('CB_VALID_ENTRY') or die();
 		<div class="form-group">
 
 			<?php if ($this->showLabel) { ?>
-				<label for="input-<?php echo hsc($this->question->id);?>"><?php echo hsc($this->question->title);?></label>
+				<label for="input-display-<?php echo hsc($this->question->id);?>"><?php echo hsc($this->question->title);?></label>
 			<?php } ?>
 
 			<div class="input-group">
 
-				<div class="form-control pseudo-text-field trigger-show-calendar"><?php echo hsc($this->outputValue);?></div>
+				<input type="text"
+                       readonly
+                       class="form-control trigger-show-calendar pseudo-text-field"
+                       id="input-display-<?php echo hsc($this->question->id);?>"
+                       value="<?php echo hsc($this->outputValue);?>" />
 
-				<span class="input-group-append trigger-show-calendar">
-					<span class="input-group-text fa fa-calendar" title="<?php echo KText::_('Change Date');?>"></span>
-				</span>
+                <button class="btn btn-outline-secondary trigger-show-calendar"
+                        type="button"
+                        title="<?php echo KText::_('Change Date');?>">
+                    <span class="fa fa-calendar"></span>
+                </button>
 
 			</div>
 
-			<input style="display:block;width:0;height:0;border:none;margin:0;padding:0;" value="<?php echo hsc($this->outputValue);?>" type="text" id="output-helper-<?php echo hsc($this->question->id);?>" />
+			<input style="display:block;width:0;height:0;border:none;margin:0;padding:0;"
+                   value="<?php echo hsc($this->outputValue);?>"
+                   type="text"
+                   id="output-helper-<?php echo hsc($this->question->id);?>" />
+            <label for="output-helper-<?php echo hsc($this->question->id);?>" class="sr-only"></label>
 
 			<div id="input-<?php echo hsc($this->question->id);?>" data-selection="<?php echo hsc($this->selection);?>"></div>
 
-			<div class="help-block validation-message-target">
+			<div class="invalid-feedback validation-message-target">
 				<?php echo ($this->hasValidationMessage) ? hsc($this->validationMessage) : '';?>
 			</div>
 

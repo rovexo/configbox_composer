@@ -34,10 +34,6 @@ class ConfigboxViewProductdetailpanes extends KenedoView {
 		return NULL;
 	}
 
-	function getJsInitCallsOnce() {
-		return ['cbj.bootstrap'];
-	}
-
 	function prepareTemplateVars() {
 
 		if ($this->productId === null) {

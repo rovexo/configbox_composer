@@ -1326,6 +1326,16 @@ class ConfigboxModelAdminconfig extends KenedoModel {
 			'positionForm'=>3040,
 		);
 
+		$propDefs['add_requirejs_onload'] = array(
+			'name'=>'add_requirejs_onload',
+			'label'=>KText::_('CONFIG_LABEL_REQUIREJS_LOADING_METHOD'),
+			'tooltip'=>KText::_('CONFIG_TOOLTIP_REQUIREJS_LOADING_METHOD'),
+			'type'=>'dropdown',
+			'choices'=> array(0=>KText::_('CONFIG_OPTION_IMMEDIATELY'), 1=>KText::_('CONFIG_OPTION_ONLOAD')),
+			'default'=>1,
+			'positionForm'=>3050,
+		);
+
 		$propDefs['debugging_end'] = array(
 			'name'=>'debugging_end',
 			'type'=>'groupend',

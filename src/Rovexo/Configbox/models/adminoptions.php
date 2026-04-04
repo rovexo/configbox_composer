@@ -365,6 +365,20 @@ class ConfigboxModelAdminoptions extends KenedoModel {
 
 	}
 
+	function getDataFromTransferRecord($transferRecord, $propertyFilePaths, $filesBaseDir) {
+
+		$data = new stdClass();
+
+		$properties = $this->getProperties();
+
+		foreach ($properties as $property) {
+			$property->getDataFromTransferRecord($data, $transferRecord, $propertyFilePaths, $filesBaseDir);
+		}
+
+		return $data;
+
+	}
+
 	/**
 	 * @return object[]
 	 */

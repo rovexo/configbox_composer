@@ -10,15 +10,15 @@ if (ConfigboxUpdateHelper::tableFieldExists('#__configbox_config', 'language_tag
 	$db->query();
 }
 
-$keys = ConfigboxUpdateHelper::getKeyNames('#__configbox_xref_country_payment_method', 'payment_id');
-foreach ($keys as $key) {
-	if ($key !== 'PRIMARY') {
-		$query = "
-		ALTER TABLE #__configbox_xref_country_payment_method RENAME INDEX `".$key."` TO `payment_id`";
-		$db->setQuery($query);
-		$db->query();
-	}
-}
+//$keys = ConfigboxUpdateHelper::getKeyNames('#__configbox_xref_country_payment_method', 'payment_id');
+//foreach ($keys as $key) {
+//	if ($key !== 'PRIMARY') {
+//		$query = "
+//		ALTER TABLE #__configbox_xref_country_payment_method DROP INDEX `".$key."`";
+//		$db->setQuery($query);
+//		$db->query();
+//	}
+//}
 
 if (ConfigboxUpdateHelper::tableExists('#__configbox_shopdata')) {
 

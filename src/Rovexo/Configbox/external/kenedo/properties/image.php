@@ -3,6 +3,53 @@ defined('CB_VALID_ENTRY') or die();
 
 class KenedoPropertyImage extends KenedoProperty {
 
+	protected const outputFormats = ['jpg', 'gif', 'png', 'webp'];
+
+	public $file = null;
+
+	function getFile() {
+		return $this->file;
+	}
+
+	/**
+	 * Like the parent method, but it also looks for an uploaded file and keeps a record of it in ->file
+	 * @param $data
+	 * @return void
+	 */
+	function getDataFromRequest( &$data ) {
+		parent::getDataFromRequest( $data );
+		$fileUpload = KRequest::getFile($this->propertyName);
+		if ($fileUpload) {
+			$this->file = $fileUpload;
+		}
+	}
+
+	/**
+	 * Like parent, but also looks for a provided image to be used just as it was uploaded
+	 * @param $data
+	 * @param $transferRecord
+	 * @param $propertyFilePaths
+	 * @param $filesBaseDir
+	 * @return void
+	 */
+	function getDataFromTransferRecord(&$data, $transferRecord, $propertyFilePaths, $filesBaseDir) {
+
+		$data->{$this->propertyName} = $transferRecord[$this->propertyName] ?? '';
+		$this->file = null;
+
+		if ($data->{$this->propertyName} && isset($propertyFilePaths[$this->propertyName])) {
+			$srcFile = $filesBaseDir .'/'. $propertyFilePaths[$this->propertyName][0];
+			if (is_file($srcFile)) {
+				$this->file = [
+					'tmp_name' => $srcFile,
+					'name' => basename($srcFile),
+					'size' => filesize($srcFile),
+					'error' => null,
+				];
+			}
+		}
+	}
+
 	/**
 	 * Since the user can store data without supplying the image, we add the current file name info to the $data object.
 	 * @param object $data
@@ -19,7 +66,7 @@ class KenedoPropertyImage extends KenedoProperty {
 		$this->resetErrors();
 
 		if ($this->isRequired() && $this->applies($data)) {
-			$fileUpload = KRequest::getFile($this->propertyName);
+			$fileUpload = $this->getFile();
 			$currentFile = $this->getCurrentOriginalFileName($data->id);
 			if (!$fileUpload && !$currentFile) {
 				$this->setError( KText::sprintf('You need to upload a file for field %s.',$this->getPropertyDefinition('label')) );
@@ -27,7 +74,7 @@ class KenedoPropertyImage extends KenedoProperty {
 			}
 		}
 
-		$file = KRequest::getFile($this->propertyName);
+		$file = $this->getFile();
 
 		// Otherwise, if nothing got uploaded - let be ok
 		if (empty($file['tmp_name'])) {
@@ -82,16 +129,14 @@ class KenedoPropertyImage extends KenedoProperty {
 				// Get dimensions in an array
 				$minDimensions = $this->getPropertyDefinition('minimumDimensions');
 
-				// Load the GD library
-				if (class_exists('PHPThumb') == false) {
-					require_once(KenedoPlatform::p()->getComponentDir('com_configbox').'/external/kenedo/external/phpthumb/phpthumb.php');
-				}
-
 				try	{
-					$actualImage = new GD($file['tmp_name']);
-					$dimensions = $actualImage->getCurrentDimensions();
+					$size = getimagesize($file['tmp_name']);
+					$dimensions = [
+						'width' => $size[0],
+						'height' => $size[1],
+					];
 				}
-				catch (Exception $e) {
+				catch (Throwable $e) {
 					KLog::log('Issue with image validation. Exception text was "'. $e->getMessage(), 'error');
 					$this->setError( KText::sprintf('The system could not determine image dimensions for %s. Please check the file, if the problem persists, try saving the file in an alternative photo editor.', $this->getPropertyDefinition('label')));
 					return false;
@@ -147,8 +192,8 @@ class KenedoPropertyImage extends KenedoProperty {
 			}
 		}
 
-		// Get the uploaded file's info (This is the typical array you'd get from $_FILES['your_file'])
-		$file = KRequest::getFile($this->propertyName);
+		// Get the uploaded file's info
+		$file = $this->getFile();
 
 		// If the user checked the 'delete' checkbox, delete the item
 		if ($shouldDelete) {
@@ -202,7 +247,7 @@ class KenedoPropertyImage extends KenedoProperty {
 		$destinationPath = $storageFolder . '/' . $newOriginalFileName;
 
 		// Move the file from tmp to destination
-		$moveSuccess = rename($file['tmp_name'], $destinationPath);
+		$moveSuccess = copy($file['tmp_name'], $destinationPath);
 
 		// Send false and feedback if moving didn't go well
 		if ($moveSuccess == false) {
@@ -263,22 +308,15 @@ class KenedoPropertyImage extends KenedoProperty {
 
 	public function copy($data, $newId, $oldId) {
 
-		$logPrefix = get_class($this->model).'\\'.$this->propertyName.'. Type "'.$this->getType().'": ';
-
-		KLog::log($logPrefix.' - Copying started for Image Property');
-
 		// Get the current filename of the original and the mutations
 		$originalFilename = $data->{$this->propertyName};
-		$mutationFilenames = $this->getMutationFileNames($originalFilename);
 
 		if (empty($originalFilename)) {
-			KLog::log($logPrefix.' - No file set, skipping copying.');
 			return true;
 		}
 
 		// Get new filenames
 		$newOriginalFilename = $this->getNewFileNameForCopy($data, $newId);
-		$newMutationFilenames = $this->getMutationFileNames($newOriginalFilename);
 
 		// Get the path to the image directory
 		$pathFilesystem = $this->getPropertyDefinition('dirBase');
@@ -288,17 +326,6 @@ class KenedoPropertyImage extends KenedoProperty {
 			KLog::log('Original file to copy not found in location "'.$pathFilesystem.'/'.$originalFilename.'"', 'error');
 			throw new Exception('Original image not found for property '.$this->getPropertyDefinition('label').' in model "'.get_class($this->model).'", record ID '.$oldId.'.');
 		}
-
-		// Check if any of the mutation images are missing
-//		foreach($mutationFilenames as $mutationKey => $mutationFilename) {
-//
-//			if (is_file($pathFilesystem.'/'.$mutationFilename) == false) {
-//				KLog::log('Mutation file "'.$mutationKey.'" to copy not found in location "'.$pathFilesystem.'/'.$originalFilename.'"', 'error');
-//				throw new Exception('Mutation image "'.$mutationKey.'" not found for property '.$this->getPropertyDefinition('label').' in model "'.get_class($this->model).'", record ID '.$oldId.'.');
-//
-//			}
-//
-//		}
 
 		// Create the image folder if it does not exist yet
 		if (!is_dir($pathFilesystem)) {
@@ -318,16 +345,23 @@ class KenedoPropertyImage extends KenedoProperty {
 			throw new Exception('Could not copy file for property '.$this->getPropertyDefinition('label').' in model "'.get_class($this->model).'".');
 		}
 
+		$existingMutationFileNames = $this->getExistingMutationFileNames($originalFilename);
+
 		// Copy each mutation image
-		foreach($mutationFilenames as $mutationKey => $mutationFilename) {
+		foreach($existingMutationFileNames as $mutationKey => $mutationSourceName) {
 
-			if (is_file($pathFilesystem.'/'.$mutationFilename) == true) {
-				$result = copy($pathFilesystem.'/'.$mutationFilename, $pathFilesystem.'/'.$newMutationFilenames[$mutationKey]);
+			$fileExtension = KenedoFileHelper::getExtension($mutationSourceName);
+			$extensionMutationNames = $this->getMutationFileNames($newOriginalFilename, $fileExtension);
+			$mutationDestName = $extensionMutationNames[$mutationKey];
 
-				if ($result === false) {
-					KLog::log('Could not copy mutation image for property '.$this->propertyName.' in model "'.get_class($this->model).'". Last PHP message was '.error_get_last(), 'error');
-					throw new Exception('Could not copy file for property '.$this->getPropertyDefinition('label').' in model "'.get_class($this->model).'".');
-				}
+			$result = copy(
+				$pathFilesystem.'/'.$mutationSourceName,
+				$pathFilesystem.'/'.$mutationDestName
+			);
+
+			if ($result === false) {
+				KLog::log('Could not copy mutation image for property '.$this->propertyName.' in model "'.get_class($this->model).'". Last PHP message was '.error_get_last(), 'error');
+				throw new Exception('Could not copy file for property '.$this->getPropertyDefinition('label').' in model "'.get_class($this->model).'".');
 			}
 
 		}
@@ -371,7 +405,7 @@ class KenedoPropertyImage extends KenedoProperty {
 	 *
 	 * @param int $id
 	 * @param string $tableName
-	 * @return bool|void
+	 * @return bool
 	 */
 	function delete($id, $tableName) {
 
@@ -386,7 +420,7 @@ class KenedoPropertyImage extends KenedoProperty {
 		$this->deleteMutations($currentFilename);
 
 		// Let the base class method take care of externally stored data (may try to delete an already deleted external row)
-		parent::delete($id, $tableName);
+		return parent::delete($id, $tableName);
 
 	}
 
@@ -398,43 +432,73 @@ class KenedoPropertyImage extends KenedoProperty {
 
 		if(!empty($data->{$this->propertyName})) {
 
+			$fileNameOriginal = $data->{$this->propertyName};
+
+			// Add URL to original
 			$pathUrl = $this->getPropertyDefinition('urlBase');
 			if ($pathUrl) {
-				$data->{$this->propertyName.'_href'} = (!empty($data->{$this->propertyName})) ? $pathUrl.'/'.$data->{$this->propertyName} : '';
+				$data->{$this->propertyName.'_href'} = $pathUrl.'/'.$fileNameOriginal;
 			}
 
+			// Add file path to original
 			$pathFilesystem = $this->getPropertyDefinition('dirBase');
 			if ($pathFilesystem) {
-				$data->{$this->propertyName.'_path'} = (!empty($data->{$this->propertyName})) ? $pathFilesystem.'/'.$data->{$this->propertyName} : '';
+				$data->{$this->propertyName.'_path'} = $pathFilesystem.'/'.$fileNameOriginal;
 			}
 
-			$mutations = $this->getPropertyDefinition('mutations', array());
+			// Get existing mutations
+			$mutationFileNames = $this->getExistingMutationFileNames($fileNameOriginal);
 
-			$fileNames = $this->getMutationFileNames($data->{$this->propertyName});
+			// Add URL and path to each mutation
+			foreach ($mutationFileNames as $mutationName => $mutationFileName) {
 
-			foreach ($mutations as $mutationKey => $mutationData) {
-				$fileName = $fileNames[$mutationKey];
-				$objectKeyNamePath = $this->propertyName . '_' . $mutationKey . '_path';
-				$objectKeyNameHref = $this->propertyName . '_' . $mutationKey . '_href';
+				$objectKeyNamePath = $this->propertyName . '_' . $mutationName . '_path';
+				$objectKeyNameHref = $this->propertyName . '_' . $mutationName . '_href';
 
-				$data->$objectKeyNamePath = $pathFilesystem . '/' . $fileName;
-				$data->$objectKeyNameHref = $pathUrl . '/' . $fileName;
+				$data->$objectKeyNamePath = $pathFilesystem . '/' . $mutationFileName;
+				$data->$objectKeyNameHref = $pathUrl . '/' . $mutationFileName;
+
 			}
 
 		}
 
 		parent::appendDataForGetRecord( $data );
+
 	}
 
-	/**
-	 * This updates the paths and URLs (just in case the request scheme changed or similar). Runs the
-	 * appendDataForGetRecord again.
-	 * @see KenedoPropertyFile::appendDataForGetRecord()
-	 *
-	 * @param object $data
-	 */
-	public function appendDataForPostCaching(&$data) {
-		$this->appendDataForGetRecord($data);
+	function getPropertyFilePaths($record) {
+
+		$filePaths = [];
+
+		$dirDataStore = KenedoPlatform::p()->getDirDataStore();
+
+		if (empty($record->{$this->propertyName})) {
+			return [];
+		}
+
+		$fileNameOriginal = $record->{$this->propertyName};
+
+		$basePath = $this->getPropertyDefinition('dirBase');
+
+		// The base path should be relative based on the store's data dir
+		$basePath = str_replace($dirDataStore, '', $basePath);
+
+		// Add the original image
+		if ($basePath) {
+			$filePaths[] = $basePath.'/'.$fileNameOriginal;
+		}
+
+		// Mutations won't be copied, on import they will be regenerated
+
+		// Get rid of reference to any missing images
+		foreach ($filePaths as $k=>$filePath) {
+			if (!is_file($dirDataStore.$filePath)) {
+				unset($filePaths[$k]);
+			}
+		}
+
+		return $filePaths;
+
 	}
 
 	/**
@@ -444,7 +508,7 @@ class KenedoPropertyImage extends KenedoProperty {
 	 */
 	protected function getNewOriginalFilename($data) {
 
-		$file = KRequest::getFile($this->propertyName);
+		$file = $this->getFile();
 
 		if (!$file || empty($file['tmp_name'])) {
 			return '';
@@ -504,7 +568,7 @@ class KenedoPropertyImage extends KenedoProperty {
 		$db->setQuery($query);
 		$filename = $db->loadResult();
 
-		return $filename;
+		return (string)$filename;
 
 	}
 
@@ -542,11 +606,15 @@ class KenedoPropertyImage extends KenedoProperty {
 	}
 
 	/**
-	 * Returns an array of mutation file names (incl. extension, excl. folder info)
-	 * @param string $filenameOriginal File name of the original file
+	 * @param string $filenameOriginal
 	 * @return string[]
 	 */
-	protected function getMutationFileNames($filenameOriginal) {
+	protected function getExistingMutationFileNames($filenameOriginal) {
+
+		// No current original file, done then
+		if (empty($filenameOriginal)) {
+			return array();
+		}
 
 		$mutations = $this->getPropertyDefinition('mutations', array());
 
@@ -555,13 +623,74 @@ class KenedoPropertyImage extends KenedoProperty {
 			return array();
 		}
 
-		// No mutations? All done then
+		$baseDir = $this->getPropertyDefinition('dirBase');
+
+		// Get the original file name excl. file extension
+		$baseNameOriginal = KenedoFileHelper::stripExtension($filenameOriginal);
+
+		// Store the extension separately for later
+		$extensionOriginal = KenedoFileHelper::getExtension($filenameOriginal);
+
+		$isUsingSerials = $this->getPropertyDefinition('appendSerial', false);
+
+		// Extract the file's original name (excl. serial)
+		if ($isUsingSerials == true) {
+			$parts = explode('-', $baseNameOriginal);
+			$serialPart = '-'.array_pop($parts);
+			$baseMutation = implode('-', $parts);
+		}
+		else {
+			$baseMutation = $baseNameOriginal;
+			$serialPart = '';
+		}
+
+		// Collect all mutation file names
+		$mutationFileNames = array();
+
+		foreach ($mutations as $mutationName => $mutationData) {
+			$mutationExtension = $mutationData['params']['outputFormat'] ?? $extensionOriginal;
+			$mutationFileName = $baseMutation.'-'.$mutationName.$serialPart.'.'.$mutationExtension;
+			if (file_exists($baseDir.'/'.$mutationFileName)) {
+				$mutationFileNames[$mutationName] = $mutationFileName;
+			}
+			else {
+				foreach (self::outputFormats as $mutationExtension) {
+					$mutationFileName = $baseMutation.'-'.$mutationName.$serialPart.'.'.$mutationExtension;
+					if (file_exists($baseDir.'/'.$mutationFileName)) {
+						$mutationFileNames[$mutationName] = $mutationFileName;
+						break;
+					}
+				}
+			}
+		}
+
+		return $mutationFileNames;
+
+	}
+
+	/**
+	 * Returns an array of mutation file names (incl. extension, excl. folder info)
+	 * @param string $filenameOriginal File name of the original file
+	 * @param string $extOverride Optional extension to use (if omitted, it uses the outputFormat extension)
+	 * @return string[]
+	 */
+	protected function getMutationFileNames($filenameOriginal, $extOverride = null) {
+
+		// No current original file, done then
 		if (empty($filenameOriginal)) {
+			return array();
+		}
+
+		$mutations = $this->getPropertyDefinition('mutations', array());
+
+		// No mutations? All done then
+		if (count($mutations) == 0) {
 			return array();
 		}
 
 		// Get the original file name excl. file extension
 		$nameOriginal = KenedoFileHelper::stripExtension($filenameOriginal);
+
 		// Store the extension separately for later
 		$extensionOriginal = KenedoFileHelper::getExtension($filenameOriginal);
 
@@ -580,12 +709,29 @@ class KenedoPropertyImage extends KenedoProperty {
 
 		// Collect all mutation file names
 		$mutationFileNames = array();
-		foreach($mutations as $mutationName=>$mutationData) {
 
-			$mutationFileNames[$mutationName] =
-				$baseMutation . '-' . $mutationName .
-				(($isUsingSerials == true) ? '-'.$serial : '') .
-				'.' .$extensionOriginal;
+		foreach ($mutations as $mutationName=>$mutationData) {
+
+			$fileName = $baseMutation . '-' . $mutationName;
+
+			if ($isUsingSerials == true) {
+				$fileName .= '-'.$serial;
+			}
+
+			if ($extOverride) {
+				$ext = $extOverride;
+			}
+			elseif (!empty($mutationData['params']['outputFormat'])) {
+				$ext = $mutationData['params']['outputFormat'];
+			}
+			else {
+				$ext = $extensionOriginal;
+			}
+
+			$fileName .= '.'. $ext;
+
+			$mutationFileNames[$mutationName] = $fileName;
+
 		}
 
 		return $mutationFileNames;
@@ -593,128 +739,119 @@ class KenedoPropertyImage extends KenedoProperty {
 
 	/**
 	 * Perform Mutation of an Image file
-	 * @param string $filenameOriginal (excl. folder info)
-	 * @param string $filenameMutation (excl. folder info)
+	 * @param string $filenameSource (excl. folder info)
+	 * @param string $filenameTarget (excl. folder info)
 	 * @param string $mode Mutation mode
 	 * @param array $mutationParameters Parameters for the mutation mode
-	 * @return boolean Creation result
 	 * @throws Exception
 	 */
-	protected function makeMutation($filenameOriginal, $filenameMutation, $mode, $mutationParameters) {
+	protected function makeMutation($filenameSource, $filenameTarget, $mode, $mutationParameters) {
 
-		if(empty($filenameOriginal)) {
-			throw new Exception("Something went wrong with original image filename.");
+		if (empty($filenameSource)) {
+			throw new Exception('Could not create image variant for image. Source file does not exist.');
 		}
 
-		$baseDir = $this->getPropertyDefinition('dirBase');
+		try {
+			if (extension_loaded('imagick') && class_exists('Imagick')) {
+				$driver = new Intervention\Image\Drivers\Imagick\Driver();
+			}
+			else {
+				$driver = new Intervention\Image\Drivers\GD\Driver();
+			}
 
-		if (class_exists('PHPThumb') == false) {
-			require_once(KenedoPlatform::p()->getComponentDir('com_configbox').'/external/kenedo/external/phpthumb/phpthumb.php');
+			$manager = new Intervention\Image\ImageManager($driver);
+			$baseDir = $this->getPropertyDefinition('dirBase');
+
+			$image = $manager->read($baseDir . '/' . $filenameSource);
+
+			// Set to RBG and remove color profile
+			$image->setColorspace(Intervention\Image\Colors\Rgb\Colorspace::class);
+			$image->removeProfile();
+
+			switch($mode) {
+
+				// Scales the image to fit into target dimensions, cropping any excess
+				case 'forceRatioAndContain': // Deprecated old name
+				case 'coverAndCrop':
+					$image->cover($mutationParameters['width'], $mutationParameters['height'], 'center');
+					break;
+				// Scales the image to fit into target dimensions leaving one dimension shorter if need be
+				case 'contain':
+					$image->scale($mutationParameters['width'] ?? null, $mutationParameters['height'] ?? null);
+					break;
+				// Scales the image to fit into target dimensions leaving one dimension longer if need be
+				case 'cover':
+					$image = $this->getImageCoveredWithoutCrop($image, $mutationParameters['width'] ?? null, $mutationParameters['height'] ?? null);
+					break;
+				default:
+					throw new Exception('Unknown mutation mode "'.$mode.'" used. Model name is '. get_class($this->model).', property name is '.$this->propertyName);
+
+			}
+
+			$quality = $mutationParameters['outputQuality'] ?? 70;
+
+			switch ($mutationParameters['outputFormat'] ?? 'asInput') {
+
+				case 'webp':
+					$image->toWebp($quality);
+					break;
+				case 'jpg':
+					$image->toJpeg($quality);
+					break;
+				case 'png':
+					$image->toPng();
+					break;
+				case 'gif':
+					$image->toGif();
+					break;
+
+			}
+		}
+		catch (Throwable $e) {
+			KLog::logException($e);
+			throw new Exception('Could not create image variant for image. Error message was "'.$e->getMessage().'".');
 		}
 
-		switch($mode) {
-
-			// 'forceRatioAndContain' resizes to image to fit within the given dimensions and crops (centered) if ratio does not fit
-			case 'forceRatioAndContain':
-
-				try	{
-					$mutation = new GD($baseDir . '/' . $filenameOriginal, array('resizeUp' => true, 'jpegQuality' => 75));
-				}
-				catch (Exception $e) {
-					KLog::log('Problem with processing image. Exception message from GD was '.$e->getMessage(), 'error');
-					throw new Exception('System error during image saving. ConfigBox error log contains analytic information.');
-				}
-
-				// Check if parameters are valid, throw an exception if they are not
-				if (empty($mutationParameters['width']) || empty($mutationParameters['height'])) {
-					throw new Exception('Mutation mode "'.$mode.'" used, but either parameter width or height is missing. Check property definitions. Model name is '. get_class($this->model).', property name is '.$this->propertyName);
-				}
-
-				// Do the resizing and save the image
-				try	{
-					$mutation->adaptiveResize($mutationParameters['width'], $mutationParameters['height']);
-					$mutation->save($baseDir . '/' . $filenameMutation);
-				}
-				catch (Exception $e) {
-					KLog::log('Mode "'.$mode.'" on image failed. Error message was '. $e->getMessage(), 'error');
-					throw new Exception("Could not save thumbnail image.");
-				}
-
-				break;
-
-			// 'Contain' keeps the ratio and resizes the image to fit within given width and height. You can have width or height 0/null, then only the other dimension will be used
-			case 'contain':
-
-				try	{
-					$mutation = new GD($baseDir . '/' . $filenameOriginal, array('resizeUp' => false, 'jpegQuality' => 75));
-				}
-				catch (Exception $e) {
-					KLog::log('Problem with processing image. Exception message from GD was '.$e->getMessage(), 'error');
-					throw new Exception('System error during image saving. ConfigBox error log contains analytic information.');
-				}
-
-				// Check if parameters are valid, throw an exception if they are not
-				if (empty($mutationParameters['width']) && empty($mutationParameters['height'])) {
-					throw new Exception('Mutation mode "'.$mode.'" used, but neither width or height is set (you must provide at least one of them). Check property definitions. Model name is '. get_class($this->model).', property name is '.$this->propertyName);
-				}
-
-				// Set to 0 if missing
-				if (empty($mutationParameters['width'])) {
-					$mutationParameters['width'] = 0;
-				}
-
-				// Set to 0 if missing
-				if (empty($mutationParameters['height'])) {
-					$mutationParameters['height'] = 0;
-				}
-
-				// Do the resizing and save the image
-				try	{
-					$mutation->resize($mutationParameters['width'], $mutationParameters['height']);
-					$mutation->save($baseDir . '/' . $filenameMutation);
-				}
-				catch (Exception $e) {
-					KLog::log('Mode "'.$mode.'" on image failed. Error message was '. $e->getMessage(), 'error');
-					throw new Exception("Could not save thumbnail image.");
-				}
-
-				break;
-
-			// 'Cover' blows up the image to the given dimensions, making one dimension longer if needed
-			case 'cover':
-
-				try	{
-					$mutation = new GD($baseDir . '/' . $filenameOriginal, array('resizeUp' => true, 'jpegQuality' => 75));
-				}
-				catch (Exception $e) {
-					KLog::log('Problem with processing image. Exception message from GD was '.$e->getMessage(), 'error');
-					throw new Exception('System error during image saving. ConfigBox error log contains analytic information.');
-				}
-
-				// Check if parameters are valid, throw an exception if they are not
-				if (empty($mutationParameters['width']) || empty($mutationParameters['height'])) {
-					throw new Exception('Mutation mode "'.$mode.'" used, but neither width or height is set (you must provide at least one of them). Check property definitions. Model name is '. get_class($this->model).', property name is '.$this->propertyName);
-				}
-
-				// Do the resizing and save the image
-				try	{
-					$mutation->resize($mutationParameters['width'], $mutationParameters['height']);
-					$mutation->save($baseDir . '/' . $filenameMutation);
-				}
-				catch (Exception $e) {
-					KLog::log('Mode "'.$mode.'" on image failed. Error message was '. $e->getMessage(), 'error');
-					throw new Exception("Could not save thumbnail image.");
-				}
-
-				break;
-
-			default:
-				throw new Exception('Unknown mutation mode "'.$mode.'" used. Model name is '. get_class($this->model).', property name is '.$this->propertyName);
-
+		try {
+			$image->save($baseDir . '/' . $filenameTarget);
+		}
+		catch (Exception $e) {
+			KLog::logException($e);
+			throw new Exception('Saving image variant for '.$this->propertyDefinition['label'].' failed.');
 		}
 
-		return true;
+	}
 
+	/**
+	 * @param \Intervention\Image\Interfaces\ImageInterface $image
+	 * @param ?int $targetWidth
+	 * @param ?int $targetHeight
+	 * @return \Intervention\Image\Interfaces\ImageInterface
+	 */
+	protected function getImageCoveredWithoutCrop($image, $targetWidth = null, $targetHeight = null) {
+		$targetWidth = $mutationParameters['width'] ?? null;
+		$targetHeight = $mutationParameters['height'] ?? null;
+		if ($targetWidth) {
+			if ($image->width() != $targetWidth) {
+				$image->scale($targetWidth);
+			}
+			if ($targetHeight) {
+				if ($image->height() < $targetHeight) {
+					$image->scale(null, $targetHeight);
+				}
+			}
+		}
+		elseif ($targetHeight) {
+			if ($image->height() != $targetHeight) {
+				$image->scale(null, $targetHeight);
+			}
+			if ($targetWidth) {
+				if ($image->width() < $targetWidth) {
+					$image->scale($targetWidth);
+				}
+			}
+		}
+		return $image;
 	}
 
 	/**
@@ -726,14 +863,12 @@ class KenedoPropertyImage extends KenedoProperty {
 
 		$folder = $this->getPropertyDefinition('dirBase');
 
-		$mutationsToDelete = $this->getMutationFileNames($originalFilename);
+		$mutationsToDelete = $this->getExistingMutationFileNames($originalFilename);
 
-		if(!empty($mutationsToDelete)) {
-			foreach ($mutationsToDelete as $key => $item) {
-				$file2delete =  $folder . '/' . $item;
-				if(is_file($file2delete)) {
-					unlink($file2delete);
-				}
+		foreach ($mutationsToDelete as $item) {
+			$file2delete =  $folder . '/' . $item;
+			if (is_file($file2delete)) {
+				unlink($file2delete);
 			}
 		}
 	}
@@ -777,7 +912,6 @@ class KenedoPropertyImage extends KenedoProperty {
 	function recreateMutations() {
 
 		$records = $this->model->getRecords();
-		$missingFiles = [];
 
 		// Check for mutations
 		$mutations = $this->getPropertyDefinition('mutations', array());
@@ -788,7 +922,6 @@ class KenedoPropertyImage extends KenedoProperty {
 			$fileName = $record->{$this->propertyName};
 
 			if (!is_file($baseDir.'/'.$fileName)) {
-				$missingFiles[] = $fileName;
 				continue;
 			}
 

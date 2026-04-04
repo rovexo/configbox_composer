@@ -245,7 +245,9 @@ class KenedoPlatformMagento2 implements InterfaceKenedoPlatform {
 			$prefix = $deploymentConfig->get('db/table_prefix');
 
 			$connection = new stdClass();
-			$connection->hostname = $config['host'];
+			$connection->port = !empty($config['port']) ? $config['port'] : null;
+			$connection->socket = !empty($config['unix_socket']) ? $config['unix_socket'] : null;
+			$connection->hostname = !empty($config['host']) ? $config['host'] : null;
 			$connection->username = $config['username'];
 			$connection->password = $config['password'];
 			$connection->database = $config['dbname'];

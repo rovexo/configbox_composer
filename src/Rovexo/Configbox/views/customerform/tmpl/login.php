@@ -14,8 +14,8 @@ defined('CB_VALID_ENTRY') or die();
 
 			<div class="login-box">
 
-				<input type="text" class="form-control input-username" name="username" placeholder="<?php echo KText::_('Email');?>" />
-				<input type="password" class="form-control input-password" name="password" placeholder="<?php echo KText::_('Password');?>" />
+				<input type="text" autocomplete="username" class="form-control input-username" name="username" placeholder="<?php echo KText::_('Email');?>" />
+				<input type="password" autocomplete="current-password" class="form-control input-password" name="password" placeholder="<?php echo KText::_('Password');?>" />
 
 				<div class="feedback"></div>
 
@@ -28,7 +28,7 @@ defined('CB_VALID_ENTRY') or die();
 
 				<div class="info-text"><?php echo KText::_('Please enter your email address.');?></div>
 
-				<input type="text" class="form-control input-username" name="username" placeholder="<?php echo KText::_('Email');?>" />
+				<input type="text" autocomplete="username" class="form-control input-username" name="username" placeholder="<?php echo KText::_('Email');?>" />
 
 				<div class="feedback"></div>
 
@@ -41,8 +41,8 @@ defined('CB_VALID_ENTRY') or die();
 
 				<div class="info-text"><?php echo KText::_('We have sent a verification code to your email address. Please enter the code and pick a new password.');?></div>
 
-				<input class="form-control input-verification" type="text" id="verification_code" name="verification_code" value="" placeholder="<?php echo KText::_('Verification Code');?>" />
-				<input class="form-control input-new-password" type="password" id="new_password" name="new_password" value="" placeholder="<?php echo KText::_('New Password');?>" />
+				<input class="form-control input-verification" autocomplete="one-time-code" type="text" id="verification_code" name="verification_code" value="" placeholder="<?php echo KText::_('Verification Code');?>" />
+				<input class="form-control input-new-password" autocomplete="new-password" type="password" id="new_password" name="new_password" value="" placeholder="<?php echo KText::_('New Password');?>" />
 
 				<div class="feedback"></div>
 

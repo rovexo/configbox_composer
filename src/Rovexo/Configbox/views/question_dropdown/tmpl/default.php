@@ -84,13 +84,13 @@ defined('CB_VALID_ENTRY') or die();
 								<a class="fa fa-info-circle"
 								   aria-label="<?php echo KText::_('Details');?>"
 								   role="button"
-								   data-toggle="modal"
-								   data-target="#answer-description-<?php echo intval($answer->id);?>"></a>
+								   data-bs-toggle="modal"
+								   data-bs-target="#answer-description-<?php echo intval($answer->id);?>"></a>
 
 								<div id="answer-description-<?php echo intval($answer->id);?>" class="modal answer-description-modal" tabindex="-1" aria-hidden="true">
 									<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
 										<div class="modal-content">
-											<button type="button" class="close" data-dismiss="modal" aria-label="<?php echo KText::_('Close');?>"><span aria-hidden="true">&times;</span></button>
+											<button type="button" class="close" data-bs-dismiss="modal" aria-label="<?php echo KText::_('Close');?>"><span aria-hidden="true">&times;</span></button>
 											<div class="modal-body"><?php echo $answer->description;?></div>
 										</div>
 									</div>

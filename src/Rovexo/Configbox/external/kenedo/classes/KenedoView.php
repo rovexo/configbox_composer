@@ -463,7 +463,12 @@ class KenedoView {
 		}
 
 		if ($template === NULL) {
-			$template = KRequest::getKeyword('layout','default');
+			if (KRequest::getKeyword('option') == 'com_configbox') {
+				$template = KRequest::getKeyword('layout','default');
+			}
+		}
+		if ($template === NULL) {
+			$template = 'default';
 		}
 
 		$template = str_replace(array(DIRECTORY_SEPARATOR, '/', "\\") , '', $template);
@@ -649,6 +654,18 @@ class KenedoView {
 		$useCacheBusting = CbSettings::getInstance()->get('use_assets_cache_buster');
 		$cacheBusterQs = 'version='.ConfigboxViewHelper::getCacheBusterValue();
 
+		$customCss = KenedoPlatform::p()->getUrlCustomizationAssets().'/css/custom.css';
+		// Put the custom CSS last
+		$urls = array_unique($urls);
+		foreach ($urls as $key=>$url) {
+			if (strstr($url, $customCss) !== false) {
+				$urls[] = $url;
+				unset($urls[$key]);
+				break;
+			}
+		}
+		unset($url);
+
 		foreach ($urls as &$url) {
 
 			if ($useMinifiedCss) {
@@ -674,7 +691,10 @@ class KenedoView {
 			}
 
 			if ($useCacheBusting) {
-				$url .= ((strpos($url, '?') === false) ? '?':'&') . $cacheBusterQs;
+				// Add cache busting GET param (but only if the stylesheet is from our system)
+				if (strstr($url, $baseUrlAssetsCustom) || strstr($url, $baseUrlAssets)) {
+					$url .= ((strpos($url, '?') === false) ? '?':'&') . $cacheBusterQs;
+				}
 			}
 
 		}
@@ -690,8 +710,8 @@ class KenedoView {
 	function getStyleSheetUrls() {
 
 		$urls = array(
-			KenedoPlatform::p()->getUrlAssets().'/kenedo/external/bootstrap-4.6.0/css/bootstrap-namespaced.css',
-			'https://use.fontawesome.com/releases/v5.15.0/css/all.css',
+			KenedoPlatform::p()->getUrlAssets().'/kenedo/external/bootstrap-5.3.8/css/bootstrap-namespaced.css',
+			KenedoPlatform::p()->getUrlAssets().'/kenedo/external/fontawesome-free-5.15.4-web/css/all.css',
 		);
 
 		if (KenedoPlatform::p()->isAdminArea() == true || strpos($this->view, 'admin') === 0) {
@@ -786,14 +806,14 @@ class KenedoView {
 
 		// Add required stylesheets (but only if the view gets rendered for HTML injection, because CSS combiners mess up things)
 		if (KRequest::getKeyword('output_mode') == 'view_only') {
-			$attributes['data-stylesheets'] = json_encode($this->getOptimizedStylesheetUrls());
+			$attributes['data-stylesheets'] = json_encode($this->getOptimizedStylesheetUrls(), JSON_UNESCAPED_SLASHES);
 		}
 		else {
-			$attributes['data-stylesheets'] = json_encode(array());
+			$attributes['data-stylesheets'] = '[]';
 		}
 
-		$attributes['data-init-calls-once'] = json_encode($this->getJsInitCallsOnce());
-		$attributes['data-init-calls-each'] = json_encode($this->getJsInitCallsEach());
+		$attributes['data-init-calls-once'] = json_encode($this->getJsInitCallsOnce(), JSON_UNESCAPED_SLASHES);
+		$attributes['data-init-calls-each'] = json_encode($this->getJsInitCallsEach(), JSON_UNESCAPED_SLASHES);
 
 		$attributePairs = array();
 		foreach ($attributes as $key=>$value) {

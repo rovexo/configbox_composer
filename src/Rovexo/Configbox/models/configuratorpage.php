@@ -163,7 +163,8 @@ class ConfigboxModelConfiguratorPage extends KenedoModelLight {
 		}
 
 		// Make sure we got a user
-		if (ConfigboxUserHelper::getUserId() == 0) {
+		$userId = ConfigboxUserHelper::getUserId();
+		if ($userId == 0 || $userId === NULL) {
 			$userId = ConfigboxUserHelper::createNewUser();
 			ConfigboxUserHelper::setUserId($userId);
 		}
@@ -171,16 +172,20 @@ class ConfigboxModelConfiguratorPage extends KenedoModelLight {
 		// Make sure we have a cart id
 		$cartModel = KenedoModel::getModel('ConfigboxModelCart');
 		if (!$cartModel->getSessionCartId()) {
-			KLog::log('No cart is set, creating new one.');
 			$cartId = $cartModel->createCart();
 			$cartModel->setSessionCartId($cartId);
 		}
 
 		$cartId = $cartModel->getSessionCartId();
 
-		// In case we got a cart id from session, but cleanup removed it already
+		// In case the session cart doesn't exist anymore
 		if ($cartModel->cartExists($cartId) == false) {
-			KLog::log('Cart ID must have been cleaned up, creating new one.');
+			$cartId = $cartModel->createCart();
+			$cartModel->setSessionCartId($cartId);
+		}
+
+		// In case the cart doesn't belong to the current user
+		if ($cartModel->cartBelongsToUser($cartId, $userId) == false) {
 			$cartId = $cartModel->createCart();
 			$cartModel->setSessionCartId($cartId);
 		}
@@ -203,14 +208,19 @@ class ConfigboxModelConfiguratorPage extends KenedoModelLight {
 			KLog::log('No position is set, creating new one.');
 			$positionId = $positionModel->createPosition($cartId, $productId);
 		}
-		else {
-			$position = $positionModel->getPosition($positionId);
-			if (!$position) {
-				KLog::log('Position is ID is there, but position may have been auto-cleaned. Creating new one.');
-				$positionId = $positionModel->createPosition($cartId, $productId);
-			}
-		}
+
 		$position = $positionModel->getPosition($positionId);
+
+		if (!$position) {
+			KLog::log('Position is ID is there, but position may have been auto-cleaned. Creating new one.');
+			$positionId = $positionModel->createPosition($cartId, $productId);
+			$position = $positionModel->getPosition($positionId);
+		}
+
+		// Check if the position we have belongs to the cart we have
+		if ($position->cart_id != $cartId) {
+			$positionId = $positionModel->createPosition($cartId, $productId);
+		}
 
 		// If the position is for a different product, create a new position
 		if ($position->prod_id != $productId or $position->finished) {

@@ -537,6 +537,10 @@ class ConfigboxCacheHelper {
 	 */
 	public static function augmentProduct(&$product) {
 
+		if (!$product) {
+			return;
+		}
+
 		// Run post-caching prop methods
 		$model = KenedoModel::getModel('ConfigboxModelAdminproducts');
 		$props = $model->getProperties();
@@ -1003,7 +1007,13 @@ class ConfigboxCacheHelper {
 			self::getAnswersForProduct($productId);
 		}
 
-		return self::$cache['xrefs'][$productId][$answerId];
+		if (isset(self::$cache['xrefs'][$productId][$answerId])) {
+			return self::$cache['xrefs'][$productId][$answerId];
+		}
+		else {
+			$null = null;
+			return $null;
+		}
 
 	}
 

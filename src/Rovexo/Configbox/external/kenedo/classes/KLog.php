@@ -2,13 +2,10 @@
 class KLog {
 
 	static $starttime;
-
 	static $takes = array();
 	static $timings = array();
-
 	static $counts = array();
-
-	static $ignoredErrorNumbers = array(E_STRICT, E_USER_DEPRECATED);
+	static $ignoredErrorNumbers = array(E_STRICT, E_USER_DEPRECATED, E_DEPRECATED);
 
 	static $errorCodes = array(
 		1	=> 'E_ERROR',
@@ -20,12 +17,7 @@ class KLog {
 		8192=> 'E_DEPRECATED',
 	);
 
-	static function setTiming($task, $milliSeconds) {
-		self::$timings[$task] = $milliSeconds;
-	}
-
 	/**
-	 *
 	 * Start or reset the timer for time profiling
 	 * @param string $task task keyword
 	 */
@@ -43,9 +35,7 @@ class KLog {
 	}
 
 	/**
-	 *
 	 * Get the time since start was called in ms
-	 *
 	 * @param string $task task keyword
 	 * @return int Time in ms
 	 */
@@ -59,9 +49,7 @@ class KLog {
 	}
 
 	/**
-	 *
 	 * Get the time since start was called in ms
-	 *
 	 * @param string $task task keyword
 	 * @return int Time in ms
 	 */
@@ -76,6 +64,16 @@ class KLog {
 		return $time;
 	}
 
+	/**
+	 * Store the timing for any given task. See getTimings
+	 * @param string $task
+	 * @param float $milliSeconds
+	 * @return void
+	 */
+	static function setTiming($task, $milliSeconds) {
+		self::$timings[$task] = $milliSeconds;
+	}
+
 	static function getTakes() {
 		return self::$takes;
 	}
@@ -84,6 +82,15 @@ class KLog {
 		return self::$timings;
 	}
 
+	static function getTiming($task = 'default') {
+		return self::$timings[$task] ?? null;
+	}
+
+	/**
+	 * Increment the counter for any task
+	 * @param string $task
+	 * @return void
+	 */
 	static function count($task) {
 		if (!isset(self::$counts[$task])) {
 			self::$counts[$task] = 0;
@@ -91,6 +98,11 @@ class KLog {
 		self::$counts[$task]++;
 	}
 
+	/**
+	 * Get the count for a given task
+	 * @param string $task
+	 * @return int|mixed
+	 */
 	static function getCount($task) {
 		if (!isset(self::$counts[$task])) {
 			self::$counts[$task] = 0;
@@ -98,10 +110,20 @@ class KLog {
 		return self::$counts[$task];
 	}
 
+	/**
+	 * Get counts of all tasks
+	 * @return int[]
+	 */
 	static function getCounts() {
 		return self::$counts;
 	}
 
+	/**
+	 * Log anything that is deprecated in CB
+	 * @param string $info
+	 * @param int $stackLevelsBack
+	 * @return void
+	 */
 	static function logLegacyCall($info = '', $stackLevelsBack = 0) {
 
 		$caller = self::getCallerInfo(1 + $stackLevelsBack);
@@ -115,9 +137,7 @@ class KLog {
 	}
 
 	/**
-	 *
 	 * Logs a message to the log file and optionally triggers a platform exception
-	 *
 	 * @param string $messageInternal The internal log message, only shown in the log file (or on the website if debug mode is on and a JError is triggered)
 	 * @param string $logLevel The log level of the message (debug, notice, warning, error etc). Controls which file is used for logging, debug is ignored unless debug mode is on.
 	 * @param string $messagePublic This triggers a platform exception and uses the text to display
@@ -138,68 +158,68 @@ class KLog {
 		switch ($logLevel) {
 
 			case 'debug':
-				$logFile = 'configbox_debug.php';
+				$logFile = 'configbox_debug.log';
 				break;
 
 			case 'warning':
-				$logFile = 'configbox_warnings.php';
+				$logFile = 'configbox_warnings.log';
 				break;
 
 			case 'error':
 			case 'exception':
-				$logFile = 'configbox_errors.php';
+				$logFile = 'configbox_errors.log';
 				break;
 
 			case 'payment':
-				$logFile = 'configbox_payment.php';
+				$logFile = 'configbox_payment.log';
 				break;
 
 			case 'payment_tracking':
-				$logFile = 'configbox_payment_tracking.php';
+				$logFile = 'configbox_payment_tracking.log';
 				break;
 
 			case 'calculation_code_error':
-				$logFile = 'configbox_calculation_code_errors.php';
+				$logFile = 'configbox_calculation_code_errors.log';
 				break;
 
 			case 'permissions':
-				$logFile = 'configbox_permissions.php';
+				$logFile = 'configbox_permissions.log';
 				break;
 
 			case 'php_error':
-				$logFile = 'configbox_php_messages.php';
+				$logFile = 'configbox_php_messages.log';
 				break;
 
 			case 'php_platform_errors':
-				$logFile = 'configbox_php_platform_errors.php';
+				$logFile = 'configbox_php_platform_errors.log';
 				break;
 
 			case 'deprecated':
-				$logFile = 'configbox_deprecated.php';
+				$logFile = 'configbox_deprecated.log';
 				break;
 
 			case 'external_apis':
-				$logFile = 'configbox_external_apis.php';
+				$logFile = 'configbox_external_apis.log';
 				break;
 
 			case 'db_error':
-				$logFile = 'configbox_db_errors.php';
+				$logFile = 'configbox_db_errors.log';
 				break;
 
 			case 'upgrade_errors':
-				$logFile = 'configbox_upgrade_errors.php';
+				$logFile = 'configbox_upgrade_errors.log';
 				break;
 
 			case 'authorization':
-				$logFile = 'configbox_authorization.php';
+				$logFile = 'configbox_authorization.log';
 				break;
 
 			case 'inconsistencies':
-				$logFile = 'configbox_inconsistencies.php';
+				$logFile = 'configbox_inconsistencies.log';
 				break;
 
 			case 'cleanup':
-				$logFile = 'configbox_cleanup.php';
+				$logFile = 'configbox_cleanup.log';
 				break;
 
 			default:
@@ -208,11 +228,11 @@ class KLog {
 				if (strpos($logLevel, 'custom_') === 0) {
 					// Clear out any nastiness
 					$logFile = str_replace(array('/', '\\', '.'), '', $logLevel);
-					$logFile = strtolower($logFile).'.php';
+					$logFile = strtolower($logFile).'.log';
 
 				}
 				else {
-					$logFile = 'configbox_general.php';
+					$logFile = 'configbox_general.log';
 				}
 
 		}
@@ -230,7 +250,6 @@ class KLog {
 
 		if (!is_file($logPath.'/'.$logFile)) {
 			touch($logPath.'/'.$logFile);
-			file_put_contents($logPath.'/'.$logFile, "<?php\ndie('No browser access, use FTP.');\n?>\n\n", FILE_APPEND);
 		}
 
 		$response = file_put_contents($logPath.'/'.$logFile, $line, FILE_APPEND);
@@ -276,10 +295,15 @@ class KLog {
 	/**
 	 * @param Exception $e
 	 */
-	static public function logException($e) {
-		KLog::log($e->getMessage().' in '.$e->getFile().':'.$e->getLine().".\nTrace:\n".$e->getTraceAsString(), 'exception');
+	static public function logException($e, $logType = 'exception') {
+		KLog::log($e->getMessage().' in '.$e->getFile().':'.$e->getLine().".\nTrace:\n".$e->getTraceAsString(), $logType);
 	}
 
+	/**
+	 * Get backtrace information $offset levels back from where you called this method
+	 * @param int $offset
+	 * @return string[]
+	 */
 	static protected function getCallerInfo($offset = 0) {
 		$stack = debug_backtrace(false);
 		foreach ($stack as $index=>$level) {
@@ -301,6 +325,10 @@ class KLog {
 		return $info;
 	}
 
+	/**
+	 * @param int $length
+	 * @return string
+	 */
 	static protected function getRandomString($length = 10) {
 
 		$characters = '0123456789abcdefghijklmnopqrstuvwxyz';
@@ -335,16 +363,13 @@ class KLog {
 		$appDir = str_replace(DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $appDir);
 
 		if (!strstr($file, $appDir)) {
-			if ($number == E_DEPRECATED) {
-				return;
-			}
 			$logLevel = 'php_platform_errors';
 		}
 		else {
 			$logLevel = 'php_error';
 		}
 
-		self::log('PHP error (Type: '.self::getErrorType($number).', message: '.$message.', file: '.$file.', line: '.$line, $logLevel );
+		self::log('PHP error (Type: '.self::getErrorTypeConstantName($number).', message: '.$message.', file: '.$file.', line: '.$line, $logLevel );
 
 		// Log a backtrace in case system runs in debug mode or if error is an E_ERROR
 		if (KenedoPlatform::p()->getDebug() || $number == E_ERROR) {
@@ -357,14 +382,12 @@ class KLog {
 	}
 
 	/**
-	 * Logs uncaught exceptions
+	 * Logs exceptions
 	 * @param Exception $exception
 	 * @throws Exception
 	 */
 	static public function handleException($exception) {
-		$logMessage = 'PHP exception from exception handler (Message: "'.$exception->getMessage().'", file: "'.$exception->getFile().'", line: "'.$exception->getLine().'")';
-		self::log($logMessage, 'php_error');
-		error_log($logMessage.'. Also see Configbox php_errors.php in Joomla log folder (subfolder configbox).');
+		self::logException($exception);
 		throw $exception;
 	}
 
@@ -379,7 +402,7 @@ class KLog {
 		$typesNotLogged = array(
 			E_WARNING,
 			E_NOTICE,
-			E_STRICT,
+			2048, // Deprecated E_STRICT
 			E_DEPRECATED,
 			E_USER_DEPRECATED,
 		);
@@ -405,11 +428,15 @@ class KLog {
 			$logLevel = 'php_error';
 		}
 
-		self::log('PHP error (Type: '.self::getErrorType($error['type']).', message: '.$error['message'].', file: '.$error['file'].', line: '.$error['line'], $logLevel );
+		self::log('PHP error (Type: '.self::getErrorTypeConstantName($error['type']).', message: '.$error['message'].', file: '.$error['file'].', line: '.$error['line'], $logLevel );
 
 	}
 
-	protected static function getErrorType($errorNumber) {
+	/**
+	 * @param int $errorNumber
+	 * @return int|string The E_* constant name or the error number if not found
+	 */
+	protected static function getErrorTypeConstantName($errorNumber) {
 		return (isset(self::$errorCodes[$errorNumber])) ? self::$errorCodes[$errorNumber] : $errorNumber;
 	}
 
